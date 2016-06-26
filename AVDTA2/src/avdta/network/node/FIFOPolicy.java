@@ -1,0 +1,40 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package avdta.network.node;
+
+import avdta.network.Simulator;
+import avdta.vehicle.Vehicle;
+import avdta.network.node.TBR;
+
+/**
+ * Prioritizes vehicles based on arrival time at intersection (set when the vehicle is part of sending flow)
+ * @author Michael
+ */
+public class FIFOPolicy extends IntersectionPolicy
+{
+    public int compare(Vehicle v1, Vehicle v2)
+    {
+        if(v1.arr_time != v2.arr_time)
+        {
+            return v1.arr_time - v2.arr_time;
+        }
+        else if(v1.getNetEnterTime() != v2.getNetEnterTime())
+        {
+            return v1.getNetEnterTime() - v2.getNetEnterTime();
+        }
+        else
+        {
+            return v1.getId() - v2.getId();
+        }
+    }
+
+    public void initialize(TBR node, Vehicle v)
+    {
+        if(v.reservation_time < 0)
+        {
+            v.reservation_time = Simulator.time;
+        }
+    }
+}
