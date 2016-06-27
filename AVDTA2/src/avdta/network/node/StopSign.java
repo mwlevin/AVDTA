@@ -4,6 +4,7 @@
  */
 package avdta.network.node;
 
+import avdta.network.Network;
 import avdta.vehicle.DriverType;
 import avdta.network.link.Link;
 import avdta.network.Simulator;
@@ -54,7 +55,7 @@ public class StopSign extends IntersectionControl
                 if(capacities.get(i).containsKey(j))
                 {
                     //return getCapacity() / capacities.get(i).get(j);
-                    return Math.min(cr.getCapacity() * Simulator.dt / 3600.0, getCapacity() / capacities.get(i).get(j));
+                    return Math.min(cr.getCapacity() * Network.dt / 3600.0, getCapacity() / capacities.get(i).get(j));
                 }
                 else
                 {
@@ -252,9 +253,9 @@ public class StopSign extends IntersectionControl
                 }
                 double flow = cr.adjustFlow(i, j);
                 
-                if(flow > cr.getCapacity() * Simulator.dt / 3600.0)
+                if(flow > cr.getCapacity() * Network.dt / 3600.0)
                 {
-                    System.out.println(getNode().getId()+" "+flow+" "+(cr.getCapacity() * Simulator.dt / 3600.0));
+                    System.out.println(getNode().getId()+" "+flow+" "+(cr.getCapacity() * Network.dt / 3600.0));
                 }
             }
         }
@@ -406,7 +407,7 @@ public class StopSign extends IntersectionControl
     
     public boolean requires2Timesteps(Link i, Link j)
     {
-        return cr.adjustFlow(i, j) > cr.getCapacity() * Simulator.dt / 3600.0;
+        return cr.adjustFlow(i, j) > cr.getCapacity() * Network.dt / 3600.0;
     }
     
     public boolean hasAvailableCapacity(Link i, Link j, double flow)
@@ -429,7 +430,7 @@ public class StopSign extends IntersectionControl
         // minimum time from entering link to exiting
         // TT + FF speed / deceleration of 9m/s^2
         
-        return (int)Math.ceil(Simulator.dt+ i.getFFSpeed() / (braking_deceleration / 5280 * 3600));
+        return (int)Math.ceil(Network.dt+ i.getFFSpeed() / (braking_deceleration / 5280 * 3600));
         //return 0;
     }
 }

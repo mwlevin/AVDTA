@@ -14,7 +14,7 @@ import avdta.network.node.Node;
 import avdta.network.Path;
 import avdta.network.node.Zone;
 import avdta.vehicle.PersonalVehicle;
-import avdta.vehicle.VehicleClass;
+import avdta.vehicle.fuel.VehicleClass;
 import avdta.vehicle.Vehicle;
 import avdta.vehicle.DriverType;
 import avdta.network.node.FCFSPolicy;
@@ -48,12 +48,12 @@ import java.util.TreeSet;
  *
  * @author ut
  */
-public class Simulator implements Serializable 
+public class Simulator extends Network 
 {
 
     public static String type = "";
     public static int time;
-    public static int dt = 6;
+    
     public static int duration = 3600*10;
     public static int ast_duration = 15*60;
     public static final int num_asts = duration / ast_duration ;
@@ -70,36 +70,25 @@ public class Simulator implements Serializable
         return time / ast_duration;
     }
     
-    public static void setTimestep(int linktype)
-    {
-        if(linktype == Link.CTM)
-        {
-        	dt = 6;
-        }
-        else if(linktype == Link.LTM)
-        {
-        	dt = 10;
-        }
-    }
-    
+
     public static int ast(int time)
     {
         return (int)Math.min(time / ast_duration, num_asts-1);
     }
     
-    
-    public static Simulator readTBRNetwork(String network, int linktype) throws IOException
+    /*
+    public static Network readTBRNetwork(String network, int linktype) throws IOException
     {
         return readTBRNetwork(network, new FCFSPolicy(), Node.CR, linktype);
     }
-    public static Simulator readTBRNetwork(String network, int linktype, String demandfile) throws IOException
+    public static Network readTBRNetwork(String network, int linktype, String demandfile) throws IOException
     {
         return readTBRNetwork(network, new FCFSPolicy(), Node.CR, linktype, demandfile);
     }
-    public static Simulator readTBRNetwork(String network, Object policy, int nodetype, int linktype) throws IOException
+    public static Network readTBRNetwork(String network, Object policy, int nodetype, int linktype) throws IOException
     {
         ReadNetwork input = new ReadNetwork();
-        Simulator output = new Simulator(network);
+        Network output = new Network(network);
         
         input.readNetwork(output, linktype);
         input.readTBR(output, policy, nodetype);
@@ -109,10 +98,10 @@ public class Simulator implements Serializable
         
         return output;
     }
-    public static Simulator readTBRNetwork(String network, Object policy, int nodetype, int linktype, String demandfile) throws IOException
+    public static Network readTBRNetwork(String network, Object policy, int nodetype, int linktype, String demandfile) throws IOException
     {
         ReadNetwork input = new ReadNetwork();
-        Simulator output = new Simulator(network);
+        Network output = new Network(network);
         
         input.readNetwork(output, linktype);
         input.readTBR(output, policy, nodetype);
@@ -123,10 +112,10 @@ public class Simulator implements Serializable
         return output;
     }
     
-    public static Simulator readSignalsNetwork(String network, int linktype) throws IOException
+    public static Network readSignalsNetwork(String network, int linktype) throws IOException
     {
         ReadNetwork input = new ReadNetwork();
-        Simulator output = new Simulator(network);
+        Network output = new Network(network);
         
         input.readNetwork(output, linktype);
         input.readSignals(output);
@@ -137,10 +126,10 @@ public class Simulator implements Serializable
         return output;
     }
     
-    public static Simulator readSignalsNetwork(String network, int linktype, String demandfile) throws IOException
+    public static Network readSignalsNetwork(String network, int linktype, String demandfile) throws IOException
     {
         ReadNetwork input = new ReadNetwork();
-        Simulator output = new Simulator(network);
+        Network output = new Network(network);
         
         input.readNetwork(output, linktype);
         input.readSignals(output);
@@ -150,129 +139,70 @@ public class Simulator implements Serializable
         
         return output;
     }
+    */
     
     public static final int indexTime(double t)
     {
-        return (int)Math.ceil( t / Simulator.dt);
+        return (int)Math.ceil(t / Network.dt);
     }
     
     public static Simulator active;
     
-    public static final int num_timesteps = (int)Math.ceil(Simulator.duration / Simulator.dt)+1;
+    public static final int num_timesteps = (int)Math.ceil(Simulator.duration / Network.dt)+1;
     
-    protected List<Node> nodes;
-    protected List<Link> links;
+
     protected List<PersonalVehicle> vehicles;
     
-    private Map<Integer, List<Path>> allPaths;
+
     
     private String name, scenario;
     
-    private static boolean dlr;
+  
     
     
-    public static double a = 22020.6;
-    public static double b = 2.7926;
-    public static double c = 0.2977;
     
-    protected static boolean HVs_use_reservations = false;
-
+    
     public static Random rand = new Random(5);
     
-    public static double dagum_rand()
-    {
-        double y = rand.nextDouble();
-        return Math.pow( a / (Math.pow(1/y, 1/c) - 1), 1/b);
-    }
-    
-    
-    
-    private boolean link_dijkstras; // dijkstras
     
     public static int centroid_time = 0;
     
-    private int linktype;
-    
+
     private PrintStream out;
     
-    private TravelCost costFunc;
+
     
     protected StatusUpdate statusUpdate;
     
-    public Simulator(String name, List<Node> nodes, List<Link> links, int linktype)
+    public Simulator(String name, List<Node> nodes, List<Link> links)
     {
-        this(name, nodes, links, false, linktype);
-    }
-    
-    public Simulator(String name, List<Node> nodes, List<Link> links, boolean link_dijkstras, int linktype)
-    { 
+        super(nodes, links);
+        
         active = this;
         
         this.out = System.out;
         this.name = name;
         scenario = "default";
         this.scenario = name;
-        this.nodes = nodes;
-        this.links = links;    
-        this.linktype = linktype;
+   
         vehicles = new ArrayList<PersonalVehicle>();
         
-        this.link_dijkstras = link_dijkstras;
         
-        this.costFunc = TravelCost.ttCost;
         
-        setTimestep(linktype);
         
-        for(Node n : nodes)
-        {
-            n.initialize();
-        }
         
-        allPaths = new HashMap<Integer, List<Path>>();
+        
     }
     
-    public Simulator(String name)
-    {
-        active = this;
-        
-        this.name = name;
-        scenario = "default";
-        this.out = System.out;
-        this.scenario = name;
-        vehicles = new ArrayList<PersonalVehicle>();
-        
-        allPaths = new HashMap<Integer, List<Path>>();
-        this.link_dijkstras = false;
-        this.costFunc = TravelCost.ttCost;
-    }
-    
+
     public void setStatusUpdate(StatusUpdate s)
     {
         statusUpdate = s;
     }
     
-    public void setNodes(List<Node> nodes)
-    {
-        this.nodes = nodes;
-    }
+
     
-    public void setHVsUseReservations(boolean h)
-    {
-        HVs_use_reservations = h;
-    }
-    
-    public void setLinks(List<Link> links, int linktype)
-    {
-        this.links = links;
-        this.linktype = linktype;
-        setTimestep(linktype);
-    }
-    
-    public void setNetwork(List<Node> nodes, List<Link> links, int linktype)
-    {
-        setNodes(nodes);
-        setLinks(links, linktype);
-    }
+
 
     public void setScenario(String scenario)
     {
@@ -335,47 +265,9 @@ public class Simulator implements Serializable
         printLinkTdd();
     }
     
-    public static void setDLR(boolean d)
-    {
-        dlr = d;
-        
-        
-    }
     
-    public void tieLinks()
-    {  
-        int count = 0;
-        
-        for(Node n : nodes)
-        {
-            for(Link i : n.getIncoming())
-            {
-                if(i.isCentroidConnector())
-                {
-                    continue;
-                }
-                
-                for(Link j : n.getOutgoing())
-                {
-                    if(!j.isCentroidConnector() && i.getSource() == j.getDest())
-                    {
-                        if (((CTMLink)i).tieCells((CTMLink)j))
-                        {
-                            count++;
-                        }
-                    }
-                    
-                }
-            }
-        }
-        
-        System.out.println("Tied "+count+" links");
-    }
     
-    public static boolean isDLR()
-    {
-        return dlr;
-    }
+    
     
     public void setOutStream(PrintStream out)
     {
@@ -402,13 +294,13 @@ public class Simulator implements Serializable
         }
     }
     
-    public static Simulator load(File file)
+    public static Network load(File file)
     {
         try
         {
             ObjectInputStream in = new ObjectInputStream(new FileInputStream(file));
             
-            Simulator output = (Simulator)in.readObject();
+            Network output = (Network)in.readObject();
             in.close();
             
             return output;
@@ -584,15 +476,7 @@ public class Simulator implements Serializable
         return output / count;
     }
     
-    public void setUseLinkDijkstras(boolean l)
-    {
-    	link_dijkstras = l;
-    }
-    
-    public List<Node> getNodes()
-    {
-        return nodes;
-    }
+
     
     public List<PersonalVehicle> getVehicles()
     {
@@ -954,21 +838,8 @@ public class Simulator implements Serializable
         return (int)Math.round((ast + 0.5) * ast_duration);
     }
     
-    public int getLinkType()
-    {
-        return linktype;
-    }
     
     
-    public TravelCost getCostFunction()
-    {
-        return costFunc;
-    }
-    
-    public void setCostFunction(TravelCost cost)
-    {
-        costFunc = cost;
-    }
     
     public double getAvgMPG()
     {
@@ -987,232 +858,8 @@ public class Simulator implements Serializable
         return total / count;
     }
 
-    public Node getNode(int id)
-    {
-        for(Node n : nodes)
-        {
-            if(n.getId() == id)
-            {
-                return n;
-            }
-        }
-        
-        return null;
-    }
-    
-    public Path findPath(Node o, Node d, int dep_time, double vot, DriverType driver, TravelCost costFunc)
-    {
-        node_dijkstras(o, dep_time, vot, driver, costFunc);
-        Path output = node_trace(o, d);
-        
-        if(output.size() == 0)
-        {
-            link_dijkstras(o, dep_time, vot, driver, costFunc);
-            output = link_trace(o, d);
-        }
-        
-        int hash = output.hashCode();
-        
-        if(allPaths.containsKey(hash))
-        {
-            List<Path> temp = allPaths.get(hash);
-            
-            for(Path p : temp)
-            {
-                if(output.equals(p))
-                {
-                    return p;
-                }
-            }
-            
-            temp.add(output);
-            return output;
-        }
-        else
-        {
-            ArrayList<Path> temp = new ArrayList<Path>();
-            temp.add(output);
-            allPaths.put(hash, temp);
-            return output;
-        }
-    }
 
     
-    public void dijkstras(Node o, int dep_time, double vot, DriverType driver, TravelCost costFunc)
-    {
-        dijkstras(o, dep_time, vot, driver, costFunc, link_dijkstras);
-    }
-    
-    public void dijkstras(Node o, int dep_time, double vot, DriverType driver, TravelCost costFunc, boolean link_dijkstras)
-    {
-        if(link_dijkstras)
-        {
-            link_dijkstras(o, dep_time, vot, driver, costFunc);
-        }
-        else
-        {
-            node_dijkstras(o, dep_time, vot, driver, costFunc);
-        }
-    }
-    
-
-    public void link_dijkstras(Node o, int dep_time, double vot, DriverType driver, TravelCost costFunc)
-    {
-        for(Link l : links)
-        {
-            l.label = Integer.MAX_VALUE;
-            l.arr_time = Integer.MAX_VALUE;
-            l.prev = null;
-        }
-        
-        Set<Link> Q = new HashSet<Link>();
-        
-        for(Link l : o.getOutgoing())
-        {
-            double tt = l.getAvgTT(dep_time);
-            l.arr_time = (int)(dep_time + tt);
-            double fuel = l.getAvgFuel(dep_time);
-            
-            //l.label = vot * (tt / 3600) + fuel;
-            l.label = tt + 10;
-            
-            Q.add(l);
-        }
-        
-        
-        while(!Q.isEmpty())
-        {
-            double min = Integer.MAX_VALUE-1;
-            Link u = null;
-            
-            for(Link l : Q)
-            {
-                if(l.label < min)
-                {
-                    min = l.label;
-                    u = l;
-                }
-            }
-            
-            Q.remove(u);
-            
-
-            
-            Node d = u.getDest();
-            
-            for(Link v : d.getOutgoing())
-            {
-                if(!d.canMove(u, v, driver))
-                {
-                    continue;
-                }
-                
-                
-                double tt = v.getAvgTT(u.arr_time);
-                
-                double new_label = u.label + costFunc.cost(v, vot, u.arr_time);
-
-                
-                if(new_label < v.label)
-                {
-                    v.arr_time = (int)(u.arr_time + tt);
-                   
-                    v.label = new_label;
-                    v.prev = u;
-                    
-                    Q.add(v);
-                }
-            }
-        }
-        
-    }
-    
-    
-
-    public void node_dijkstras(Node o, int dep_time, double vot, DriverType driver, TravelCost costFunc)
-    {
-        for(Node n : nodes)
-        {
-            n.label = Integer.MAX_VALUE;
-            n.prev = null;
-        }
-
-        o.arr_time = dep_time;
-        o.label = 0;
-
-        /*
-        Set<Node> Q = new TreeSet<Node>(new Comparator<Node>()
-        {
-            public int compare(Node lhs, Node rhs)
-            {
-                return (int)(10000*(lhs.label - rhs.label));
-            }
-        });
-        */
-        
-        Set<Node> Q = new HashSet<Node>();
-
-        Q.add(o);
-
-
-        while(!Q.isEmpty())
-        {
-            double min = Integer.MAX_VALUE-1;
-            Node u = null;
-
-            for(Node n : Q)
-            {
-                if(n.label < min)
-                {
-                    u = n;
-                    min = n.label;
-                }
-            }
-
-            Q.remove(u);
-
-            for(Link l : u.getOutgoing())
-            {
-                
-                if(u.prev != null && !u.canMove(u.prev, l, driver))
-                {
-                    continue;
-                }
-                
-                
-                
-
-                Node v = l.getDest();
-
-                double temp = u.label;
-                int arr_time = u.arr_time;
-
-                temp += costFunc.cost(l, vot, arr_time);
-                
-                if(!HVs_use_reservations && !driver.isAV() &&
-                        (l.getDest() instanceof Intersection) &&
-                        (((Intersection)l.getDest()).getControl() instanceof TBR))
-                {
-                    temp += 10000;
-                }
-
-                arr_time += (int)Math.round(l.getAvgTT(arr_time));
-
-                if(temp < v.label)
-                {
-                    v.label = temp;
-                    v.prev = l;
-                    v.arr_time = arr_time;
-
-                    if(!(v instanceof Zone))
-                    {
-                        Q.add(v);
-                    }
-                }
-            }
-
-        }
-    }
     
     public int getNodeDemand(Node n)
     {
@@ -1338,65 +985,7 @@ public class Simulator implements Serializable
         fileout.close();
     }
 
-    public Path trace(Node o, Node d)
-    {
-        if(link_dijkstras)
-        {
-            return link_trace(o, d);
-        }
-        else
-        {
-            return node_trace(o, d);
-        }
-    }
     
-    public Path node_trace(Node o, Node d)
-    {
-        Node curr = d;
-        
-        Path output = new Path();
-        
-        output.setCost(d.label);
-        
-        while(curr.prev != null)
-        {
-            
-            output.add(0, curr.prev);
-            curr = curr.prev.getSource();
-        }
-        
-        return output;
-    }
-    
-    public Path link_trace(Node o, Node d)
-    {
-        Path output = new Path();
-        
-        Link curr = null;
-        double min = Integer.MAX_VALUE - 1;
-        
-        for(Link l : d.getIncoming())
-        {
-            if(l.label < min)
-            {
-                min = d.label;
-                curr = l;
-            }
-        }
-        
-        output.setCost(min);
-        
-        while(curr != null)
-        {
-            output.add(0, curr);
-            
-            curr = curr.prev;
-            
-            
-        }
-        
-        return output;
-    }
     
     public void setVehicles(List<PersonalVehicle> vehicles)
     {
@@ -1414,10 +1003,6 @@ public class Simulator implements Serializable
     }
     public void simulate(boolean recording) throws IOException
     {
-        if(!validate())
-        {
-            return;
-        }
         
         
         
@@ -1494,24 +1079,7 @@ public class Simulator implements Serializable
         
     }
     
-    public void initialize()
-    {
-        for(Node n : nodes)
-        {
-            n.initialize();
-        }
-        
-        for(Link l : links)
-        {
-            l.initialize();
-        }
-        
-        if(dlr && linktype == Link.CTM)
-        {
-            tieLinks();
-        }
-    }
-    
+
     public void printLinkTdd() throws IOException
     {
         for(Link l : links)
@@ -1588,13 +1156,11 @@ public class Simulator implements Serializable
     
     protected void propagateFlow()
     {
-        if(linktype == Link.CTM)
+        for(Link l : links)
         {
-            for(Link l : links)
-            {
-                l.prepare();
-            }
+            l.prepare();
         }
+        
 
         for(Link l : links)
         {
@@ -1606,46 +1172,14 @@ public class Simulator implements Serializable
             exit_count += n.step();
         }
 
-        if(linktype == Link.CTM)
-        {
-            for(Link l : links)
-            {
-                l.update();
-            }
-        }
-    }
-    
-    public void printLinkTT(int start, int end) throws IOException
-    {
-        printLinkTT(start, end, new File("results/"+name+"/"+scenario+"/linktt.txt"));
-    }
-    public void printLinkTT(int start, int end, File file) throws IOException
-    {
-        PrintStream fileout = new PrintStream(new FileOutputStream(file), true);
-        
-        fileout.print("Link source\tLink dest\tType\tFFtime");
-        
-        for(int t = (start / ast_duration) * ast_duration; t <= end; t += ast_duration)
-        {
-            fileout.print("\t"+t);
-        }
-        
-        fileout.println();
-        
         for(Link l : links)
         {
-            fileout.print(l.getSource()+"\t"+l.getDest()+"\t"+l.strType()+"\t"+l.getFFTime());
-            
-            for(int t = (start / ast_duration) * ast_duration; t <= end; t += ast_duration)
-            {
-                fileout.print("\t"+l.getAvgTT(t));
-            }
-            
-            fileout.println();
+            l.update();
         }
         
-        fileout.close();
     }
+    
+    
     
     public void printLinkFlow(int start, int end) throws IOException
     {
@@ -1680,138 +1214,6 @@ public class Simulator implements Serializable
         fileout.close();
     }
     
-    /*
-    public void printRecords(int max_time)
-    {
-        try
-        {
-            File dir = new File("results/"+scenario);
-            dir.mkdirs();
-            
-            PrintStream fileout = new PrintStream(new FileOutputStream(new File("results/"+scenario+"/vehicle_path.txt")), true);
-            PrintStream fileout2 = new PrintStream(new FileOutputStream(new File("results/"+scenario+"/vehicle_path_time.txt")), true);
-            
-            fileout.println("id\torigin\tdest\tsize\tfreeflowtt\tlength\tlinks");
-            fileout2.println("id\ttype\torigin\tdest\tdep_time\texit_time\tpath\tefficiency\tdistance\tenergy\tMPG");
-            
-            Set<Integer> printed_paths = new HashSet<Integer>();
-            
-            for(Vehicle v : vehicles)
-            {
-                Path p = v.getPath();
-                if(!printed_paths.add(p.getId()))
-                {
-                    fileout.println(p.getId()+"\t"+p.getOrigin()+"\t"+p.getDest()+"\t"+p.size()+"\t"+p.getFFTime()+"\t"+p.getLength()+"\t"+p);
-                }
-                
-                fileout2.println(v.getId()+"\t"+v.getDriver()+"\t"+v.getOrigin()+"\t"+v.getDest()+"\t"+v.getDepTime()+"\t"+v.getExitTime()+"\t"+v.getPath().getId()+"\t"+
-                        v.getEfficiency()+"\t"+v.getPath().getLength()+"\t"+v.getTotalEnergy()+"\t"+v.getMPG());
-            }
-            
-            fileout.close();
-            fileout2.close();
-            
-            printed_paths = null;
-            
-            fileout = new PrintStream(new FileOutputStream(new File("results/"+scenario+"/link_enter.txt")), true);
-            fileout2 = new PrintStream(new FileOutputStream(new File("results/"+scenario+"/link_exit.txt")), true);
-            
-            fileout.print("id\ttype\tsource\tdest");
-            fileout2.print("id\ttype\tsource\tdest");
-            
-            for(int i = 0; i <= Math.ceil(max_time / ast_duration) && i < duration / ast_duration; i++)
-            {
-                fileout.print("\t"+(i * ast_duration));
-                fileout2.print("\t"+(i * ast_duration));
-            }
-            
-            fileout.println();
-            fileout2.println();
-            
-            for(Link l : links)
-            {
-                fileout.print(l.getId()+"\t"+l.getType()+"\t"+l.getSource()+"\t"+l.getDest());
-                fileout2.print(l.getId()+"\t"+l.getType()+"\t"+l.getSource()+"\t"+l.getDest());
-                
-                for(int i = 0; i <= Math.ceil(max_time / ast_duration) && i < duration / ast_duration; i++)
-                {
-                    fileout.print("\t"+l.enter[i]);
-                    fileout2.print("\t"+l.exit[i]);
-                }
-                
-                fileout.println();
-                fileout2.println();
-            }
-            
-            fileout.close();
-            fileout2.close();
-            
-            fileout = new PrintStream(new FileOutputStream(new File("results/"+scenario+"/link_tt.txt")), true);
-            
-            fileout.print("id\ttype\tsource\tdest");
-            
-            for(int i = 0; i <= Math.ceil(max_time / ast_duration) && i < duration / ast_duration; i++)
-            {
-                fileout.print("\t"+(i * ast_duration));
-            }
-            
-            fileout.println();
-            
-            for(Link l : links)
-            {
-                fileout.print(l.getId()+"\t"+l.getType()+"\t"+l.getSource()+"\t"+l.getDest());
-                
-                for(int i = 0; i <= Math.ceil(max_time / ast_duration) && i < duration / ast_duration; i++)
-                {
-                    fileout.print("\t"+l.getAvgTT(i * ast_duration));
-                }
-                
-                fileout.println();
-            }
-            
-            fileout.close();
-            
-            fileout = new PrintStream(new FileOutputStream(new File("results/"+scenario+"/node_movement.txt")), true);
-            
-            fileout.print("id");
-            
-            for(int i = 0; i <= Math.ceil(max_time / ast_duration) && i < duration / ast_duration; i++)
-            {
-                fileout.print("\t"+(i * ast_duration));
-            }
-            
-            fileout.println();
-            
-            for(Node n : nodes)
-            {
-                if(n.isZone())
-                {
-                    continue;
-                }
-                
-                fileout.print(n.getId());
-                
-                for(int i = 0; i <= Math.ceil(max_time / ast_duration) && i < duration / ast_duration; i++)
-                {
-                    int count = 0;
-                    
-                    for(Link l : n.getOutgoing())
-                    {
-                        count += l.enter[i];
-                    }
-                    
-                    fileout.print("\t"+count);
-                }
-                fileout.println();
-            }
-            
-            fileout.close();
-            
-        }
-        catch(IOException ex){}
-    }
-    */
-    
     public int getActiveVehicles()
     {
         int output = 0;
@@ -1830,6 +1232,38 @@ public class Simulator implements Serializable
         return output;
     }
     
+    public void printLinkTT(int start, int end) throws IOException
+    {
+        printLinkTT(start, end, new File("results/"+name+"/"+scenario+"/linktt.txt"));
+    }
+    public void printLinkTT(int start, int end, File file) throws IOException
+    {
+        PrintStream fileout = new PrintStream(new FileOutputStream(file), true);
+        
+        fileout.print("Link source\tLink dest\tType\tFFtime");
+        
+        for(int t = (start / ast_duration) * ast_duration; t <= end; t += ast_duration)
+        {
+            fileout.print("\t"+t);
+        }
+        
+        fileout.println();
+        
+        for(Link l : links)
+        {
+            fileout.print(l.getSource()+"\t"+l.getDest()+"\t"+l.strType()+"\t"+l.getFFTime());
+            
+            for(int t = (start / ast_duration) * ast_duration; t <= end; t += ast_duration)
+            {
+                fileout.print("\t"+l.getAvgTT(t));
+            }
+            
+            fileout.println();
+        }
+        
+        fileout.close();
+    }
+    
     public int getWaitingVehicles()
     {
         int output = 0;
@@ -1845,30 +1279,7 @@ public class Simulator implements Serializable
         return output;
     }
     
-    public boolean validate()
-    {
-        for(Link l : links)
-        {
-            if(l.getType() != linktype && !l.isCentroidConnector())
-            {
-                return false;
-            }
-        }
-        
-        return true;
-    }
 
-    public Link getLink(int id)
-    {
-        for(Link l : links)
-        {
-            if(l.getId() == id)
-            {
-                return l;
-            }
-        }
-        
-        return null;
-    }
+
     
 }

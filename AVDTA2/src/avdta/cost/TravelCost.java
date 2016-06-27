@@ -5,7 +5,7 @@
 package avdta.cost;
 
 import avdta.network.link.Link;
-import avdta.sav.SAVSimulator;
+import avdta.network.Simulator;
 import avdta.vehicle.Vehicle;
 
 /**

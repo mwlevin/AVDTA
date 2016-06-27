@@ -5,7 +5,7 @@
 package avdta.network.node;
 
 import avdta.network.link.Link;
-import avdta.network.Simulator;
+import avdta.network.Network;
 import avdta.vehicle.Vehicle;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -103,7 +103,7 @@ public class PhasedTBR extends PriorityTBR implements Signalized
             return;
         }
         
-        double time_rem = Simulator.dt;
+        double time_rem = Network.dt;
         
         for(Link i : turns.keySet())
         {
@@ -135,7 +135,7 @@ public class PhasedTBR extends PriorityTBR implements Signalized
             {     
                 try
                 {
-                    turns.get(turn.i).get(turn.j).q += (green_time / Simulator.dt) * turn.j.R;
+                    turns.get(turn.i).get(turn.j).q += (green_time / Network.dt) * turn.j.R;
                 }
                 catch(RuntimeException ex)
                 {

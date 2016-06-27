@@ -4,6 +4,7 @@
  */
 package avdta.network.link;
 
+import avdta.network.Network;
 import avdta.network.Simulator;
 
 /**
@@ -40,7 +41,7 @@ public class FixedSizeLL
         }
         else
         {
-            for(int i = t; i <= Simulator.time / Simulator.dt; i++)
+            for(int i = t; i <= Simulator.time / Network.dt; i++)
                 createNode(i, 0);
             
             return 0;

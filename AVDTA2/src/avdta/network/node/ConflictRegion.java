@@ -3,7 +3,7 @@ package avdta.network.node;
 
 //import ilog.concert.IloLinearNumExpr;
 import avdta.network.link.Link;
-import avdta.network.Simulator;
+import avdta.network.Network;
 import java.io.Serializable;
 
 /*
@@ -73,12 +73,12 @@ public class ConflictRegion implements Serializable
 
         if(blocked && R>=0)
         {
-            R += capacity * Simulator.dt / 3600.0;
+            R += capacity * Network.dt / 3600.0;
         }
         else
         {
             R -= (int)R;
-            R += capacity * Simulator.dt / 3600.0;
+            R += capacity * Network.dt / 3600.0;
         }
 
         blocked = false;
@@ -86,7 +86,7 @@ public class ConflictRegion implements Serializable
     
     public void reset()
     {
-        R = capacity * Simulator.dt / 3600.0;
+        R = capacity * Network.dt / 3600.0;
         blocked = false;
     }
 

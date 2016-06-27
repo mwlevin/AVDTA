@@ -4,13 +4,13 @@
  */
 package avdta.network.link;
 
-import avdta.FourStep;
 import avdta.network.node.Node;
 import avdta.network.RunningAvg;
-import avdta.network.Simulator;
+import avdta.network.Network;
 import avdta.vehicle.Vehicle;
-import static avdta.network.Simulator.ast_duration;
-import static avdta.network.Simulator.duration;
+import avdta.network.Network;
+import avdta.network.Simulator;
+import avdta.vehicle.fuel.ICV;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -122,7 +122,7 @@ public abstract class Link implements Serializable, Comparable<Link>
             avgToll[i] = new RunningAvg();
         }
         
-        flowin = new int[(int)Math.ceil((double)duration / ast_duration)+1];
+        flowin = new int[(int)Math.ceil((double)Simulator.duration / Simulator.ast_duration)+1];
         
     }
     
@@ -229,8 +229,8 @@ public abstract class Link implements Serializable, Comparable<Link>
      */
     public void updateTT(Vehicle v)
     {
-    	updateTT(v.enter_time, Simulator.time + Simulator.dt);
-        flowin[v.enter_time / ast_duration +1]++;
+    	updateTT(v.enter_time, Simulator.time + Network.dt);
+        flowin[v.enter_time / Simulator.ast_duration +1]++;
     }
     
 
@@ -284,7 +284,7 @@ public abstract class Link implements Serializable, Comparable<Link>
      */
     public int getFlowin(int t)
     {
-        return flowin[t / ast_duration];
+        return flowin[t / Simulator.ast_duration];
     }
     
     public void postProcessFlowin()
@@ -302,12 +302,12 @@ public abstract class Link implements Serializable, Comparable<Link>
      */
     public double getAvgFlow(int t)
     {
-        int idx_bot = t / ast_duration;
-        int idx_top = t / ast_duration+1;
+        int idx_bot = t / Simulator.ast_duration;
+        int idx_top = t / Simulator.ast_duration+1;
         
         if(idx_top < flowin.length)
         {
-            return (double)(flowin[idx_top] - flowin[idx_bot]) / (ast_duration / 3600.0);
+            return (double)(flowin[idx_top] - flowin[idx_bot]) / (Simulator.ast_duration / 3600.0);
         }
         else
         {
@@ -483,7 +483,7 @@ public abstract class Link implements Serializable, Comparable<Link>
      */
     public double getAvgFuel(int enter)
     {
-        return getAvgEnergy(enter) / FourStep.ENERGY_PER_GAL * FourStep.FUELCOST;
+        return getAvgEnergy(enter) / ICV.ENERGY_PER_GAL * ICV.FUELCOST;
     }
     
     /**
@@ -545,7 +545,7 @@ public abstract class Link implements Serializable, Comparable<Link>
      */
     public double getCapacityPerTimestep()
     {
-        return getCapacity() * Simulator.dt/3600.0;
+        return getCapacity() * Network.dt/3600.0;
     }
 
     /**

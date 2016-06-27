@@ -4,6 +4,7 @@
  */
 package avdta.network.link;
 
+import avdta.network.Network;
 import avdta.network.RunningAvg;
 import avdta.network.Simulator;
 import avdta.network.node.Node;
@@ -57,7 +58,7 @@ public class CTMLink extends Link
     
     public void initialize()
     {
-        cells = new Cell[(int)Math.max(2, Math.round( (getTrueLength() / getFFSpeed()) / (Simulator.dt / 3600.0) ))];
+        cells = new Cell[(int)Math.max(2, Math.round((getTrueLength() / getFFSpeed()) / (Network.dt / 3600.0) ))];
         
         cells[0] = new StartCell(this);
                 
@@ -107,7 +108,7 @@ public class CTMLink extends Link
     
     public double getFFTime()
     {
-        return cells.length * Simulator.dt;
+        return cells.length * Network.dt;
     }
     
     public boolean isTied()
@@ -181,7 +182,7 @@ public class CTMLink extends Link
             c.setNumLanes(getNumLanes());
         }
         
-        if(Simulator.isDLR())
+        if(Network.isDLR())
         {
             usSendingFlow = next_usSendingFlow;
             dsReceivingFlow = next_dsReceivingFlow;
@@ -284,12 +285,12 @@ public class CTMLink extends Link
     
     public double getCellCapacityPerLane()
     {
-        return getCapacityPerLane() * Simulator.dt / 3600.0;
+        return getCapacityPerLane() * Network.dt / 3600.0;
     }
     
     public double getCellLength()
     {
-        return getFFSpeed() * Simulator.dt / 3600.0;
+        return getFFSpeed() * Network.dt / 3600.0;
     }
     
     public Cell getFirstCell()
@@ -406,15 +407,15 @@ public class CTMLink extends Link
         
         for(int t_idx = 0; t_idx < T; t_idx++)
         {
-            incoming1 += getExpUsSendingFlow(Simulator.time + t_idx * Simulator.dt);
-            incoming2 += opposite.getExpUsSendingFlow(Simulator.time + t_idx * Simulator.dt);
+            incoming1 += getExpUsSendingFlow(Simulator.time + t_idx * Network.dt);
+            incoming2 += opposite.getExpUsSendingFlow(Simulator.time + t_idx * Network.dt);
         }
         
         demand1 += incoming1;
         demand2 += incoming2;
         
         // supply
-        double Q_per_dt = getCapacityPerLane() * Simulator.dt / 3600.0;
+        double Q_per_dt = getCapacityPerLane() * Network.dt / 3600.0;
         
         
         // expected supply
@@ -423,8 +424,8 @@ public class CTMLink extends Link
         
         for(int t_idx = 0; t_idx < T; t_idx++)
         {
-            R1_max += getExpDsReceivingFlow(Simulator.time + t_idx * Simulator.dt);
-            R2_max += opposite.getExpDsReceivingFlow(Simulator.time + t_idx * Simulator.dt);
+            R1_max += getExpDsReceivingFlow(Simulator.time + t_idx * Network.dt);
+            R2_max += opposite.getExpDsReceivingFlow(Simulator.time + t_idx * Network.dt);
         }
         
         demand1 = Math.min(demand1, R1_max);
@@ -571,7 +572,7 @@ public class CTMLink extends Link
     
     public void prepare()
     {
-        if(Simulator.isDLR())
+        if(Network.isDLR())
         {
             dlr();
         }
@@ -594,7 +595,7 @@ public class CTMLink extends Link
     
     public void update()
     {
-        if(Simulator.isDLR())
+        if(Network.isDLR())
         {
             updateDsReceivingFlowCounts();
             updateUsSendingFlowCounts();

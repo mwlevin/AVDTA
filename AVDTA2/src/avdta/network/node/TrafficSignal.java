@@ -6,7 +6,7 @@ package avdta.network.node;
 
 import avdta.vehicle.DriverType;
 import avdta.network.link.Link;
-import avdta.network.Simulator;
+import avdta.network.Network;
 import avdta.vehicle.Vehicle;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -243,7 +243,7 @@ public class TrafficSignal extends IntersectionControl implements Signalized
     {
         if(phases.size() > 0)
         {
-            double time_rem = Simulator.dt;
+            double time_rem = Network.dt;
         
             for(Link i : turns.keySet())
             {
@@ -272,7 +272,7 @@ public class TrafficSignal extends IntersectionControl implements Signalized
                 {     
                     try
                     {
-                        turns.get(turn.i).get(turn.j).addMaxFlow( (green_time / Simulator.dt) * turn.j.getCapacity());
+                        turns.get(turn.i).get(turn.j).addMaxFlow((green_time / Network.dt) * turn.j.getCapacity());
                     }
                     catch(RuntimeException ex)
                     {

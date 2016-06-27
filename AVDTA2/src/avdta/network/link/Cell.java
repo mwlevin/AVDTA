@@ -4,7 +4,7 @@
  */
 package avdta.network.link;
 
-import avdta.network.Simulator;
+import avdta.network.Network;
 import avdta.vehicle.Vehicle;
 import avdta.vehicle.DriverType;
 import java.util.ArrayList;
@@ -124,7 +124,7 @@ public class Cell implements Comparable<Cell>
     
     public boolean isCongested()
     {
-        return (curr.size() > link.getCapacityPerLane() * numLanes * Simulator.dt / 3600.0);
+        return (curr.size() > link.getCapacityPerLane() * numLanes * Network.dt / 3600.0);
     }
 
     public void reset()
@@ -187,7 +187,7 @@ public class Cell implements Comparable<Cell>
     
     public void prepare()
     {
-        double capacity = scaleCapacity(link.getCapacityPerLane()) * numLanes * Simulator.dt / 3600.0;
+        double capacity = scaleCapacity(link.getCapacityPerLane()) * numLanes * Network.dt / 3600.0;
         R = R - Math.floor(R);
         max_S = max_S - Math.floor(max_S);
         
@@ -256,7 +256,7 @@ public class Cell implements Comparable<Cell>
     
     public double getReceivingFlow(int numLanes)
     {
-        return Math.min(scaleCapacity(link.getCapacityPerLane()) * numLanes * Simulator.dt / 3600.0, scaleWaveSpeed(link.getWaveSpeed()) / link.getFFSpeed() * (link.getCellJamdPerLane() * numLanes - curr.size()));
+        return Math.min(scaleCapacity(link.getCapacityPerLane()) * numLanes * Network.dt / 3600.0, scaleWaveSpeed(link.getWaveSpeed()) / link.getFFSpeed() * (link.getCellJamdPerLane() * numLanes - curr.size()));
     }
 
     public boolean removeVehicle(Vehicle v)

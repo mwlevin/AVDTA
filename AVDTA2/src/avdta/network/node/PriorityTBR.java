@@ -5,7 +5,7 @@
 package avdta.network.node;
 
 import avdta.network.link.Link;
-import avdta.network.Simulator;
+import avdta.network.Network;
 import avdta.vehicle.Vehicle;
 import avdta.network.node.TurningMovement;
 import java.util.ArrayList;
@@ -67,7 +67,7 @@ public class PriorityTBR extends TBR
         int moved = 0;
         
         // if DLR update CR capacity because they shift number of lanes
-        if(Simulator.isDLR())
+        if(Network.isDLR())
         {
             updateCRCapacity();
         }

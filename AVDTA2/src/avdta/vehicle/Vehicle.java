@@ -5,6 +5,8 @@
 package avdta.vehicle;
 
 //import ilog.concert.IloIntVar;
+import avdta.network.Network;
+import avdta.vehicle.fuel.VehicleClass;
 import avdta.network.link.CTMLink;
 import avdta.network.link.Cell;
 import avdta.network.link.Link;
@@ -208,7 +210,7 @@ public abstract class Vehicle implements Serializable, Comparable<Vehicle>
         
         // current case
         double prev_speed = prev_cell != null? prev_cell.getLength() / (prev_cell_time / 3600.0) : 0;
-        double curr_cell_time = Simulator.time + Simulator.dt - cell_enter;
+        double curr_cell_time = Simulator.time + Network.dt - cell_enter;
         double speed = curr_cell != null? curr_cell.getLength() / (curr_cell_time / 3600.0) : 0;
         double accel = (speed - prev_speed) / curr_cell_time;
         double grade = curr_cell != null? curr_cell.getLink().getGrade() : 0;
@@ -217,7 +219,7 @@ public abstract class Vehicle implements Serializable, Comparable<Vehicle>
 
         prev_speed = curr_cell != null? curr_cell.getLength() / (curr_cell_time / 3600.0) : 0;
         speed = getNextLink().isCentroidConnector()? 0 : ((CTMLink)getNextLink()).getFirstCellSpeed();
-        curr_cell_time = getNextLink().isCentroidConnector()? Simulator.dt : (getNextLink().getFFSpeed() / speed) * Simulator.dt;
+        curr_cell_time = getNextLink().isCentroidConnector()? Network.dt : (getNextLink().getFFSpeed() / speed) * Network.dt;
         accel = (speed - prev_speed) / curr_cell_time;
         grade = getNextLink().getGrade();
         
@@ -226,7 +228,7 @@ public abstract class Vehicle implements Serializable, Comparable<Vehicle>
         
         // delayed case
         prev_speed = prev_cell != null? prev_cell.getLength() / (prev_cell_time / 3600.0) : 0;
-        curr_cell_time = Simulator.time - cell_enter + 2*Simulator.dt;
+        curr_cell_time = Simulator.time - cell_enter + 2*Network.dt;
         speed = curr_cell != null? curr_cell.getLength() / (curr_cell_time / 3600.0) : 0;
         accel = (speed - prev_speed) / curr_cell_time;
         grade = curr_cell != null? curr_cell.getLink().getGrade() : 0;
@@ -235,7 +237,7 @@ public abstract class Vehicle implements Serializable, Comparable<Vehicle>
         
         prev_speed = curr_cell != null? curr_cell.getLength() / (curr_cell_time / 3600.0) : 0;
         speed = getNextLink().isCentroidConnector()? 0 : ((CTMLink)getNextLink()).getFirstCellSpeed();
-        curr_cell_time = getNextLink().isCentroidConnector()? Simulator.dt : (getNextLink().getFFSpeed() / speed) * Simulator.dt;
+        curr_cell_time = getNextLink().isCentroidConnector()? Network.dt : (getNextLink().getFFSpeed() / speed) * Network.dt;
         accel = (speed - prev_speed) / curr_cell_time;
         grade = getNextLink().getGrade();
         
@@ -448,7 +450,7 @@ public abstract class Vehicle implements Serializable, Comparable<Vehicle>
         path_idx++;
         arr_times[path_idx] = Simulator.time;
         
-        time_waiting += Simulator.time + Simulator.dt - arr_time;
+        time_waiting += Simulator.time + Network.dt - arr_time;
         
         arr_time = -1;
         enter_time = Simulator.time;

@@ -7,7 +7,7 @@ package avdta.vehicle;
 import avdta.network.node.Node;
 import avdta.network.Path;
 import avdta.network.Simulator;
-import avdta.vehicle.VehicleClass;
+import avdta.vehicle.fuel.VehicleClass;
 import avdta.vehicle.Vehicle;
 import avdta.vehicle.DriverType;
 import avdta.vehicle.Wallet;

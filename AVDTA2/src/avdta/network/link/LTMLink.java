@@ -6,6 +6,7 @@
 
 package avdta.network.link;
 
+import avdta.network.Network;
 import avdta.network.node.Node;
 import avdta.network.Simulator;
 import avdta.network.link.Link;
@@ -38,11 +39,11 @@ public class LTMLink extends Link
     
     public void initialize()
     {
-        N_up = new ChainedArray((int)Math.ceil(getLength()/getFFSpeed()*3600 / Simulator.dt)+2);
-        N_down = new ChainedArray((int)Math.ceil(getLength()/getWaveSpeed()*3600 / Simulator.dt)+2);
+        N_up = new ChainedArray((int)Math.ceil(getLength()/getFFSpeed()*3600 / Network.dt)+2);
+        N_down = new ChainedArray((int)Math.ceil(getLength()/getWaveSpeed()*3600 / Network.dt)+2);
 
-        this.capacityUp = getCapacity() * Simulator.dt / 3600.0;
-        this.capacityDown = getCapacity() * Simulator.dt / 3600.0;
+        this.capacityUp = getCapacity() * Network.dt / 3600.0;
+        this.capacityDown = getCapacity() * Network.dt / 3600.0;
     }
     
     // includes fractions lost to discretization
@@ -64,8 +65,8 @@ public class LTMLink extends Link
     public void reset()
     {
         queue.clear();
-        N_up = new ChainedArray((int)Math.ceil(getLength()/getFFSpeed()*3600 / Simulator.dt)+5);
-        N_down = new ChainedArray((int)Math.ceil(getLength()/getWaveSpeed()*3600 / Simulator.dt)+5);
+        N_up = new ChainedArray((int)Math.ceil(getLength()/getFFSpeed()*3600 / Network.dt)+5);
+        N_down = new ChainedArray((int)Math.ceil(getLength()/getWaveSpeed()*3600 / Network.dt)+5);
 
         
         super.reset();
@@ -75,11 +76,11 @@ public class LTMLink extends Link
     {
         capacityUp -= (int)capacityUp;
         
-        capacityUp += getCapacity() * Simulator.dt / 3600.0;
+        capacityUp += getCapacity() * Network.dt / 3600.0;
 
         capacityDown -= (int)capacityDown;
         
-        capacityDown += getCapacity() * Simulator.dt / 3600.0;
+        capacityDown += getCapacity() * Network.dt / 3600.0;
     }
     
     public void addVehicle(Vehicle veh)
@@ -105,7 +106,8 @@ public class LTMLink extends Link
     
     public int getNumSendingFlow()
     {
-        return (int)Math.min(getN_up(Simulator.time - getLength()/getFFSpeed()*3600 + Simulator.dt) - getN_down(Simulator.time), getCurrentDownstreamCapacity());
+        return (int)Math.min(getN_up(Simulator.time - getLength()/getFFSpeed()*3600 + Network.dt) - 
+                getN_down(Simulator.time), getCurrentDownstreamCapacity());
     }
     
     public List<Vehicle> getSendingFlow()
@@ -170,14 +172,14 @@ public class LTMLink extends Link
     
     public double getReceivingFlow()
     {
-        return Math.min(getN_down(Simulator.time - getLength()/getWaveSpeed()*3600 + Simulator.dt) 
+        return Math.min(getN_down(Simulator.time - getLength()/getWaveSpeed()*3600 + Network.dt) 
                 + getJamDensity() * getLength() - getN_up(Simulator.time),
                 getCurrentUpstreamCapacity());
     }
     
     public int getNumWaiting()
     {
-        return getN_up(Simulator.time - getLength()/getFFSpeed()*3600 + Simulator.dt) - getN_down(Simulator.time);
+        return getN_up(Simulator.time - getLength()/getFFSpeed()*3600 + Network.dt) - getN_down(Simulator.time);
     }
     
     public void addN_up(double t, int val)
