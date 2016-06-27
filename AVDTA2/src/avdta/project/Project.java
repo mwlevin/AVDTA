@@ -5,6 +5,7 @@
  */
 package avdta.project;
 
+import avdta.util.FileTransfer;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -186,5 +187,19 @@ public abstract class Project
     public String getProjectDirectory()
     {
         return "/projects/"+getName();
+    }
+    
+    public String getResultsFolder()
+    {
+        return getProjectDirectory()+"/results/";
+    }
+    
+    public void importNetworkFromProject(Project rhs) throws IOException
+    {
+        // clone nodes, links, options, phases
+        FileTransfer.copy(rhs.getNodesFile(), getNodesFile());
+        FileTransfer.copy(rhs.getLinksFile(), getLinksFile());
+        FileTransfer.copy(rhs.getOptionsFile(), getOptionsFile());
+        FileTransfer.copy(rhs.getPhasesFile(), getPhasesFile());
     }
 }

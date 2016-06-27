@@ -111,7 +111,7 @@ public class ReadNetwork
         readPhases(project);
         
         
-        Simulator sim = new Simulator(nodes, links);
+        Simulator sim = new Simulator(project, nodes, links);
         
         sim.initialize();
         

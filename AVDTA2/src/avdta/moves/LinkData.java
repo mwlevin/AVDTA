@@ -4,7 +4,7 @@
  */
 package avdta.moves;
 
-import avdta.network.RunningAvg;
+import avdta.util.RunningAvg;
 import avdta.network.link.Link;
 import avdta.vehicle.Vehicle;
 import java.util.List;

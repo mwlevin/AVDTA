@@ -22,18 +22,21 @@ public class Path extends ArrayList<Link> implements Serializable
     
     private double cost;
     
-    /**
-     * Instantiates path with unique id
-     */
     public Path()
     {
-        this(next_id++);
+        id = -1;
     }
     
     public Path(int id)
     {
         this.id = id;
     }
+    
+    public void setId()
+    {
+        id = next_id++;
+    }
+    
     
     public Path(Link... links)
     {
@@ -103,6 +106,10 @@ public class Path extends ArrayList<Link> implements Serializable
         return id;
     }
     
+    public int hashCode()
+    {
+        return size();
+    }
     /**
      * 
      * @return origin node for this path

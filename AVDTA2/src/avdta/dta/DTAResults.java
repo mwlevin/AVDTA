@@ -2,22 +2,22 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package avdta.network;
+package avdta.dta;
 
 /**
  *
  * @author Michael
  */
-public class Results 
+public class DTAResults 
 {
-    private double mintt, ttt;
+    private double mintt, tstt;
     private int num_veh;
     private int exiting;
     
-    public Results(double mintt, double ttt, int num_veh, int exiting)
+    public DTAResults(double mintt, double tstt, int num_veh, int exiting)
     {
         this.mintt = mintt;
-        this.ttt = ttt;
+        this.tstt = tstt;
         this.num_veh = num_veh;
         this.exiting = exiting;
     }
@@ -37,23 +37,38 @@ public class Results
         return exiting;
     }
     
+    public int getNumExiting()
+    {
+        return exiting;
+    }
+    
+    public double getMinTT()
+    {
+        return mintt;
+    }
+    
     // hours
     public double getTSTT()
     {
-        return ttt/3600.0;
+        return tstt/3600.0;
     }
     
     public double getAEC()
     {
-        return (ttt - mintt) / num_veh;
+        return (tstt - mintt) / num_veh;
     }
     
     public double getGapPercent()
     {
-        return (ttt - mintt) / ttt * 100.0;
+        return (tstt - mintt) / tstt * 100.0;
     }
     
     public int getTrips()
+    {
+        return num_veh;
+    }
+    
+    public int getNumVeh()
     {
         return num_veh;
     }

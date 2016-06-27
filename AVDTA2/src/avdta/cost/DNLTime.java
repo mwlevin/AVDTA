@@ -5,6 +5,7 @@
 package avdta.cost;
 
 import avdta.cost.TravelCost;
+import avdta.dta.DTASimulator;
 import avdta.network.Simulator;
 import avdta.network.link.Link;
 import avdta.network.Network;
@@ -23,7 +24,7 @@ public class DNLTime extends TravelCost
     
     public double cost(Link l, double vot, int time)
     {
-        int look_back = Simulator.ast_duration - Network.dt;
+        int look_back = DTASimulator.ast_duration - Network.dt;
 
         if(time >= look_back)
         {

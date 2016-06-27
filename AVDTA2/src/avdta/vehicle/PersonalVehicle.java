@@ -4,6 +4,7 @@
  */
 package avdta.vehicle;
 
+import avdta.dta.DTASimulator;
 import avdta.network.node.Node;
 import avdta.network.Path;
 import avdta.network.Simulator;
@@ -71,7 +72,7 @@ public class PersonalVehicle extends Vehicle
     
     public int getAST()
     {
-        return dep_time / Simulator.ast_duration;
+        return dep_time / DTASimulator.ast_duration;
     }
     
     public int getType()

@@ -1,7 +1,6 @@
 package avdta.network;
 
 import avdta.cost.TravelCost;
-import static avdta.network.Simulator.ast_duration;
 import avdta.network.link.CTMLink;
 import avdta.network.link.Link;
 import avdta.network.node.Intersection;
@@ -24,7 +23,7 @@ import java.util.Set;
 public class Network
 {
     
-    private Map<Integer, List<Path>> allPaths;
+    private PathList paths;
 
     public static int dt = 6;
     
@@ -54,7 +53,7 @@ public class Network
             n.initialize();
         }
         
-        allPaths = new HashMap<Integer, List<Path>>();
+        paths = new PathList();
     }
     
     public void setNodes(List<Node> nodes)
@@ -123,30 +122,7 @@ public class Network
             output = link_trace(o, d);
         }
         
-        int hash = output.hashCode();
-        
-        if(allPaths.containsKey(hash))
-        {
-            List<Path> temp = allPaths.get(hash);
-            
-            for(Path p : temp)
-            {
-                if(output.equals(p))
-                {
-                    return p;
-                }
-            }
-            
-            temp.add(output);
-            return output;
-        }
-        else
-        {
-            ArrayList<Path> temp = new ArrayList<Path>();
-            temp.add(output);
-            allPaths.put(hash, temp);
-            return output;
-        }
+        return paths.addPath(output);
     }
 
     
@@ -460,5 +436,29 @@ public class Network
         }
         
         System.out.println("Tied "+count+" links");
+    }
+    
+    public Map<Integer, Link> createLinkIdsMap()
+    {
+        Map<Integer, Link> output = new HashMap<Integer, Link>();
+        
+        for(Link l : links)
+        {
+            output.put(l.getId(), l);
+        }
+        
+        return output;
+    }
+    
+    public Map<Integer, Node> createNodesMap()
+    {
+        Map<Integer, Node> output = new HashMap<Integer, Node>();
+        
+        for(Node n : nodes)
+        {
+            output.put(n.getId(), n);
+        }
+        
+        return output;
     }
 }

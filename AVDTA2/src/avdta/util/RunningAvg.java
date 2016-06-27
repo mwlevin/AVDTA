@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package avdta.network;
+package avdta.util;
 
 import java.io.Serializable;
 

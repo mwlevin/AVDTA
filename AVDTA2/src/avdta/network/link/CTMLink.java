@@ -5,7 +5,7 @@
 package avdta.network.link;
 
 import avdta.network.Network;
-import avdta.network.RunningAvg;
+import avdta.util.RunningAvg;
 import avdta.network.Simulator;
 import avdta.network.node.Node;
 import avdta.vehicle.Vehicle;

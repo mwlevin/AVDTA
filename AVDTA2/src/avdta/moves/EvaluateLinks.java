@@ -41,10 +41,8 @@ public class EvaluateLinks
     
     public void calculate(Simulator sim)
     {
-        name = sim.getName();
-        scenario = sim.getScenario();
         
-        File file = new File("results/"+name+"/"+scenario+"/moves/");
+        File file = new File(sim.getProject().getResultsFolder()+"/moves/");
         file.mkdirs();
         
         data = new TreeMap<Link, LinkData>();

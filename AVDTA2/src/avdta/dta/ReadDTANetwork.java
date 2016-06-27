@@ -3,8 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package avdta.network;
+package avdta.dta;
 
+import avdta.network.AST;
+import avdta.network.DemandProfile;
+import avdta.network.ReadNetwork;
 import avdta.network.node.Zone;
 import avdta.project.DTAProject;
 import avdta.vehicle.VOT;
@@ -22,6 +25,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
+import java.util.Set;
+import java.util.TreeSet;
 
 /**
  *
@@ -72,11 +77,11 @@ public class ReadDTANetwork extends ReadNetwork
     
     public int prepareDemand(DTAProject project, double prop) throws IOException
     {
+        Set<VehicleRecord> vehicles = new TreeSet<VehicleRecord>();
+        
         DemandProfile profile = readDemandProfile(project);
         Scanner filein = new Scanner(project.getDynamicODFile());
-        PrintStream fileout = new PrintStream(new FileOutputStream(project.getDemandFile()), true);
         
-        fileout.println("id\ttype\torigin\tdest\tdtime");
         
         filein.nextLine();
         
@@ -117,7 +122,7 @@ public class ReadDTANetwork extends ReadNetwork
             {
                 int dtime = ast.getStart() + (i+1) * dtime_interval;
                 
-                fileout.println((new_id++)+"\t"+type+"\t"+origin+"\t"+dest+"\t"+dtime);
+                vehicles.add(new VehicleRecord(new_id++, type, origin, dest, dtime));
             }
             
             total += num_vehicles;
@@ -125,6 +130,16 @@ public class ReadDTANetwork extends ReadNetwork
         }
         
         filein.close();
+        
+        PrintStream fileout = new PrintStream(new FileOutputStream(project.getDemandFile()), true);
+        
+        fileout.println("id\ttype\torigin\tdest\tdtime\tvot");
+        
+        for(VehicleRecord v : vehicles)
+        {
+            double vot = VOT.dagum_rand(rand);
+            fileout.println(v+"\t"+vot);
+        }
         fileout.close();
         
 
@@ -148,11 +163,12 @@ public class ReadDTANetwork extends ReadNetwork
             int origin_id = filein.nextInt();
             int dest_id = filein.nextInt();
             int dtime = filein.nextInt();
+            double vot = filein.nextDouble();
             filein.nextLine();
   
             if(type != Vehicle.BUS)
             {
-                double vot = VOT.dagum_rand(rand);
+                
             
                 Wallet wallet = new StaticWallet(vot);
             
