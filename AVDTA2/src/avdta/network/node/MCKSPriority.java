@@ -22,6 +22,11 @@ public class MCKSPriority extends IntersectionPolicy
         this.func = func;
     }
     
+    public ObjFunction getObj()
+    {
+        return func;
+    }
+    
     public void initialize(Node n)
     {
         func.initialize(n);

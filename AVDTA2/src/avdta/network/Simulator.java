@@ -142,8 +142,6 @@ public class Simulator extends Network
     }
     
 
-    
-    
     public void importResults() throws IOException
     {
         PrintStream path_out = new PrintStream(new FileOutputStream(new File(project.getResultsFolder()+"/vehicle_path.txt")), true);

@@ -32,4 +32,9 @@ public class MCKSTBR extends PriorityTBR
     {
         super(n, new MCKSPriority(func));
     }  
+    
+    public ObjFunction getObj()
+    {
+        return ((MCKSPriority)getPolicy()).getObj();
+    }
 }

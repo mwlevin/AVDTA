@@ -5,6 +5,8 @@
  */
 package avdta.project;
 
+import avdta.network.ReadNetwork;
+import avdta.network.Simulator;
 import avdta.util.FileTransfer;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -27,14 +29,71 @@ public abstract class Project
     private int randSeed;
     private Random rand;
     
+    private Simulator simulator;
+    
+    private Map<String, String> networkOptions;
+    
+    private String directory;
+    
     public Project()
     {
-        
+        networkOptions = new TreeMap<String, String>();
     }
     
-    public Project(String name) throws IOException
+    public void setSimulator(Simulator sim)
     {
-        this.name = name;
+        this.simulator = sim;
+    }
+    
+    public Simulator loadSimulator() throws IOException
+    {
+        ReadNetwork read = new ReadNetwork();       
+        
+        Simulator output = read.readNetwork(this);
+        
+        simulator = output;
+        
+        return output;
+    }
+    
+    public String getOption(String k)
+    {
+        return networkOptions.get(k.toLowerCase());
+    }
+    
+    public void writeOptions() throws IOException
+    {
+        PrintStream fileout = new PrintStream(new FileOutputStream(getOptionsFile()), true);
+
+        fileout.println("key\tvalue");
+        for(String k : networkOptions.keySet())
+        {
+            fileout.println(k+"\t"+networkOptions.get(k));
+        }
+        
+        fileout.close();
+    }
+    
+    public void setOption(String key, String val)
+    {
+        networkOptions.put(key, val);
+    }
+    
+    public abstract String getType();
+    
+    public Simulator getSimulator()
+    {
+        return simulator;
+    }
+    
+    public Project(File dir) throws IOException
+    {
+        this.directory = dir.getCanonicalPath();
+        
+        if(directory.indexOf("project.dat") >= 0)
+        {
+            directory = directory.substring(0, directory.lastIndexOf("/")+1);
+        }
         loadProject();
     }
     
@@ -63,6 +122,8 @@ public abstract class Project
         
         randSeed = Integer.parseInt(map.get("seed"));
         rand = new Random(randSeed);
+        
+        name = map.get("name");
         
         loadProperties(map);
     }
@@ -122,6 +183,7 @@ public abstract class Project
         
         map.put("type", getType());
         map.put("seed", ""+randSeed);
+        map.put("name", getName());
         
         
         for(String k : map.keySet())
@@ -129,7 +191,6 @@ public abstract class Project
             fileout.println(k+"\t"+map.get(k));
         }
 
-        writeProperties(fileout);
 
         fileout.close();
     }
@@ -138,12 +199,6 @@ public abstract class Project
     {
         return new TreeMap<String, String>();
     }
-    
-    public void writeProperties(PrintStream fileout)
-    {
-        
-    }
-    public abstract String getType();
     
     public void createProjectFolders(File dir) throws IOException
     {
@@ -161,32 +216,32 @@ public abstract class Project
     
     public File getNodesFile()
     {
-        return new File(getProjectDirectory()+"/network/nodes.dat");
+        return new File(getProjectDirectory()+"/network/nodes.txt");
     }
     
     public File getPropertiesFile()
     {
-        return new File(getProjectDirectory()+"/network/project.dat");
+        return new File(getProjectDirectory()+"/network/project.txt");
     }
     
     public File getLinksFile()
     {
-        return new File(getProjectDirectory()+"/network/links.dat");
+        return new File(getProjectDirectory()+"/network/links.txt");
     }
     
     public File getPhasesFile()
     {
-        return new File(getProjectDirectory()+"/network/phases.dat");
+        return new File(getProjectDirectory()+"/network/phases.txt");
     }
     
     public File getOptionsFile()
     {
-        return new File(getProjectDirectory()+"/network/options.dat");
+        return new File(getProjectDirectory()+"/network/options.txt");
     }
     
     public String getProjectDirectory()
     {
-        return "/projects/"+getName();
+        return directory;
     }
     
     public String getResultsFolder()

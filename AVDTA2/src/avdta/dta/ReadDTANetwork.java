@@ -8,6 +8,9 @@ package avdta.dta;
 import avdta.network.AST;
 import avdta.network.DemandProfile;
 import avdta.network.ReadNetwork;
+import avdta.network.Simulator;
+import avdta.network.link.Link;
+import avdta.network.node.Node;
 import avdta.network.node.Zone;
 import avdta.project.DTAProject;
 import avdta.vehicle.VOT;
@@ -34,6 +37,25 @@ import java.util.TreeSet;
  */
 public class ReadDTANetwork extends ReadNetwork
 {
+    public DTASimulator readNetwork(DTAProject project) throws IOException
+    {
+        readOptions(project);
+        List<Node> nodes = readNodes(project);
+        List<Link> links = readLinks(project);
+        
+        readIntersections(project);
+        readPhases(project);
+        
+        
+        DTASimulator sim = new DTASimulator(project, nodes, links);
+        
+        sim.initialize();
+        
+        sim.setVehicles(readVehicles(project));
+        
+        return sim;
+    }
+    
     public void createDynamicOD(DTAProject project) throws IOException
     {
         DemandProfile profile = readDemandProfile(project);

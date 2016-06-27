@@ -64,6 +64,7 @@ public class ReadNetwork
     public static final int CTM = 1;
     public static final int CENTROID = 10;
     
+    
     // node types - actual type is multiplied by 100
     //public static final int CENTROID = 100;
     public static final int SIGNAL = 1;
@@ -252,15 +253,8 @@ public class ReadNetwork
             int type = filein.nextInt();
             int source_id = filein.nextInt();
             int dest_id = filein.nextInt();
-            
-            if(!nodesmap.containsKey(source_id))
-            {
-                System.out.println(source_id);
-            }
-
-            
             double length = filein.nextDouble() / 5280;
-            double ffspd = filein.nextDouble() * 60;
+            double ffspd = filein.nextDouble();
             double capacity = filein.nextDouble();
             int numLanes = filein.nextInt();
             double jamd = 5280.0/Vehicle.vehicle_length;
@@ -437,6 +431,8 @@ public class ReadNetwork
                 String key = filein.next();
                 String val = filein.next();
                 
+                project.setOption(key, val);
+                
                 if(key.equals("simulation-mesoscopic-delta"))
                 {
                     double delta = Double.parseDouble(val);
@@ -492,8 +488,11 @@ public class ReadNetwork
 
     
     
-    
     public static Set<String> listProjects() throws IOException
+    {
+        return listProjects(null);
+    }
+    public static Set<String> listProjects(String typefilter) throws IOException
     {
         TreeSet<String> output = new TreeSet<String>();
         
@@ -534,14 +533,13 @@ public class ReadNetwork
                             break;
                         }
                     }
-                    
-                    // check name and folder match
- 
-                    output.add(name+" ("+type+")");
-                    
                     filein.close();
-                }
-                
+                    
+                    if(typefilter == null || type.equals(typefilter))
+                    {
+                        output.add(name+" ("+type+")");
+                    }
+                }    
             }
         }
         

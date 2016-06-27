@@ -5,6 +5,7 @@
  */
 package avdta.gui;
 
+import java.awt.Color;
 import java.awt.Image;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -19,18 +20,21 @@ import javax.swing.JOptionPane;
  *
  * @author micha
  */
-public class GUI 
+public class GUI extends JFrame
 {
-    
+    private static JFrame frame;
     private static Image icon;
     
     
     public static void main(String[] args) throws IOException
     {
-        System.setErr(new PrintStream(new FileOutputStream(new File("error_log.txt")), true));
+        //System.setErr(new PrintStream(new FileOutputStream(new File("error_log.txt")), true));
+        
+        new DTAGUI();
+        
     }
     
-    
+
     public static Image getIcon()
     {
         if(icon == null)
@@ -45,15 +49,20 @@ public class GUI
         return icon;
     }
     
-    public static String getTitle()
-    {
-        return "AVDTA";
-    }
     
-    public static void handleException(JFrame frame, Exception ex)
+    
+    public static void handleException(Exception ex)
     {
         JOptionPane.showMessageDialog(frame, ex.getMessage(),
                             "Error", JOptionPane.ERROR_MESSAGE);
         System.exit(1);
+    }
+    
+    public GUI()
+    {
+        setTitle("AVDTA");
+        //setIconImage(GUI.getIcon());
+        
+        frame = this;
     }
 }

@@ -55,6 +55,11 @@ public class PriorityTBR extends TBR
     }
     
     
+    public IntersectionPolicy getPolicy()
+    {
+        return policy;
+    }
+    
 
     public int step()
     {

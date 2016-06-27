@@ -5,6 +5,10 @@
  */
 package avdta.project;
 
+import avdta.dta.DTASimulator;
+import avdta.dta.ReadDTANetwork;
+import avdta.network.ReadNetwork;
+import avdta.network.Simulator;
 import avdta.util.FileTransfer;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -22,11 +26,27 @@ public class DTAProject extends Project
         
     }
     
-    public DTAProject(String name) throws IOException
+    public DTAProject(File directory) throws IOException
     {
-        super(name);
+        super(directory);
     }
     
+    
+    public DTASimulator getSimulator()
+    {
+        return (DTASimulator)super.getSimulator();
+    }
+    
+    public DTASimulator loadSimulator() throws IOException
+    {
+        ReadDTANetwork read = new ReadDTANetwork();       
+        
+        DTASimulator output = read.readNetwork(this);
+        
+        setSimulator(output);
+        
+        return output;
+    }
     
     public void createProjectFolders(File dir) throws IOException
     {
@@ -41,29 +61,29 @@ public class DTAProject extends Project
 
     public File getStaticODFile()
     {
-        return new File(getProjectDirectory()+"/network/static_od.dat");
+        return new File(getProjectDirectory()+"/network/static_od.txt");
     }
     
     public File getDynamicODFile()
     {
-        return new File(getProjectDirectory()+"/network/dynamic_od.dat");
+        return new File(getProjectDirectory()+"/network/dynamic_od.txt");
     }
     
     public File getDemandProfileFile()
     {
-        return new File(getProjectDirectory()+"/network/demand_profile.dat");
+        return new File(getProjectDirectory()+"/network/demand_profile.txt");
     }
     
     public File getDemandFile()
     {
-        return new File(getProjectDirectory()+"/network/demand.dat");
+        return new File(getProjectDirectory()+"/network/demand.txt");
     }
     
     
     
     public File getOptionsFile()
     {
-        return new File(getProjectDirectory()+"/network/options.dat");
+        return new File(getProjectDirectory()+"/network/options.txt");
     }
     
     public String getType()
