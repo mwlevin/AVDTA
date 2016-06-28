@@ -8,7 +8,7 @@ package avdta.vehicle;
 import avdta.network.Network;
 import avdta.vehicle.fuel.VehicleClass;
 import avdta.network.link.CTMLink;
-import avdta.network.link.Cell;
+import avdta.network.link.cell.Cell;
 import avdta.network.link.Link;
 import avdta.network.node.Node;
 import avdta.network.Path;

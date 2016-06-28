@@ -31,6 +31,11 @@ public class DTAProject extends Project
         super(directory);
     }
     
+    public void cloneFromProject(DTAProject rhs) throws IOException
+    {
+        super.cloneFromProject(rhs);
+        importDemandFromProject(rhs);
+    }
     
     public DTASimulator getSimulator()
     {

@@ -2,8 +2,12 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package avdta.network.link;
+package avdta.network.link.cell;
 
+import avdta.network.link.CTMLink;
+import avdta.network.link.DLRCTMLink;
+import avdta.network.link.cell.LinkCell;
+import avdta.network.link.Link;
 import avdta.network.link.Link;
 import avdta.vehicle.Vehicle;
 
@@ -11,7 +15,7 @@ import avdta.vehicle.Vehicle;
  *
  * @author Michael
  */
-public class EndCell extends Cell
+public class EndCell extends LinkCell
 {
     public EndCell(Cell prev, CTMLink link)
     {
@@ -22,9 +26,9 @@ public class EndCell extends Cell
     {
         Link j = v.getNextLink();
         
-        if(j != null && j instanceof CTMLink)
+        if(j != null && j instanceof DLRCTMLink)
         {
-            ((CTMLink)j).addToUsSendingFlow();
+            ((DLRCTMLink)j).addToUsSendingFlow();
         }
         super.addVehicle(v);
     }

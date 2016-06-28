@@ -82,7 +82,7 @@ public class DTAGUI extends GUI
         JMenuItem mi;
         
         me = new JMenu("File");
-        mi = new JMenuItem("New");
+        mi = new JMenuItem("New network");
         
         mi.addActionListener(new ActionListener()
         {
@@ -93,7 +93,7 @@ public class DTAGUI extends GUI
         });
         me.add(mi);
         
-        mi = new JMenuItem("Open");
+        mi = new JMenuItem("Open network");
         
         mi.addActionListener(new ActionListener()
         {
@@ -104,7 +104,7 @@ public class DTAGUI extends GUI
         });
         me.add(mi);
         
-        mi = new JMenuItem("Clone");
+        mi = new JMenuItem("Clone opened network");
         
         mi.addActionListener(new ActionListener()
         {
@@ -127,7 +127,7 @@ public class DTAGUI extends GUI
         {
             public void actionPerformed(ActionEvent e)
             {
-                JOptionPane.showMessageDialog(frame, "Version "+Version.getVersion()+"\nCopyright © 2014 by "+Version.getAuthor(), 
+                JOptionPane.showMessageDialog(frame, "AVDTA v"+Version.getVersion()+"\nCopyright © 2014 by "+Version.getAuthor(), 
                         "About", JOptionPane.INFORMATION_MESSAGE);
             }
         });
@@ -182,7 +182,41 @@ public class DTAGUI extends GUI
     
     public void cloneProject()
     {
+        ProjectFileView view = new ProjectFileView("DTA");
         
+        JFileChooser chooser = new JFileChooser(new File("networks/"))
+        {
+            public boolean accept(File file)
+            {
+                return view.isProject(file) == 0;
+            }
+        };
+        
+        chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        chooser.setFileView(view);
+        
+        
+        int returnVal = chooser.showDialog(this, "Select folder");
+        
+        if(returnVal == JFileChooser.APPROVE_OPTION)
+        {
+            File dir = chooser.getSelectedFile();
+            
+            String name = JOptionPane.showInputDialog(this, "What do you want to name this project? ", "Project name", 
+                    JOptionPane.QUESTION_MESSAGE);
+            
+            try
+            {
+                DTAProject rhs = new DTAProject();
+                rhs.createProject(name, new File(dir.getCanonicalPath()+"/"+name));
+                rhs.cloneFromProject(project);
+                openProject(rhs);
+            }
+            catch(IOException ex)
+            {
+                handleException(ex);
+            }
+        }
     }
     
     public void openProject()

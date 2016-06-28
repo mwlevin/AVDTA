@@ -27,7 +27,6 @@ public abstract class Project
     private String name;
     
     private int randSeed;
-    private Random rand;
     
     private Simulator simulator;
     
@@ -133,7 +132,6 @@ public abstract class Project
         filein.close();
         
         randSeed = Integer.parseInt(map.get("seed"));
-        rand = new Random(randSeed);
         
         name = map.get("name");
         
@@ -214,15 +212,18 @@ public abstract class Project
     
     public Random getRandom()
     {
-        return rand;
+        return new Random(randSeed);
     }
     
+    public void cloneFromProject(Project rhs) throws IOException
+    {
+        importNetworkFromProject(rhs);
+        FileTransfer.copy(rhs.getOptionsFile(), getOptionsFile());
+    }
 
     public void changeRandSeed()
     {
         randSeed = (int)(System.nanoTime()/1.0e10);
-        
-        rand = new Random(randSeed);
     }
     
     public void writeProperties() throws IOException

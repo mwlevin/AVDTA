@@ -5,7 +5,7 @@
 package avdta.network.node;
 
 import avdta.network.link.CTMLink;
-import avdta.network.link.Cell;
+import avdta.network.link.cell.Cell;
 import avdta.network.link.CentroidConnector;
 import avdta.network.link.LTMLink;
 import avdta.network.link.Link;

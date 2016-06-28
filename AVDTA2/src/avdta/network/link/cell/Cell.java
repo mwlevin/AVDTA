@@ -2,9 +2,10 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package avdta.network.link;
+package avdta.network.link.cell;
 
 import avdta.network.Network;
+import avdta.network.link.CTMLink;
 import avdta.vehicle.Vehicle;
 import avdta.vehicle.DriverType;
 import java.util.ArrayList;
@@ -15,29 +16,27 @@ import java.util.List;
  *
  * @author Michael
  */
-public class Cell implements Comparable<Cell>
+public abstract class Cell implements Comparable<Cell>
 {
     private static int id_count;
     private int id;
     
     
     private CTMLink link;
-    private Cell prev;
     
-    // for lane sharing
-    private Cell opposite; 
+    
 
-    private List<Vehicle> curr, next;
+    protected List<Vehicle> curr, next;
     
     private int numLanes;
     
     private double R, max_S;
 
-    public Cell(Cell prev, CTMLink link)
+    public Cell(CTMLink link)
     {
         id = id_count++;
         
-        this.prev = prev;
+        
         this.link = link;
 
         curr = new ArrayList<Vehicle>();
@@ -71,15 +70,7 @@ public class Cell implements Comparable<Cell>
         numLanes = n;
     }
     
-    public void setOppositeCell(Cell o)
-    {
-        opposite = o;
-    }
     
-    public Cell getOpposite()
-    {
-        return opposite;
-    }
     
     // minimum lanes for this timestep
     public double getMinLanes()
@@ -98,24 +89,7 @@ public class Cell implements Comparable<Cell>
         }
     }
     
-    public double getMaxLanes()
-    {
-        int total_road_lanes = link.getNumLanes();
-        
-        if(opposite != null)
-        {
-            total_road_lanes += opposite.link.getNumLanes();
-        }
-        
-        if(curr.size() > 0)
-        {
-            return (int)Math.min(numLanes + 1, total_road_lanes);
-        }
-        else
-        {
-            return total_road_lanes;
-        }
-    }
+    
 
     public CTMLink getLink()
     {
@@ -148,26 +122,7 @@ public class Cell implements Comparable<Cell>
         return link.getCellLength();
     }
 
-    public void step()
-    {
-        double y = Math.min(prev.getNumSendingFlow(), getReceivingFlow());
-
-        Iterator<Vehicle> iter = prev.curr.iterator();
-        
-
-        while(y >= 1)
-        {
-            y -= 1;
-
-            Vehicle v = iter.next();
-            addVehicle(v);
-            iter.remove();
-
-            v.updatePosition(this);
-
-        }
-        
-    }
+    public abstract void step();
 
     public void addVehicle(Vehicle v)
     {

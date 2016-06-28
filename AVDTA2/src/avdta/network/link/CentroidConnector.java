@@ -105,9 +105,9 @@ public class CentroidConnector extends Link
         
         Link j = v.getNextLink();
         
-        if(j != null && j instanceof CTMLink)
+        if(j != null && j instanceof DLRCTMLink)
         {
-            ((CTMLink)j).addToUsSendingFlow();
+            ((DLRCTMLink)j).addToUsSendingFlow();
         }
     }
     

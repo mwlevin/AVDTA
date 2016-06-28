@@ -31,6 +31,7 @@ import avdta.network.node.SignalWeightedTBR;
 import avdta.network.node.Signalized;
 import avdta.network.AST;
 import avdta.network.DemandProfile;
+import avdta.network.link.DLRCTMLink;
 import avdta.network.node.BackPressureObj;
 import avdta.network.node.P0Obj;
 import avdta.project.DTAProject;
@@ -61,6 +62,7 @@ public class ReadNetwork
 {
     public static final int LTM = 200;
     public static final int CTM = 100;
+    public static final int DLR = 2;
     public static final int CENTROID = 1000;
     
     
@@ -274,8 +276,16 @@ public class ReadNetwork
                      link = new LTMLink(id, nodesmap.get(source_id), nodesmap.get(dest_id), capacity, ffspd, ffspd*mesodelta, jamd, length, numLanes);
                      break;
                 case CTM/100:
-                     link = new CTMLink(id, nodesmap.get(source_id), nodesmap.get(dest_id), capacity, ffspd, ffspd*mesodelta, jamd, length, numLanes);
-                     break;
+                    if(type%10 == DLR)
+                    {
+                        Network.dlr = true;
+                        link = new DLRCTMLink(id, nodesmap.get(source_id), nodesmap.get(dest_id), capacity, ffspd, ffspd*mesodelta, jamd, length, numLanes);
+                    }
+                    else
+                    {
+                        link = new CTMLink(id, nodesmap.get(source_id), nodesmap.get(dest_id), capacity, ffspd, ffspd*mesodelta, jamd, length, numLanes);
+                    }
+                    break;
                 default:
                     throw new RuntimeException("Link type not recognized: "+type);
             }

@@ -2,6 +2,7 @@ package avdta.network;
 
 import avdta.cost.TravelCost;
 import avdta.network.link.CTMLink;
+import avdta.network.link.DLRCTMLink;
 import avdta.network.link.Link;
 import avdta.network.node.Intersection;
 import avdta.network.node.Node;
@@ -29,7 +30,7 @@ public class Network
     
     
     
-    private static boolean dlr;  
+    public static boolean dlr;  
     
     
     public List<Node> nodes;
@@ -428,14 +429,14 @@ public class Network
                 
                 for(Link j : n.getOutgoing())
                 {
-                    if(!j.isCentroidConnector() && i.getSource() == j.getDest())
+                    if(!j.isCentroidConnector() && i.getSource() == j.getDest() && 
+                            (i instanceof DLRCTMLink) && (j instanceof DLRCTMLink))
                     {
-                        if (((CTMLink)i).tieCells((CTMLink)j))
+                        if (((DLRCTMLink)i).tieCells((DLRCTMLink)j))
                         {
                             count++;
                         }
-                    }
-                    
+                    } 
                 }
             }
         }
