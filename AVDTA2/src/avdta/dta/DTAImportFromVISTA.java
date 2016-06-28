@@ -20,19 +20,23 @@ import java.util.Scanner;
  *
  * @author micha
  */
-public class DTAImportFromVISTA extends ImportFromVISTA
+public class DTAImportFromVISTA
 {
-    public DTAImportFromVISTA(DTAProject project, File nodes, File linkdetails, File elevation, File phases,
-            File static_od, File dynamic_od, File demand_profile, File demand)
+    /*
+    public DTAImportFromVISTA(DTAProject project, File nodes, File linkdetails, File elevation, File phases)
             throws IOException
     {
         super(project, nodes, linkdetails, elevation, phases);
-        
+    }
+    */
+    
+    public DTAImportFromVISTA(DTAProject project, File static_od, File dynamic_od, File demand_profile, File demand)
+            throws IOException
+    {
         convertStaticOD(project, static_od);
         convertDynamicOD(project, dynamic_od);
         convertDemandProfile(project, demand_profile);
         convertDemand(project, demand);
-        
     }
     
     public void convertDemand(DTAProject project, File demand) throws IOException
@@ -40,7 +44,7 @@ public class DTAImportFromVISTA extends ImportFromVISTA
         PrintStream fileout = new PrintStream(new FileOutputStream(project.getDemandFile()), true);
         Scanner filein = new Scanner(demand);
         
-        fileout.println("id\ttype\torigin\tdest\tdtime\tvot");
+        fileout.println(ReadDTANetwork.getDemandFileHeader());
         
         Random rand = project.getRandom();
         
@@ -76,7 +80,7 @@ public class DTAImportFromVISTA extends ImportFromVISTA
         PrintStream fileout = new PrintStream(new FileOutputStream(project.getStaticODFile()));
         Scanner filein = new Scanner(dynamic_od);
         
-        fileout.println("id\ttype\torigin\tdestination\tast\tdemand");
+        fileout.println(ReadDTANetwork.getDynamicODFileHeader());
         
         while(filein.hasNextInt())
         {
@@ -101,7 +105,7 @@ public class DTAImportFromVISTA extends ImportFromVISTA
         PrintStream fileout = new PrintStream(new FileOutputStream(project.getStaticODFile()));
         Scanner filein = new Scanner(static_od);
         
-        fileout.println("id\ttype\torigin\tdestination\tdemand");
+        fileout.println(ReadDTANetwork.getStaticODFileHeader());
         
         while(filein.hasNextInt())
         {
@@ -125,7 +129,7 @@ public class DTAImportFromVISTA extends ImportFromVISTA
         PrintStream fileout = new PrintStream(new FileOutputStream(project.getDemandProfileFile()), true);
         Scanner filein = new Scanner(demand_profile);
         
-        fileout.println("id\tweight\tstart\tduration");
+        fileout.println(ReadDTANetwork.getDemandProfileFileHeader());
         while(filein.hasNext())
         {
             fileout.println(filein.nextLine());

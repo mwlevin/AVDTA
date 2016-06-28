@@ -49,10 +49,31 @@ public class DTAProject extends Project
         }
         catch(Exception ex)
         {
-            //ex.printStackTrace(System.err);
+            ex.printStackTrace(System.err);
             setSimulator(createEmptySimulator());
         }
 
+    }
+    
+    public void writeEmptyFiles() throws IOException
+    {
+        super.writeEmptyFiles();
+        
+        PrintStream fileout = new PrintStream(new FileOutputStream(getDemandFile()), true);
+        fileout.println(ReadDTANetwork.getDemandFileHeader());
+        fileout.close();
+        
+        fileout = new PrintStream(new FileOutputStream(getDynamicODFile()), true);
+        fileout.println(ReadDTANetwork.getDynamicODFileHeader());
+        fileout.close();
+        
+        fileout = new PrintStream(new FileOutputStream(getStaticODFile()), true);
+        fileout.println(ReadDTANetwork.getStaticODFileHeader());
+        fileout.close();
+        
+        fileout = new PrintStream(new FileOutputStream(getDemandProfileFile()), true);
+        fileout.println(ReadDTANetwork.getDemandProfileFileHeader());
+        fileout.close();
     }
     
     public void createProjectFolders(File dir) throws IOException
@@ -106,12 +127,14 @@ public class DTAProject extends Project
         return "DTA";
     }
     
+    public String toString()
+    {
+        return getName();
+    }
     
-    public void importNetworkFromProject(DTAProject rhs) throws IOException
+    public void importDemandFromProject(DTAProject rhs) throws IOException
     {
         // copy demand, static_od, dynamic_od, demand_profile
-        
-        super.importNetworkFromProject(rhs);
         
         FileTransfer.copy(rhs.getDemandFile(), getDemandFile());
         FileTransfer.copy(rhs.getStaticODFile(), getStaticODFile());

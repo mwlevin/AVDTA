@@ -277,4 +277,24 @@ public class ReadDTANetwork extends ReadNetwork
         
         return output;
     }
+    
+    public static String getDemandFileHeader()
+    {
+        return "id\ttype\torigin\tdest\tdtime\tvot";
+    }
+    
+    public static String getDemandProfileFileHeader()
+    {
+        return "id\tweight\tstart\tduration";
+    }
+    
+    public static String getDynamicODFileHeader()
+    {
+        return "id\ttype\torigin\tdestination\tast\tdemand";
+    }
+    
+    public static String getStaticODFileHeader()
+    {
+        return "id\ttype\torigin\tdestination\tdemand";
+    }
 }

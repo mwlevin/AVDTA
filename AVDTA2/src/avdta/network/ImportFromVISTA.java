@@ -33,7 +33,7 @@ public class ImportFromVISTA
         PrintStream fileout = new PrintStream(new FileOutputStream(project.getPhasesFile()), true);
         Scanner filein = new Scanner(phases);
         
-        fileout.println("nodeid\ttype\toffset\tphase_id\ttime_red\ttime_yellow\ttime_green\tnum_moves\tlink_from\tlink_to");
+        fileout.println(ReadNetwork.getPhasesFileHeader());
         
         while(filein.hasNextInt())
         {
@@ -58,7 +58,7 @@ public class ImportFromVISTA
         
         PrintStream fileout = new PrintStream(new FileOutputStream(project.getLinksFile()), true);
         
-        fileout.println("id\ttype\tsource\tdest\tlength (ft)\tffspd (mph)\tcapacity\tnumLanes");
+        fileout.println(ReadNetwork.getLinksFileHeader());
         
         while(filein.hasNextInt())
         {
@@ -110,7 +110,7 @@ public class ImportFromVISTA
         
         filein = new Scanner(nodes);
         
-        fileout.println("id\ttype\tlongitude\tlatitude\televation");
+        fileout.println(ReadNetwork.getNodesFileHeader());
         
         while(filein.hasNextInt())
         {

@@ -175,6 +175,23 @@ public abstract class Project
         writeProperties();
         
         simulator = createEmptySimulator();
+        
+        writeEmptyFiles();
+    }
+    
+    public void writeEmptyFiles() throws IOException
+    {
+        PrintStream fileout = new PrintStream(new FileOutputStream(getLinksFile()), true);
+        fileout.println(ReadNetwork.getLinksFileHeader());
+        fileout.close();
+        
+        fileout = new PrintStream(new FileOutputStream(getPhasesFile()), true);
+        fileout.println(ReadNetwork.getPhasesFileHeader());
+        fileout.close();
+        
+        fileout = new PrintStream(new FileOutputStream(getNodesFile()), true);
+        fileout.println(ReadNetwork.getNodesFileHeader());
+        fileout.close();
     }
     
     public void fillOptions()
@@ -182,7 +199,7 @@ public abstract class Project
         setOption("simulation-mesoscopic-delta","0.5");
         setOption("simulation-duration","36000");
         setOption("hv-reaction-time","1");
-        setOption("av-reaction-time","1");
+        setOption("av-reaction-time","0.5");
         setOption("hvs-use-reservations","0");
         setOption("dynamic-lane-reversal","0");
         setOption("simulation-mesoscopic-step","6");

@@ -104,6 +104,10 @@ public abstract class Vehicle implements Serializable, Comparable<Vehicle>
         effFactor = .5 + Math.round(rand.nextDouble());
     }
     
+    public VehicleClass getVehicleClass()
+    {
+        return vehClass;
+    }
 
     public void setVOT(double vot)
     {

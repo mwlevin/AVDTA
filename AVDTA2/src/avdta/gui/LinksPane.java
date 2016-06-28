@@ -149,14 +149,7 @@ public class LinksPane extends JPanel
         
         if(project != null)
         {
-            ctm.setEnabled(true);
-            ltm.setEnabled(true);
-            save.setEnabled(true);
-            reset.setEnabled(true);
-            mesoDelta.setEnabled(true);
-            timestep.setEnabled(true);
-            HVtau.setEnabled(true);
-            AVtau.setEnabled(true);
+            
             mesoDelta.setText(project.getOption("simulation-mesoscopic-delta"));
             timestep.setText(project.getOption("simulation-mesoscopic-step"));
             HVtau.setText(project.getOption("hv-reaction-time"));
@@ -198,6 +191,9 @@ public class LinksPane extends JPanel
             {
                 data.append(centroid+"\tcentroid connectors\n");
             }
+            enable();
+            
+            
         }
         else
         {
@@ -226,11 +222,11 @@ public class LinksPane extends JPanel
         ctm.setEnabled(true);
         ltm.setEnabled(true);
         save.setEnabled(true);
-        reset.setEnabled(true);
-        mesoDelta.setEnabled(true);
-        timestep.setEnabled(true);
-        HVtau.setEnabled(true);
-        AVtau.setEnabled(true);
+        reset.setEnabled(true);     
+        mesoDelta.setEditable(true);
+        timestep.setEditable(true);
+        HVtau.setEditable(true);
+        AVtau.setEditable(true);
     }
     
     public void setProject(Project project)

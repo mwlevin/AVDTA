@@ -59,17 +59,15 @@ import java.util.TreeSet;
  */
 public class ReadNetwork 
 {
-    // link types - actual type is multiplied by 100
-    public static final int LTM = 2;
-    public static final int CTM = 1;
-    public static final int CENTROID = 10;
+    public static final int LTM = 200;
+    public static final int CTM = 100;
+    public static final int CENTROID = 1000;
     
     
-    // node types - actual type is multiplied by 100
     //public static final int CENTROID = 100;
-    public static final int SIGNAL = 1;
-    public static final int STOPSIGN = 2;
-    public static final int RESERVATION = 3;
+    public static final int SIGNAL = 100;
+    public static final int STOPSIGN = 200;
+    public static final int RESERVATION = 300;
     
     // reservation policies
     public static final int FCFS = 1;
@@ -134,7 +132,7 @@ public class ReadNetwork
             double elevation = filein.nextDouble();
             filein.nextLine();
             
-            if(type/100 == CENTROID)
+            if(type/100 == CENTROID/100)
             {
                 continue;
             }
@@ -156,13 +154,13 @@ public class ReadNetwork
                 
                 switch(type/100)
                 {
-                    case SIGNAL:
+                    case SIGNAL/100:
                         node.setControl(new TrafficSignal());
                         break;
-                    case STOPSIGN:
+                    case STOPSIGN/100:
                         node.setControl(new StopSign());
                         break;
-                    case RESERVATION:
+                    case RESERVATION/100:
                     {
                         switch(type % 100)
                         {
@@ -220,7 +218,7 @@ public class ReadNetwork
             
             Node node;
 
-            if(type / 100 == CENTROID)
+            if(type / 100 == CENTROID/100)
             {
                 node = new Zone(id, new Location(x, y));
             }
@@ -269,13 +267,13 @@ public class ReadNetwork
             switch(type/100)
             {   
 
-                case CENTROID: 
+                case CENTROID/100: 
                     link = new CentroidConnector(id, nodesmap.get(source_id), nodesmap.get(dest_id));
                     break;
-                case LTM:
+                case LTM/100:
                      link = new LTMLink(id, nodesmap.get(source_id), nodesmap.get(dest_id), capacity, ffspd, ffspd*mesodelta, jamd, length, numLanes);
                      break;
-                case CTM:
+                case CTM/100:
                      link = new CTMLink(id, nodesmap.get(source_id), nodesmap.get(dest_id), capacity, ffspd, ffspd*mesodelta, jamd, length, numLanes);
                      break;
                 default:
@@ -535,4 +533,18 @@ public class ReadNetwork
         return output;
     }
 
+    public static String getLinksFileHeader()
+    {
+        return "id\ttype\tsource\tdest\tlength (ft)\tffspd (mph)\tcapacity\tnum_lanes";
+    }
+    
+    public static String getNodesFileHeader()
+    {
+        return "id\ttype\tlongitude\tlatitude\televation";
+    }
+    
+    public static String getPhasesFileHeader()
+    {
+        return "nodeid\ttype\toffset\tphase_id\ttime_red\ttime_yellow\ttime_green\tnum_moves\tlink_from\tlink_to";
+    }
 }

@@ -35,6 +35,7 @@ public class DTAGUI extends GUI
 {
     protected DTAProject project;
     private NetworkPane networkPane;
+    private DemandPane demandPane;
     
     
     private JMenuItem cloneMI;
@@ -56,6 +57,8 @@ public class DTAGUI extends GUI
         networkPane = new NetworkPane();
         
         tabs.add("Network", networkPane);
+        tabs.add("Demand", demandPane);
+        
         
         constrain(p, tabs, 0, 0, 1, 1);
         
@@ -155,21 +158,24 @@ public class DTAGUI extends GUI
         setVisible(true);
     }
     
-    public void openProject(DTAProject project)
+    public void openProject(DTAProject project) throws IOException
     {
         this.project = project;
         
-        System.out.println(project);
         
         cloneMI.setEnabled(project != null);
+        project.loadSimulator();
         
         networkPane.setProject(project);
+        demandPane.setProject(project);
         
         
         if(project != null)
         {
             setTitle(project.getName()+" - AVDTA");
         }
+        
+        
     }
     
     public void cloneProject()
@@ -181,7 +187,7 @@ public class DTAGUI extends GUI
     {
         ProjectFileView view = new ProjectFileView("DTA");
         
-        JFileChooser chooser = new JFileChooser(new File("projects/"))
+        JFileChooser chooser = new JFileChooser(new File("networks/"))
         {
             public boolean accept(File file)
             { 
@@ -194,7 +200,7 @@ public class DTAGUI extends GUI
         chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
         chooser.setFileView(view);
         
-        int returnVal = chooser.showDialog(this, "Open project");
+        int returnVal = chooser.showDialog(this, "Open network");
         
         if(returnVal == chooser.APPROVE_OPTION)
         {
@@ -216,7 +222,7 @@ public class DTAGUI extends GUI
     {
         ProjectFileView view = new ProjectFileView("DTA");
         
-        JFileChooser chooser = new JFileChooser(new File("projects/"))
+        JFileChooser chooser = new JFileChooser(new File("networks/"))
         {
             public boolean accept(File file)
             {

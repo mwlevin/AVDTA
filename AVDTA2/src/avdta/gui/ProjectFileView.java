@@ -20,6 +20,10 @@ public class ProjectFileView extends FileView
 {
     private String type;
     
+    public ProjectFileView()
+    {
+        this(null);
+    }
     public ProjectFileView(String type)
     {
         this.type = type;
@@ -44,15 +48,22 @@ public class ProjectFileView extends FileView
             
             if(properties.exists())
             {
-                File dta = new File(file.getCanonicalPath()+"/dta.dat");
-                
-                if(dta.exists())
+                if(type == null)
                 {
                     return 1;
                 }
                 else
                 {
-                    return 2;
+                    File typefile = new File(file.getCanonicalPath()+"/"+type+".dat");
+
+                    if(typefile.exists())
+                    {
+                        return 1;
+                    }
+                    else
+                    {
+                        return 2;
+                    }
                 }
             }
         }

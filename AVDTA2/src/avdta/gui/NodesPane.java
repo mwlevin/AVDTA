@@ -160,6 +160,8 @@ public class NodesPane extends JPanel
         stop.setSelected(false);
         reservation.setSelected(false);
         
+        data.setText("");
+        
         if(project != null)
         {
             HVsUseReservations.setSelected(project.getOption("hvs-use-reservations").equals("true"));
@@ -250,9 +252,9 @@ public class NodesPane extends JPanel
             }
             
             
-            data.setText("");
             
-            data.append(total+"\tnodes\n");
+            
+            data.append(total+"\tnodes\n\n");
             if(centroidCount > 0)
             {
                 data.append(total+"\tcentroids\n");
@@ -267,31 +269,31 @@ public class NodesPane extends JPanel
             }
             if(reservationCount > 0)
             {
-                data.append(reservationCount + "\treservations\n");
+                data.append(reservationCount + "\treservations\n\n");
                 
                 if(fcfsCount > 0)
                 {
-                    data.append("\t"+fcfsCount+"\tFCFS\n");
+                    data.append(fcfsCount+"\tFCFS\n");
                 }
                 if(auctionCount > 0)
                 {
-                    data.append("\t"+auctionCount+"\tauctions\n");
+                    data.append(auctionCount+"\tauctions\n");
                 }
                 if(pressureCount > 0)
                 {
-                    data.append("\t"+pressureCount+"\tbackpressure\n");
+                    data.append(pressureCount+"\tbackpressure\n");
                 }
                 if(p0Count > 0)
                 {
-                    data.append("\t"+p0Count+"\tP0\n");
+                    data.append(p0Count+"\tP0\n");
                 }
                 if(weightedCount > 0)
                 {
-                    data.append("\t"+weightedCount+"\tweighted\n");
+                    data.append(weightedCount+"\tweighted\n");
                 }
                 if(phasedCount > 0)
                 {
-                    data.append("\t"+phasedCount+"\tphased\n");
+                    data.append(phasedCount+"\tphased\n");
                 }
             }
             
