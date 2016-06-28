@@ -34,6 +34,10 @@ public class DTASimulator extends Simulator
     
     private int iteration;
     
+    public DTASimulator(DTAProject project)
+    {
+        super(project);
+    }
     public DTASimulator(DTAProject project, List<Node> nodes, List<Link> links)
     {
         super(project, nodes, links);

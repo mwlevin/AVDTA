@@ -37,15 +37,22 @@ public class DTAProject extends Project
         return (DTASimulator)super.getSimulator();
     }
     
-    public DTASimulator loadSimulator() throws IOException
+    public void loadSimulator() throws IOException
     {
-        ReadDTANetwork read = new ReadDTANetwork();       
+        try
+        {
+            ReadDTANetwork read = new ReadDTANetwork();  
+            
+            DTASimulator output = read.readNetwork(this);
         
-        DTASimulator output = read.readNetwork(this);
-        
-        setSimulator(output);
-        
-        return output;
+            setSimulator(output);
+        }
+        catch(Exception ex)
+        {
+            //ex.printStackTrace(System.err);
+            setSimulator(createEmptySimulator());
+        }
+
     }
     
     public void createProjectFolders(File dir) throws IOException
@@ -56,6 +63,14 @@ public class DTAProject extends Project
         
         File file = new File(dirStr+"/assignments");
         file.mkdirs();
+        
+        PrintStream fileout = new PrintStream(getProjectDirectory()+"/dta.dat");
+        fileout.close();
+    }
+    
+    public DTASimulator createEmptySimulator()
+    {
+        return new DTASimulator(this);
     }
     
 

@@ -37,6 +37,21 @@ import java.util.TreeSet;
  */
 public class ReadDTANetwork extends ReadNetwork
 {
+    public static final int HV = 10;
+    public static final int AV = 20;
+    
+    public static final int ICV = 1;
+    public static final int BEV = 2;
+    
+    public static final int DA_VEHICLE = 100;
+    public static final int TRANSIT = 500;
+    public static final int SAV = 200;
+    
+    public ReadDTANetwork()
+    {
+        super();
+    }
+    
     public DTASimulator readNetwork(DTAProject project) throws IOException
     {
         readOptions(project);
@@ -188,7 +203,7 @@ public class ReadDTANetwork extends ReadNetwork
             double vot = filein.nextDouble();
             filein.nextLine();
   
-            if(type != Vehicle.BUS)
+            if(type / 10 == DA_VEHICLE)
             {
                 
             
@@ -200,7 +215,33 @@ public class ReadDTANetwork extends ReadNetwork
                 origin.addProductions(1);
                 dest.addAttractions(1);
                 
-                vehicles.add(new PersonalVehicle(id, origin, dest, dtime, vot, VehicleClass.getVehClass(type), DriverType.getDriver(type)));
+                VehicleClass vehClass = null;
+                DriverType driver = null;
+                
+                switch(type%100)
+                {
+                    case ICV:
+                        vehClass = VehicleClass.icv;
+                        break;
+                    case BEV:
+                        vehClass = VehicleClass.bev;
+                        break;
+                    default:
+                        throw new RuntimeException("Vehicle class not recognized - "+type);
+                }
+                
+                switch((type / 10 % 10)*10)
+                {
+                    case HV:
+                        driver = DriverType.HV;
+                        break;
+                    case AV:
+                        driver = DriverType.AV;
+                        break;
+                    default:
+                        throw new RuntimeException("Vehicle class not recognized - "+type);
+                }
+                vehicles.add(new PersonalVehicle(id, origin, dest, dtime, vot, vehClass, driver));
             }
         }
         

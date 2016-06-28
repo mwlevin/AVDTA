@@ -24,8 +24,8 @@ public class NetworkPane extends JPanel
     
     public NetworkPane()
     {
-        linksPane = new LinksPane();
-        nodesPane = new NodesPane();
+        linksPane = new LinksPane(this);
+        nodesPane = new NodesPane(this);
         
         setLayout(new GridBagLayout());
         
@@ -39,5 +39,23 @@ public class NetworkPane extends JPanel
         
         linksPane.setProject(project);
         nodesPane.setProject(project);
+    }
+    
+    public void reset()
+    {
+        nodesPane.reset();
+        linksPane.reset();
+    }
+    
+    public void enable()
+    {
+        nodesPane.enable();
+        linksPane.enable();
+    }
+    
+    public void disable()
+    {
+        nodesPane.disable();
+        linksPane.disable();
     }
 }

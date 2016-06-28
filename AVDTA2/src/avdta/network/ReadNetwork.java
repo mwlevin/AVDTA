@@ -25,7 +25,6 @@ import avdta.network.node.IntersectionControl;
 import avdta.network.node.IntersectionPolicy;
 import avdta.network.node.StopSign;
 import avdta.network.node.Phase;
-import avdta.network.node.PhasedTBR;
 import avdta.network.node.TrafficSignal;
 import avdta.network.node.PriorityTBR;
 import avdta.network.node.SignalWeightedTBR;
@@ -35,6 +34,7 @@ import avdta.network.DemandProfile;
 import avdta.network.node.BackPressureObj;
 import avdta.network.node.P0Obj;
 import avdta.project.DTAProject;
+import avdta.network.node.PhasedTBR;
 import avdta.project.Project;
 import avdta.vehicle.DriverType;
 import avdta.vehicle.fuel.VehicleClass;
@@ -237,6 +237,8 @@ public class ReadNetwork
         return nodes;
     }
     
+    
+    
     public List<Link> readLinks(Project project) throws IOException
     {
         List<Link> links = new ArrayList<Link>();
@@ -304,8 +306,8 @@ public class ReadNetwork
 
         while(filein.hasNext())
         {
-            int type = filein.nextInt();
             int nodeid = filein.nextInt();
+            int type = filein.nextInt();
             int offset = filein.nextInt();
             int phaseid = filein.nextInt();
             double timered = filein.nextDouble();
@@ -470,20 +472,7 @@ public class ReadNetwork
     }
     
     
-    public static void fillOptions(String name) throws IOException
-    {
-        PrintStream fileout = new PrintStream(new File("data/"+name+"/options.txt"));
-        fileout.println("key\tvalue");
-        fileout.println("simulation-mesoscopic-delta\t0.5");
-        fileout.println("simulation-duration\t36000");
-        fileout.println("hv-reaction-time\t1");
-        fileout.println("av-reaction-time\t1");
-        fileout.println("hvs-use-reservations\t0");
-        fileout.println("dynamic-lane-reversal\t0");
-        fileout.close();
-    }
-    
-    
+   
     
 
     

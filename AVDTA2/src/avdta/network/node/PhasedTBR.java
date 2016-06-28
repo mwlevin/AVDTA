@@ -40,8 +40,9 @@ public class PhasedTBR extends PriorityTBR implements Signalized
     public PhasedTBR(Intersection n)
     {
         super(n);
-        phases = new ArrayList<Phase>();
         turns = new HashMap<Link, Map<Link, PhaseMovement>>();
+        phases = new ArrayList<Phase>();
+        
         
         setPolicy(new PhasePriority(this));
     }

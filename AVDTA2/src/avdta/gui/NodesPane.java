@@ -59,6 +59,7 @@ import javax.swing.event.ChangeListener;
  */
 public class NodesPane extends JPanel
 {
+    private NetworkPane parent;
     private Project project;
     
     private JTextArea data;
@@ -67,10 +68,11 @@ public class NodesPane extends JPanel
     private JRadioButton signal, stop, reservation;
     private JButton save, reset;
     
-    public NodesPane()
+    public NodesPane(NetworkPane parent)
     {
+        this.parent = parent;
         data = new JTextArea(5, 30);
-        data.setEnabled(false);
+        data.setEditable(false);
         
         HVsUseReservations = new JCheckBox("HVs use reservations");
         

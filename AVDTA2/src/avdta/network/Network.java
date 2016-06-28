@@ -41,6 +41,11 @@ public class Network
     
     public TravelCost costFunc;
     
+    public Network()
+    {
+        nodes = new ArrayList<Node>();
+        links = new ArrayList<Link>();
+    }
     public Network(List<Node> nodes, List<Link> links)
     {
         this.nodes = nodes;

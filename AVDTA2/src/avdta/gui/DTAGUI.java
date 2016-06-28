@@ -16,11 +16,16 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.File;
+import java.io.IOException;
+import javax.swing.JFileChooser;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
+import javax.swing.filechooser.FileView;
+import avdta.network.ReadNetwork;
 
 /**
  *
@@ -31,7 +36,8 @@ public class DTAGUI extends GUI
     protected DTAProject project;
     private NetworkPane networkPane;
     
-    private JTextField projectTxt, typeTxt;
+    
+    private JMenuItem cloneMI;
     
     public DTAGUI()
     {
@@ -43,17 +49,7 @@ public class DTAGUI extends GUI
         JPanel p = new JPanel();
         p.setLayout(new GridBagLayout());
 
-        
-        projectTxt = new JTextField(20);
-        projectTxt.setEnabled(false);
-        projectTxt.setBorder(null);
-        projectTxt.setBackground(getBackground());
-        
-        typeTxt = new JTextField(20);
-        typeTxt.setEnabled(false);
-        typeTxt.setBorder(null);
-        typeTxt.setBackground(getBackground());
-        
+
         
         JTabbedPane tabs = new JTabbedPane();
         
@@ -61,9 +57,7 @@ public class DTAGUI extends GUI
         
         tabs.add("Network", networkPane);
         
-        constrain(p, projectTxt, 0, 0, 1, 1);
-        constrain(p, typeTxt, 1, 0, 1, 1);
-        constrain(p, tabs, 0, 1, 2, 1);
+        constrain(p, tabs, 0, 0, 1, 1);
         
         
         
@@ -82,6 +76,46 @@ public class DTAGUI extends GUI
         JMenuBar menu = new JMenuBar();
         JMenu me;
         JMenuItem mi;
+        
+        me = new JMenu("File");
+        mi = new JMenuItem("New");
+        
+        mi.addActionListener(new ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                newProject();
+            }
+        });
+        me.add(mi);
+        
+        mi = new JMenuItem("Open");
+        
+        mi.addActionListener(new ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                openProject();
+            }
+        });
+        me.add(mi);
+        
+        mi = new JMenuItem("Clone");
+        
+        mi.addActionListener(new ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                cloneProject();
+            }
+        });
+        me.add(mi);
+        
+        cloneMI = mi;
+        cloneMI.setEnabled(false);
+        
+        menu.add(me);
+        
         me = new JMenu("About");
         mi = new JMenuItem("Version");
         
@@ -89,7 +123,7 @@ public class DTAGUI extends GUI
         {
             public void actionPerformed(ActionEvent e)
             {
-                JOptionPane.showMessageDialog(frame, "Version "+Version.getVersion()+"\nCopyright "+Version.getAuthor(), 
+                JOptionPane.showMessageDialog(frame, "Version "+Version.getVersion()+"\nCopyright © 2014 by "+Version.getAuthor(), 
                         "About", JOptionPane.INFORMATION_MESSAGE);
             }
         });
@@ -125,6 +159,94 @@ public class DTAGUI extends GUI
     {
         this.project = project;
         
+        System.out.println(project);
+        
+        cloneMI.setEnabled(project != null);
+        
         networkPane.setProject(project);
+        
+        
+        if(project != null)
+        {
+            setTitle(project.getName()+" - AVDTA");
+        }
+    }
+    
+    public void cloneProject()
+    {
+        
+    }
+    
+    public void openProject()
+    {
+        ProjectFileView view = new ProjectFileView("DTA");
+        
+        JFileChooser chooser = new JFileChooser(new File("projects/"))
+        {
+            public boolean accept(File file)
+            { 
+               return view.isProject(file) < 2;
+            }
+        };
+        
+        
+        
+        chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+        chooser.setFileView(view);
+        
+        int returnVal = chooser.showDialog(this, "Open project");
+        
+        if(returnVal == chooser.APPROVE_OPTION)
+        {
+            try
+            {
+                DTAProject project = new DTAProject(chooser.getSelectedFile());
+                
+                openProject(project);
+            }
+            catch(IOException ex)
+            {
+                JOptionPane.showMessageDialog(this, "The selected folder is not a DTA network", "Invalid network", 
+                        JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
+    
+    public void newProject()
+    {
+        ProjectFileView view = new ProjectFileView("DTA");
+        
+        JFileChooser chooser = new JFileChooser(new File("projects/"))
+        {
+            public boolean accept(File file)
+            {
+                return view.isProject(file) == 0;
+            }
+        };
+        
+        chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        chooser.setFileView(view);
+        
+        
+        int returnVal = chooser.showDialog(this, "Select folder");
+        
+        if(returnVal == JFileChooser.APPROVE_OPTION)
+        {
+            File dir = chooser.getSelectedFile();
+            
+            String name = JOptionPane.showInputDialog(this, "What do you want to name this project? ", "Project name", 
+                    JOptionPane.QUESTION_MESSAGE);
+            
+            try
+            {
+                DTAProject project = new DTAProject();
+                project.createProject(name, new File(dir.getCanonicalPath()+"/"+name));
+                openProject(project);
+            }
+            catch(IOException ex)
+            {
+                handleException(ex);
+            }
+        }
     }
 }

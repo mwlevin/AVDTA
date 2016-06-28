@@ -45,15 +45,21 @@ public abstract class Project
         this.simulator = sim;
     }
     
-    public Simulator loadSimulator() throws IOException
+    public void loadSimulator() throws IOException
     {
         ReadNetwork read = new ReadNetwork();       
         
-        Simulator output = read.readNetwork(this);
+        try
+        {
+            Simulator output = read.readNetwork(this);
         
-        simulator = output;
-        
-        return output;
+            simulator =  output;
+        }
+        catch(Exception ex)
+        {
+            simulator = createEmptySimulator();
+        }
+
     }
     
     public String getOption(String k)
@@ -88,19 +94,25 @@ public abstract class Project
     
     public Project(File dir) throws IOException
     {
+        networkOptions = new TreeMap<String, String>();
+        setDirectory(dir);
+        loadProject();
+    }
+    
+    public void setDirectory(File dir) throws IOException
+    {
         this.directory = dir.getCanonicalPath();
         
         if(directory.indexOf("project.dat") >= 0)
         {
             directory = directory.substring(0, directory.lastIndexOf("/")+1);
         }
-        loadProject();
     }
     
     public void loadProject() throws IOException
     {
-        
         readProperties();
+        loadSimulator();
     }
     
     public void readProperties() throws IOException
@@ -151,13 +163,36 @@ public abstract class Project
         createProjectFolders(new File(dirStr));
     }
     
-    public void createProject(String name) throws IOException
+    public void createProject(String name, File dir) throws IOException
     {
         this.name = name;
+        setDirectory(dir);
         createProjectFolders(new File(getProjectDirectory()));
+        fillOptions();
+        writeOptions();
         
         changeRandSeed();
         writeProperties();
+        
+        simulator = createEmptySimulator();
+    }
+    
+    public void fillOptions()
+    {
+        setOption("simulation-mesoscopic-delta","0.5");
+        setOption("simulation-duration","36000");
+        setOption("hv-reaction-time","1");
+        setOption("av-reaction-time","1");
+        setOption("hvs-use-reservations","0");
+        setOption("dynamic-lane-reversal","0");
+        setOption("simulation-mesoscopic-step","6");
+        
+        
+    }
+    
+    public Simulator createEmptySimulator()
+    {
+        return new Simulator(this);
     }
     
     public Random getRandom()
@@ -168,7 +203,7 @@ public abstract class Project
 
     public void changeRandSeed()
     {
-        randSeed = (int)(System.nanoTime()/1.0e6);
+        randSeed = (int)(System.nanoTime()/1.0e10);
         
         rand = new Random(randSeed);
     }
@@ -221,7 +256,7 @@ public abstract class Project
     
     public File getPropertiesFile()
     {
-        return new File(getProjectDirectory()+"/network/project.txt");
+        return new File(getProjectDirectory()+"/project.dat");
     }
     
     public File getLinksFile()

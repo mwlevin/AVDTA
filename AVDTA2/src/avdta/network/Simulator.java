@@ -114,6 +114,10 @@ public class Simulator extends Network
     
     protected StatusUpdate statusUpdate;
     
+    public Simulator(Project project)
+    {
+        this.project = project;
+    }
     public Simulator(Project project, List<Node> nodes, List<Link> links)
     {
         super(nodes, links);

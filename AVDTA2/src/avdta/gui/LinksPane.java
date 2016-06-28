@@ -39,6 +39,7 @@ import javax.swing.JTextField;
 public class LinksPane extends JPanel
 {
     private Project project;
+    private NetworkPane parent;
     
     private JTextArea data;
     
@@ -51,10 +52,12 @@ public class LinksPane extends JPanel
     private JTextField mesoDelta;
     private JTextField timestep;
     
-    public LinksPane()
+    public LinksPane(NetworkPane parent)
     {
+        this.parent = parent;
+        
         data = new JTextArea(5, 30);
-        data.setEnabled(false);
+        data.setEditable(false);
         
         HVtau = new JTextField(5);
         AVtau = new JTextField(5);
@@ -182,7 +185,7 @@ public class LinksPane extends JPanel
                 total ++;
             }
             
-            data.append(total+"\ttotal links\n");
+            data.append(total+"\tlinks\n");
             if(ctm > 0)
             {
                 data.append(ctm+"\tCTM links\n");
@@ -239,7 +242,7 @@ public class LinksPane extends JPanel
 
     public void save() throws IOException
     {
-        disable();
+        parent.disable();
         
         
         project.setOption("simulation-mesoscopic-delta", ""+Double.parseDouble(mesoDelta.getText().trim()));
@@ -302,8 +305,9 @@ public class LinksPane extends JPanel
         }
         
         project.loadSimulator();
+        parent.reset();
         
-        enable();
+        parent.enable();
     }
  
     
