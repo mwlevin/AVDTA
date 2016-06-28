@@ -48,4 +48,23 @@ public abstract class DLRCell extends Cell
             return total_road_lanes;
         }
     }
+    
+    // minimum lanes for this timestep
+    public double getMinLanes()
+    {
+        int numLanes = getNumLanes();
+        
+        if(curr.size() == 0)
+        {
+            return 0;
+        }
+        else if(curr.size() > getLink().getCellJamdPerLane() * (numLanes - 1))
+        {
+            return numLanes;
+        }
+        else
+        {
+            return numLanes - 1;
+        }
+    }
 }

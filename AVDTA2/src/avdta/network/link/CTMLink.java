@@ -69,17 +69,17 @@ public class CTMLink extends Link
         cells[cells.length -1] = createEndCell(cells[cells.length-2]);
     }
     
-    protected EndCell createEndCell(Cell prev)
+    public Cell createEndCell(Cell prev)
     {
         return new EndCell(prev, this);
     }
     
-    protected StartCell createStartCell()
+    public Cell createStartCell()
     {
         return new StartCell(this);
     }
     
-    protected LinkCell createCell(Cell prev)
+    public Cell createCell(Cell prev)
     {
         return new LinkCell(prev, this);
     }

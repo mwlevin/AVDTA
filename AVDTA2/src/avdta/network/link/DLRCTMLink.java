@@ -9,6 +9,9 @@ import avdta.network.link.cell.Cell;
 import avdta.network.link.cell.DLRCell;
 import avdta.network.Network;
 import avdta.network.Simulator;
+import avdta.network.link.cell.DLREndCell;
+import avdta.network.link.cell.DLRLinkCell;
+import avdta.network.link.cell.DLRStartCell;
 import avdta.network.node.Node;
 import avdta.util.RunningAvg;
 
@@ -34,6 +37,22 @@ public class DLRCTMLink extends CTMLink
         super(id, source, dest, capacity, ffspd, wavespd, jamd, length, numLanes);
         
         usSendingFlow_fordt = 0;
+    }
+    
+    
+    public Cell createEndCell(DLRCell prev)
+    {
+        return new DLREndCell(prev, this);
+    }
+    
+    public Cell createStartCell()
+    {
+        return new DLRStartCell(this);
+    }
+    
+    public Cell createCell(DLRCell prev)
+    {
+        return new DLRLinkCell(prev, this);
     }
     
     public boolean isTied()
@@ -251,7 +270,7 @@ public class DLRCTMLink extends CTMLink
         
         for(Cell c : opposite.cells)
         {
-            output = (int)Math.min(output, total_lanes - c.getMinLanes());
+            output = (int)Math.min(output, total_lanes - ((DLRCell)c).getMinLanes());
         }
         
         //return output;
@@ -266,7 +285,7 @@ public class DLRCTMLink extends CTMLink
         
         for(Cell c : cells)
         {
-            output = (int)Math.min(output, total_lanes - c.getMinLanes());
+            output = (int)Math.min(output, total_lanes - ((DLRCell)c).getMinLanes());
         }
         
         //return output;

@@ -37,6 +37,11 @@ public class Bus extends PersonalVehicle
         stop_arr_time = dtime;
     }
     
+    public boolean isTransit()
+    {
+        return true;
+    }
+    
     public int getType()
     {
         return BUS;

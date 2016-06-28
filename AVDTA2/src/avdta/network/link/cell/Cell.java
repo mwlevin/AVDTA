@@ -72,22 +72,7 @@ public abstract class Cell implements Comparable<Cell>
     
     
     
-    // minimum lanes for this timestep
-    public double getMinLanes()
-    {
-        if(curr.size() == 0)
-        {
-            return 0;
-        }
-        else if(curr.size() > link.getCellJamdPerLane() * (numLanes - 1))
-        {
-            return numLanes;
-        }
-        else
-        {
-            return numLanes - 1;
-        }
-    }
+    
     
     
 
@@ -98,7 +83,7 @@ public abstract class Cell implements Comparable<Cell>
     
     public boolean isCongested()
     {
-        return (curr.size() > link.getCapacityPerLane() * numLanes * Network.dt / 3600.0);
+        return (curr.size() > scaleCapacity(getCapacity()) * Network.dt / 3600.0);
     }
 
     public void reset()
@@ -142,13 +127,24 @@ public abstract class Cell implements Comparable<Cell>
     
     public void prepare()
     {
-        double capacity = scaleCapacity(link.getCapacityPerLane()) * numLanes * Network.dt / 3600.0;
+        double capacity = scaleCapacity(getCapacity()) * Network.dt / 3600.0;
         R = R - Math.floor(R);
         max_S = max_S - Math.floor(max_S);
         
-        R += Math.min(capacity, scaleWaveSpeed(link.getWaveSpeed()) / link.getFFSpeed() * (link.getCellJamdPerLane() * numLanes - curr.size()));
+        R += Math.min(capacity, scaleWaveSpeed(link.getWaveSpeed()) / link.getFFSpeed() * 
+                (getJamD() - curr.size()));
         max_S += capacity;
        
+    }
+    
+    public double getCapacity()
+    {
+        return link.getCapacityPerLane() * getNumLanes();
+    }
+    
+    public double getJamD()
+    {
+        return link.getCellJamdPerLane() * getNumLanes();
     }
 
     public double getAvgReactionTime()
@@ -170,7 +166,8 @@ public abstract class Cell implements Comparable<Cell>
 
     public double scaleCapacity(double c)
     {
-        return c * (link.getFFSpeed() * DriverType.HV.getReactionTime() + Vehicle.vehicle_length) / (link.getFFSpeed() * getAvgReactionTime() + Vehicle.vehicle_length);
+        return c * (link.getFFSpeed() * DriverType.HV.getReactionTime() + Vehicle.vehicle_length) / 
+                (link.getFFSpeed() * getAvgReactionTime() + Vehicle.vehicle_length);
     }
 
     public double scaleWaveSpeed(double w)
@@ -211,7 +208,9 @@ public abstract class Cell implements Comparable<Cell>
     
     public double getReceivingFlow(int numLanes)
     {
-        return Math.min(scaleCapacity(link.getCapacityPerLane()) * numLanes * Network.dt / 3600.0, scaleWaveSpeed(link.getWaveSpeed()) / link.getFFSpeed() * (link.getCellJamdPerLane() * numLanes - curr.size()));
+        return Math.min(scaleCapacity(getCapacity())
+                * Network.dt / 3600.0, scaleWaveSpeed(link.getWaveSpeed()) / link.getFFSpeed() 
+                * (getJamD() - curr.size()));
     }
 
     public boolean removeVehicle(Vehicle v)
