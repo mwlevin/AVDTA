@@ -32,6 +32,7 @@ import avdta.network.node.Signalized;
 import avdta.network.AST;
 import avdta.network.DemandProfile;
 import avdta.network.link.DLRCTMLink;
+import avdta.network.link.SharedTransitCTMLink;
 import avdta.network.node.BackPressureObj;
 import avdta.network.node.P0Obj;
 import avdta.project.DTAProject;
@@ -63,6 +64,7 @@ public class ReadNetwork
     public static final int LTM = 200;
     public static final int CTM = 100;
     public static final int DLR = 2;
+    public static final int SHARED_TRANSIT = 3;
     public static final int CENTROID = 1000;
     
     
@@ -280,6 +282,10 @@ public class ReadNetwork
                     {
                         Network.dlr = true;
                         link = new DLRCTMLink(id, nodesmap.get(source_id), nodesmap.get(dest_id), capacity, ffspd, ffspd*mesodelta, jamd, length, numLanes);
+                    }
+                    else if(type % 10 == SHARED_TRANSIT)
+                    {
+                        link = new SharedTransitCTMLink(id, nodesmap.get(source_id), nodesmap.get(dest_id), capacity, ffspd, ffspd*mesodelta, jamd, length, numLanes);
                     }
                     else
                     {
