@@ -71,7 +71,7 @@ public class NodesPane extends JPanel
     public NodesPane(NetworkPane parent)
     {
         this.parent = parent;
-        data = new JTextArea(5, 30);
+        data = new JTextArea(5, 20);
         data.setEditable(false);
         
         HVsUseReservations = new JCheckBox("HVs use reservations");

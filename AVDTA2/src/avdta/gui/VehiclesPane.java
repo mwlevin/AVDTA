@@ -5,6 +5,7 @@
  */
 package avdta.gui;
 
+import avdta.dta.ReadDTANetwork;
 import avdta.project.DTAProject;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -16,6 +17,12 @@ import avdta.vehicle.DriverType;
 import avdta.vehicle.PersonalVehicle;
 import avdta.vehicle.Vehicle;
 import avdta.vehicle.fuel.VehicleClass;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.IOException;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JTextField;
 /**
  *
  * @author micha
@@ -27,23 +34,78 @@ public class VehiclesPane extends JPanel
     
     private JTextArea data;
     
+    private JTextField prop;
+    private JButton prepareDemand;
+    
     public VehiclesPane(DemandPane parent)
     {
-        data = new JTextArea(10, 30);
+        data = new JTextArea(10, 20);
         data.setEditable(false);
         
+        prop = new JTextField(5);
+        prepareDemand = new JButton("Prepare demand");
+        
+        prepareDemand.addActionListener(new ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                try
+                {
+                    prepareDemand();
+                }
+                catch(IOException ex)
+                {
+                    GUI.handleException(ex);
+                }
+            }
+        });
+        
+        prop.setText("100");
+        
         setLayout(new GridBagLayout());
-        constrain(this, new JScrollPane(data), 0, 0, 1, 1);
+        constrain(this, new JScrollPane(data), 0, 0, 2, 1);
+        constrain(this, new JLabel("Percent of dynamic OD: "), 0, 1, 1, 1);
+        constrain(this, prop, 1, 1, 1, 1);
+        constrain(this, prepareDemand, 0, 2, 2, 1);
+        
+        reset();
     }
     
     public void enable()
     {
-        
+        prop.setEditable(true);
+        prepareDemand.setEnabled(true);
     }
     
     public void disable()
     {
+        prop.setEditable(false);      
+        prepareDemand.setEnabled(false);
+    }
+    
+    public void prepareDemand() throws IOException
+    {
+        try
+        {
+            Double.parseDouble(prop.getText().trim());
+        }
+        catch(Exception ex)
+        {
+            prop.setText("100");
+            prop.requestFocus();
+            return;
+        }
+        parent.disable();
         
+        ReadDTANetwork read = new ReadDTANetwork();
+        read.prepareDemand(project, Double.parseDouble(prop.getText().trim())/100.0);
+        
+        project.loadSimulator();
+     
+        prop.setText("100");
+        
+        parent.reset();
+        parent.enable();
     }
     
     public void reset()
@@ -59,6 +121,8 @@ public class VehiclesPane extends JPanel
             int SAVs = 0;
             int ICV = 0;
             int BEV = 0;
+            
+            
             
             for(Vehicle v : project.getSimulator().getVehicles())
             {
@@ -127,8 +191,12 @@ public class VehiclesPane extends JPanel
                 data.append(BEV+"\tBEVs\n");
             }
             
+            enable();
         }
-        
+        else
+        {
+            disable();
+        }
     }
     
     public void setProject(DTAProject project)

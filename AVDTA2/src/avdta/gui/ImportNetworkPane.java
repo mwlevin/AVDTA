@@ -54,7 +54,7 @@ public class ImportNetworkPane extends JPanel
             }
             public File chooseFile()
             {
-                ProjectFileView view = new ProjectFileView("DTA");
+                ProjectFileView view = new ProjectFileView(null);
         
                 JFileChooser chooser = new JFileChooser(new File("networks/"))
                 {
@@ -164,7 +164,7 @@ public class ImportNetworkPane extends JPanel
         constrain(p, new JLabel("Import from VISTA"), 0, 0, 4, 1);
         constrain(p, new JLabel("Nodes: "), 0, 1, 1, 1);
         constrain(p, nodes, 1, 1, 1, 1);
-        constrain(p, new JLabel("Link details: "), 0, 2, 1, 1);
+        constrain(p, new JLabel("Linkdetails: "), 0, 2, 1, 1);
         constrain(p, linkdetails, 1, 2, 1, 1);
         constrain(p, new JLabel("Phases: "), 0, 3, 1, 1);
         constrain(p, phases, 1, 3, 1, 1);
@@ -271,7 +271,6 @@ public class ImportNetworkPane extends JPanel
         parent.reset();
         
         parent.enable();
-        parent.reset();
     }
     
     

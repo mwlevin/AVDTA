@@ -55,6 +55,7 @@ public class DTAGUI extends GUI
         JTabbedPane tabs = new JTabbedPane();
         
         networkPane = new NetworkPane();
+        demandPane = new DemandPane();
         
         tabs.add("Network", networkPane);
         tabs.add("Demand", demandPane);
@@ -140,7 +141,6 @@ public class DTAGUI extends GUI
         
         
         
-        
         pack();
         setResizable(false);
         
@@ -164,16 +164,18 @@ public class DTAGUI extends GUI
         
         
         cloneMI.setEnabled(project != null);
-        project.loadSimulator();
-        
-        networkPane.setProject(project);
-        demandPane.setProject(project);
-        
         
         if(project != null)
         {
             setTitle(project.getName()+" - AVDTA");
         }
+        
+        
+        networkPane.setProject(project);
+        demandPane.setProject(project);
+        
+        
+        
         
         
     }

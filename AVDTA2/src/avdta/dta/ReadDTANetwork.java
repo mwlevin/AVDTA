@@ -25,10 +25,13 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.Scanner;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.TreeSet;
 
 /**
@@ -112,6 +115,83 @@ public class ReadDTANetwork extends ReadNetwork
         fileout.close();
     }
     
+    public void changeType(DTAProject project, Map<Integer, Double> proportionMap) throws IOException
+    {
+        Map<Integer, Map<Integer, Map<Integer, Double>>> demands = new TreeMap<Integer, Map<Integer, Map<Integer, Double>>>();
+        
+        Scanner filein = new Scanner(project.getDynamicODFile());
+        
+        while(filein.hasNextInt())
+        {
+            filein.nextInt();
+            int type = filein.nextInt();
+            int origin = filein.nextInt();
+            int dest = filein.nextInt();
+            int t = filein.nextInt();
+            double demand = filein.nextDouble();
+            filein.nextLine();
+            
+            Map<Integer, Map<Integer, Double>> temp;
+            
+            if(demands.containsKey(origin))
+            {
+                temp = demands.get(origin);
+            }
+            else
+            {
+                demands.put(origin, temp = new TreeMap<Integer, Map<Integer, Double>>());
+            }
+            
+            Map<Integer, Double> temp2;
+            
+            if(temp.containsKey(dest))
+            {
+                temp2 = temp.get(dest);
+            }
+            else
+            {
+                temp.put(dest, temp2 = new TreeMap<Integer, Double>());
+            }
+            
+            if(temp2.containsKey(t))
+            {
+                temp2.put(t, temp2.get(t) + demand);
+            }
+            else
+            {
+                temp2.put(t, demand);
+            }
+        }
+        filein.close();
+        
+        PrintStream fileout = new PrintStream(new FileOutputStream(project.getDynamicODFile()), true);
+        fileout.println(getDynamicODFileHeader());
+        
+        int new_id = 1;
+        for(int o : demands.keySet())
+        {
+            Map<Integer, Map<Integer, Double>> temp = demands.get(o);
+            
+            for(int d : temp.keySet())
+            {
+                Map<Integer, Double> temp2 = temp.get(o);
+                
+                for(int t : temp2.keySet())
+                {
+                    double total = temp2.get(t);
+                    
+                    for(int type : proportionMap.keySet())
+                    {
+                        double dem = total * proportionMap.get(type);
+                        
+                        fileout.println((new_id++)+"\t"+type+"\t"+o+"\t"+d+"\t"+t + "\t" + dem);            
+                    }
+                }
+            }
+        }
+        fileout.close();
+    }
+    
     public int prepareDemand(DTAProject project, double prop) throws IOException
     {
         Set<VehicleRecord> vehicles = new TreeSet<VehicleRecord>();
@@ -190,7 +270,6 @@ public class ReadDTANetwork extends ReadNetwork
         
         Scanner filein = new Scanner(project.getDemandFile());
         
-        Random rand = project.getRandom();
         filein.nextLine();
         
         while(filein.hasNext())
@@ -203,7 +282,7 @@ public class ReadDTANetwork extends ReadNetwork
             double vot = filein.nextDouble();
             filein.nextLine();
   
-            if(type / 10 == DA_VEHICLE)
+            if(type / 100 == DA_VEHICLE/100)
             {
                 
             
@@ -218,7 +297,7 @@ public class ReadDTANetwork extends ReadNetwork
                 VehicleClass vehClass = null;
                 DriverType driver = null;
                 
-                switch(type%100)
+                switch(type % 10)
                 {
                     case ICV:
                         vehClass = VehicleClass.icv;

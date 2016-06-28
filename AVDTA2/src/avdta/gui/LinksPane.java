@@ -56,7 +56,7 @@ public class LinksPane extends JPanel
     {
         this.parent = parent;
         
-        data = new JTextArea(5, 30);
+        data = new JTextArea(5, 25);
         data.setEditable(false);
         
         HVtau = new JTextField(5);
@@ -178,7 +178,7 @@ public class LinksPane extends JPanel
                 total ++;
             }
             
-            data.append(total+"\tlinks\n");
+            data.append(total+"\tlinks\n\n");
             if(ctm > 0)
             {
                 data.append(ctm+"\tCTM links\n");
