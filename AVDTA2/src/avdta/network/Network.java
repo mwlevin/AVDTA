@@ -98,6 +98,16 @@ public class Network
         return costFunc;
     }
     
+    public PathList getPaths()
+    {
+        return paths;
+    }
+    
+    public void setPaths(PathList p)
+    {
+        paths = p;
+    }
+    
     public void setCostFunction(TravelCost cost)
     {
         costFunc = cost;

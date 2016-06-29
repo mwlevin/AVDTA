@@ -31,6 +31,12 @@ public class PathList
         paths = new HashMap<Node, Map<Node, Map<Integer, List<Path>>>>();
     }
     
+    public PathList(Network network, File file) throws IOException
+    {
+        this();
+        
+        readFromFile(network, file);
+    }
     
     // return new path, or old path if new path is a duplicate
     public Path addPath(Path p)

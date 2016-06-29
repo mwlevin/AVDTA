@@ -20,36 +20,71 @@ import java.util.Scanner;
  * Relies on vehicles to be sorted by dtime then id
  * @author micha
  */
-public class Assignment 
+public class Assignment implements Comparable<Assignment>
 {
     private DTAResults results;
+    private int time;
+    
+    private String name;
     
     public Assignment(File input) throws IOException
     {
+        name = input.getCanonicalPath();
+        name = name.substring(0, name.lastIndexOf("\\".charAt(0)));
+        name = name.substring(name.lastIndexOf("\\".charAt(0))+1, name.length());
+        
+        time = (int)(input.lastModified()/1000);
+        
         // read header data
         
         Scanner filein = new Scanner(input);
         
+        readAssignment(filein);
+        
+        filein.close();
+        
+        
+    }
+    
+    public String getName()
+    {
+        return name;
+    }
+    
+    public String toString()
+    {
+        return getName();
+    }
+    
+    public int compareTo(Assignment rhs)
+    {
+        return rhs.time - time;
+    }
+    
+    public void readAssignment(Scanner filein)
+    {
         double mintt = filein.nextDouble();
         double tstt = filein.nextDouble();
         int num_veh = filein.nextInt();
         int exiting = filein.nextInt();
-        
-        filein.close();
-        
-        results = new DTAResults(mintt, tstt, num_veh, exiting);
+        results = new DTAResults(mintt*3600.0, tstt*3600.0, num_veh, exiting);
     }
     
     public Assignment(DTAResults results)
     {
         this.results = results;
+       
     }
     
+    public DTAResults getResults()
+    {
+        return results;
+    }
     
     public void writeToFile(List<Vehicle> vehicles, File file) throws IOException
     {
         PrintStream fileout = new PrintStream(new FileOutputStream(file), true);
-        fileout.println(results.getMinTT()+"\t"+results.getTSTT()+"\t"+results.getNumVeh()+"\t"+results.getNumExiting());
+        fileout.println(getHeaderData());
         
         for(Vehicle v : vehicles)
         {
@@ -60,11 +95,18 @@ public class Assignment
         
     }
     
+    public String getHeaderData()
+    {
+        return (results.getMinTT()/3600.0)+"\t"+results.getTSTT()+"\t"+results.getNumVeh()+"\t"+results.getNumExiting();
+    }
+    
     public void readFromFile(List<Vehicle> vehicles, PathList pathlist, File file) throws IOException
     {
         Map<Integer, Path> paths = pathlist.createPathIdsMap();
         
         Scanner filein = new Scanner(file);
+        
+        filein.nextLine();
         
         for(Vehicle v : vehicles)
         {
@@ -75,11 +117,12 @@ public class Assignment
                 throw new RuntimeException("Id mismatch when reading assignment");
             }
             
-            Path p = paths.get(filein.nextInt());
+            int path_id = filein.nextInt();
+            Path p = paths.get(path_id);
             
             if(p == null)
             {
-                throw new RuntimeException("Missing path when reading assignment");
+                throw new RuntimeException("Missing path when reading assignment - "+path_id);
             }
             
             v.setPath(p);

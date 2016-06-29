@@ -120,6 +120,10 @@ public class DTAProject extends Project
         return new File(getProjectDirectory()+"/network/demand.txt");
     }
     
+    public String getAssignmentsFolder()
+    {
+        return getProjectDirectory()+"/assignments";
+    }
     
     
     public File getOptionsFile()

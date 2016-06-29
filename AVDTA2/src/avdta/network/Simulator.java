@@ -91,7 +91,7 @@ public class Simulator extends Network
     public static final int num_timesteps = (int)Math.ceil(Simulator.duration / Network.dt)+1;
     
 
-    protected List<PersonalVehicle> vehicles;
+    protected List<Vehicle> vehicles;
     
 
     
@@ -129,7 +129,7 @@ public class Simulator extends Network
         
         this.out = System.out;
    
-        vehicles = new ArrayList<PersonalVehicle>();
+        vehicles = new ArrayList<Vehicle>();
  
         time = 0;
     }
@@ -146,50 +146,7 @@ public class Simulator extends Network
     }
     
 
-    public void importResults() throws IOException
-    {
-        PrintStream path_out = new PrintStream(new FileOutputStream(new File(project.getResultsFolder()+"/vehicle_path.txt")), true);
-        PrintStream veh_out = new PrintStream(new FileOutputStream(new File(project.getResultsFolder()+"/vehicle_path_time.txt")), true);
-        
-        Set<Integer> printed_paths = new HashSet<Integer>();
-        
-        // vehicle_path: id, origin, dest, hash, size, freeflowtt, length, issimpath, links
-        // vehicle_path_time: id, type, dta_departure, sim_departure, sim_exittime, dta_path, sim_path, arrivaltime
-        
-        for(PersonalVehicle v : vehicles)
-        {
-            Path p = v.getPath();
-            
-            if(printed_paths.add(p.getId()))
-            {
-                path_out.print(p.getId()+"\t"+p.getOrigin()+"\t"+p.getDest()+"\t"+p.hashCode()+"\t"+p.size()+"\t"+p.getFFTime()+"\t"+p.getLength()+"\t2\t{");
-                
-                path_out.print(p.get(0));
-                for(int i = 1; i < p.size(); i++)
-                {
-                    path_out.print(","+p.get(i));
-                }
-                path_out.println("}");
-            }
-            
-            veh_out.print(v.getId()+"\t"+v.getType()+"\t"+v.getDepTime()+"\t"+v.getDepTime()+"\t"+v.getExitTime()+"\t"+p.getId()+"\t"+p.getId()+"\t{");
-            int[] arr_times = v.getArrivalTimes();
-            
-            veh_out.print(arr_times[0]);
-            for(int i = 1; i < arr_times.length; i++)
-            {
-                veh_out.print(","+arr_times[i]);
-            }
-            
-            veh_out.print("}");
-            veh_out.println();
-        }
-        
-        path_out.close();
-        veh_out.close();
-        
-        printLinkTdd();
-    }
+    
     
     
     
@@ -222,18 +179,7 @@ public class Simulator extends Network
     
 
     
-    public void writeVehicleResults() throws IOException
-    {
-        PrintStream fileout = new PrintStream(new FileOutputStream(new File(project.getResultsFolder()+"/vehicles.txt")), true);
-        
-        fileout.println("ID\tOrigin\tDest\tDtime\tTT\tMPG\tTime waiting");
-        for(PersonalVehicle v : vehicles)
-        {
-            fileout.println(v.getId()+"\t"+v.getOrigin()+"\t"+v.getDest()+"\t"+v.getDepTime()+"\t"+v.getTT()+"\t"+v.getMPG()+"\t"+v.getTimeWaiting());
-        }
-        
-        fileout.close();
-    }
+    
     
     
     
@@ -258,7 +204,7 @@ public class Simulator extends Network
     
 
     
-    public List<PersonalVehicle> getVehicles()
+    public List<Vehicle> getVehicles()
     {
         return vehicles;
     }
@@ -318,7 +264,7 @@ public class Simulator extends Network
     {
     	double output = 0;
 
-    	for(PersonalVehicle v : vehicles)
+    	for(Vehicle v : vehicles)
     	{
             if(v.getExitTime() < Simulator.duration)
             {
@@ -509,7 +455,7 @@ public class Simulator extends Network
 
     
     
-    public void setVehicles(List<PersonalVehicle> vehicles)
+    public void setVehicles(List<Vehicle> vehicles)
     {
         this.vehicles = vehicles;
     }
@@ -649,27 +595,9 @@ public class Simulator extends Network
         return exit_count == vehicles.size();
     }
     
-    protected void addVehicles()
+    public void addVehicles()
     {
-        while(veh_idx < vehicles.size())
-        {
-            PersonalVehicle v = vehicles.get(veh_idx);
-
-            if(v.getPath() == null)
-            {
-                veh_idx++;
-            }
-            else if(v.getDepTime() <= Simulator.time)
-            {
-                v.entered();
-                v.getNextLink().addVehicle(v);
-                veh_idx++;
-            }
-            else
-            {
-                break;
-            }
-        }
+        
     }
     
     protected void propagateFlow()

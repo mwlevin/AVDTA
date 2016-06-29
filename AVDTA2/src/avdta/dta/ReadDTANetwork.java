@@ -264,9 +264,9 @@ public class ReadDTANetwork extends ReadNetwork
         
     }
     
-    public List<PersonalVehicle> readVehicles(DTAProject project) throws IOException
+    public List<Vehicle> readVehicles(DTAProject project) throws IOException
     {
-        List<PersonalVehicle> vehicles = new ArrayList<PersonalVehicle>();
+        List<Vehicle> vehicles = new ArrayList<Vehicle>();
         
         Scanner filein = new Scanner(project.getDemandFile());
         

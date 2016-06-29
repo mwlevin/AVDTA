@@ -297,6 +297,10 @@ public abstract class Project
         return directory;
     }
     
+    public File getPathsFile()
+    {
+        return new File(getProjectDirectory()+"/paths.dat");
+    }
     public String getResultsFolder()
     {
         return getProjectDirectory()+"/results/";

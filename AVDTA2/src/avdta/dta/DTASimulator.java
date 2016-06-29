@@ -6,6 +6,7 @@
 package avdta.dta;
 
 import avdta.network.Path;
+import avdta.network.PathList;
 import avdta.network.Simulator;
 import avdta.network.link.CentroidConnector;
 import avdta.network.link.Link;
@@ -13,6 +14,7 @@ import avdta.network.node.Node;
 import avdta.project.DTAProject;
 import avdta.vehicle.DriverType;
 import avdta.vehicle.PersonalVehicle;
+import avdta.vehicle.Vehicle;
 import avdta.vehicle.fuel.VehicleClass;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -21,9 +23,11 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  *
@@ -47,9 +51,9 @@ public class DTASimulator extends Simulator
     
     public DTAResults partial_demand(int iter) throws IOException
     {
-        List<PersonalVehicle> temp = new ArrayList<PersonalVehicle>();
+        List<Vehicle> temp = new ArrayList<Vehicle>();
         
-        for(PersonalVehicle v : vehicles)
+        for(Vehicle v : vehicles)
         {
             temp.add(v);
         }
@@ -70,7 +74,7 @@ public class DTASimulator extends Simulator
         {
             long time = System.nanoTime();
             
-            Iterator<PersonalVehicle> iterator = temp.iterator();
+            Iterator<Vehicle> iterator = temp.iterator();
             
             while(iterator.hasNext())
             {
@@ -114,8 +118,10 @@ public class DTASimulator extends Simulator
 
         int count = 0;
         
-        for(PersonalVehicle v : vehicles)
+        for(Vehicle x : vehicles)
         {
+            PersonalVehicle v = (PersonalVehicle)x;
+            
             Node o = v.getOrigin();
             Node d = v.getDest();
             int ast = v.getAST();
@@ -214,9 +220,123 @@ public class DTASimulator extends Simulator
         return iteration;
     }
     
+    public void saveAssignment(Assignment assign) throws IOException
+    {
+        String label = ""+(int)(System.nanoTime()/1.0e9);
+        
+        DTAProject project = (DTAProject)getProject();
+        
+        File folder = new File(project.getAssignmentsFolder()+"/"+label);
+        folder.mkdirs();
+        
+        PathList paths = getPaths();
+        paths.writeToFile(project.getPathsFile());
+        
+        assign.writeToFile(vehicles, new File(project.getAssignmentsFolder()+"/"+label+"/vehicles.dat"));
+    }
+    
+    public void openAssignment(File file) throws IOException
+    {
+        DTAProject project = (DTAProject)getProject();
+        PathList paths = new PathList(this, project.getPathsFile());
+        
+        Assignment assign = new Assignment(file);
+        assign.readFromFile(getVehicles(), paths, file);
+        
+        
+    }
+        
+    public void addVehicles()
+    {
+        List<Vehicle> vehicles = getVehicles();
+        
+        while(veh_idx < vehicles.size())
+        {
+            PersonalVehicle v = (PersonalVehicle)vehicles.get(veh_idx);
+
+            if(v.getPath() == null)
+            {
+                veh_idx++;
+            }
+            else if(v.getDepTime() <= Simulator.time)
+            {
+                v.entered();
+                v.getNextLink().addVehicle(v);
+                veh_idx++;
+            }
+            else
+            {
+                break;
+            }
+        }
+    }
+    
+    public void writeVehicleResults() throws IOException
+    {
+        DTAProject project = (DTAProject)getProject();
+        PrintStream fileout = new PrintStream(new FileOutputStream(new File(project.getResultsFolder()+"/vehicles.txt")), true);
+        
+        fileout.println("ID\tOrigin\tDest\tDtime\tTT\tMPG\tTime waiting");
+        for(Vehicle x : vehicles)
+        {
+            PersonalVehicle v = (PersonalVehicle)x;
+            fileout.println(v.getId()+"\t"+v.getOrigin()+"\t"+v.getDest()+"\t"+v.getDepTime()+"\t"+v.getTT()+"\t"+v.getMPG()+"\t"+v.getTimeWaiting());
+        }
+        
+        fileout.close();
+    }
+    
     public DTAResults msa(int max_iter) throws IOException
     {
         return msa(max_iter, -1);
+    }
+    
+    public void importResults() throws IOException
+    {
+        DTAProject project = (DTAProject)getProject();
+        PrintStream path_out = new PrintStream(new FileOutputStream(new File(project.getResultsFolder()+"/vehicle_path.txt")), true);
+        PrintStream veh_out = new PrintStream(new FileOutputStream(new File(project.getResultsFolder()+"/vehicle_path_time.txt")), true);
+        
+        Set<Integer> printed_paths = new HashSet<Integer>();
+        
+        // vehicle_path: id, origin, dest, hash, size, freeflowtt, length, issimpath, links
+        // vehicle_path_time: id, type, dta_departure, sim_departure, sim_exittime, dta_path, sim_path, arrivaltime
+        
+        for(Vehicle x : vehicles)
+        {
+            PersonalVehicle v = (PersonalVehicle)x;
+            
+            Path p = v.getPath();
+            
+            if(printed_paths.add(p.getId()))
+            {
+                path_out.print(p.getId()+"\t"+p.getOrigin()+"\t"+p.getDest()+"\t"+p.hashCode()+"\t"+p.size()+"\t"+p.getFFTime()+"\t"+p.getLength()+"\t2\t{");
+                
+                path_out.print(p.get(0));
+                for(int i = 1; i < p.size(); i++)
+                {
+                    path_out.print(","+p.get(i));
+                }
+                path_out.println("}");
+            }
+            
+            veh_out.print(v.getId()+"\t"+v.getType()+"\t"+v.getDepTime()+"\t"+v.getDepTime()+"\t"+v.getExitTime()+"\t"+p.getId()+"\t"+p.getId()+"\t{");
+            int[] arr_times = v.getArrivalTimes();
+            
+            veh_out.print(arr_times[0]);
+            for(int i = 1; i < arr_times.length; i++)
+            {
+                veh_out.print(","+arr_times[i]);
+            }
+            
+            veh_out.print("}");
+            veh_out.println();
+        }
+        
+        path_out.close();
+        veh_out.close();
+        
+        printLinkTdd();
     }
     
     public DTAResults msa(int max_iter, double min_gap) throws IOException
@@ -238,7 +358,7 @@ public class DTASimulator extends Simulator
     {
         if(statusUpdate != null)
         {
-            statusUpdate.update(0);
+            statusUpdate.update(0.01);
         }
         
         
@@ -249,7 +369,7 @@ public class DTASimulator extends Simulator
 
         if(print_status)
         {
-            out.println("Iter\tStep\tGap %\tAEC\tTTT\tTrips\tNon-exit\ttime");
+            out.println("Iter\tStep\tGap %\tAEC\tTSTT\tTrips\tNon-exit\ttime");
         }
         
         fileout.println("Iter\tStep\tGap %\tAEC\tTTT\tTrips\tNon-exit\ttime");

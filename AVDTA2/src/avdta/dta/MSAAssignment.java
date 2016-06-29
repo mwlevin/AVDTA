@@ -1,0 +1,68 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package avdta.dta;
+
+import avdta.vehicle.Vehicle;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.PrintStream;
+import java.util.List;
+import java.util.Scanner;
+
+/**
+ *
+ * @author micha
+ */
+public class MSAAssignment extends Assignment
+{
+    private int iter;
+    
+    public MSAAssignment(File input) throws IOException
+    {
+        super(input);
+    }
+    
+    public MSAAssignment(DTAResults results, int iter)
+    {
+        super(results);
+        this.iter = iter;
+    }
+    
+    public void writeToFile(List<Vehicle> vehicles, File file) throws IOException
+    {
+        super.writeToFile(vehicles, file);
+        
+        String dir = file.getCanonicalPath();
+        dir = dir.substring(0, dir.lastIndexOf("\\".charAt(0)));
+        
+        File indicator = new File(dir+"/msa.dat");
+        
+        PrintStream fileout = new PrintStream(new FileOutputStream(indicator), true);
+        fileout.close();
+    }
+    
+    public int getIter()
+    {
+        return iter;
+    }
+    
+    public void setIter(int iter)
+    {
+        this.iter = iter;
+    }
+    public void readAssignment(Scanner filein)
+    {
+        super.readAssignment(filein);
+        
+        iter = filein.nextInt();
+    }
+    
+    public String getHeaderData()
+    {
+        return super.getHeaderData()+"\t"+iter;
+    }
+}

@@ -36,6 +36,7 @@ public class DTAGUI extends GUI
     protected DTAProject project;
     private NetworkPane networkPane;
     private DemandPane demandPane;
+    private DTAPane dtaPane;
     
     
     private JMenuItem cloneMI;
@@ -56,10 +57,11 @@ public class DTAGUI extends GUI
         
         networkPane = new NetworkPane();
         demandPane = new DemandPane();
+        dtaPane = new DTAPane();
         
         tabs.add("Network", networkPane);
         tabs.add("Demand", demandPane);
-        
+        tabs.add("DTA", dtaPane);
         
         constrain(p, tabs, 0, 0, 1, 1);
         
@@ -173,6 +175,7 @@ public class DTAGUI extends GUI
         
         networkPane.setProject(project);
         demandPane.setProject(project);
+        dtaPane.setProject(project);
         
         
         
