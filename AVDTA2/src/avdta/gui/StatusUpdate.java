@@ -12,4 +12,5 @@ package avdta.gui;
 public interface StatusUpdate
 {
     public abstract void update(double estimate);
+    public abstract void update(double estimate, String text);
 }

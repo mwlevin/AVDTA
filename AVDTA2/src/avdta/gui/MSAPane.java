@@ -212,7 +212,7 @@ public class MSAPane extends JPanel
                         results = sim.msa(max, gap);
                     }
                     
-                    sim.saveAssignment(new MSAAssignment(results, sim.getIteration()));
+                    
                     
                     double tstt = sim.getTSTT() / 3600.0;
                     double avg = tstt * 60 / sim.getNumVehicles();
@@ -224,7 +224,7 @@ public class MSAPane extends JPanel
                             "AV TT: "+String.format("%.2f", sim.getAvgTT(DriverType.AV)/60)+" min",
                             "DTA complete", JOptionPane.PLAIN_MESSAGE);
 
-                    status.update(0);
+                    status.update(0, "");
                     status.resetTime();
 
                     parent.reset();

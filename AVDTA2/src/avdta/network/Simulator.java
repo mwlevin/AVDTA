@@ -74,7 +74,7 @@ public class Simulator extends Network
     
     
     public static PrintStream fileout;
-    
+    public static PrintStream vat;
     
     public static boolean print_status = true;
     
@@ -463,11 +463,8 @@ public class Simulator extends Network
     protected int exit_count;
     protected int veh_idx;
     
+    
     public void simulate() throws IOException
-    {
-        simulate(true);
-    }
-    public void simulate(boolean recording) throws IOException
     {
         
         
@@ -478,15 +475,7 @@ public class Simulator extends Network
         
         PrintStream sim_vat = null;
         
-        if(recording)
-        {
-            File file = new File(project.getResultsFolder()+"/sim.vat");
-
-            sim_vat = new PrintStream(new FileOutputStream(file), true);
-            
-            fileout = new PrintStream(new FileOutputStream(new File(project.getResultsFolder()+"/cell_enter.txt")), true);
-            fileout.println("Vehicle\tLink\tTime");
-        }
+        vat = new PrintStream(new FileOutputStream(getVatFile()), true);
         
         veh_idx = 0;
 
@@ -513,29 +502,54 @@ public class Simulator extends Network
         
         simulationFinished();
          
-        if(recording)
-        {
-            for(Vehicle v : vehicles)
-            {
-                int[] arr_times = v.getArrivalTimes();
-
-                sim_vat.println(v.getType()+" "+v.getId()+" "+arr_times[0]+".00 "+arr_times[arr_times.length-1]+".00");
-
-                Path route = v.getPath();
-                sim_vat.print(route.size());
-
-                for(int i = 0; i < arr_times.length; i++)
-                {
-                    sim_vat.print(" "+route.get(i).getId()+" "+arr_times[i]+".00");
-                }
-                sim_vat.println();
-            }
-
-
-            sim_vat.close();
+        vat.close();
+    }
+    
+    public void createSimVat(File outputFile) throws IOException
+    {
+        Map<Integer, List<Integer>> arrTimes = new HashMap<Integer, List<Integer>>();
         
-            printLinkTdd();
+        for(Vehicle v : vehicles)
+        {
+            arrTimes.put(v.getId(), new ArrayList<Integer>());
         }
+        
+        Scanner filein = new Scanner(getVatFile());
+        
+        while(filein.hasNextInt())
+        {
+            int id = filein.nextInt();
+            int link = filein.nextInt();
+            int time = filein.nextInt();
+            
+            arrTimes.get(id).add(time);
+        }
+        
+        filein.close();
+        
+        PrintStream fileout = new PrintStream(new FileOutputStream(outputFile), true);
+        
+        for(Vehicle v : vehicles)
+        {
+            List<Integer> times = arrTimes.get(v.getId());
+            fileout.println(v.getType()+" "+v.getId()+" "+times.get(0)+".00 "+times.get(times.size()-1)+".00");
+        
+            Path route = v.getPath();
+            fileout.print(route.size());
+
+            for(int i = 0; i < times.size(); i++)
+            {
+                fileout.print(" "+route.get(i).getId()+" "+times.get(i)+".00");
+            }
+            fileout.println();
+        }
+        
+        fileout.close();
+    }
+    
+    public File getVatFile()
+    {
+        return new File(project.getResultsFolder()+"/vat.dat");
     }
     
     public void simulationFinished()

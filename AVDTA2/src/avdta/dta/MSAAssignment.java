@@ -5,6 +5,7 @@
  */
 package avdta.dta;
 
+import avdta.project.DTAProject;
 import avdta.vehicle.Vehicle;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -32,12 +33,12 @@ public class MSAAssignment extends Assignment
         this.iter = iter;
     }
     
-    public void writeToFile(List<Vehicle> vehicles, File file) throws IOException
+    
+    public void writeToFile(List<Vehicle> vehicles, DTAProject project) throws IOException
     {
-        super.writeToFile(vehicles, file);
+        super.writeToFile(vehicles, project);
         
-        String dir = file.getCanonicalPath();
-        dir = dir.substring(0, dir.lastIndexOf("\\".charAt(0)));
+        String dir = project.getAssignmentsFolder()+"/"+getName();
         
         File indicator = new File(dir+"/msa.dat");
         

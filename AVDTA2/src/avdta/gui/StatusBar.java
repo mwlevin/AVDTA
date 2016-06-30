@@ -24,14 +24,16 @@ public class StatusBar extends JComponent implements StatusUpdate
     
     private long startTime;
     
+    private String text;
+    
     private static final int delay = 100;
     
     public StatusBar()
     {
         eta = -1;
         percent = 0;
-        setPreferredSize(new Dimension(210, 45));
-        
+        setPreferredSize(new Dimension(210, 65));
+        text = "";
         
         Timer timer = new Timer(delay, new ActionListener()
         {
@@ -42,6 +44,8 @@ public class StatusBar extends JComponent implements StatusUpdate
             }
         });
         timer.start();
+        
+        
     }
     
     public void paint(Graphics g)
@@ -50,19 +54,21 @@ public class StatusBar extends JComponent implements StatusUpdate
         g.fillRect(0, 0, getWidth(), getHeight());
         
         g.setColor(Color.green);
-        g.fillRect(5, 5, (int)Math.round(percent /100.0 * (getWidth()-10)), 20);
+        g.fillRect(5, 25, (int)Math.round(percent /100.0 * (getWidth()-10)), 20);
         
         g.setColor(Color.black);
-        g.drawRect(5, 5, getWidth()-10, 20);
+        g.drawRect(5, 25, getWidth()-10, 20);
         
         g.setFont(new Font("Arial", 0, 12));
-        g.drawString(""+percent+"%", (getWidth()-10)/2, 20);
+        g.drawString(""+percent+"%", (getWidth()-10)/2, 40);
         
         if(eta > 0)
         {
             int rem = (int)Math.round(eta/1.0e9);
-            g.drawString("Remaining: "+(rem/60)+" min "+(rem%60)+" sec", 10, 40);
+            g.drawString("Remaining: "+(rem/60)+" min "+(rem%60)+" sec", 10, 60);
         }
+        
+        g.drawString(text, 5, 20);
     }
     
     public void resetTime()
@@ -76,6 +82,11 @@ public class StatusBar extends JComponent implements StatusUpdate
         return percent == 100;
     }
     
+    public void update(double p, String text)
+    {
+        this.text = text;
+        update(p);
+    }
     public void update(double p)
     {
         long time = System.nanoTime();

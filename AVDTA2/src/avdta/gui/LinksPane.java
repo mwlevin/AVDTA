@@ -56,7 +56,7 @@ public class LinksPane extends JPanel
     {
         this.parent = parent;
         
-        data = new JTextArea(5, 25);
+        data = new JTextArea(5, 20);
         data.setEditable(false);
         
         HVtau = new JTextField(5);
@@ -112,7 +112,7 @@ public class LinksPane extends JPanel
         constrain(p, new JLabel("Flow model"), 0, 0, 1, 1);
         constrain(p, ctm, 0, 1, 1, 1);
         constrain(p, ltm, 0, 2, 1, 1);
-        constrain(this, p, 0, 3, 1, 1);
+        constrain(this, p, 0, 3, 2, 1);
         
         p = new JPanel();
         p.setLayout(new GridBagLayout());
@@ -125,14 +125,14 @@ public class LinksPane extends JPanel
         constrain(p, new JLabel("AV reaction time: "), 0, 3, 1, 1);
         constrain(p, AVtau, 1, 3, 1, 1);
         
-        constrain(this, p, 1, 3, 1, 1);
+        constrain(this, p, 0, 4, 2, 1);
         
         p = new JPanel();
         p.setLayout(new GridBagLayout());
         
         constrain(p, save, 0, 0, 1, 1);
         constrain(p, reset, 1, 0, 1, 1);
-        constrain(this, p, 0, 4, 2, 1);
+        constrain(this, p, 0, 5, 2, 1);
         
         
         

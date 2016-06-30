@@ -27,6 +27,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
 import java.util.Set;
 
 /**
@@ -35,6 +36,7 @@ import java.util.Set;
  */
 public class DTASimulator extends Simulator
 {
+    private Assignment currAssign;
     
     private int iteration;
     
@@ -202,7 +204,7 @@ public class DTASimulator extends Simulator
         	System.err.println("Unable: "+error_count);
         }
 
-        simulate(false);
+        simulate();
         
 
         if(tstt == 0)
@@ -221,18 +223,16 @@ public class DTASimulator extends Simulator
     }
     
     public void saveAssignment(Assignment assign) throws IOException
-    {
-        String label = ""+(int)(System.nanoTime()/1.0e9);
-        
+    {        
         DTAProject project = (DTAProject)getProject();
         
-        File folder = new File(project.getAssignmentsFolder()+"/"+label);
+        File folder = new File(project.getAssignmentsFolder()+"/"+assign.getName());
         folder.mkdirs();
         
         PathList paths = getPaths();
         paths.writeToFile(project.getPathsFile());
         
-        assign.writeToFile(vehicles, new File(project.getAssignmentsFolder()+"/"+label+"/vehicles.dat"));
+        assign.writeToFile(vehicles, (DTAProject)getProject());
     }
     
     public void openAssignment(File file) throws IOException
@@ -243,7 +243,7 @@ public class DTASimulator extends Simulator
         Assignment assign = new Assignment(file);
         assign.readFromFile(getVehicles(), paths, file);
         
-        
+        currAssign = assign;
     }
         
     public void addVehicles()
@@ -293,7 +293,16 @@ public class DTASimulator extends Simulator
     
     public void importResults() throws IOException
     {
+        
         DTAProject project = (DTAProject)getProject();
+        statusUpdate.update(0, "Simulating");
+        simulate();
+        statusUpdate.update(1.0/4, "Creating sim.vat");
+        createSimVat(new File(project.getAssignmentsFolder()+"/"+currAssign.getName()+"/sim.vat"));
+        statusUpdate.update(2.0/4, "Postprocessing");
+        
+        Scanner filein = new Scanner(new File(project.getAssignmentsFolder()+"/"+currAssign.getName()+"/sim.vat"));
+        
         PrintStream path_out = new PrintStream(new FileOutputStream(new File(project.getResultsFolder()+"/vehicle_path.txt")), true);
         PrintStream veh_out = new PrintStream(new FileOutputStream(new File(project.getResultsFolder()+"/vehicle_path_time.txt")), true);
         
@@ -302,9 +311,33 @@ public class DTASimulator extends Simulator
         // vehicle_path: id, origin, dest, hash, size, freeflowtt, length, issimpath, links
         // vehicle_path_time: id, type, dta_departure, sim_departure, sim_exittime, dta_path, sim_path, arrivaltime
         
+        
         for(Vehicle x : vehicles)
         {
+            
+            int type = filein.nextInt();
+            int id = filein.nextInt();
+            int enter = (int)filein.nextDouble();
+            int exit = (int)filein.nextDouble();
+            
+            int size = filein.nextInt();
+            
+            int[] arr_times = new int[size];
+            
+            for(int i = 0; i < size; i++)
+            {
+                filein.nextInt();
+                arr_times[i] = (int)filein.nextDouble();
+            }
+            
             PersonalVehicle v = (PersonalVehicle)x;
+            
+            if(id != v.getId())
+            {
+                throw new RuntimeException("Vehicles out of order");
+            }
+            
+            
             
             Path p = v.getPath();
             
@@ -321,7 +354,6 @@ public class DTASimulator extends Simulator
             }
             
             veh_out.print(v.getId()+"\t"+v.getType()+"\t"+v.getDepTime()+"\t"+v.getDepTime()+"\t"+v.getExitTime()+"\t"+p.getId()+"\t"+p.getId()+"\t{");
-            int[] arr_times = v.getArrivalTimes();
             
             veh_out.print(arr_times[0]);
             for(int i = 1; i < arr_times.length; i++)
@@ -333,10 +365,15 @@ public class DTASimulator extends Simulator
             veh_out.println();
         }
         
+        filein.close();
         path_out.close();
         veh_out.close();
         
+        statusUpdate.update(3.0/4, "Link tdd");
         printLinkTdd();
+        
+        statusUpdate.update(1, "");
+        
     }
     
     public DTAResults msa(int max_iter, double min_gap) throws IOException
@@ -356,13 +393,16 @@ public class DTASimulator extends Simulator
     
     public DTAResults msa_cont(int start_iter, int max_iter, double min_gap) throws IOException
     {
+        currAssign = new MSAAssignment(null, start_iter);
+        
         if(statusUpdate != null)
         {
-            statusUpdate.update(0.01);
+            statusUpdate.update(0, "Starting MSA");
         }
         
         
-        PrintStream fileout = new PrintStream(new FileOutputStream(new File(getProject().getResultsFolder()+"/log.txt")), true);
+        PrintStream fileout = new PrintStream(new FileOutputStream(
+                new File(getProject().getResultsFolder()+"/"+currAssign.getName()+"/log.txt")), true);
         
         iteration = start_iter;
         DTAResults output = null;
@@ -396,14 +436,18 @@ public class DTASimulator extends Simulator
 
             if(statusUpdate != null)
             {
-                statusUpdate.update((double)iteration / max_iter);
+                statusUpdate.update((double)iteration / (max_iter - start_iter + 1), "Iteration "+iteration);
             }
         }
         while(iteration++ < max_iter && (iteration == 2 || min_gap < output.getGapPercent()));
         
+        currAssign.setResults(output);
+        ((MSAAssignment)currAssign).setIter(iteration);
+        saveAssignment(currAssign);
+        
         if(statusUpdate != null)
         {
-            statusUpdate.update(1);
+            statusUpdate.update(1, "");
         }
 
         out.println(String.format("TSTT\t%.1f", getTSTT()/3600.0)+"\thr\nAvg. TT\t"+String.format("%.2f", getTSTT() / 60 / vehicles.size())+"\tmin/veh");

@@ -7,6 +7,7 @@ package avdta.dta;
 
 import avdta.network.Path;
 import avdta.network.PathList;
+import avdta.project.DTAProject;
 import avdta.vehicle.Vehicle;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -72,17 +73,28 @@ public class Assignment implements Comparable<Assignment>
     
     public Assignment(DTAResults results)
     {
+        this(results, ""+(int)(System.nanoTime()/1.0e9));
+    }
+    
+    public Assignment(DTAResults results, String name)
+    {
         this.results = results;
+        this.name = name;
        
     }
     
+    public void setResults(DTAResults results)
+    {
+        this.results = results;
+    }
     public DTAResults getResults()
     {
         return results;
     }
     
-    public void writeToFile(List<Vehicle> vehicles, File file) throws IOException
+    public void writeToFile(List<Vehicle> vehicles, DTAProject project) throws IOException
     {
+        File file = new File(project.getAssignmentsFolder()+"/"+getName()+"/vehicles.dat");
         PrintStream fileout = new PrintStream(new FileOutputStream(file), true);
         fileout.println(getHeaderData());
         

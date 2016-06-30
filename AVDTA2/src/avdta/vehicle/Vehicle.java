@@ -40,7 +40,6 @@ public abstract class Vehicle implements Serializable, Comparable<Vehicle>
     private int id;
 
     private Path route;
-    private int[] arr_times;
     
     public int path_idx;
     private int exit_time, net_enter_time;
@@ -335,29 +334,6 @@ public abstract class Vehicle implements Serializable, Comparable<Vehicle>
         route = p;
         path_idx = -1;
         
-        if(route != null)
-        {
-            arr_times = new int[p.size()];
-
-            for(int i = 0; i < arr_times.length; i++)
-            {
-                arr_times[i] = -1;
-            }
-        }
-    }
-    
-    public int getArrTime(Link i)
-    {
-        int idx = route.indexOf(i);
-        
-        if(idx >= 0)
-        {
-            return arr_times[idx];
-        }
-        else
-        {
-            return -10;
-        }
     }
     
     
@@ -457,7 +433,6 @@ public abstract class Vehicle implements Serializable, Comparable<Vehicle>
         
         
         path_idx++;
-        arr_times[path_idx] = Simulator.time;
         
         time_waiting += Simulator.time + Network.dt - arr_time;
         
@@ -468,16 +443,18 @@ public abstract class Vehicle implements Serializable, Comparable<Vehicle>
         
         addToll(l.getToll(Simulator.time));
         
+        if(Simulator.vat != null)
+        {
+            Simulator.vat.println(getId()+"\t"+l+"\t"+Simulator.time);
+        }
         if(curr_cell != null && l.isCentroidConnector() && Simulator.fileout != null)
         {
             printCellRecord(curr_cell, cell_enter, Simulator.time);
         }
+        
+        
     }
     
-    public int[] getArrivalTimes()
-    {
-        return arr_times;
-    }
 
     public int getTimeWaiting()
     {

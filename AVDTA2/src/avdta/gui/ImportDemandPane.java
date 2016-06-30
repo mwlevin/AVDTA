@@ -155,7 +155,7 @@ public class ImportDemandPane extends JPanel
         
         JPanel p = new JPanel();
         p.setLayout(new GridBagLayout());
-        constrain(p, new JLabel("Import network from project"), 0, 0, 3, 1);
+        constrain(p, new JLabel("Import demand from project"), 0, 0, 3, 1);
         constrain(p, new JLabel("Project: "), 0, 1, 1, 1);
         constrain(p, importFromProject, 1, 1, 1, 1);
         constrain(p, import1, 2, 1, 1, 1);
