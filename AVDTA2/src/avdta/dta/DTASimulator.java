@@ -246,6 +246,11 @@ public class DTASimulator extends Simulator
         currAssign = assign;
     }
         
+    public Assignment getAssignment()
+    {
+        return currAssign;
+    }
+    
     public void addVehicles()
     {
         List<Vehicle> vehicles = getVehicles();

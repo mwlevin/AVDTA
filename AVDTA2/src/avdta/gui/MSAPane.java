@@ -135,15 +135,18 @@ public class MSAPane extends JPanel
     
     public void showAssignment(Assignment assign)
     {
-        data.setText("");
-        
         if(assign != null)
         {
-            DTAResults results = assign.getResults();
-            data.append("Gap:\t"+String.format("%.2f", results.getGapPercent())+"%\n");
-            data.append("TSTT:\t"+String.format("%.1f", results.getTSTT())+" hr\n");
-            data.append("Non-exit:\t"+results.getNonExiting());
+            showResults(assign.getResults());
         }
+    }
+    public void showResults(DTAResults results)
+    {
+        data.setText("");
+        data.append("Gap:\t"+String.format("%.2f", results.getGapPercent())+"%\n");
+        data.append("TSTT:\t"+String.format("%.1f", results.getTSTT())+" hr\n");
+        data.append("Non-exit:\t"+results.getNonExiting());
+        
     }
     
     public void run()
@@ -224,6 +227,8 @@ public class MSAPane extends JPanel
                             "AV TT: "+String.format("%.2f", sim.getAvgTT(DriverType.AV)/60)+" min",
                             "DTA complete", JOptionPane.PLAIN_MESSAGE);
 
+                    showResults(results);
+                    
                     status.update(0, "");
                     status.resetTime();
 

@@ -4,10 +4,13 @@
  */
 package avdta.moves;
 
+import avdta.dta.DTASimulator;
 import avdta.network.Simulator;
 import avdta.network.link.CTMLink;
 import avdta.network.link.Link;
 import avdta.network.Path;
+import avdta.project.DTAProject;
+import avdta.vehicle.PersonalVehicle;
 import avdta.vehicle.Vehicle;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -39,8 +42,9 @@ public class EvaluateLinks
         scenario = "";
     }
     
-    public void calculate(Simulator sim)
+    public void calculate(DTAProject project) throws IOException
     {
+        DTASimulator sim = (DTASimulator)project.getSimulator();
         
         File file = new File(sim.getProject().getResultsFolder()+"/moves/");
         file.mkdirs();
@@ -55,16 +59,43 @@ public class EvaluateLinks
             }
         }
         
-        for(Vehicle v : sim.getVehicles())
+        Scanner filein = new Scanner(new File(project.getAssignmentsFolder()+"/"+sim.getAssignment().getName()+"/sim.vat"));
+        
+        for(Vehicle x : sim.getVehicles())
         {
-            int[] arrtimes = v.getArrivalTimes();
+            
+            int type = filein.nextInt();
+            int id = filein.nextInt();
+            filein.nextDouble();
+            filein.nextDouble();
+            
+            int size = filein.nextInt();
+            
+            int[] arr_times = new int[size];
+            
+            for(int i = 0; i < size; i++)
+            {
+                filein.nextInt();
+                arr_times[i] = (int)filein.nextDouble();
+            }
+            
+            PersonalVehicle v = (PersonalVehicle)x;
+            
+            if(id != v.getId())
+            {
+                throw new RuntimeException("Vehicles out of order");
+            }
+            
+            
             
             Path p = v.getPath();
             
+            
+            
             for(int i = 1; i < p.size()-1; i++)
             {
-                int enter = arrtimes[i];
-                int exit = arrtimes[i+1];
+                int enter = arr_times[i];
+                int exit = arr_times[i+1];
                 
                 Link l = p.get(i);
                 
