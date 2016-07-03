@@ -105,7 +105,7 @@ public abstract class TBR extends IntersectionControl implements Signalized
     public boolean hasAvailableCapacity(Link i, Link j, double flow)
     {
         
-        boolean output = j.R >= flow && (i.Q - i.q) * (1 - (i.lanes_blocked) / ((double)i.getDsLanes())) >= flow;
+        boolean output = (i.Q - i.q) * (1 - (i.lanes_blocked) / ((double)i.getDsLanes())) >= flow;
 
         for(ConflictRegion cr : conflicts.get(i).get(j))
         {

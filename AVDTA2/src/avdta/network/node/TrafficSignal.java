@@ -357,6 +357,8 @@ public class TrafficSignal extends IntersectionControl implements Signalized
                 PhaseMovement movement = (turns.get(i) != null? turns.get(i).get(j) : null);
 
 
+                double receivingFlow = equiv_flow * j.scaleReceivingFlow(v);
+                
                 // always move vehicles onto centroid connectors
                 if(j.isCentroidConnector())
                 {
@@ -365,12 +367,12 @@ public class TrafficSignal extends IntersectionControl implements Signalized
 
                     
                 }
-                else if(j.R >= equiv_flow && movement != null && movement.hasAvailableCapacity(equiv_flow))
+                else if(j.R >= receivingFlow && movement != null && movement.hasAvailableCapacity(equiv_flow))
                 {
                     i.S -= equiv_flow;
                     i.q += equiv_flow;
 
-                    j.R -= equiv_flow;
+                    j.R -= receivingFlow;
 
                     movement.update(equiv_flow);
 
@@ -379,9 +381,9 @@ public class TrafficSignal extends IntersectionControl implements Signalized
                     moved++;
                     
                 }
-                else if(i.isCentroidConnector() && j.R >= equiv_flow)
+                else if(i.isCentroidConnector() && j.R >= receivingFlow)
                 {
-                    j.R -= equiv_flow;
+                    j.R -= receivingFlow;
 
                     i.removeVehicle(v);
                     j.addVehicle(v);

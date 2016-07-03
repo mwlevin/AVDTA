@@ -102,11 +102,11 @@ public abstract class SharedTransitCell extends Cell
     {
         if(currTransit.size() == 0)
         {
-            return super.getNumLanes() + 1;
+            return super.getNumLanes();
         }
         else
         {
-            return super.getNumLanes();
+            return super.getNumLanes()-1;
         }
     }
     

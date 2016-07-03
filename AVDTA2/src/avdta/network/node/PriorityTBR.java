@@ -155,17 +155,17 @@ public class PriorityTBR extends TBR
 
                 double equiv_flow = v.getDriver().getEquivFlow(i.getFFSpeed());
 
-
+                double receivingFlow = equiv_flow * i.scaleReceivingFlow(v);
 
                 if(v.getDriver().isAV())
                 {
                     TurningMovement movement = conflicts.get(i).get(j);
 
-                    if(hasAvailableCapacity(i, j, equiv_flow))
+                    if(j.R >= receivingFlow && hasAvailableCapacity(i, j, equiv_flow))
                     {
                         
                         
-                        j.R -= equiv_flow;
+                        j.R -= receivingFlow;
                         i.q += equiv_flow;
                         moved++;
 
@@ -208,7 +208,7 @@ public class PriorityTBR extends TBR
 
                     inner: for(Link j2 : conflicts.get(i).keySet())
                     {
-                        if(!hasAvailableCapacity(i, j2, equiv_flow))
+                        if(!(j2.R >= equiv_flow * j2.scaleReceivingFlow(v) && hasAvailableCapacity(i, j2, equiv_flow)))
                         {
                             reserveAll = false;
                             break inner;
@@ -226,7 +226,7 @@ public class PriorityTBR extends TBR
                         for(Link j2 : conflicts.get(i).keySet())
                         {
                             TurningMovement movement = conflicts.get(i).get(j2);
-                            j2.R -= 1;
+                            j2.R -= equiv_flow * j2.scaleReceivingFlow(v);
 
                             for(ConflictRegion cr : movement)
                             {

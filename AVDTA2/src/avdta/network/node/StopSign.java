@@ -305,21 +305,7 @@ public class StopSign extends IntersectionControl
 
         cr.reset();
         
-        /*
-        if(getNode().getId() == 5778)
-        {
-            int occupancy = 0;
-            
-            for(Link i : getNode().getIncoming())
-            {
-                occupancy += i.getOccupancy();
-            }
-            System.out.print(Simulator.time+"\t"+occupancy+"\t");
-            if(vehicles.size() > 0)
-            System.out.print(vehicles.first());
-            System.out.println();
-        }
-        */
+        
         
         outer: while(!vehicles.isEmpty())
         {
@@ -362,10 +348,11 @@ public class StopSign extends IntersectionControl
                 }
 
                 double equiv_flow = v.getDriver().getEquivFlow(i.getFFSpeed());
-
-                if((i.isCentroidConnector() || j.isCentroidConnector()) && j.R >= equiv_flow)
+                double receivingFlow = equiv_flow * j.scaleReceivingFlow(v);
+                
+                if((i.isCentroidConnector() || j.isCentroidConnector()) && j.R >= receivingFlow)
                 {
-                    j.R -= 1;
+                    j.R -= receivingFlow;
                     i.q += 1;
                     i.S--;
                     
@@ -373,9 +360,9 @@ public class StopSign extends IntersectionControl
                     iter.remove();
                     j.addVehicle(v);
                 }
-                else if(hasAvailableCapacity(i, j, equiv_flow))
+                else if(j.R >= receivingFlow && hasAvailableCapacity(i, j, equiv_flow))
                 {
-                    j.R -= 1;
+                    j.R -= receivingFlow;
                     i.q += 1;
                     i.S--;
 
@@ -412,12 +399,7 @@ public class StopSign extends IntersectionControl
     
     public boolean hasAvailableCapacity(Link i, Link j, double flow)
     {
-        boolean output = j.R >= flow;
-        
-        output = output && cr.canMove(i, j, flow);
-        
-        
-        return output;
+        return cr.canMove(i, j, flow);
     }
         
     public boolean hasConflictRegions()

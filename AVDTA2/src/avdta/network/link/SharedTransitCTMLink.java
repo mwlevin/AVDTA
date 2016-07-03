@@ -20,7 +20,7 @@ public class SharedTransitCTMLink extends CTMLink
 {
     public SharedTransitCTMLink(int id, Node source, Node dest, double capacity, double ffspd, double wavespd, double jamd, double length, int numLanes)
     {
-        super(id, source, dest, capacity, ffspd, wavespd, jamd, length, numLanes-1);        
+        super(id, source, dest, capacity, ffspd, wavespd, jamd, length, numLanes);        
     }
     
     public double getTransitCapacityPerLane()

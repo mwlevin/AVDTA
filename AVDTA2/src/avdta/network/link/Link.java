@@ -234,6 +234,14 @@ public abstract class Link implements Serializable, Comparable<Link>
     }
     
 
+    /*
+    * @return the receiving flow scale for v
+    */
+    public double scaleReceivingFlow(Vehicle v)
+    {
+        return 1.0;
+    }
+    
     
     public void setCapacity(double capacity)
     {
