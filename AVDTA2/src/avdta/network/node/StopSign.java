@@ -4,6 +4,7 @@
  */
 package avdta.network.node;
 
+import avdta.network.node.policy.IntersectionPolicy;
 import avdta.network.Network;
 import avdta.vehicle.DriverType;
 import avdta.network.link.Link;

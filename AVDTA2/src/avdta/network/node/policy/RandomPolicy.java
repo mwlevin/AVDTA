@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package avdta.network.node;
+package avdta.network.node.policy;
 
 import avdta.vehicle.Vehicle;
 import java.util.List;

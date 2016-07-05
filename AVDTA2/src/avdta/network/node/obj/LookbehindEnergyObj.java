@@ -2,12 +2,14 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package avdta.network.node;
+package avdta.network.node.obj;
 
 import avdta.network.link.Link;
 import avdta.vehicle.Vehicle;
 import avdta.network.node.Intersection;
-import avdta.network.node.EnergyObj;
+import avdta.network.node.Intersection;
+import avdta.network.node.Node;
+import avdta.network.node.TBR;
 import avdta.network.node.TBR;
 import java.util.List;
 

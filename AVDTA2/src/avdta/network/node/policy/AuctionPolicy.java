@@ -2,9 +2,11 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package avdta.network.node;
+package avdta.network.node.policy;
 
+import avdta.network.node.policy.IntersectionPolicy;
 import avdta.vehicle.Vehicle;
+import avdta.network.node.TBR;
 import avdta.network.node.TBR;
 import java.util.Collection;
 import java.util.List;

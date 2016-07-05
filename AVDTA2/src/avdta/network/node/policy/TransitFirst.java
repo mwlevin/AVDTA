@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package avdta.network.node;
+package avdta.network.node.policy;
 
+import avdta.network.node.TBR;
 import avdta.vehicle.Vehicle;
 
 /**

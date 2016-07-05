@@ -18,7 +18,7 @@ import avdta.vehicle.PersonalVehicle;
 import avdta.vehicle.fuel.VehicleClass;
 import avdta.vehicle.Vehicle;
 import avdta.vehicle.DriverType;
-import avdta.network.node.FCFSPolicy;
+import avdta.network.node.policy.FCFSPolicy;
 import avdta.network.node.Intersection;
 import avdta.network.node.TBR;
 import avdta.project.Project;

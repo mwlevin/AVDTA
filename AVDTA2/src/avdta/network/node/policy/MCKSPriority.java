@@ -2,11 +2,14 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package avdta.network.node;
+package avdta.network.node.policy;
 
+import avdta.network.node.obj.ObjFunction;
 import avdta.vehicle.Vehicle;
 import avdta.network.node.ConflictRegion;
-import avdta.network.node.IntersectionPolicy;
+import avdta.network.node.ConflictRegion;
+import avdta.network.node.Node;
+import avdta.network.node.TBR;
 import avdta.network.node.TBR;
 
 /**
