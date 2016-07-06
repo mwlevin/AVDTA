@@ -186,17 +186,11 @@ public abstract class Cell implements Comparable<Cell>
 
         int max = getNumSendingFlow();
 
-        for(Vehicle v : curr)
+        for(int i = 0; i < max; i++)
         {
-            if(max-- > 0)
-            {
-                output.add(v);
-            }
-            else
-            {
-                break;
-            }
+            output.add(curr.get(i));
         }
+
 
         return output;
     }
@@ -214,18 +208,7 @@ public abstract class Cell implements Comparable<Cell>
 
     public boolean removeVehicle(Vehicle v)
     {
-        Iterator<Vehicle> iter = curr.iterator();
-
-        while(iter.hasNext())
-        {
-            if(iter.next().equals(v))
-            {
-                iter.remove();
-                return true;
-            }
-        }
-
-        return false;
+        return curr.remove(v);
     }
     
     public double getSpeed()

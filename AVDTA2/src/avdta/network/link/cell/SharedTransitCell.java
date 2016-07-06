@@ -32,6 +32,11 @@ public abstract class SharedTransitCell extends Cell
         nextTransit = new ArrayList<Vehicle>();
     }
     
+    public int getOccupancy()
+    {
+        return super.getOccupancy() + currTransit.size();
+    }
+    
     public void addVehicle(Vehicle v)
     {
         if(v.isTransit())
@@ -130,5 +135,32 @@ public abstract class SharedTransitCell extends Cell
         }
 
         return avg_reaction_time / currTransit.size();
+    }
+    
+    
+    public List<Vehicle> getSendingFlow()
+    {
+        List<Vehicle> output = super.getSendingFlow();
+        
+        int num_transit = getNumTransitSendingFlow();
+        
+        for(int i = 0; i < num_transit; i++)
+        {
+            output.add(currTransit.get(i));
+        }
+        
+        return output;
+    }
+    
+    public boolean removeVehicle(Vehicle v)
+    {
+        if(v.isTransit())
+        {
+            return currTransit.remove(v);
+        }
+        else
+        {
+            return super.removeVehicle(v);
+        }
     }
 }

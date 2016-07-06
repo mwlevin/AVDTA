@@ -423,6 +423,7 @@ public abstract class Vehicle implements Serializable, Comparable<Vehicle>
     
     public void enteredLink(Link l)
     {
+        
         Link i = getPrevLink();
 
 
@@ -451,8 +452,6 @@ public abstract class Vehicle implements Serializable, Comparable<Vehicle>
         {
             printCellRecord(curr_cell, cell_enter, Simulator.time);
         }
-        
-        
     }
     
 

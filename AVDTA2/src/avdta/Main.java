@@ -7,6 +7,7 @@ package avdta;
 
 import avdta.dta.DTASimulator;
 import avdta.gui.GUI;
+import avdta.network.Path;
 import avdta.network.Simulator;
 import avdta.project.DTAProject;
 import avdta.project.Project;
@@ -16,6 +17,8 @@ import java.util.Set;
 import java.util.HashSet;
 import avdta.network.node.*;
 import avdta.network.link.*;
+import avdta.network.link.cell.Cell;
+import avdta.vehicle.Bus;
 import avdta.vehicle.PersonalVehicle;
 import avdta.vehicle.Vehicle;
 import java.util.ArrayList;
@@ -56,7 +59,7 @@ public class Main
         nodes.add(n4);
         
         Link l12 = new CentroidConnector(12, n1, n2);
-        Link l23 = new SharedTransitCTMLink(23, n2, n3, 1200, 30, 15, 5280.0/Vehicle.vehicle_length, 2, 2);
+        CTMLink l23 = new SharedTransitCTMLink(23, n2, n3, 1200, 30, 15, 5280.0/Vehicle.vehicle_length, 2, 2);
         Link l34 = new CentroidConnector(34, n3, n4);
         
         links.add(l12);
@@ -65,11 +68,10 @@ public class Main
         
         sim.setNetwork(nodes, links);
         
-        System.out.println(sim.findPath(n1, n4));
         
         
         List<Vehicle> vehicles = new ArrayList<Vehicle>();
-        int rate = 2400;
+        int rate = 1200;
         
         int num = (int)(rate * 10.0/60);
         
@@ -78,11 +80,32 @@ public class Main
             vehicles.add(new PersonalVehicle(i+1, n1, n4, (int)(600.0/num*i)));
         }
         
+        
+        rate = 60;
+        
+        num = (int)(rate * 10.0/60);
+        ArrayList<BusLink> stops = new ArrayList<BusLink>();
+        stops.add(new BusLink(n1, n4));
+        Path path = new Path(l12, l23, l34);
+        
+        for(int i = 0; i < num; i++)
+        {
+            vehicles.add(new Bus(i+1, 1, (int)(600.0/num*i), path, stops));
+        }
+        
+        
+        
+        
+        
+        
         sim.setVehicles(vehicles);
         
         sim.msa(2);
+
         
-        
-        
+        for(Cell c : l23.getCells())
+        {
+            //System.out.println(c.getId()+" "+c.getOccupancy());
+        }
     }
 }

@@ -469,12 +469,7 @@ public class Simulator extends Network
     
     
     public void simulate() throws IOException
-    {
-        
-        
-        
-        
-        
+    {   
         resetSim();
         
         PrintStream sim_vat = null;

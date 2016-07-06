@@ -45,13 +45,15 @@ public class SharedTransitLinkCell extends SharedTransitCell
         }
         
         double y_transit = Math.min(prev.getNumTransitSendingFlow(), getTransitReceivingFlow());
+        
+        ;
 
         iter = prev.currTransit.iterator();
         
 
-        while(y >= 1)
+        while(y_transit >= 1)
         {
-            y -= 1;
+            y_transit -= 1;
 
             Vehicle v = iter.next();
             addVehicle(v);
