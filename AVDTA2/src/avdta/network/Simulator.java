@@ -117,15 +117,19 @@ public class Simulator extends Network
     public Simulator(Project project)
     {
         this.project = project;
+        rand = project.getRandom();
+        this.out = System.out;
+        vehicles = new ArrayList<Vehicle>();
+        active = this;
     }
     public Simulator(Project project, List<Node> nodes, List<Link> links)
     {
         super(nodes, links);
         
         this.project = project;
+        rand = project.getRandom();
         
         active = this;
-        rand = project.getRandom();
         
         this.out = System.out;
    

@@ -71,16 +71,18 @@ public class Assignment implements Comparable<Assignment>
         results = new DTAResults(mintt*3600.0, tstt*3600.0, num_veh, exiting);
     }
     
-    public Assignment(DTAResults results)
+    public Assignment(DTAProject project, DTAResults results)
     {
-        this(results, ""+(int)(System.nanoTime()/1.0e9));
+        this(project, results, ""+(int)(System.nanoTime()/1.0e9));
     }
     
-    public Assignment(DTAResults results, String name)
+    public Assignment(DTAProject project, DTAResults results, String name)
     {
         this.results = results;
         this.name = name;
-       
+        
+        File file = new File(project.getAssignmentsFolder()+"/"+name);
+        file.mkdirs();
     }
     
     public void setResults(DTAResults results)

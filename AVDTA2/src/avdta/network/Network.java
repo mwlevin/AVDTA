@@ -44,27 +44,24 @@ public class Network
     
     public Network()
     {
-        nodes = new ArrayList<Node>();
-        links = new ArrayList<Link>();
+        this(new ArrayList<Node>(), new ArrayList<Link>());
     }
     public Network(List<Node> nodes, List<Link> links)
     {
-        this.nodes = nodes;
-        this.links = links; 
+        setNetwork(nodes, links);
         
         this.costFunc = TravelCost.ttCost;
-        
-        for(Node n : nodes)
-        {
-            n.initialize();
-        }
-        
         paths = new PathList();
     }
     
     public void setNodes(List<Node> nodes)
     {
         this.nodes = nodes;
+        
+        for(Node n : nodes)
+        {
+            n.initialize();
+        }
     }
     
     public void setHVsUseReservations(boolean h)
@@ -75,9 +72,14 @@ public class Network
     public void setLinks(List<Link> links)
     {
         this.links = links;
+        
+        for(Link l : links)
+        {
+            l.initialize();
+        }
     }
     
-    public void setNetwork(List<Node> nodes, List<Link> links, int linktype)
+    public void setNetwork(List<Node> nodes, List<Link> links)
     {
         setNodes(nodes);
         setLinks(links);
@@ -126,6 +128,10 @@ public class Network
         return null;
     }
     
+    public Path findPath(Node o, Node d)
+    {
+        return findPath(o, d, 0, 0, DriverType.AV, costFunc);
+    }
     
     public Path findPath(Node o, Node d, int dep_time, double vot, DriverType driver, TravelCost costFunc)
     {
@@ -291,6 +297,7 @@ public class Network
                 double temp = u.label;
                 int arr_time = u.arr_time;
 
+                
                 temp += costFunc.cost(l, vot, arr_time);
                 
                 if(!HVs_use_reservations && !driver.isAV() &&

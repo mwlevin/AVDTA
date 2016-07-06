@@ -43,12 +43,20 @@ public class DTASimulator extends Simulator
     public DTASimulator(DTAProject project)
     {
         super(project);
+        
+        iteration = 1;
     }
     public DTASimulator(DTAProject project, List<Node> nodes, List<Link> links)
     {
         super(project, nodes, links);
         
         iteration = 1;
+    }
+    
+    
+    public DTAProject getProject()
+    {
+        return (DTAProject)super.getProject();
     }
     
     public DTAResults partial_demand(int iter) throws IOException
@@ -398,7 +406,7 @@ public class DTASimulator extends Simulator
     
     public DTAResults msa_cont(int start_iter, int max_iter, double min_gap) throws IOException
     {
-        currAssign = new MSAAssignment(null, start_iter);
+        currAssign = new MSAAssignment(getProject(), null, start_iter);
         
         if(statusUpdate != null)
         {
@@ -407,7 +415,7 @@ public class DTASimulator extends Simulator
         
         
         PrintStream fileout = new PrintStream(new FileOutputStream(
-                new File(getProject().getResultsFolder()+"/"+currAssign.getName()+"/log.txt")), true);
+                new File(getProject().getAssignmentsFolder()+"/"+currAssign.getName()+"/log.txt")), true);
         
         iteration = start_iter;
         DTAResults output = null;

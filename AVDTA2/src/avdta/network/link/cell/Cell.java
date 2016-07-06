@@ -208,9 +208,8 @@ public abstract class Cell implements Comparable<Cell>
     
     public double getReceivingFlow(int numLanes)
     {
-        return Math.min(scaleCapacity(getCapacity())
-                * Network.dt / 3600.0, scaleWaveSpeed(link.getWaveSpeed()) / link.getFFSpeed() 
-                * (getJamD() - curr.size()));
+        return Math.min(scaleCapacity(getCapacity()) * Network.dt / 3600.0, 
+                scaleWaveSpeed(link.getWaveSpeed()) / link.getFFSpeed() * (getJamD() - curr.size()));
     }
 
     public boolean removeVehicle(Vehicle v)

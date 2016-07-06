@@ -21,7 +21,7 @@ public abstract class SharedTransitCell extends Cell
     protected List<Vehicle> currTransit, nextTransit;
     
     // for transit
-    private double R, max_S;
+    private double transit_R, transit_max_S;
     
     
     public SharedTransitCell(SharedTransitCTMLink link)
@@ -52,12 +52,12 @@ public abstract class SharedTransitCell extends Cell
     public void prepare()
     {
         double capacity = scaleCapacity(getLink().getTransitCapacityPerLane()) * Network.dt / 3600.0;
-        R = R - Math.floor(R);
-        max_S = max_S - Math.floor(max_S);
+        transit_R = transit_R - Math.floor(transit_R);
+        transit_max_S = transit_max_S - Math.floor(transit_max_S);
         
-        R += Math.min(capacity, scaleWaveSpeed(getLink().getTransitWaveSpeed()) / 
+        transit_R += Math.min(capacity, scaleWaveSpeed(getLink().getTransitWaveSpeed()) / 
                 getLink().getFFSpeed() * (getLink().getTransitCellJamdPerLane() - curr.size()));
-        max_S += capacity;
+        transit_max_S += capacity;
         
         super.prepare();
        
@@ -78,17 +78,17 @@ public abstract class SharedTransitCell extends Cell
     
     public void setNumLanes(int n)
     {
-        super.setNumLanes(n-1);
+        super.setNumLanes(n);
     }
     
     public int getNumTransitSendingFlow()
     {
-        return (int)Math.min(max_S, currTransit.size());
+        return (int)Math.min(transit_max_S, currTransit.size());
     }
     
     public double getTransitReceivingFlow()
     {
-        return R;
+        return transit_R;
     }
     
     public double getTransitReceivingFlow(int numLanes)

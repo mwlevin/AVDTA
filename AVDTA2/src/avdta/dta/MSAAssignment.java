@@ -27,9 +27,9 @@ public class MSAAssignment extends Assignment
         super(input);
     }
     
-    public MSAAssignment(DTAResults results, int iter)
+    public MSAAssignment(DTAProject project, DTAResults results, int iter)
     {
-        super(results);
+        super(project, results);
         this.iter = iter;
     }
     

@@ -57,6 +57,7 @@ public class CTMLink extends Link
     
     public void initialize()
     {
+        
         cells = new Cell[(int)Math.max(2, Math.round((getTrueLength() / getFFSpeed()) / (Network.dt / 3600.0) ))];
         
         cells[0] = createStartCell();

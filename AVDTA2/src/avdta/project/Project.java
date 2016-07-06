@@ -207,7 +207,8 @@ public abstract class Project
     
     public Simulator createEmptySimulator()
     {
-        return new Simulator(this);
+        simulator = new Simulator(this);
+        return simulator;
     }
     
     public Random getRandom()
