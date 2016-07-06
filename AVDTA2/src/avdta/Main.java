@@ -18,6 +18,7 @@ import java.util.HashSet;
 import avdta.network.node.*;
 import avdta.network.link.*;
 import avdta.network.link.cell.Cell;
+import avdta.util.RunningAvg;
 import avdta.vehicle.Bus;
 import avdta.vehicle.PersonalVehicle;
 import avdta.vehicle.Vehicle;
@@ -59,10 +60,12 @@ public class Main
         nodes.add(n4);
         
         Link l12 = new CentroidConnector(12, n1, n2);
-        CTMLink l23 = new SharedTransitCTMLink(23, n2, n3, 1200, 30, 15, 5280.0/Vehicle.vehicle_length, 2, 2);
+        TransitLane t23 = new TransitLane(230, n2, n3, 1200, 30, 15, 5280/Vehicle.vehicle_length, 2);
+        CTMLink l23 = new SharedTransitCTMLink(23, n2, n3, 1200, 30, 15, 5280.0/Vehicle.vehicle_length, 2, 1, t23);
         Link l34 = new CentroidConnector(34, n3, n4);
         
         links.add(l12);
+        links.add(t23);
         links.add(l23);
         links.add(l34);
         
@@ -71,7 +74,7 @@ public class Main
         
         
         List<Vehicle> vehicles = new ArrayList<Vehicle>();
-        int rate = 1200;
+        int rate = 60;
         
         int num = (int)(rate * 10.0/60);
         
@@ -102,10 +105,28 @@ public class Main
         
         sim.msa(2);
 
-        
-        for(Cell c : l23.getCells())
+        for(Link l : links)
         {
-            //System.out.println(c.getId()+" "+c.getOccupancy());
+            System.out.println(l.getId()+" "+l.getAvgTT(0));
         }
+        
+        RunningAvg busTime = new RunningAvg();
+        RunningAvg vehTime = new RunningAvg();
+        
+        for(Vehicle v : vehicles)
+        {
+            if(v instanceof Bus)
+            {
+                busTime.add(v.getTT());
+                System.out.println(v.getPath());
+            }
+            else
+            {
+                vehTime.add(v.getTT());
+            }
+        }
+        
+        System.out.println("Bus: "+busTime.getAverage());
+        System.out.println("DA: "+vehTime.getAverage());
     }
 }

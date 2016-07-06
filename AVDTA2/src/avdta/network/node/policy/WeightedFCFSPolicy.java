@@ -4,6 +4,7 @@
  */
 package avdta.network.node.policy;
 
+import avdta.network.ReadNetwork;
 import avdta.network.node.DelayWeights;
 import avdta.vehicle.Vehicle;
 
@@ -39,5 +40,10 @@ public class WeightedFCFSPolicy extends FCFSPolicy
     public double getWeight(Vehicle v)
     {
         return weights.getWeight(v.getPrevLink(), v.getNextLink());
+    }
+    
+    public int getType()
+    {
+        return ReadNetwork.WEIGHTED;
     }
 }

@@ -6,6 +6,7 @@ package avdta.network.node;
 
 import avdta.network.node.policy.IntersectionPolicy;
 import avdta.network.Network;
+import avdta.network.ReadNetwork;
 import avdta.vehicle.DriverType;
 import avdta.network.link.Link;
 import avdta.network.Simulator;
@@ -64,6 +65,11 @@ public class StopSign extends IntersectionControl
                 }
             }
         };
+    }
+    
+    public int getType()
+    {
+        return ReadNetwork.STOPSIGN;
     }
     
     public boolean canMove(Link i, Link j, DriverType driver)

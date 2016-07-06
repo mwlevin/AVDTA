@@ -4,6 +4,7 @@
  */
 package avdta.network.node.obj;
 
+import avdta.network.ReadNetwork;
 import avdta.network.node.Node;
 import avdta.network.node.obj.ObjFunction;
 import avdta.vehicle.Vehicle;
@@ -57,5 +58,10 @@ public class EnergyObj implements ObjFunction
         }*/
         
         return v.calcDeltaEnergy()*1000;
+    }
+    
+    public int getType()
+    {
+        return ReadNetwork.DE4;
     }
 }

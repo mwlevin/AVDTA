@@ -4,6 +4,7 @@
  */
 package avdta.network.node;
 
+import avdta.network.ReadNetwork;
 import avdta.vehicle.DriverType;
 import avdta.network.link.Link;
 import avdta.vehicle.Vehicle;
@@ -37,6 +38,12 @@ public class Merge extends IntersectionControl
     {
         movements = new HashMap<Link, PhaseMovement>();
     }
+    
+    public int getType()
+    {
+        return ReadNetwork.SIGNAL;
+    }
+    
     /**
      * Calls each incoming link to the merge and puts their details in 
      * {@code movements} map; also caluclates {@code Q_total}, which is the sum 

@@ -4,10 +4,12 @@
  */
 package avdta.vehicle;
 
+import avdta.dta.ReadDTANetwork;
 import avdta.network.link.BusLink;
 import avdta.network.link.Link;
 import avdta.network.Path;
 import avdta.network.Simulator;
+import avdta.vehicle.fuel.VehicleClass;
 import java.util.ArrayList;
 
 /**
@@ -28,7 +30,7 @@ public class Bus extends PersonalVehicle
     
     public Bus(int id, int route_id, int dtime, Path path, ArrayList<BusLink> transitStops)
     {
-        super(id, path.getOrigin(), path.getDest(), dtime, Bus.VOT, Bus.wallet, path);
+        super(id, path.getOrigin(), path.getDest(), dtime, Bus.VOT, Bus.wallet, path, VehicleClass.icv, DriverType.BUS_AV);
         
         this.transitStops = transitStops;
         this.route_id = route_id;
@@ -44,7 +46,7 @@ public class Bus extends PersonalVehicle
     
     public int getType()
     {
-        return BUS;
+        return ReadDTANetwork.BUS + getVehClass().getType() + getDriver().getType();
     }
     
     public int getRouteId()

@@ -4,6 +4,7 @@
  */
 package avdta.network.node.obj;
 
+import avdta.network.ReadNetwork;
 import avdta.network.node.obj.ObjFunction;
 import avdta.network.link.Link;
 import avdta.network.Simulator;
@@ -39,6 +40,11 @@ public class P0Obj implements ObjFunction
         pressure_i = Q*(t - t_f);
         
         return pressure_i;
+    }
+    
+    public int getType()
+    {
+        return ReadNetwork.P0;
     }
     
 }

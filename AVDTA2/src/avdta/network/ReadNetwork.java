@@ -33,6 +33,7 @@ import avdta.network.AST;
 import avdta.network.DemandProfile;
 import avdta.network.link.DLRCTMLink;
 import avdta.network.link.SharedTransitCTMLink;
+import avdta.network.link.TransitLane;
 import avdta.network.node.obj.BackPressureObj;
 import avdta.network.node.obj.P0Obj;
 import avdta.project.DTAProject;
@@ -65,6 +66,7 @@ public class ReadNetwork
     public static final int CTM = 100;
     public static final int DLR = 2;
     public static final int SHARED_TRANSIT = 3;
+    public static final int TRANSIT_LANE = 4;
     public static final int CENTROID = 1000;
     
     
@@ -75,10 +77,17 @@ public class ReadNetwork
     
     // reservation policies
     public static final int FCFS = 1;
+    public static final int FIFO = 4;
+    public static final int AUCTION = 8;
+    public static final int RANDOM = 9;
+    
+    public static final int IP = 50;
+    public static final int MCKS = 30;
+    public static final int VOT = 1;
+    public static final int Q2 = 4;
+    public static final int DE4 = 5;
     public static final int PRESSURE = 2;
     public static final int P0 = 3;
-    public static final int AUCTION = 10;
-    public static final int RANDOM = 9;
  
     
     public static final int SIGNALIZED_RESERVATION = 20;
@@ -285,7 +294,10 @@ public class ReadNetwork
                     }
                     else if(type % 10 == SHARED_TRANSIT)
                     {
-                        link = new SharedTransitCTMLink(id, nodesmap.get(source_id), nodesmap.get(dest_id), capacity, ffspd, ffspd*mesodelta, jamd, length, numLanes);
+                        TransitLane transitLane = new TransitLane(id, nodesmap.get(source_id), nodesmap.get(dest_id), capacity, ffspd, ffspd*mesodelta, jamd, length);
+                        links.add(transitLane);
+                        link = new SharedTransitCTMLink(id, nodesmap.get(source_id), nodesmap.get(dest_id), capacity, 
+                                ffspd, ffspd*mesodelta, jamd, length, numLanes-1, transitLane);
                     }
                     else
                     {
@@ -354,7 +366,7 @@ public class ReadNetwork
                 num_moves = 0;
             }
 
-            Turn[] turns = new Turn[num_moves];
+            List<Turn> turns = new ArrayList<Turn>();
 
             for(int x = 0; x < num_moves; x++)
             {
@@ -365,13 +377,30 @@ public class ReadNetwork
                 {
                     System.out.println(split_inc[x]+" "+split_out[x]+" "+i+" "+j);
                 }
-                turns[x] = new Turn(i, j);
+                turns.add(new Turn(i, j));
+                
+                if(i instanceof SharedTransitCTMLink)
+                {
+                    if(j instanceof SharedTransitCTMLink)
+                    {
+                        turns.add(new Turn(((SharedTransitCTMLink)i).getTransitLane(),
+                        ((SharedTransitCTMLink)j).getTransitLane()));
+                    }
+                    
+                    turns.add(new Turn(((SharedTransitCTMLink)i).getTransitLane(), j));
+                }
+                else if(j instanceof SharedTransitCTMLink)
+                {
+                    turns.add(new Turn(i, ((SharedTransitCTMLink)j).getTransitLane()));
+                }
+                
+                
             }
 
             double duration = timegreen + timeyellow + timered;
             Phase phase = new Phase(turns, timegreen, duration);
 
-            if(turns.length > 0)
+            if(turns.size() > 0)
             {   
                 ((Signalized)((Intersection)node).getControl()).addPhase(phase);
             }

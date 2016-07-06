@@ -49,4 +49,6 @@ public abstract class VehicleClass
             return null;
         }
     }
+    
+    public abstract int getType();
 }

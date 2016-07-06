@@ -4,6 +4,7 @@
  */
 package avdta.network.node.obj;
 
+import avdta.network.ReadNetwork;
 import avdta.network.link.Link;
 import avdta.network.node.Node;
 import avdta.vehicle.Vehicle;
@@ -50,5 +51,10 @@ public class MaxFlowObj implements ObjFunction
         
         return value;
         * */
+    }
+    
+    public int getType()
+    {
+        return ReadNetwork.Q2;
     }
 }

@@ -10,6 +10,9 @@ import avdta.network.Network;
 import avdta.vehicle.Vehicle;
 import avdta.network.Network;
 import avdta.network.Simulator;
+import avdta.network.node.Intersection;
+import avdta.network.node.TBR;
+import avdta.vehicle.DriverType;
 import avdta.vehicle.fuel.ICV;
 import java.io.File;
 import java.io.IOException;
@@ -48,10 +51,6 @@ import java.util.List;
  */
 public abstract class Link implements Serializable, Comparable<Link>
 {
-    public static final int LTM = 1;    //Link Transmission Model
-    public static final int CTM = 2;
-    public static final int PQ = 3;
-    public static final int CENTROID = 100;
     
     
     
@@ -131,21 +130,7 @@ public abstract class Link implements Serializable, Comparable<Link>
      * @return an int corresponding to the type of the link
      */
     public abstract int getType();
-    
-    /**
-     * @return A description of the type of the link
-     */
-    public String strType()
-    {
-        switch(getType())
-        {
-            case CTM: return "CTM";
-            case LTM: return "LTM";
-            case PQ: return "PQ";
-            case CENTROID: return "centroid";
-            default: return "null";
-        }
-    }
+   
             
     public int getEffQueueLength()
     {
@@ -675,6 +660,19 @@ public abstract class Link implements Serializable, Comparable<Link>
     public int compareTo(Link rhs)
     {
         return id - rhs.id;
+    }
+    
+    public boolean canUseLink(DriverType driver)
+    {
+        if((dest instanceof Intersection) &&
+            (((Intersection)dest).getControl() instanceof TBR))
+        {
+            return driver.isAV();
+        }
+        else
+        {
+            return true;
+        }
     }
     
 }

@@ -43,25 +43,5 @@ public class SharedTransitLinkCell extends SharedTransitCell
             v.updatePosition(this);
 
         }
-        
-        double y_transit = Math.min(prev.getNumTransitSendingFlow(), getTransitReceivingFlow());
-        
-        ;
-
-        iter = prev.currTransit.iterator();
-        
-
-        while(y_transit >= 1)
-        {
-            y_transit -= 1;
-
-            Vehicle v = iter.next();
-            addVehicle(v);
-            iter.remove();
-
-            v.updatePosition(this);
-
-        }
-        
     }
 }

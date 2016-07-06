@@ -43,11 +43,12 @@ public class ReadDTANetwork extends ReadNetwork
     public static final int HV = 10;
     public static final int AV = 20;
     
+    
     public static final int ICV = 1;
     public static final int BEV = 2;
     
     public static final int DA_VEHICLE = 100;
-    public static final int TRANSIT = 500;
+    public static final int BUS = 500;
     public static final int SAV = 200;
     
     public ReadDTANetwork()

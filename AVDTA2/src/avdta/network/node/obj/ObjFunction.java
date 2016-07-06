@@ -34,4 +34,6 @@ public interface ObjFunction
      * Initialization work before scanning the vehicle list
      */
     public void initialize(Node n);
+    
+    public int getType();
 }

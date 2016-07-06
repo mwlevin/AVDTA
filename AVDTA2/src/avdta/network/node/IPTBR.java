@@ -26,6 +26,7 @@ import java.util.Set;
 public class IPTBR extends TBR
 {
     public int step(){return 0;}
+    public int getType(){ return 0;}
     /*
     private ObjFunction objfunc;
     

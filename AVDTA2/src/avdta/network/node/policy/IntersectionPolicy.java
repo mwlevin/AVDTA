@@ -71,4 +71,6 @@ public abstract class IntersectionPolicy implements Comparator<Vehicle>
     * initialization work before scanning vehicle list
     */
     public void initialize(Node n){}
+    
+    public abstract int getType();
 }

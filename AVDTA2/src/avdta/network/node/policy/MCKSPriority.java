@@ -4,6 +4,7 @@
  */
 package avdta.network.node.policy;
 
+import avdta.network.ReadNetwork;
 import avdta.network.node.obj.ObjFunction;
 import avdta.vehicle.Vehicle;
 import avdta.network.node.ConflictRegion;
@@ -87,5 +88,10 @@ public class MCKSPriority extends IntersectionPolicy
         
         v.efficiency = func.value(v, node) / weight;
         */
+    }
+    
+    public int getType()
+    {
+        return func.getType() + ReadNetwork.MCKS;
     }
 }

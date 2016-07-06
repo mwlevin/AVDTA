@@ -6,6 +6,7 @@ import avdta.network.link.DLRCTMLink;
 import avdta.network.link.Link;
 import avdta.network.node.Intersection;
 import avdta.network.node.Node;
+import avdta.network.link.SharedTransitCTMLink;
 import avdta.network.node.TBR;
 import avdta.network.node.Zone;
 import avdta.vehicle.DriverType;
@@ -54,6 +55,11 @@ public class Network
         paths = new PathList();
     }
     
+    public static boolean getHVsUseReservations()
+    {
+        return HVs_use_reservations;
+    }
+    
     public void setNodes(List<Node> nodes)
     {
         this.nodes = nodes;
@@ -73,10 +79,26 @@ public class Network
     {
         this.links = links;
         
+        boolean sharedTransit = false;
+        
         for(Link l : links)
         {
             l.initialize();
+            
+            sharedTransit = sharedTransit || (l instanceof SharedTransitCTMLink);
         }
+        
+        if(sharedTransit)
+        {
+            for(Link l : links)
+            {
+                if(l instanceof SharedTransitCTMLink)
+                {
+                    ((SharedTransitCTMLink)l).tieCells();
+                }
+            }
+        }
+        
     }
     
     public void setNetwork(List<Node> nodes, List<Link> links)
@@ -300,9 +322,7 @@ public class Network
                 
                 temp += costFunc.cost(l, vot, arr_time);
                 
-                if(!HVs_use_reservations && !driver.isAV() &&
-                        (l.getDest() instanceof Intersection) &&
-                        (((Intersection)l.getDest()).getControl() instanceof TBR))
+                if(!l.canUseLink(driver))
                 {
                     temp += 10000;
                 }

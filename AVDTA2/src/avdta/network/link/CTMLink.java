@@ -9,6 +9,7 @@ import avdta.network.link.cell.EndCell;
 import avdta.network.link.cell.LinkCell;
 import avdta.network.link.cell.StartCell;
 import avdta.network.Network;
+import avdta.network.ReadNetwork;
 import avdta.util.RunningAvg;
 import avdta.network.Simulator;
 import avdta.network.node.Node;
@@ -111,7 +112,7 @@ public class CTMLink extends Link
     
     public int getType()
     {
-        return CTM;
+        return ReadNetwork.CTM;
     }
     
     public double getFirstCellSpeed()

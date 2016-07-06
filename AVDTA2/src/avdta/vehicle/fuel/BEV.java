@@ -4,6 +4,8 @@
  */
 package avdta.vehicle.fuel;
 
+import avdta.dta.ReadDTANetwork;
+
 /**
  *
  * @author ut
@@ -54,5 +56,10 @@ public class BEV extends VehicleClass
         double P_fuel = P_recharge_loss + P_battery_power;
 
         return P_fuel / 1000;
+    }
+    
+    public int getType()
+    {
+        return ReadDTANetwork.BEV;
     }
 }

@@ -4,6 +4,7 @@
  */
 package avdta.network.node;
 
+import avdta.network.ReadNetwork;
 import avdta.vehicle.DriverType;
 import avdta.network.link.Link;
 import avdta.vehicle.Vehicle;
@@ -33,6 +34,13 @@ public class Diverge extends IntersectionControl
     {
         movements = new HashMap<Link, PhaseMovement>();
     }
+    
+    public int getType()
+    {
+        return ReadNetwork.SIGNAL;
+    }
+    
+    
     /**
      * Calls each outgoing link from the diverge and puts their details in
      * {@code movements} map.

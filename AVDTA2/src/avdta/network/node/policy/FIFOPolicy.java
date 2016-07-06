@@ -4,6 +4,7 @@
  */
 package avdta.network.node.policy;
 
+import avdta.network.ReadNetwork;
 import avdta.network.node.policy.IntersectionPolicy;
 import avdta.network.Simulator;
 import avdta.vehicle.Vehicle;
@@ -38,5 +39,10 @@ public class FIFOPolicy extends IntersectionPolicy
         {
             v.reservation_time = Simulator.time;
         }
+    }
+    
+    public int getType()
+    {
+        return ReadNetwork.FIFO;
     }
 }

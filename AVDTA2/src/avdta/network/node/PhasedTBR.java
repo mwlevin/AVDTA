@@ -4,6 +4,7 @@
  */
 package avdta.network.node;
 
+import avdta.network.node.policy.PhasePriority;
 import avdta.network.link.Link;
 import avdta.network.Network;
 import avdta.vehicle.Vehicle;

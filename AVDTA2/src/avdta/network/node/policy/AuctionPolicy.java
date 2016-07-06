@@ -10,6 +10,7 @@ import avdta.network.node.TBR;
 import avdta.network.node.TBR;
 import java.util.Collection;
 import java.util.List;
+import avdta.network.ReadNetwork;
 
 /**
  *
@@ -54,5 +55,10 @@ public class AuctionPolicy extends IntersectionPolicy
     public void onAccept(Vehicle v)
     {
         v.getWallet().pay(v.bid);
+    }
+    
+    public int getType()
+    {
+        return ReadNetwork.AUCTION;
     }
 }

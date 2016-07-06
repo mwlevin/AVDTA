@@ -45,6 +45,11 @@ public class Intersection extends Node
         }
     }
     
+    public int getType()
+    {
+        return control.getType();
+    }
+    
     
     public boolean canMove(Link i, Link j, DriverType driver)
     {

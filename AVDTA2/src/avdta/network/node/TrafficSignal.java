@@ -7,6 +7,7 @@ package avdta.network.node;
 import avdta.vehicle.DriverType;
 import avdta.network.link.Link;
 import avdta.network.Network;
+import avdta.network.ReadNetwork;
 import avdta.vehicle.Vehicle;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -61,6 +62,12 @@ public class TrafficSignal extends IntersectionControl implements Signalized
     {
         return phases.size();
     }
+    
+    public int getType()
+    {
+        return ReadNetwork.SIGNAL;
+    }
+    
     /**
      * Returns if the signal has conflicting regions, which it has (always), and 
      * so it returns true.

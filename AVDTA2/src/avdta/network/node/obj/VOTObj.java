@@ -4,6 +4,7 @@
  */
 package avdta.network.node.obj;
 
+import avdta.network.ReadNetwork;
 import avdta.network.node.Node;
 import avdta.vehicle.Vehicle;
 import avdta.network.node.TBR;
@@ -30,5 +31,10 @@ public class VOTObj implements ObjFunction
     public double value(Vehicle v, TBR n)
     {
         return v.getVOT();
+    }
+    
+    public int getType()
+    {
+        return ReadNetwork.VOT;
     }
 }

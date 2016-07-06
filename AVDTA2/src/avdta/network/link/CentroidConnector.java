@@ -4,6 +4,7 @@
  */
 package avdta.network.link;
 
+import avdta.network.ReadNetwork;
 import avdta.network.Simulator;
 import avdta.vehicle.Vehicle;
 import java.util.ArrayList;
@@ -114,7 +115,7 @@ public class CentroidConnector extends Link
     
     public int getType()
     {
-        return Link.CENTROID;
+        return ReadNetwork.CENTROID;
     }
     
     public boolean isCentroidConnector()

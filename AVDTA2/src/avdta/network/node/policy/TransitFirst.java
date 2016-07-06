@@ -5,6 +5,7 @@
  */
 package avdta.network.node.policy;
 
+import avdta.network.ReadNetwork;
 import avdta.network.node.TBR;
 import avdta.vehicle.Vehicle;
 
@@ -40,5 +41,10 @@ public class TransitFirst extends IntersectionPolicy
     public void initialize(TBR node, Vehicle v)
     {
         defaultPolicy.initialize(node, v);
+    }
+    
+    public int getType()
+    {
+        return defaultPolicy.getType();
     }
 }

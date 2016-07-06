@@ -4,6 +4,8 @@
  */
 package avdta.vehicle.fuel;
 
+import avdta.dta.ReadDTANetwork;
+
 /**
  *
  * @author ut
@@ -56,5 +58,10 @@ public class ICV extends VehicleClass
         double P_fuel = P_engine + P_engine_loss;
 
         return P_fuel / 1000;
+    }
+    
+    public int getType()
+    {
+        return ReadDTANetwork.ICV;
     }
 }

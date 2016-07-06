@@ -4,6 +4,7 @@
  */
 package avdta.network.node.obj;
 
+import avdta.network.ReadNetwork;
 import avdta.network.link.CTMLink;
 import avdta.network.link.cell.Cell;
 import avdta.network.link.CentroidConnector;
@@ -200,4 +201,9 @@ public class BackPressureObj implements ObjFunction
         return (m_ij * (pressure_i - pressure_j));
     }
     */
+    
+    public int getType()
+    {
+        return ReadNetwork.PRESSURE;
+    }
 }

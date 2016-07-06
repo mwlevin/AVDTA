@@ -660,7 +660,7 @@ public class Simulator extends Network
         
         for(Link l : links)
         {
-            fileout.print(l.getId()+"\t"+l.strType());
+            fileout.print(l.getId()+"\t"+l.getType());
             
             for(int t = (start / ast_duration) * ast_duration; t <= end; t += ast_duration)
             {
@@ -710,7 +710,7 @@ public class Simulator extends Network
         
         for(Link l : links)
         {
-            fileout.print(l.getSource()+"\t"+l.getDest()+"\t"+l.strType()+"\t"+l.getFFTime());
+            fileout.print(l.getSource()+"\t"+l.getDest()+"\t"+l.getType()+"\t"+l.getFFTime());
             
             for(int t = (start / ast_duration) * ast_duration; t <= end; t += ast_duration)
             {

@@ -8,6 +8,7 @@ package avdta.network.link;
 import avdta.network.link.cell.Cell;
 import avdta.network.link.cell.DLRCell;
 import avdta.network.Network;
+import avdta.network.ReadNetwork;
 import avdta.network.Simulator;
 import avdta.network.link.cell.DLREndCell;
 import avdta.network.link.cell.DLRLinkCell;
@@ -370,5 +371,10 @@ public class DLRCTMLink extends CTMLink
         
         
         super.update();
+    }
+    
+    public int getType()
+    {
+        return ReadNetwork.CTM + ReadNetwork.DLR;
     }
 }

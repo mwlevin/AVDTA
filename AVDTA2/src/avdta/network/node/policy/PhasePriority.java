@@ -2,8 +2,11 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package avdta.network.node;
+package avdta.network.node.policy;
 
+import avdta.network.ReadNetwork;
+import avdta.network.node.PhasedTBR;
+import avdta.network.node.TBR;
 import avdta.network.node.policy.IntersectionPolicy;
 import avdta.vehicle.Vehicle;
 
@@ -51,5 +54,10 @@ public class PhasePriority extends IntersectionPolicy
         {
             return v1.getId() - v2.getId();
         }
+    }
+    
+    public int getType()
+    {
+        return ReadNetwork.PHASED;
     }
 }

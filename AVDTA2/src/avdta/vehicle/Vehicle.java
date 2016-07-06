@@ -26,12 +26,7 @@ import java.util.Random;
  * @author ut
  */
 public abstract class Vehicle implements Serializable, Comparable<Vehicle>
-{
-    public static final int CAR = 1;
-    public static final int AV = 10;
-    public static final int TAXI = 100;
-    public static final int BUS = 501;
-    
+{   
     public static final double vehicle_length = 19;
     
     private static final Random rand = new Random(9000);

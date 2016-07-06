@@ -27,16 +27,6 @@ import java.util.TreeSet;
  */
 public abstract class Node extends Location implements Serializable, Comparable<Node>
 {
-    public static final int CR = 0;
-    public static final int SIGNALS = 1;
-    public static final int IP = 2;
-    public static final int MCKS = 3;
-    public static final int STOP = 4;
-    public static final int PHASED_TBR = 5;
-    public static final int WEIGHTED_TBR = 6;
-    public static final int MULTI = 10;
-    public static final int MULTI2 = 11;
-    public static final int MIX_SIGNAL_TBR = 20;
     
     private Set<Link> incoming, outgoing;
     private int id;
@@ -213,6 +203,7 @@ public abstract class Node extends Location implements Serializable, Comparable<
         return transitInc;
     }
     
+    public abstract int getType();
     /**
      * 
      * @return outgoing transit links

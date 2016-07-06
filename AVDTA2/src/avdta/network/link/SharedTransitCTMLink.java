@@ -5,6 +5,7 @@
  */
 package avdta.network.link;
 
+import avdta.network.ReadNetwork;
 import avdta.network.link.cell.Cell;
 import avdta.network.link.cell.SharedTransitCell;
 import avdta.network.link.cell.SharedTransitEndCell;
@@ -18,24 +19,34 @@ import avdta.network.node.Node;
  */
 public class SharedTransitCTMLink extends CTMLink
 {
-    public SharedTransitCTMLink(int id, Node source, Node dest, double capacity, double ffspd, double wavespd, double jamd, double length, int numLanes)
+    private TransitLane transitLane;
+    
+    public SharedTransitCTMLink(int id, Node source, Node dest, double capacity, double ffspd, double wavespd, 
+            double jamd, double length, int numLanes, TransitLane transitLane)
     {
-        super(id, source, dest, capacity, ffspd, wavespd, jamd, length, numLanes);        
+        super(id, source, dest, capacity, ffspd, wavespd, jamd, length, numLanes);  
+        this.transitLane = transitLane;
     }
     
-    public double getTransitCapacityPerLane()
+    public TransitLane getTransitLane()
     {
-        return getCapacityPerLane();
+        return transitLane;
     }
     
-    public double getTransitWaveSpeed()
+    public int getType()
     {
-        return getWaveSpeed();
+        return ReadNetwork.CTM + ReadNetwork.SHARED_TRANSIT;
     }
     
-    public double getTransitCellJamdPerLane()
+    public void tieCells()
     {
-        return getCellJamdPerLane();
+        Cell[] cells = getCells();
+        Cell[] transitCell = transitLane.getCells();
+        
+        for(int i = 0; i < cells.length; i++)
+        {
+            ((SharedTransitCell)cells[i]).setTransitLane(transitCell[i]);
+        }
     }
     
     public Cell createEndCell(Cell prev)
@@ -51,5 +62,20 @@ public class SharedTransitCTMLink extends CTMLink
     public Cell createCell(Cell prev)
     {
         return new SharedTransitLinkCell((SharedTransitCell)prev, this);
+    }
+    
+    public void prepare()
+    {
+        updateLanes();
+        
+        super.prepare();
+    }
+    
+    public void updateLanes()
+    {
+        for(Cell c : cells)
+        {
+            ((SharedTransitCell)c).updateLanes();
+        }
     }
 }

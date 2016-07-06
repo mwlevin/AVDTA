@@ -7,6 +7,7 @@ package avdta.network.node;
 import avdta.network.node.policy.IntersectionPolicy;
 import avdta.network.link.Link;
 import avdta.network.Network;
+import avdta.network.ReadNetwork;
 import avdta.vehicle.Vehicle;
 import avdta.network.node.TurningMovement;
 import java.util.ArrayList;
@@ -48,6 +49,11 @@ public class PriorityTBR extends TBR
         super(n);
         
         this.policy = policy;
+    }
+    
+    public int getType()
+    {
+        return ReadNetwork.RESERVATION + policy.getType();
     }
     
     public void setPolicy(IntersectionPolicy policy)

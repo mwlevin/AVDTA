@@ -5,6 +5,7 @@
 package avdta.vehicle;
 
 import avdta.dta.DTASimulator;
+import avdta.dta.ReadDTANetwork;
 import avdta.network.node.Node;
 import avdta.network.Path;
 import avdta.network.Simulator;
@@ -12,7 +13,6 @@ import avdta.vehicle.fuel.VehicleClass;
 import avdta.vehicle.Vehicle;
 import avdta.vehicle.DriverType;
 import avdta.vehicle.Wallet;
-import static avdta.vehicle.Vehicle.CAR;
 
 /**
  *
@@ -63,9 +63,9 @@ public class PersonalVehicle extends Vehicle
         effFactor = .5 + Math.round(Math.random());
     }
     
-    public PersonalVehicle(int id, Node origin, Node dest, int dtime, double vot, Wallet wallet, Path path)
+    public PersonalVehicle(int id, Node origin, Node dest, int dtime, double vot, Wallet wallet, Path path, VehicleClass vehClass, DriverType driver)
     {
-        this(id, origin, dest, dtime, vot, wallet);
+        this(id, origin, dest, dtime, vot, wallet, vehClass, driver);
         setPath(path);
     }
     
@@ -77,7 +77,7 @@ public class PersonalVehicle extends Vehicle
     
     public int getType()
     {
-        return CAR;
+        return ReadDTANetwork.DA_VEHICLE + getDriver().getType() + getVehClass().getType();
     }
     
     

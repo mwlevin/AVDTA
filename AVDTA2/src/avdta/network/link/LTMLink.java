@@ -7,6 +7,7 @@
 package avdta.network.link;
 
 import avdta.network.Network;
+import avdta.network.ReadNetwork;
 import avdta.network.node.Node;
 import avdta.network.Simulator;
 import avdta.network.link.Link;
@@ -59,7 +60,7 @@ public class LTMLink extends Link
     
     public int getType()
     {
-        return LTM;
+        return ReadNetwork.LTM;
     }
     
     public void reset()

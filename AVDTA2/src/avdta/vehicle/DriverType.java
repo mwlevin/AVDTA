@@ -4,6 +4,7 @@
  */
 package avdta.vehicle;
 
+import avdta.dta.ReadDTANetwork;
 import java.io.Serializable;
 
 /**
@@ -14,24 +15,18 @@ import java.io.Serializable;
 public class DriverType implements Serializable
 {
     
-    public static final DriverType AV = new DriverType("AV", 1, true);
-    public static final DriverType HV = new DriverType("HV", 1, false);
+    public static final DriverType AV = new DriverType("AV", 1, true, false);
+    public static final DriverType HV = new DriverType("HV", 1, false, false);
+    public static final DriverType BUS_AV = new DriverType("AV", 1, true, true);
+    public static final DriverType BUS_HV = new DriverType("HV", 1, false, true);
     
-    public static DriverType getDriver(int type)
-    {
-        if(type >= Vehicle.AV && type < Vehicle.BUS)
-        {
-            return AV;
-        }
-        else
-        {
-            return HV;
-        }
-    }
+    
     
     private double reactionTime;
     private boolean isAV;
     private String name;
+    private boolean isTransit;
+    
     /**
      * Instantiates {@code DriverType} with the inputs (name, reaction time, 
      * and if it is an autonomous vehicle).
@@ -39,11 +34,29 @@ public class DriverType implements Serializable
      * @param reactionTime Is the reaction time for given name.
      * @param isAV Boolean indicating if the driver type is {@code AV}.
      */
-    public DriverType(String name, double reactionTime, boolean isAV)
+    public DriverType(String name, double reactionTime, boolean isAV, boolean isTransit)
     {
         this.name = name;
         this.reactionTime = reactionTime;
         this.isAV = isAV;
+        this.isTransit = isTransit;
+    }
+    
+    public int getType()
+    {
+        if(isAV)
+        {
+            return ReadDTANetwork.AV;
+        }
+        else
+        {
+            return ReadDTANetwork.HV;
+        }
+    }
+    
+    public boolean isTransit()
+    {
+        return isTransit;
     }
     /**
      * Integer mapping for {@code AV} and {@code HV}. 
@@ -99,26 +112,5 @@ public class DriverType implements Serializable
     public double getEquivFlow(double speed)
     {
         return (speed * reactionTime + Vehicle.vehicle_length) / (speed * HV.getReactionTime() + Vehicle.vehicle_length);
-    }
-    /**
-     * Self-explanatory name.
-     * @param name AV or HV.
-     * @return Returns the type of driver or null if neither {@code AV} nor 
-     * {@code HV}.
-     */
-    public static DriverType getType(String name)
-    {
-        if(name.equalsIgnoreCase("AV"))
-        {
-            return AV;
-        }
-        else if(name.equalsIgnoreCase("HV"))
-        {
-            return HV;
-        }
-        else
-        {
-            return null;
-        }
     }
 }

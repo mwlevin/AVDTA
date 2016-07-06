@@ -98,4 +98,5 @@ public abstract class IntersectionControl
     public abstract int step();
     public abstract void reset();
     public abstract void initialize();
+    public abstract int getType();
 }

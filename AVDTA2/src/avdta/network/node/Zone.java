@@ -4,6 +4,7 @@
  */
 package avdta.network.node;
 
+import avdta.network.ReadNetwork;
 import avdta.network.link.Link;
 import avdta.vehicle.Vehicle;
 import avdta.vehicle.DriverType;
@@ -102,6 +103,11 @@ public class Zone extends Node
     public void setAttractions(double a)
     {
         this.attractions = a;
+    }
+    
+    public int getType()
+    {
+        return ReadNetwork.CENTROID;
     }
     
     public void setParkingFee(double f)
