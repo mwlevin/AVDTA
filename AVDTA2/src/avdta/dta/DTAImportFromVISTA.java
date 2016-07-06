@@ -61,7 +61,7 @@ public class DTAImportFromVISTA
             
             if(type == 500)
             {
-                type = ReadDTANetwork.TRANSIT + ReadDTANetwork.HV + ReadDTANetwork.ICV;
+                type = ReadDTANetwork.BUS + ReadDTANetwork.HV + ReadDTANetwork.ICV;
             }
             else
             {

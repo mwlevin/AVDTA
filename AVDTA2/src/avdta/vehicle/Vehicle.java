@@ -281,7 +281,7 @@ public abstract class Vehicle implements Serializable, Comparable<Vehicle>
     public void exited()
     {
         exit_time = Simulator.time;
-        
+
         /*
         if(Simulator.isRecording())
         {

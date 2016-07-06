@@ -4,6 +4,7 @@
  */
 package avdta.network.node.policy;
 
+import avdta.network.ReadNetwork;
 import avdta.network.node.policy.WeightedFCFSPolicy;
 import avdta.network.link.Link;
 import avdta.network.node.DelayWeights;
@@ -84,5 +85,10 @@ public class SignalWeightedTBR extends PriorityTBR implements Signalized, DelayW
         }
         
         total_weight += p.getGreenTime();
+    }
+    
+    public int getType()
+    {
+        return ReadNetwork.RESERVATION + ReadNetwork.WEIGHTED;
     }
 }

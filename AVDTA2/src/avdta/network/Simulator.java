@@ -536,7 +536,7 @@ public class Simulator extends Network
             Path route = v.getPath();
             fileout.print(route.size());
 
-            for(int i = 0; i < times.size(); i++)
+            for(int i = 0; i < route.size(); i++)
             {
                 fileout.print(" "+route.get(i).getId()+" "+times.get(i)+".00");
             }

@@ -66,11 +66,25 @@ public class DriverType implements Serializable
     {
         if(isAV)
         {
-            return 0;
+            if(isTransit)
+            {
+                return 2;
+            }
+            else
+            {
+                return 0;
+            }
         }
         else
         {
-            return 1;
+            if(isTransit)
+            {
+                return 3;
+            }
+            else
+            {
+                return 1;
+            }
         }
     }
     /**

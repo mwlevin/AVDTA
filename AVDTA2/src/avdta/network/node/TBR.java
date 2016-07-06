@@ -136,4 +136,6 @@ public abstract class TBR extends IntersectionControl implements Signalized
         return true;
         */
     }
+    
+    public abstract int getType();
 }

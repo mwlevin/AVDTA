@@ -23,6 +23,7 @@ import avdta.vehicle.Bus;
 import avdta.vehicle.PersonalVehicle;
 import avdta.vehicle.Vehicle;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 
@@ -93,10 +94,10 @@ public class Main
         
         for(int i = 0; i < num; i++)
         {
-            vehicles.add(new Bus(i+1, 1, (int)(600.0/num*i), path, stops));
+            vehicles.add(new Bus(100+i+1, 1, (int)(600.0/num*i), path, stops));
         }
         
-        
+        Collections.sort(vehicles);
         
         
         
@@ -105,11 +106,6 @@ public class Main
         
         sim.msa(2);
 
-        for(Link l : links)
-        {
-            System.out.println(l.getId()+" "+l.getAvgTT(0));
-        }
-        
         RunningAvg busTime = new RunningAvg();
         RunningAvg vehTime = new RunningAvg();
         
@@ -118,7 +114,6 @@ public class Main
             if(v instanceof Bus)
             {
                 busTime.add(v.getTT());
-                System.out.println(v.getPath());
             }
             else
             {
@@ -128,5 +123,7 @@ public class Main
         
         System.out.println("Bus: "+busTime.getAverage());
         System.out.println("DA: "+vehTime.getAverage());
+        
+        sim.importResults();
     }
 }

@@ -88,6 +88,8 @@ public class ReadNetwork
     public static final int DE4 = 5;
     public static final int PRESSURE = 2;
     public static final int P0 = 3;
+    
+
  
     
     public static final int SIGNALIZED_RESERVATION = 20;

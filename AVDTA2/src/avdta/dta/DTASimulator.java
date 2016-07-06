@@ -160,7 +160,7 @@ public class DTASimulator extends Simulator
             }
             else
             {
-                temp1.put(d, temp2 = new Path[Simulator.num_asts][2]);
+                temp1.put(d, temp2 = new Path[Simulator.num_asts][4]);
             }
 
             if(temp2[ast][v.getDriver().typeIndex()] == null)
@@ -308,11 +308,30 @@ public class DTASimulator extends Simulator
     {
         
         DTAProject project = (DTAProject)getProject();
-        statusUpdate.update(0, "Simulating");
+        
+        if(statusUpdate != null)
+        {
+            statusUpdate.update(0, "Simulating");
+        }
+        
+        
         simulate();
-        statusUpdate.update(1.0/4, "Creating sim.vat");
+        
+        
+        if(statusUpdate != null)
+        {
+            statusUpdate.update(1.0/4, "Creating sim.vat");
+        }
+        
+        
         createSimVat(new File(project.getAssignmentsFolder()+"/"+currAssign.getName()+"/sim.vat"));
-        statusUpdate.update(2.0/4, "Postprocessing");
+        
+        
+        if(statusUpdate != null)
+        {
+            statusUpdate.update(2.0/4, "Postprocessing");
+        }
+        
         
         Scanner filein = new Scanner(new File(project.getAssignmentsFolder()+"/"+currAssign.getName()+"/sim.vat"));
         
@@ -366,7 +385,7 @@ public class DTASimulator extends Simulator
                 path_out.println("}");
             }
             
-            veh_out.print(v.getId()+"\t"+v.getType()+"\t"+v.getDepTime()+"\t"+v.getDepTime()+"\t"+v.getExitTime()+"\t"+p.getId()+"\t"+p.getId()+"\t{");
+            veh_out.print(v.getId()+"\t"+v.getType()+"\t"+v.getDepTime()+"\t"+v.getNetEnterTime()+"\t"+v.getExitTime()+"\t"+p.getId()+"\t"+p.getId()+"\t{");
             
             veh_out.print(arr_times[0]);
             for(int i = 1; i < arr_times.length; i++)
@@ -382,11 +401,17 @@ public class DTASimulator extends Simulator
         path_out.close();
         veh_out.close();
         
-        statusUpdate.update(3.0/4, "Link tdd");
+        if(statusUpdate != null)
+        {
+            statusUpdate.update(3.0/4, "Link tdd");
+        }
+        
         printLinkTdd();
         
-        statusUpdate.update(1, "");
-        
+        if(statusUpdate != null)
+        {
+            statusUpdate.update(1, "");
+        }
     }
     
     public DTAResults msa(int max_iter, double min_gap) throws IOException
