@@ -255,7 +255,7 @@ public class ReadDTANetwork extends ReadNetwork
         
         for(VehicleRecord v : vehicles)
         {
-            double vot = VOT.dagum_rand(rand);
+            double vot = avdta.vehicle.VOT.dagum_rand(rand);
             fileout.println(v+"\t"+vot);
         }
         fileout.close();
