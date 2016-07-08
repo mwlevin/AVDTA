@@ -24,7 +24,7 @@ public class DTAResults
     
     public double getAvgTT()
     {
-        return getTSTT() / num_veh;
+        return tstt/60 / num_veh;
     }
     
     public int getNonExiting()

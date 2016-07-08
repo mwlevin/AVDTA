@@ -26,11 +26,14 @@ import java.util.Map;
 import java.util.Scanner;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 /**
  *
@@ -43,7 +46,10 @@ public class LinksPane extends JPanel
     
     private JTextArea data;
     
+    private static final String[] LINK_OPTIONS = new String[]{"DLR", "Shared transit"};
+    
     private JRadioButton ctm, ltm;
+    private JComboBox<String> linkOptions;
     private JButton save, reset;
     
     
@@ -61,6 +67,8 @@ public class LinksPane extends JPanel
         
         HVtau = new JTextField(5);
         AVtau = new JTextField(5);
+        
+        linkOptions = new JComboBox<String>(LINK_OPTIONS);
         
         mesoDelta = new JTextField(5);
         timestep = new JTextField(5);
@@ -99,7 +107,14 @@ public class LinksPane extends JPanel
                 reset();
             }
         });
-                
+        
+        ctm.addChangeListener(new ChangeListener()
+        {
+           public void stateChanged(ChangeEvent e)
+           {
+               linkOptions.setEnabled(ctm.isSelected());
+           }
+        });
         
         
         setLayout(new GridBagLayout());
@@ -112,6 +127,7 @@ public class LinksPane extends JPanel
         constrain(p, new JLabel("Flow model"), 0, 0, 1, 1);
         constrain(p, ctm, 0, 1, 1, 1);
         constrain(p, ltm, 0, 2, 1, 1);
+        constrain(p, linkOptions, 1, 1, 1, 2);
         constrain(this, p, 0, 3, 2, 1);
         
         p = new JPanel();
@@ -215,6 +231,7 @@ public class LinksPane extends JPanel
         HVtau.setEditable(false);
         AVtau.setText("");
         AVtau.setEditable(false);
+        linkOptions.setEnabled(false);
     }
     
     public void enable()
@@ -227,6 +244,7 @@ public class LinksPane extends JPanel
         timestep.setEditable(true);
         HVtau.setEditable(true);
         AVtau.setEditable(true);
+        linkOptions.setEnabled(ctm.isSelected());
     }
     
     public void setProject(Project project)
@@ -259,6 +277,11 @@ public class LinksPane extends JPanel
                 newtype = ReadNetwork.LTM;
             }
             
+            if(linkOptions.getSelectedItem().equals("DLR"))
+            {
+                newtype += ReadNetwork.DLR;
+            }
+            
             ArrayList<String> temp = new ArrayList<String>();
             
             Scanner filein = new Scanner(project.getLinksFile());
@@ -277,14 +300,19 @@ public class LinksPane extends JPanel
                 int numLanes = filein.nextInt();
                 double jamd = 5280.0/Vehicle.vehicle_length;
 
-                filein.nextLine();
+                String line = filein.nextLine();
                 
                 if(type != ReadNetwork.CENTROID)
                 {
                     type = newtype;
                 }
                 
-                temp.add(""+id+"\t"+type+"\t"+source_id+"\t"+dest_id+"\t"+length+"\t"+ffspd+"\t"+capacity+"\t"+numLanes+"\t"+jamd);
+                if(linkOptions.getSelectedItem().equals("Shared transit") && numLanes > 1)
+                {
+                    type += ReadNetwork.SHARED_TRANSIT;
+                }
+                
+                temp.add(""+id+"\t"+type+"\t"+source_id+"\t"+dest_id+"\t"+length+"\t"+ffspd+"\t"+capacity+"\t"+numLanes+"\t"+jamd+line);
             }
             
             filein.close();

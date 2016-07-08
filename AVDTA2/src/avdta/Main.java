@@ -36,8 +36,8 @@ public class Main
 {
     public static void main(String[] args) throws IOException
     {
-        transitTest();
-        //GUI.main(args);
+        //transitTest();
+        GUI.main(args);
     }
     
     public static void transitTest() throws IOException
@@ -61,8 +61,8 @@ public class Main
         nodes.add(n4);
         
         Link l12 = new CentroidConnector(12, n1, n2);
-        TransitLane t23 = new TransitLane(230, n2, n3, 1200, 30, 15, 5280/Vehicle.vehicle_length, 2);
-        CTMLink l23 = new SharedTransitCTMLink(23, n2, n3, 1200, 30, 15, 5280.0/Vehicle.vehicle_length, 2, 1, t23);
+        TransitLane t23 = new TransitLane(230, n2, n3, 1200, 30, 15, 5280/Vehicle.vehicle_length, 2.0);
+        CTMLink l23 = new SharedTransitCTMLink(23, n2, n3, 1200, 30, 15, 5280.0/Vehicle.vehicle_length, 2.0, 1, t23);
         Link l34 = new CentroidConnector(34, n3, n4);
         
         links.add(l12);
@@ -75,7 +75,7 @@ public class Main
         
         
         List<Vehicle> vehicles = new ArrayList<Vehicle>();
-        int rate = 60;
+        int rate = 1800;
         
         int num = (int)(rate * 10.0/60);
         
@@ -85,7 +85,7 @@ public class Main
         }
         
         
-        rate = 60;
+        rate = 0;
         
         num = (int)(rate * 10.0/60);
         ArrayList<BusLink> stops = new ArrayList<BusLink>();

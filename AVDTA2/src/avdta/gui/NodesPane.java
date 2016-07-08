@@ -45,6 +45,7 @@ import java.util.Scanner;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
@@ -68,11 +69,16 @@ public class NodesPane extends JPanel
     private JRadioButton signal, stop, reservation;
     private JButton save, reset;
     
+    private static final String[] NODE_OPTIONS = new String[]{"FCFS", "backpressure", "P0", "Phased", "Signal weighted"};
+    private JComboBox<String> nodeOptions;
+    
     public NodesPane(NetworkPane parent)
     {
         this.parent = parent;
         data = new JTextArea(5, 20);
         data.setEditable(false);
+        
+        nodeOptions = new JComboBox<String>(NODE_OPTIONS);
         
         HVsUseReservations = new JCheckBox("HVs use reservations");
         
@@ -89,13 +95,11 @@ public class NodesPane extends JPanel
         {
             public void stateChanged(ChangeEvent e)
             {
-                // update drop down menu
+                nodeOptions.setEnabled(reservation.isSelected());
             }
         };
-        
-        signal.addChangeListener(change);
+
         reservation.addChangeListener(change);
-        stop.addChangeListener(change);
         
         save = new JButton("Save");
         reset = new JButton("Reset");
@@ -137,6 +141,7 @@ public class NodesPane extends JPanel
         constrain(p, signal, 0, 1, 1, 1);
         constrain(p, reservation, 0, 2, 1, 1);
         constrain(p, stop, 0, 3, 1, 1);
+        constrain(p, nodeOptions, 1, 2, 1, 2);
         
         constrain(this, p, 0, 2, 2, 1);
         
@@ -309,7 +314,84 @@ public class NodesPane extends JPanel
     
     public void save() throws IOException
     {
+        parent.disable();
         
+        
+        ArrayList<String> temp = new ArrayList<String>();
+        
+        Scanner filein = new Scanner(project.getNodesFile());
+        
+        temp.add(filein.nextLine());
+        
+        int newtype = 0;
+        
+        if(signal.isSelected())
+        {
+            newtype = ReadNetwork.SIGNAL;
+        }
+        else if(stop.isSelected())
+        {
+            newtype = ReadNetwork.STOPSIGN;
+        }
+        else if(reservation.isSelected())
+        {
+            newtype = ReadNetwork.RESERVATION;
+            
+            if(nodeOptions.getSelectedItem().equals("FCFS"))
+            {
+                newtype += ReadNetwork.FCFS;
+            }
+            else if(nodeOptions.getSelectedItem().equals("backpressure"))
+            {
+                newtype += ReadNetwork.PRESSURE;
+            }
+            else if(nodeOptions.getSelectedItem().equals("P0"))
+            {
+                newtype += ReadNetwork.P0;
+            }
+            else if(nodeOptions.getSelectedItem().equals("Phased"))
+            {
+                newtype += ReadNetwork.PHASED;
+            }
+            else if(nodeOptions.getSelectedItem().equals("Signal weighted"))
+            {
+                newtype += ReadNetwork.WEIGHTED;
+            }
+        }
+        
+        while(filein.hasNextInt())
+        {
+            int id = filein.nextInt();
+            int type = filein.nextInt();
+            double x = filein.nextDouble();
+            double y = filein.nextDouble();
+            double elevation = filein.nextDouble();
+            String line = filein.nextLine();
+            
+            if(type != ReadNetwork.CENTROID)
+            {
+                type = newtype;
+            }
+            
+            temp.add(id+"\t"+type+"\t"+x+"\t"+y+"\t"+elevation+line);
+        }
+        filein.close();
+        
+        PrintStream fileout = new PrintStream(new FileOutputStream(project.getNodesFile()), true);
+        
+        for(String x : temp)
+        {
+            fileout.println(x);
+        }
+        
+        fileout.close();
+        
+        
+        
+        project.loadSimulator();
+        parent.reset();
+        
+        parent.enable();
     }
     
     public void enable()
@@ -320,6 +402,7 @@ public class NodesPane extends JPanel
         stop.setEnabled(true);
         reservation.setEnabled(true);
         HVsUseReservations.setEnabled(true);
+        nodeOptions.setEnabled(reservation.isSelected());
     }
     public void disable()
     {
@@ -329,7 +412,7 @@ public class NodesPane extends JPanel
         stop.setEnabled(false);
         reservation.setEnabled(false);
         HVsUseReservations.setEnabled(false);
-        
+        nodeOptions.setEnabled(false);
     }
     
     public void setProject(Project project)

@@ -294,7 +294,7 @@ public class ReadNetwork
                         Network.dlr = true;
                         link = new DLRCTMLink(id, nodesmap.get(source_id), nodesmap.get(dest_id), capacity, ffspd, ffspd*mesodelta, jamd, length, numLanes);
                     }
-                    else if(type % 10 == SHARED_TRANSIT)
+                    else if(type % 10 == SHARED_TRANSIT && numLanes > 1)
                     {
                         TransitLane transitLane = new TransitLane(id, nodesmap.get(source_id), nodesmap.get(dest_id), capacity, ffspd, ffspd*mesodelta, jamd, length);
                         links.add(transitLane);
