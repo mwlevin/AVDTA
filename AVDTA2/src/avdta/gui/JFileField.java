@@ -70,7 +70,15 @@ public class JFileField extends JTextField
     
     public File chooseFile()
     {
-        JFileChooser chooser = new JFileChooser(new File(root));
+        JFileChooser chooser;
+        if(file == null)
+        {
+            chooser = new JFileChooser(new File(root));
+        }
+        else
+        {
+            chooser = new JFileChooser(file);
+        }
         
         if(filter != null)
         {

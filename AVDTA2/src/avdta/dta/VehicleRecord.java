@@ -35,7 +35,7 @@ public class VehicleRecord implements Comparable<VehicleRecord>
         }
         else
         {
-            return id = rhs.id;
+            return id - rhs.id;
         }
     }
 }

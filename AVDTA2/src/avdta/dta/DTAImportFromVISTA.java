@@ -77,7 +77,7 @@ public class DTAImportFromVISTA
     
     public void convertDynamicOD(DTAProject project, File dynamic_od) throws IOException
     {
-        PrintStream fileout = new PrintStream(new FileOutputStream(project.getStaticODFile()));
+        PrintStream fileout = new PrintStream(new FileOutputStream(project.getDynamicODFile()));
         Scanner filein = new Scanner(dynamic_od);
         
         fileout.println(ReadDTANetwork.getDynamicODFileHeader());

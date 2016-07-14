@@ -43,5 +43,8 @@ public class FileTransfer
                 break;
             }
         }
+        
+        in.close();
+        out.close();
     }
 }

@@ -251,7 +251,7 @@ public class ReadDTANetwork extends ReadNetwork
         
         PrintStream fileout = new PrintStream(new FileOutputStream(project.getDemandFile()), true);
         
-        fileout.println("id\ttype\torigin\tdest\tdtime\tvot");
+        fileout.println(getDemandFileHeader());
         
         for(VehicleRecord v : vehicles)
         {

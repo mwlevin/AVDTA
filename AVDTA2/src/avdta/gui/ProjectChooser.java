@@ -13,7 +13,7 @@ import javax.swing.JFileChooser;
  */
 public class ProjectChooser extends JFileChooser
 {
-    private  ProjectFileView view;
+    private ProjectFileView view;
     
     private boolean acceptAll, acceptNone;
     
@@ -27,7 +27,7 @@ public class ProjectChooser extends JFileChooser
     
     public ProjectChooser(File dir, String type)
     {
-        this(dir);
+        super(dir);
         view = new ProjectFileView(type);
         setFileView(view);
         setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
@@ -36,9 +36,22 @@ public class ProjectChooser extends JFileChooser
     
     public boolean accept(File file)
     {
+        if(view == null)
+        {
+            return false;
+        }
         int code = view.isProject(file);
+        //return true;
+        //int code = view.isProject(file);
         
-        return (acceptNone && code == 0) || (!acceptNone && (code == 1 || (acceptAll && code == 2)));
+        if(acceptNone)
+        {
+            return code == 0;
+        }
+        else
+        {
+            return code == 1 || (acceptAll && code == 2);
+        }
     }
     
     public void setAcceptAll(boolean a)

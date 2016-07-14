@@ -125,6 +125,17 @@ public class DTAProject extends Project
         return getProjectDirectory()+"/assignments";
     }
     
+    public void deleteAssignments()
+    {
+        File dir = new File(getAssignmentsFolder());
+        
+        
+        for(File f : dir.listFiles())
+        {
+            f.delete();
+        }
+    }
+    
     
     public File getOptionsFile()
     {

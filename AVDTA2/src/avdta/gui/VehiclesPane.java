@@ -39,6 +39,7 @@ public class VehiclesPane extends JPanel
     
     public VehiclesPane(DemandPane parent)
     {
+        this.parent = parent;
         data = new JTextArea(10, 20);
         data.setEditable(false);
         
@@ -154,7 +155,7 @@ public class VehiclesPane extends JPanel
                 }        
                 
             }
-            data.append(project.getSimulator().getVehicles().size()+"\tvehicles\n\n");
+            data.append(project.getSimulator().getVehicles().size()+"\ttotal vehicles\n\n");
             
             if(personal > 0)
             {

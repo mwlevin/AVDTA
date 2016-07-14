@@ -38,6 +38,7 @@ public class AssignmentPane extends JPanel
     
     private JList list;
     private JButton loadAssignment;
+    private JButton clearAssignments;
     
     private ArrayList<Assignment> assignments;
     
@@ -66,6 +67,15 @@ public class AssignmentPane extends JPanel
             }
         });
         
+        clearAssignments = new JButton("Clear all");
+        clearAssignments.addActionListener(new ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                project.deleteAssignments();
+            }
+        });
+        
         loadAssignment = new JButton("Load assignment");
         
         loadAssignment.addActionListener(new ActionListener()
@@ -90,6 +100,7 @@ public class AssignmentPane extends JPanel
         
         constrain(this, new JScrollPane(list), 0, 0, 1, 1);
         constrain(this, loadAssignment, 0, 1, 1, 1);
+        constrain(this, clearAssignments, 0, 2, 1, 1);
         
         assignments = new ArrayList<Assignment>();
         
@@ -203,11 +214,13 @@ public class AssignmentPane extends JPanel
     {
         list.setEnabled(false);
         loadAssignment.setEnabled(false);
+        clearAssignments.setEnabled(false);
     }
     
     public void enable()
     {
         list.setEnabled(true);
         loadAssignment.setEnabled(list.getSelectedIndex() > 0);
+        clearAssignments.setEnabled(true);
     }
 }

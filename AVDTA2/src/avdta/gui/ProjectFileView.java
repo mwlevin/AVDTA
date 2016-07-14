@@ -5,6 +5,7 @@
  */
 package avdta.gui;
 
+import java.awt.Image;
 import java.io.File;
 import java.io.IOException;
 import java.util.Scanner;
@@ -19,7 +20,7 @@ import javax.swing.filechooser.FileView;
  */
 public class ProjectFileView extends FileView
 {
-    private static final Icon icon = new ImageIcon(GUI.getIcon());
+    private static final Icon icon = new ImageIcon(GUI.getIcon().getScaledInstance(20, 20, Image.SCALE_DEFAULT));
     
     private String type;
     

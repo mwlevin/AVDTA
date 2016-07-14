@@ -219,7 +219,6 @@ public abstract class Project
     public void cloneFromProject(Project rhs) throws IOException
     {
         importNetworkFromProject(rhs);
-        FileTransfer.copy(rhs.getOptionsFile(), getOptionsFile());
     }
 
     public void changeRandSeed()

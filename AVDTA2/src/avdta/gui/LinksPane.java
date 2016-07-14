@@ -46,10 +46,12 @@ public class LinksPane extends JPanel
     
     private JTextArea data;
     
-    private static final String[] LINK_OPTIONS = new String[]{"DLR", "Shared transit"};
+    private static final String[] CTM_LINK_OPTIONS = new String[]{"CTM", "DLR", "Shared transit"};
+    private static final String[] LTM_LINK_OPTIONS = new String[]{"LTM", "CACC"};
     
     private JRadioButton ctm, ltm;
-    private JComboBox<String> linkOptions;
+    private JComboBox<String> ctmOptions;
+    private JComboBox<String> ltmOptions;
     private JButton save, reset;
     
     
@@ -68,7 +70,8 @@ public class LinksPane extends JPanel
         HVtau = new JTextField(5);
         AVtau = new JTextField(5);
         
-        linkOptions = new JComboBox<String>(LINK_OPTIONS);
+        ctmOptions = new JComboBox<String>(CTM_LINK_OPTIONS);
+        ltmOptions = new JComboBox<String>(LTM_LINK_OPTIONS);
         
         mesoDelta = new JTextField(5);
         timestep = new JTextField(5);
@@ -112,7 +115,15 @@ public class LinksPane extends JPanel
         {
            public void stateChanged(ChangeEvent e)
            {
-               linkOptions.setEnabled(ctm.isSelected());
+               ctmOptions.setEnabled(ctm.isSelected());
+           }
+        });
+        
+        ltm.addChangeListener(new ChangeListener()
+        {
+           public void stateChanged(ChangeEvent e)
+           {
+               ltmOptions.setEnabled(ltm.isSelected());
            }
         });
         
@@ -127,7 +138,8 @@ public class LinksPane extends JPanel
         constrain(p, new JLabel("Flow model"), 0, 0, 1, 1);
         constrain(p, ctm, 0, 1, 1, 1);
         constrain(p, ltm, 0, 2, 1, 1);
-        constrain(p, linkOptions, 1, 1, 1, 2);
+        constrain(p, ctmOptions, 1, 1, 1, 1);
+        constrain(p, ltmOptions, 1, 2, 1, 1);
         constrain(this, p, 0, 3, 2, 1);
         
         p = new JPanel();
@@ -231,7 +243,8 @@ public class LinksPane extends JPanel
         HVtau.setEditable(false);
         AVtau.setText("");
         AVtau.setEditable(false);
-        linkOptions.setEnabled(false);
+        ctmOptions.setEnabled(false);
+        ltmOptions.setEnabled(false);
     }
     
     public void enable()
@@ -244,7 +257,8 @@ public class LinksPane extends JPanel
         timestep.setEditable(true);
         HVtau.setEditable(true);
         AVtau.setEditable(true);
-        linkOptions.setEnabled(ctm.isSelected());
+        ctmOptions.setEnabled(ctm.isSelected());
+        ltmOptions.setEnabled(ltm.isSelected());
     }
     
     public void setProject(Project project)
@@ -256,13 +270,14 @@ public class LinksPane extends JPanel
 
     public void save() throws IOException
     {
-        parent.disable();
-        
-        
         project.setOption("simulation-mesoscopic-delta", ""+Double.parseDouble(mesoDelta.getText().trim()));
         project.setOption("simulation-mesoscopic-step", ""+Integer.parseInt(timestep.getText().trim()));
         project.setOption("hv-reaction-time", ""+Double.parseDouble(HVtau.getText().trim()));
         project.setOption("av-reaction-time", ""+Double.parseDouble(AVtau.getText().trim()));
+        
+        parent.disable();
+        
+        project.writeOptions();
         
         if(ctm.isSelected() || ltm.isSelected())
         {
@@ -277,9 +292,19 @@ public class LinksPane extends JPanel
                 newtype = ReadNetwork.LTM;
             }
             
-            if(linkOptions.getSelectedItem().equals("DLR"))
+            if(ctm.isSelected())
             {
-                newtype += ReadNetwork.DLR;
+                if(ctmOptions.getSelectedItem().equals("DLR"))
+                {
+                    newtype += ReadNetwork.DLR;
+                }
+            }
+            else if(ltm.isSelected())
+            {
+                if(ltmOptions.getSelectedItem().equals("CACC"))
+                {
+                    newtype += ReadNetwork.CACC;
+                }
             }
             
             ArrayList<String> temp = new ArrayList<String>();
@@ -294,7 +319,7 @@ public class LinksPane extends JPanel
                 int type = filein.nextInt();
                 int source_id = filein.nextInt();
                 int dest_id = filein.nextInt();
-                double length = filein.nextDouble() / 5280;
+                double length = filein.nextDouble();
                 double ffspd = filein.nextDouble();
                 double capacity = filein.nextDouble();
                 int numLanes = filein.nextInt();
@@ -307,12 +332,12 @@ public class LinksPane extends JPanel
                     type = newtype;
                 }
                 
-                if(linkOptions.getSelectedItem().equals("Shared transit") && numLanes > 1)
+                if(ctm.isSelected() && ctmOptions.getSelectedItem().equals("Shared transit") && numLanes > 1)
                 {
                     type += ReadNetwork.SHARED_TRANSIT;
                 }
                 
-                temp.add(""+id+"\t"+type+"\t"+source_id+"\t"+dest_id+"\t"+length+"\t"+ffspd+"\t"+capacity+"\t"+numLanes+"\t"+jamd+line);
+                temp.add(""+id+"\t"+type+"\t"+source_id+"\t"+dest_id+"\t"+length+"\t"+ffspd+"\t"+capacity+"\t"+numLanes+"\t"+line);
             }
             
             filein.close();

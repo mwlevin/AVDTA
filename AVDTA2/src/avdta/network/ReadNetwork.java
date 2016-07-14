@@ -31,6 +31,7 @@ import avdta.network.node.policy.SignalWeightedTBR;
 import avdta.network.node.Signalized;
 import avdta.network.AST;
 import avdta.network.DemandProfile;
+import avdta.network.link.CACCLTMLink;
 import avdta.network.link.DLRCTMLink;
 import avdta.network.link.SharedTransitCTMLink;
 import avdta.network.link.TransitLane;
@@ -67,6 +68,7 @@ public class ReadNetwork
     public static final int DLR = 2;
     public static final int SHARED_TRANSIT = 3;
     public static final int TRANSIT_LANE = 4;
+    public static final int CACC = 5;
     public static final int CENTROID = 1000;
     
     
@@ -286,8 +288,17 @@ public class ReadNetwork
                     link = new CentroidConnector(id, nodesmap.get(source_id), nodesmap.get(dest_id));
                     break;
                 case LTM/100:
-                     link = new LTMLink(id, nodesmap.get(source_id), nodesmap.get(dest_id), capacity, ffspd, ffspd*mesodelta, jamd, length, numLanes);
-                     break;
+                    if(type % 10 == CACC)
+                    {
+                        link = new CACCLTMLink(id, nodesmap.get(source_id), nodesmap.get(dest_id), capacity, ffspd, ffspd*mesodelta, jamd, length, numLanes);
+                        
+                        CACCLTMLink l = (CACCLTMLink)link;
+                    }
+                    else
+                    {
+                        link = new LTMLink(id, nodesmap.get(source_id), nodesmap.get(dest_id), capacity, ffspd, ffspd*mesodelta, jamd, length, numLanes);
+                    }
+                    break;
                 case CTM/100:
                     if(type%10 == DLR)
                     {

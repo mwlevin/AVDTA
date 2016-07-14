@@ -39,7 +39,7 @@ public class DTAGUI extends GUI
     private DTAPane dtaPane;
     
     
-    private JMenuItem cloneMI;
+    private JMenuItem cloneMI, closeMI;
     
     public DTAGUI()
     {
@@ -120,6 +120,19 @@ public class DTAGUI extends GUI
         cloneMI = mi;
         cloneMI.setEnabled(false);
         
+        mi = new JMenuItem("Close network");
+        mi.addActionListener(new ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                closeProject();
+            }
+        });
+        me.add(mi);
+        
+        closeMI = mi;
+        closeMI.setEnabled(false);
+        
         menu.add(me);
         
         me = new JMenu("About");
@@ -160,12 +173,25 @@ public class DTAGUI extends GUI
         setVisible(true);
     }
     
+    public void closeProject()
+    {
+        try
+        {
+            openProject(null);
+        }
+        catch(IOException ex)
+        {
+            GUI.handleException(ex);
+        }
+    }
+    
     public void openProject(DTAProject project) throws IOException
     {
         this.project = project;
         
         
         cloneMI.setEnabled(project != null);
+        closeMI.setEnabled(project != null);
         
         if(project != null)
         {
@@ -198,16 +224,18 @@ public class DTAGUI extends GUI
             String name = JOptionPane.showInputDialog(this, "What do you want to name this project? ", "Project name", 
                     JOptionPane.QUESTION_MESSAGE);
             
-            try
+            if(name != null)
             {
-                DTAProject rhs = new DTAProject();
-                rhs.createProject(name, new File(dir.getCanonicalPath()+"/"+name));
-                rhs.cloneFromProject(project);
-                openProject(rhs);
-            }
-            catch(IOException ex)
-            {
-                handleException(ex);
+                try
+                {
+                    DTAProject rhs = new DTAProject();
+                    rhs.createProject(name, new File(dir.getCanonicalPath()+"/"+name));
+                    rhs.cloneFromProject(project);
+                }
+                catch(IOException ex)
+                {
+                    handleException(ex);
+                }
             }
         }
     }
@@ -247,15 +275,18 @@ public class DTAGUI extends GUI
             String name = JOptionPane.showInputDialog(this, "What do you want to name this project? ", "Project name", 
                     JOptionPane.QUESTION_MESSAGE);
             
-            try
+            if(name != null)
             {
-                DTAProject project = new DTAProject();
-                project.createProject(name, new File(dir.getCanonicalPath()+"/"+name));
-                openProject(project);
-            }
-            catch(IOException ex)
-            {
-                handleException(ex);
+                try
+                {
+                    DTAProject project = new DTAProject();
+                    project.createProject(name, new File(dir.getCanonicalPath()+"/"+name));
+                    openProject(project);
+                }
+                catch(IOException ex)
+                {
+                    handleException(ex);
+                }
             }
         }
     }
