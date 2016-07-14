@@ -54,20 +54,7 @@ public class ImportDemandPane extends JPanel
             }
             public File chooseFile()
             {
-                final ProjectFileView view = new ProjectFileView("DTA");
-        
-                JFileChooser chooser = new JFileChooser(new File("networks/"))
-                {
-                    public boolean accept(File file)
-                    { 
-                       return view.isProject(file) < 2;
-                    }
-                };
-
-
-
-                chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
-                chooser.setFileView(view);
+                JFileChooser chooser = new ProjectChooser(new File(GUI.getDefaultDirectory()), "DTA");
 
                 int returnVal = chooser.showDialog(this, "Open network");
 

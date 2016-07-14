@@ -185,18 +185,8 @@ public class DTAGUI extends GUI
     
     public void cloneProject()
     {
-        final ProjectFileView view = new ProjectFileView("DTA");
+        JFileChooser chooser = new ProjectChooser(new File(GUI.getDefaultDirectory()));
         
-        JFileChooser chooser = new JFileChooser(new File("networks/"))
-        {
-            public boolean accept(File file)
-            {
-                return view.isProject(file) == 0;
-            }
-        };
-        
-        chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-        chooser.setFileView(view);
         
         
         int returnVal = chooser.showDialog(this, "Select folder");
@@ -224,20 +214,7 @@ public class DTAGUI extends GUI
     
     public void openProject()
     {
-        final ProjectFileView view = new ProjectFileView("DTA");
-        
-        JFileChooser chooser = new JFileChooser(new File("networks/"))
-        {
-            public boolean accept(File file)
-            { 
-               return view.isProject(file) < 2;
-            }
-        };
-        
-        
-        
-        chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
-        chooser.setFileView(view);
+        JFileChooser chooser = new ProjectChooser(new File(GUI.getDefaultDirectory()), "DTA");
         
         int returnVal = chooser.showDialog(this, "Open network");
         
@@ -259,20 +236,8 @@ public class DTAGUI extends GUI
     
     public void newProject()
     {
-        final ProjectFileView view = new ProjectFileView("DTA");
-        
-        JFileChooser chooser = new JFileChooser(new File("networks/"))
-        {
-            public boolean accept(File file)
-            {
-                return view.isProject(file) == 0;
-            }
-        };
-        
-        chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-        chooser.setFileView(view);
-        
-        
+        JFileChooser chooser = new ProjectChooser(new File(GUI.getDefaultDirectory()));
+               
         int returnVal = chooser.showDialog(this, "Select folder");
         
         if(returnVal == JFileChooser.APPROVE_OPTION)

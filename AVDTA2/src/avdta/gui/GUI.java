@@ -16,6 +16,8 @@ import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import avdta.network.node.PhasedTBR;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 
 /**
  *
@@ -50,7 +52,10 @@ public class GUI extends JFrame
         return icon;
     }
     
-    
+    public static String getDefaultDirectory()
+    {
+        return "networks/";
+    }
     
     public static void handleException(Exception ex)
     {
@@ -62,7 +67,7 @@ public class GUI extends JFrame
     public GUI()
     {
         setTitle("AVDTA");
-        //setIconImage(GUI.getIcon());
+        setIconImage(GUI.getIcon());
         
         frame = this;
     }

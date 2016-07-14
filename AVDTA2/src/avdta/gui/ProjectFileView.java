@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Scanner;
 import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileView;
 
@@ -18,6 +19,8 @@ import javax.swing.filechooser.FileView;
  */
 public class ProjectFileView extends FileView
 {
+    private static final Icon icon = new ImageIcon(GUI.getIcon());
+    
     private String type;
     
     public ProjectFileView()
@@ -33,7 +36,7 @@ public class ProjectFileView extends FileView
     {
         if(isProject(file) > 0)
         {
-            
+            return icon;
         }
         
         return super.getIcon(file);
@@ -50,7 +53,7 @@ public class ProjectFileView extends FileView
             {
                 if(type == null)
                 {
-                    return 1;
+                    return 2;
                 }
                 else
                 {
