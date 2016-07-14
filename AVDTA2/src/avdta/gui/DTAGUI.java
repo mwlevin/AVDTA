@@ -185,7 +185,7 @@ public class DTAGUI extends GUI
     
     public void cloneProject()
     {
-        ProjectFileView view = new ProjectFileView("DTA");
+        final ProjectFileView view = new ProjectFileView("DTA");
         
         JFileChooser chooser = new JFileChooser(new File("networks/"))
         {
@@ -224,7 +224,7 @@ public class DTAGUI extends GUI
     
     public void openProject()
     {
-        ProjectFileView view = new ProjectFileView("DTA");
+        final ProjectFileView view = new ProjectFileView("DTA");
         
         JFileChooser chooser = new JFileChooser(new File("networks/"))
         {
@@ -259,7 +259,7 @@ public class DTAGUI extends GUI
     
     public void newProject()
     {
-        ProjectFileView view = new ProjectFileView("DTA");
+        final ProjectFileView view = new ProjectFileView("DTA");
         
         JFileChooser chooser = new JFileChooser(new File("networks/"))
         {

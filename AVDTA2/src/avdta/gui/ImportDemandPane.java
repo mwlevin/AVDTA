@@ -54,7 +54,7 @@ public class ImportDemandPane extends JPanel
             }
             public File chooseFile()
             {
-                ProjectFileView view = new ProjectFileView("DTA");
+                final ProjectFileView view = new ProjectFileView("DTA");
         
                 JFileChooser chooser = new JFileChooser(new File("networks/"))
                 {

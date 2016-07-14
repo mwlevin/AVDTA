@@ -54,7 +54,7 @@ public class ImportNetworkPane extends JPanel
             }
             public File chooseFile()
             {
-                ProjectFileView view = new ProjectFileView(null);
+                final ProjectFileView view = new ProjectFileView(null);
         
                 JFileChooser chooser = new JFileChooser(new File("networks/"))
                 {

@@ -41,9 +41,9 @@ public class AssignmentPane extends JPanel
     
     private ArrayList<Assignment> assignments;
     
-    public AssignmentPane(DTAPane parent)
+    public AssignmentPane(DTAPane parent_)
     {
-        this.parent = parent;
+        this.parent = parent_;
         
         list = new JList();
         list.setListData(new String[]{});
