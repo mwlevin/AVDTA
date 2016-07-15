@@ -40,6 +40,7 @@ public class MSAPane extends JPanel
     private StatusBar status;
     
     private JButton run;
+    private JButton fftime;
     
     private JTextField max_iter, min_gap;
     private JTextField start_iter;
@@ -59,11 +60,21 @@ public class MSAPane extends JPanel
         status = new StatusBar();
         run = new JButton("Run MSA");
         
+        fftime = new JButton("Calc. FF time");
+        
         run.addActionListener(new ActionListener()
         {
             public void actionPerformed(ActionEvent e)
             {
                 run();
+            }
+        });
+        
+        fftime.addActionListener(new ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                ffTime();
             }
         });
         
@@ -81,7 +92,8 @@ public class MSAPane extends JPanel
         constrain(p, min_gap, 1, 2, 1, 1);
         constrain(this, p, 0, 1, 1, 1);
         constrain(this, run, 0, 2, 2, 1);
-        constrain(this, status, 0, 3, 1, 1);
+        constrain(p, fftime, 0, 3, 2, 1);
+        constrain(this, status, 0, 4, 2, 1);
         
         disable();
     }
@@ -92,6 +104,7 @@ public class MSAPane extends JPanel
         min_gap.setEditable(false);
         max_iter.setEditable(false);
         start_iter.setEditable(false);
+        fftime.setEnabled(false);
     }
     
     public void enable()
@@ -100,6 +113,7 @@ public class MSAPane extends JPanel
         min_gap.setEditable(true);
         max_iter.setEditable(true);
         start_iter.setEditable(true);
+        fftime.setEnabled(true);
     }
     
     
@@ -145,8 +159,40 @@ public class MSAPane extends JPanel
         data.setText("");
         data.append("Gap:\t"+String.format("%.2f", results.getGapPercent())+"%\n");
         data.append("TSTT:\t"+String.format("%.1f", results.getTSTT())+" hr\n");
+        data.append("Avg. TT:\t"+String.format("%.2f", results.getAvgTT())+" min\n");
         data.append("Non-exit:\t"+results.getNonExiting());
         
+    }
+    
+    public void ffTime()
+    {
+        parent.disable();
+        
+        
+        final JPanel panel = this;
+        
+        Thread t = new Thread()
+        {
+            public void run()
+            {
+
+                DTASimulator sim = project.getSimulator();
+                sim.setStatusUpdate(status);
+
+                double fftime = sim.getFFTT();
+
+                JOptionPane.showMessageDialog(panel, "FF TSTT: "+String.format("%.1f", fftime/3600.0)+" hr\n"+
+                        "FF Avg. TT: "+String.format("%.2f", fftime/60.0 / sim.getNumVehicles())+" min",
+                        "Simulation complete", JOptionPane.PLAIN_MESSAGE);
+
+                status.update(0, "");
+                status.resetTime();
+
+                parent.reset();
+                parent.enable();
+            }
+        };
+        t.start();
     }
     
     public void run()

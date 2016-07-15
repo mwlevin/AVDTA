@@ -73,6 +73,14 @@ public class AssignmentPane extends JPanel
             public void actionPerformed(ActionEvent e)
             {
                 project.deleteAssignments();
+                try
+                {
+                    listAssignments();
+                }
+                catch(IOException ex)
+                {
+                    GUI.handleException(ex);
+                }
             }
         });
         

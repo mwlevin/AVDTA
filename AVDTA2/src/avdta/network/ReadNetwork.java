@@ -290,9 +290,20 @@ public class ReadNetwork
                 case LTM/100:
                     if(type % 10 == CACC)
                     {
-                        link = new CACCLTMLink(id, nodesmap.get(source_id), nodesmap.get(dest_id), capacity, ffspd, ffspd*mesodelta, jamd, length, numLanes);
+                        if(CACCLTMLink.checkK2(capacity, ffspd, length))
+                        {
+                            link = new CACCLTMLink(id, nodesmap.get(source_id), nodesmap.get(dest_id), capacity, ffspd, ffspd*mesodelta, jamd, length, numLanes);
+                            
+                            CACCLTMLink l = (CACCLTMLink)link;
+                        }
+                        else
+                        {
+                            link = new LTMLink(id, nodesmap.get(source_id), nodesmap.get(dest_id), capacity, ffspd, ffspd*mesodelta, jamd, length, numLanes);
+                        }
                         
-                        CACCLTMLink l = (CACCLTMLink)link;
+                        
+                        
+                        
                     }
                     else
                     {

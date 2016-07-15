@@ -5,7 +5,9 @@
  */
 package avdta;
 
+import avdta.dta.DTAResults;
 import avdta.dta.DTASimulator;
+import avdta.dta.ReadDTANetwork;
 import avdta.gui.GUI;
 import avdta.network.Path;
 import avdta.network.Simulator;
@@ -22,6 +24,8 @@ import avdta.util.RunningAvg;
 import avdta.vehicle.Bus;
 import avdta.vehicle.PersonalVehicle;
 import avdta.vehicle.Vehicle;
+import java.io.FileOutputStream;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -37,7 +41,48 @@ public class Main
     public static void main(String[] args) throws IOException
     {
         //transitTest();
-        GUI.main(args);
+        caccTest();
+        //GUI.main(args);
+    }
+    
+    public static void caccTest2() throws IOException
+    {
+        DTAProject austinI35_CACC = new DTAProject(new File("networks/austinI35_CACC"));
+        DTASimulator sim = austinI35_CACC.getSimulator();
+        
+        sim.msa(2);
+    }
+    
+    public static void caccTest() throws IOException
+    {
+        DTAProject austinI35 = new DTAProject(new File("networks/austinI35"));
+        DTAProject austinI35_CACC = new DTAProject(new File("networks/austinI35_CACC"));
+        
+        PrintStream out = new PrintStream(new FileOutputStream(new File("CACC_results.txt")), true);
+        
+        for(int i = 70; i <= 70; i+= 5)
+        {
+            ReadDTANetwork read1 = new ReadDTANetwork();
+            read1.prepareDemand(austinI35, i/100.0);
+            austinI35.loadProject();
+            
+            ReadDTANetwork read2 = new ReadDTANetwork();
+            read2.prepareDemand(austinI35_CACC, i/100.0);
+            austinI35_CACC.loadProject();
+            
+            DTASimulator sim1 = austinI35.getSimulator();
+            DTAResults results1 = sim1.msa(2);
+            
+            DTASimulator sim2 = austinI35_CACC.getSimulator();
+            DTAResults results2 = sim2.msa(2);
+            
+            if(sim1.getNumVehicles() != sim2.getNumVehicles())
+            {
+                throw new RuntimeException("Demand does not match");
+            }
+            out.println(i+"\t"+sim1.getTSTT()+"\t"+sim2.getTSTT()+"\t"+sim1.getNumVehicles());
+        }
+        out.close();
     }
     
     public static void transitTest() throws IOException

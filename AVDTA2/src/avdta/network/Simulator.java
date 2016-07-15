@@ -279,6 +279,31 @@ public class Simulator extends Network
     	return output;
     }
     
+    public double getFFTT()
+    {
+        double output = 0;
+        
+        
+        int count = 0;
+        for(Vehicle v : vehicles)
+        {
+            statusUpdate.update((double)count++ / vehicles.size(), "Finding paths");
+            
+            Path p = findPath((PersonalVehicle)v, TravelCost.ffTime);
+            output += p.getFFTime();
+            
+            
+        }
+        
+        statusUpdate.update(0.0, "");
+        
+        return output;
+    }
+    
+    public Path findPath(PersonalVehicle v, TravelCost costFunc)
+    {
+        return findPath(v.getOrigin(), v.getDest(), v.getDepTime(), v.getVOT(), v.getDriver(), costFunc);
+    }
     public double getTotalEnergy()
     {
     	double output = 0;

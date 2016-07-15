@@ -28,6 +28,8 @@ public class LTMLink extends Link
     
     private ChainedArray N_up, N_down;
     
+    private boolean init;
+    
     private double capacityUp, capacityDown;
 
     public LTMLink(int id, Node source, Node dest, double capacity, double ffspd, double wavespd, double jamd, double length, int numLanes)
@@ -35,18 +37,28 @@ public class LTMLink extends Link
         super(id, source, dest, capacity, ffspd, wavespd = capacity / (jamd - capacity / ffspd), jamd, length, numLanes);
         
         queue = new LinkedList<VehTime>();
-        
+        init = false;
     }
     
     public void initialize()
     {
-        N_up = new ChainedArray((int)Math.ceil(getLength()/getFFSpeed()*3600 / Network.dt)+2);
-        N_down = new ChainedArray((int)Math.ceil(getLength()/getWaveSpeed()*3600 / Network.dt)+2);
+        N_up = new ChainedArray(getUSLookbehind()+2);
+        N_down = new ChainedArray(getDSLookBehind()+2);
 
         this.capacityUp = getCapacity() * Network.dt / 3600.0;
         this.capacityDown = getCapacity() * Network.dt / 3600.0;
+        
+        init = true;
     }
     
+    public int getUSLookbehind()
+    {
+        return (int)Math.ceil(getLength()/getFFSpeed()*3600 / Network.dt);
+    }
+    public int getDSLookBehind()
+    {
+        return (int)Math.ceil(getLength()/getWaveSpeed()*3600 / Network.dt);
+    }
     // includes fractions lost to discretization
     public double getCurrentUpstreamCapacity()
     {
@@ -66,8 +78,8 @@ public class LTMLink extends Link
     public void reset()
     {
         queue.clear();
-        N_up = new ChainedArray((int)Math.ceil(getLength()/getFFSpeed()*3600 / Network.dt)+5);
-        N_down = new ChainedArray((int)Math.ceil(getLength()/getWaveSpeed()*3600 / Network.dt)+5);
+        N_up = new ChainedArray(getUSLookbehind()+2);
+        N_down = new ChainedArray(getDSLookBehind()+2);
 
         
         super.reset();

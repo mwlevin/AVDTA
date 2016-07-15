@@ -127,12 +127,16 @@ public class DTAProject extends Project
     
     public void deleteAssignments()
     {
-        File dir = new File(getAssignmentsFolder());
+        File root = new File(getAssignmentsFolder());
         
         
-        for(File f : dir.listFiles())
+        for(File dir : root.listFiles())
         {
-            f.delete();
+            for(File f : dir.listFiles())
+            {
+                f.delete();
+            }
+            dir.delete();
         }
     }
     
