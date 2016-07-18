@@ -25,6 +25,9 @@ import javax.swing.ImageIcon;
  */
 public class GUI extends JFrame
 {
+    private static String directory = null;
+    
+    
     private static JFrame frame;
     private static Image icon;
     
@@ -54,7 +57,25 @@ public class GUI extends JFrame
     
     public static String getDefaultDirectory()
     {
-        return "networks/";
+        if(directory == null)
+        {
+            loadDirectory();
+        }
+        return directory;
+    }
+    
+    private static void loadDirectory()
+    {
+        try
+        {
+            Scanner filein = new Scanner(new File("directory.txt"));
+            directory = filein.nextLine().trim();
+            filein.close();
+        }
+        catch(IOException ex)
+        {
+            directory = "";
+        }
     }
     
     public static void handleException(Exception ex)

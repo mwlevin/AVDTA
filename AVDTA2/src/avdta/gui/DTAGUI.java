@@ -148,6 +148,20 @@ public class DTAGUI extends GUI
         });
         
         me.add(mi);
+        
+        mi = new JMenuItem("Help");
+        
+        mi.addActionListener(new ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                JOptionPane.showMessageDialog(frame, "Contact michaellevin@utexas.edu", 
+                        "Help", JOptionPane.INFORMATION_MESSAGE);
+            }
+        });
+        
+        me.add(mi);
+        
         menu.add(me);
         
         this.setJMenuBar(menu);
