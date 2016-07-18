@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package avdta.gui;
+package avdta.gui.util;
 
+import avdta.gui.GUI;
 import java.awt.Image;
 import java.io.File;
 import java.io.IOException;

@@ -3,10 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package avdta.gui;
+package avdta.gui.panels;
 
+import avdta.gui.DTAGUI;
+import avdta.gui.GUI;
+import avdta.gui.panels.NetworkPane;
 import javax.swing.JPanel;
-import static avdta.gui.GraphicUtils.*;
+import static avdta.gui.util.GraphicUtils.*;
 import avdta.network.ReadNetwork;
 import avdta.network.link.CTMLink;
 import avdta.network.link.LTMLink;
@@ -92,14 +95,7 @@ public class LinksPane extends JPanel
         {
             public void actionPerformed(ActionEvent e)
             {
-                try
-                {
-                    save();
-                }
-                catch(IOException ex)
-                {
-                    DTAGUI.handleException(ex);
-                }
+                save();
             }
         });
         
@@ -219,46 +215,29 @@ public class LinksPane extends JPanel
             {
                 data.append(centroid+"\tcentroid connectors\n");
             }
-            enable();
+            setEnabled(true);
             
             
         }
         else
         {
-            disable();
+            setEnabled(false);
         }
     }
     
-    public void disable()
+    public void setEnabled(boolean e)
     {
-        save.setEnabled(false);
-        reset.setEnabled(false);
-        ctm.setEnabled(false);
-        ltm.setEnabled(false);
-        mesoDelta.setText("");
-        mesoDelta.setEditable(false);
-        timestep.setText("");
-        timestep.setEditable(false);
-        HVtau.setText("");
-        HVtau.setEditable(false);
-        AVtau.setText("");
-        AVtau.setEditable(false);
-        ctmOptions.setEnabled(false);
-        ltmOptions.setEnabled(false);
-    }
-    
-    public void enable()
-    {
-        ctm.setEnabled(true);
-        ltm.setEnabled(true);
-        save.setEnabled(true);
-        reset.setEnabled(true);     
-        mesoDelta.setEditable(true);
-        timestep.setEditable(true);
-        HVtau.setEditable(true);
-        AVtau.setEditable(true);
-        ctmOptions.setEnabled(ctm.isSelected());
-        ltmOptions.setEnabled(ltm.isSelected());
+        ctm.setEnabled(e);
+        ltm.setEnabled(e);
+        save.setEnabled(e);
+        reset.setEnabled(e);     
+        mesoDelta.setEditable(e);
+        timestep.setEditable(e);
+        HVtau.setEditable(e);
+        AVtau.setEditable(e);
+        ctmOptions.setEnabled(e && ctm.isSelected());
+        ltmOptions.setEnabled(e && ltm.isSelected());
+        super.setEnabled(e);
     }
     
     public void setProject(Project project)
@@ -268,95 +247,143 @@ public class LinksPane extends JPanel
         reset();
     }
 
-    public void save() throws IOException
+    public void save()
     {
-        project.setOption("simulation-mesoscopic-delta", ""+Double.parseDouble(mesoDelta.getText().trim()));
-        project.setOption("simulation-mesoscopic-step", ""+Integer.parseInt(timestep.getText().trim()));
-        project.setOption("hv-reaction-time", ""+Double.parseDouble(HVtau.getText().trim()));
-        project.setOption("av-reaction-time", ""+Double.parseDouble(AVtau.getText().trim()));
+        parent.setEnabled(false);
         
-        parent.disable();
-        
-        project.writeOptions();
-        
-        if(ctm.isSelected() || ltm.isSelected())
+        Thread t = new Thread()
         {
-            int newtype = 0;
-            
-            if(ctm.isSelected())
+            public void run()
             {
-                newtype = ReadNetwork.CTM;
-            }
-            else if(ltm.isSelected())
-            {
-                newtype = ReadNetwork.LTM;
-            }
-            
-            if(ctm.isSelected())
-            {
-                if(ctmOptions.getSelectedItem().equals("DLR"))
+                try
                 {
-                    newtype += ReadNetwork.DLR;
+                    project.setOption("simulation-mesoscopic-delta", ""+Double.parseDouble(mesoDelta.getText().trim()));
                 }
-            }
-            else if(ltm.isSelected())
-            {
-                if(ltmOptions.getSelectedItem().equals("CACC"))
+                catch(Exception ex)
                 {
-                    newtype += ReadNetwork.CACC;
                 }
-            }
-            
-            ArrayList<String> temp = new ArrayList<String>();
-            
-            Scanner filein = new Scanner(project.getLinksFile());
+                try
+                {
+                    project.setOption("simulation-mesoscopic-step", ""+Integer.parseInt(timestep.getText().trim()));
+                }
+                catch(Exception ex)
+                {
+                }
+                try
+                {
+                    project.setOption("hv-reaction-time", ""+Double.parseDouble(HVtau.getText().trim()));
+                }
+                catch(Exception ex)
+                {
+                }
+                try
+                {
+                    project.setOption("av-reaction-time", ""+Double.parseDouble(AVtau.getText().trim()));
+                }
+                catch(Exception ex)
+                {
+                }
+                
+                try
+                {
+                    project.writeOptions();
+                }
+                catch(IOException ex)
+                {
+                    GUI.handleException(ex);
+                }
         
-            temp.add(filein.nextLine());
+                if(ctm.isSelected() || ltm.isSelected())
+                {
+                    int newtype = 0;
 
-            while(filein.hasNext())
-            {
-                int id = filein.nextInt();
-                int type = filein.nextInt();
-                int source_id = filein.nextInt();
-                int dest_id = filein.nextInt();
-                double length = filein.nextDouble();
-                double ffspd = filein.nextDouble();
-                double capacity = filein.nextDouble();
-                int numLanes = filein.nextInt();
-                double jamd = 5280.0/Vehicle.vehicle_length;
+                    if(ctm.isSelected())
+                    {
+                        newtype = ReadNetwork.CTM;
+                    }
+                    else if(ltm.isSelected())
+                    {
+                        newtype = ReadNetwork.LTM;
+                    }
 
-                String line = filein.nextLine();
-                
-                if(type != ReadNetwork.CENTROID)
-                {
-                    type = newtype;
+                    if(ctm.isSelected())
+                    {
+                        if(ctmOptions.getSelectedItem().equals("DLR"))
+                        {
+                            newtype += ReadNetwork.DLR;
+                        }
+                    }
+                    else if(ltm.isSelected())
+                    {
+                        if(ltmOptions.getSelectedItem().equals("CACC"))
+                        {
+                            newtype += ReadNetwork.CACC;
+                        }
+                    }
+
+                    ArrayList<String> temp = new ArrayList<String>();
+
+                    try
+                    {
+
+                        Scanner filein = new Scanner(project.getLinksFile());
+
+                        temp.add(filein.nextLine());
+
+                        while(filein.hasNext())
+                        {
+                            int id = filein.nextInt();
+                            int type = filein.nextInt();
+                            int source_id = filein.nextInt();
+                            int dest_id = filein.nextInt();
+                            double length = filein.nextDouble();
+                            double ffspd = filein.nextDouble();
+                            double capacity = filein.nextDouble();
+                            int numLanes = filein.nextInt();
+                            double jamd = 5280.0/Vehicle.vehicle_length;
+
+                            String line = filein.nextLine();
+
+                            if(type != ReadNetwork.CENTROID)
+                            {
+                                type = newtype;
+                            }
+
+                            if(ctm.isSelected() && ctmOptions.getSelectedItem().equals("Shared transit") && numLanes > 1)
+                            {
+                                type += ReadNetwork.SHARED_TRANSIT;
+                            }
+
+                            temp.add(""+id+"\t"+type+"\t"+source_id+"\t"+dest_id+"\t"+length+"\t"+ffspd+"\t"+capacity+"\t"+numLanes+"\t"+line);
+                        }
+
+                        filein.close();
+
+                        PrintStream fileout = new PrintStream(new FileOutputStream(project.getLinksFile()), true);
+
+                        for(String x : temp)
+                        {
+                            fileout.println(x);
+                        }
+
+                        fileout.close();
+                        
+                        project.loadSimulator();
+                    }
+                    catch(IOException ex)
+                    {
+                        GUI.handleException(ex);
+                    }
+
                 }
+
+                parent.reset();
+
+                parent.setEnabled(true);
                 
-                if(ctm.isSelected() && ctmOptions.getSelectedItem().equals("Shared transit") && numLanes > 1)
-                {
-                    type += ReadNetwork.SHARED_TRANSIT;
-                }
-                
-                temp.add(""+id+"\t"+type+"\t"+source_id+"\t"+dest_id+"\t"+length+"\t"+ffspd+"\t"+capacity+"\t"+numLanes+"\t"+line);
             }
-            
-            filein.close();
-            
-            PrintStream fileout = new PrintStream(new FileOutputStream(project.getLinksFile()), true);
-            
-            for(String x : temp)
-            {
-                fileout.println(x);
-            }
-            
-            fileout.close();
-            
-        }
-        
-        project.loadSimulator();
-        parent.reset();
-        
-        parent.enable();
+        };
+        t.start();
     }
  
     

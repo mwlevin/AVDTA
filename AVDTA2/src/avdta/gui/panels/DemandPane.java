@@ -3,12 +3,15 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package avdta.gui;
+package avdta.gui.panels;
 
+import avdta.gui.panels.ImportDemandPane;
+import avdta.gui.panels.VehiclesPane;
+import avdta.gui.panels.PrepareDemandPane;
 import avdta.project.DTAProject;
 import java.awt.GridBagLayout;
 import javax.swing.JPanel;
-import static avdta.gui.GraphicUtils.*;
+import static avdta.gui.util.GraphicUtils.*;
 /**
  *
  * @author micha
@@ -37,19 +40,13 @@ public class DemandPane extends JPanel
         vehiclesPane.reset();
         prepareDemandPane.reset();
     }
-    
-    public void enable()
+
+    public void setEnabled(boolean e)
     {
-        vehiclesPane.enable();
-        prepareDemandPane.enable();
-        importDemandPane.enable();
-    }
-    
-    public void disable()
-    {
-        vehiclesPane.disable();
-        prepareDemandPane.disable();
-        importDemandPane.disable();
+        vehiclesPane.setEnabled(e);
+        prepareDemandPane.setEnabled(e);
+        importDemandPane.setEnabled(e);
+        super.setEnabled(e);
     }
     
     public void setProject(DTAProject project)

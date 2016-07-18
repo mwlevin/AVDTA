@@ -5,13 +5,18 @@
  */
 package avdta.gui;
 
+import avdta.gui.util.ProjectChooser;
+import avdta.gui.util.Version;
+import avdta.gui.panels.DTAPane;
+import avdta.gui.panels.DemandPane;
+import avdta.gui.panels.NetworkPane;
 import avdta.dta.DTASimulator;
 import avdta.project.DTAProject;
 import java.awt.GridBagLayout;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
-import static avdta.gui.GraphicUtils.*;
+import static avdta.gui.util.GraphicUtils.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;

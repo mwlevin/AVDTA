@@ -3,14 +3,19 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package avdta.gui;
+package avdta.gui.panels;
 
+import avdta.dta.DTAImportFromVISTA;
+import avdta.gui.GUI;
+import avdta.gui.util.JFileField;
+import avdta.gui.util.ProjectChooser;
 import javax.swing.JPanel;
-import static avdta.gui.GraphicUtils.*;
-import avdta.network.ImportFromVISTA;
 import avdta.project.DTAProject;
-import avdta.project.Project;
+import javax.swing.JTextArea;
 import java.awt.GridBagLayout;
+import static avdta.gui.util.GraphicUtils.*;
+import avdta.network.ImportFromVISTA;
+import avdta.project.Project;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -24,18 +29,16 @@ import javax.swing.filechooser.FileFilter;
  *
  * @author micha
  */
-public class ImportNetworkPane extends JPanel
+public class ImportDemandPane extends JPanel
 {
-    private Project project;
-    private NetworkPane parent;
+    private DTAProject project;
+    private DemandPane parent;
     
     private JFileField importFromProject;
-    private JFileField linkdetails, nodes, elevation, phases;
+    private JFileField staticOD, dynamicOD, demandProfile, demand;
+    private JButton import1, import2;
     
-    private JButton import1;
-    private JButton import2;
-    
-    public ImportNetworkPane(NetworkPane parent)
+    public ImportDemandPane(DemandPane parent)
     {
         this.parent = parent;
         
@@ -54,9 +57,7 @@ public class ImportNetworkPane extends JPanel
             }
             public File chooseFile()
             {
-                ProjectChooser chooser = new ProjectChooser(new File(GUI.getDefaultDirectory()), "DTA");
-                chooser.setAcceptAll(true);
-
+                JFileChooser chooser = new ProjectChooser(new File(GUI.getDefaultDirectory()), "DTA");
 
                 int returnVal = chooser.showDialog(this, "Open network");
 
@@ -70,36 +71,40 @@ public class ImportNetworkPane extends JPanel
                 }
             }
         };
-        linkdetails = new JFileField(10, txtFiles, "data/")
+        demand = new JFileField(10, txtFiles, "data/")
         {
             public void valueChanged(File f)
             {
                 checkForOtherFiles(f);
-                import2.setEnabled(nodes.getFile() != null && linkdetails.getFile() != null && phases.getFile() != null);
+                import2.setEnabled(dynamicOD.getFile() != null && staticOD.getFile() != null 
+                        && demand.getFile() != null && demandProfile != null);
             }
         };
-        nodes = new JFileField(10, txtFiles, "data/")
+        demandProfile = new JFileField(10, txtFiles, "data/")
         {
             public void valueChanged(File f)
             {
                 checkForOtherFiles(f);
-                import2.setEnabled(nodes.getFile() != null && linkdetails.getFile() != null && phases.getFile() != null);
+                import2.setEnabled(dynamicOD.getFile() != null && staticOD.getFile() != null 
+                        && demand.getFile() != null && demandProfile != null);
             }
         };
-        elevation = new JFileField(10, txtFiles, "data/")
+        staticOD = new JFileField(10, txtFiles, "data/")
         {
             public void valueChanged(File f)
             {
                 checkForOtherFiles(f);
-                import2.setEnabled(nodes.getFile() != null && linkdetails.getFile() != null && phases.getFile() != null);
+                import2.setEnabled(dynamicOD.getFile() != null && staticOD.getFile() != null 
+                        && demand.getFile() != null && demandProfile != null);
             }
         };
-        phases = new JFileField(10, txtFiles, "data/")
+        dynamicOD = new JFileField(10, txtFiles, "data/")
         {
             public void valueChanged(File f)
             {
                 checkForOtherFiles(f);
-                import2.setEnabled(nodes.getFile() != null && linkdetails.getFile() != null && phases.getFile() != null);
+                import2.setEnabled(dynamicOD.getFile() != null && staticOD.getFile() != null 
+                        && demand.getFile() != null && demandProfile != null);
             }
         };
         
@@ -140,7 +145,7 @@ public class ImportNetworkPane extends JPanel
         
         JPanel p = new JPanel();
         p.setLayout(new GridBagLayout());
-        constrain(p, new JLabel("Import network from project"), 0, 0, 3, 1);
+        constrain(p, new JLabel("Import demand from project"), 0, 0, 3, 1);
         constrain(p, new JLabel("Project: "), 0, 1, 1, 1);
         constrain(p, importFromProject, 1, 1, 1, 1);
         constrain(p, import1, 2, 1, 1, 1);
@@ -151,19 +156,52 @@ public class ImportNetworkPane extends JPanel
         p.setLayout(new GridBagLayout());
         
         constrain(p, new JLabel("Import from VISTA"), 0, 0, 4, 1);
-        constrain(p, new JLabel("Nodes: "), 0, 1, 1, 1);
-        constrain(p, nodes, 1, 1, 1, 1);
-        constrain(p, new JLabel("Linkdetails: "), 0, 2, 1, 1);
-        constrain(p, linkdetails, 1, 2, 1, 1);
-        constrain(p, new JLabel("Phases: "), 0, 3, 1, 1);
-        constrain(p, phases, 1, 3, 1, 1);
-        constrain(p, new JLabel("Elevation: "), 0, 4, 1, 1);
-        constrain(p, elevation, 1, 4, 1, 1);
+        constrain(p, new JLabel("Static OD: "), 0, 1, 1, 1);
+        constrain(p, staticOD, 1, 1, 1, 1);
+        constrain(p, new JLabel("Dynamic OD: "), 0, 2, 1, 1);
+        constrain(p, dynamicOD, 1, 2, 1, 1);
+        constrain(p, new JLabel("Demand profile: "), 0, 3, 1, 1);
+        constrain(p, demandProfile, 1, 3, 1, 1);
+        constrain(p, new JLabel("Demand: "), 0, 4, 1, 1);
+        constrain(p, demand, 1, 4, 1, 1);
         constrain(p, import2, 2, 1, 1, 4);
         
         constrain(this, p, 0, 2, 1, 1);
         
-        disable();
+        setEnabled(false);
+    }
+    
+    public void importFromProject() throws IOException
+    {
+        parent.setEnabled(false);
+        
+        DTAProject rhs = new DTAProject(importFromProject.getFile());
+        
+        project.importDemandFromProject(rhs);
+        project.loadSimulator();
+        
+        importFromProject.setFile(null);
+        parent.reset();
+        
+        parent.setEnabled(true);
+    }
+    
+    public void importFromVISTA() throws IOException
+    {
+        parent.setEnabled(false);
+        
+        DTAImportFromVISTA read = new DTAImportFromVISTA(project, staticOD.getFile(), dynamicOD.getFile(), 
+                demandProfile.getFile(), demand.getFile());
+        
+        project.loadSimulator();
+        parent.reset();
+        
+        staticOD.setFile(null);
+        dynamicOD.setFile(null);
+        demand.setFile(null);
+        demandProfile.setFile(null);
+        
+        parent.setEnabled(true);
     }
     
     public void checkForOtherFiles(File f)
@@ -175,36 +213,36 @@ public class ImportNetworkPane extends JPanel
             dir = dir.substring(0, dir.lastIndexOf("\\".charAt(0))+1);
             
 
-            if(nodes.getFile() == null)
+            if(staticOD.getFile() == null)
             {
-                File file = new File(dir+"/nodes.txt");
+                File file = new File(dir+"/static_od.txt");
                 if(file.exists())
                 {
-                    nodes.setFile(file);
+                    staticOD.setFile(file);
                 }
             }
-            if(linkdetails.getFile() == null)
+            if(dynamicOD.getFile() == null)
             {
-                File file = new File(dir+"/linkdetails.txt");
+                File file = new File(dir+"/dynamic_od.txt");
                 if(file.exists())
                 {
-                    linkdetails.setFile(file);
+                    dynamicOD.setFile(file);
                 }
             }
-            if(phases.getFile() == null)
+            if(demandProfile.getFile() == null)
             {
-                File file = new File(dir+"/phases.txt");
+                File file = new File(dir+"/demand_profile.txt");
                 if(file.exists())
                 {
-                    phases.setFile(file);
+                    demandProfile.setFile(file);
                 }
             }
-            if(elevation.getFile() == null)
+            if(demand.getFile() == null)
             {
-                File file = new File(dir+"/elevation.txt");
+                File file = new File(dir+"/demand.txt");
                 if(file.exists())
                 {
-                    elevation.setFile(file);
+                    demand.setFile(file);
                 }
             }
         }
@@ -214,74 +252,33 @@ public class ImportNetworkPane extends JPanel
         }
         
     }
-    public void setProject(Project project)
+    
+
+    
+    public void setEnabled(boolean e)
+    {
+        importFromProject.setEnabled(e);
+        staticOD.setEnabled(e);
+        dynamicOD.setEnabled(e);
+        demandProfile.setEnabled(e);
+        demand.setEnabled(e);
+        import1.setEnabled(e && importFromProject.getFile() != null);
+        import2.setEnabled(e && dynamicOD.getFile() != null && staticOD.getFile() != null 
+                        && demand.getFile() != null && demandProfile != null);
+        super.setEnabled(e);
+    }
+    
+    public void setProject(DTAProject project)
     {
         this.project = project;
         
-        if(project != null)
+        if(project == null)
         {
-            enable();
+            setEnabled(false);
         }
         else
         {
-            disable();
+            setEnabled(true);
         }
-    }
-    
-    public void importFromVISTA() throws IOException
-    {
-        parent.disable();
-        
-        ImportFromVISTA read = new ImportFromVISTA(project, nodes.getFile(), linkdetails.getFile(), 
-                elevation.getFile(), phases.getFile());
-        
-        project.loadSimulator();
-        parent.reset();
-        
-        nodes.setFile(null);
-        elevation.setFile(null);
-        phases.setFile(null);
-        linkdetails.setFile(null);
-        
-        parent.enable();
-        parent.reset();
-    }
-    
-    public void importFromProject() throws IOException
-    {
-        parent.disable();
-        
-        Project rhs = new DTAProject(importFromProject.getFile());
-        
-        project.importNetworkFromProject(rhs);
-        project.loadSimulator();
-        
-        importFromProject.setFile(null);
-        parent.reset();
-        
-        parent.enable();
-    }
-    
-    
-    public void enable()
-    {
-        import1.setEnabled(importFromProject.getFile() != null);
-        import2.setEnabled(nodes.getFile() != null && linkdetails.getFile() != null && phases.getFile() != null);
-        elevation.setEnabled(true);
-        linkdetails.setEnabled(true);
-        nodes.setEnabled(true);
-        phases.setEnabled(true);
-        importFromProject.setEnabled(true);
-    }
-    
-    public void disable()
-    {
-        import1.setEnabled(false);
-        import2.setEnabled(false);
-        elevation.setEnabled(false);
-        linkdetails.setEnabled(false);
-        nodes.setEnabled(false);
-        phases.setEnabled(false);
-        importFromProject.setEnabled(false);
     }
 }

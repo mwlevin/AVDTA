@@ -1,4 +1,4 @@
-package avdta.gui;
+package avdta.gui.util;
 import javax.swing.*;
 import javax.swing.event.*;
 import java.util.*;

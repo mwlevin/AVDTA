@@ -3,10 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package avdta.gui;
+package avdta.gui.panels;
 
+import avdta.gui.panels.NodesPane;
 import javax.swing.JPanel;
-import static avdta.gui.GraphicUtils.*;
+import static avdta.gui.util.GraphicUtils.*;
 import avdta.project.DTAProject;
 import avdta.project.Project;
 import java.awt.GridBagLayout;
@@ -48,17 +49,12 @@ public class NetworkPane extends JPanel
         linksPane.reset();
     }
     
-    public void enable()
+    public void setEnabled(boolean e)
     {
-        nodesPane.enable();
-        linksPane.enable();
-        importPane.enable();
+        nodesPane.setEnabled(e);
+        linksPane.setEnabled(e);
+        importPane.setEnabled(e);
+        super.setEnabled(e);
     }
     
-    public void disable()
-    {
-        nodesPane.disable();
-        linksPane.disable();
-        importPane.disable();
-    }
 }

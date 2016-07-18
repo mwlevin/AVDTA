@@ -3,15 +3,17 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package avdta.gui;
+package avdta.gui.panels;
 
+import avdta.gui.panels.DTAPane;
 import avdta.dta.Assignment;
 import avdta.dta.DTASimulator;
 import avdta.dta.MSAAssignment;
+import avdta.gui.GUI;
 import avdta.project.DTAProject;
 import javax.swing.JPanel;
 import java.awt.GridBagLayout;
-import static avdta.gui.GraphicUtils.*;
+import static avdta.gui.util.GraphicUtils.*;
 import avdta.network.PathList;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -113,13 +115,13 @@ public class AssignmentPane extends JPanel
         assignments = new ArrayList<Assignment>();
         
         reset();
-        disable();
+        setEnabled(false);
         
     }
     
     public void loadAssignment(String name) throws IOException
     {
-        parent.disable();
+        parent.setEnabled(false);
         
         Assignment assign = readAssignment(name);
         
@@ -133,7 +135,7 @@ public class AssignmentPane extends JPanel
         JOptionPane.showMessageDialog(this, "Loaded assignment "+name, "Complete", JOptionPane.INFORMATION_MESSAGE);
         list.setSelectedIndex(-1);
         
-        parent.enable();
+        parent.setEnabled(true);
     }
     
     public Assignment readAssignment(String name) throws IOException
@@ -188,11 +190,11 @@ public class AssignmentPane extends JPanel
         
         if(project != null)
         {
-            enable();
+            setEnabled(true);
         }
         else
         {
-            disable();
+            setEnabled(false);
         }
     }
     
@@ -218,17 +220,12 @@ public class AssignmentPane extends JPanel
         }
     }
     
-    public void disable()
-    {
-        list.setEnabled(false);
-        loadAssignment.setEnabled(false);
-        clearAssignments.setEnabled(false);
-    }
     
-    public void enable()
+    public void setEnabled(boolean e)
     {
-        list.setEnabled(true);
-        loadAssignment.setEnabled(list.getSelectedIndex() > 0);
-        clearAssignments.setEnabled(true);
+        list.setEnabled(e);
+        loadAssignment.setEnabled(e && list.getSelectedIndex() > 0);
+        clearAssignments.setEnabled(e);
+        super.setEnabled(e);
     }
 }

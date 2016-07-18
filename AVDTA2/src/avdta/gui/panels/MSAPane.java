@@ -2,12 +2,14 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package avdta.gui;
+package avdta.gui.panels;
 
 import avdta.dta.Assignment;
 import avdta.dta.DTAResults;
 import avdta.dta.DTASimulator;
 import avdta.dta.MSAAssignment;
+import avdta.gui.GUI;
+import avdta.gui.util.StatusBar;
 import avdta.project.DTAProject;
 import avdta.vehicle.DriverType;
 import java.awt.GridBagLayout;
@@ -23,7 +25,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import static avdta.gui.GraphicUtils.*;
+import static avdta.gui.util.GraphicUtils.*;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
@@ -95,27 +97,19 @@ public class MSAPane extends JPanel
         constrain(p, fftime, 0, 3, 2, 1);
         constrain(this, status, 0, 4, 2, 1);
         
-        disable();
+        setEnabled(false);
     }
     
-    public void disable()
+    public void setEnabled(boolean e)
     {
-        run.setEnabled(false);
-        min_gap.setEditable(false);
-        max_iter.setEditable(false);
-        start_iter.setEditable(false);
-        fftime.setEnabled(false);
+        run.setEnabled(e);
+        min_gap.setEditable(e);
+        max_iter.setEditable(e);
+        start_iter.setEditable(e);
+        fftime.setEnabled(e);
+        super.setEnabled(e);
     }
-    
-    public void enable()
-    {
-        run.setEnabled(true);
-        min_gap.setEditable(true);
-        max_iter.setEditable(true);
-        start_iter.setEditable(true);
-        fftime.setEnabled(true);
-    }
-    
+
     
     public void setProject(DTAProject project)
     {
@@ -126,14 +120,14 @@ public class MSAPane extends JPanel
             start_iter.setText("1");
             max_iter.setText("30");
             min_gap.setText("1");
-            enable();
+            setEnabled(true);
         }
         else
         {
             start_iter.setText("");
             max_iter.setText("");
             min_gap.setText("");
-            disable();
+            setEnabled(false);
         }
     }
     
@@ -166,7 +160,7 @@ public class MSAPane extends JPanel
     
     public void ffTime()
     {
-        parent.disable();
+        parent.setEnabled(false);
         
         
         final JPanel panel = this;
@@ -189,7 +183,7 @@ public class MSAPane extends JPanel
                 status.resetTime();
 
                 parent.reset();
-                parent.enable();
+                parent.setEnabled(true);
             }
         };
         t.start();
@@ -231,7 +225,7 @@ public class MSAPane extends JPanel
         }
         
         
-        parent.disable();
+        parent.setEnabled(false);
         
         
         final JPanel panel = this;
@@ -279,7 +273,7 @@ public class MSAPane extends JPanel
                     status.resetTime();
 
                     parent.reset();
-                    parent.enable();
+                    parent.setEnabled(true);
                 }
                 catch(IOException ex)
                 {

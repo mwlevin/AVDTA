@@ -3,14 +3,15 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package avdta.gui;
+package avdta.gui.panels;
 
 import avdta.dta.ReadDTANetwork;
+import avdta.gui.GUI;
 import javax.swing.JPanel;
 import avdta.project.DTAProject;
 import javax.swing.JTextArea;
 import java.awt.GridBagLayout;
-import static avdta.gui.GraphicUtils.*;
+import static avdta.gui.util.GraphicUtils.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
@@ -88,14 +89,14 @@ public class PrepareDemandPane extends JPanel
     
     public void createDynamicOD() throws IOException
     {
-        parent.disable();
+        parent.setEnabled(false);
         
         ReadDTANetwork read = new ReadDTANetwork();
         
         read.createDynamicOD(project);
         
         parent.reset();
-        parent.enable(); 
+        parent.setEnabled(true); 
     }
     
     public void changeType() throws IOException
@@ -111,7 +112,7 @@ public class PrepareDemandPane extends JPanel
             return;
         }
         
-        parent.disable();
+        parent.setEnabled(false);
         
         Map<Integer, Double> proportionMap = new HashMap<Integer, Double>();
         
@@ -124,32 +125,27 @@ public class PrepareDemandPane extends JPanel
         read.changeType(project, proportionMap);
         
         parent.reset();
-        parent.enable();
+        parent.setEnabled(true);
     }
     
-    public void disable()
+    public void setEnabled(boolean e)
     {
-        createDynamicOD.setEnabled(false);
-        AVs.setEditable(false);
-        changeType.setEnabled(false);
+        createDynamicOD.setEnabled(e);
+        AVs.setEditable(e);
+        changeType.setEnabled(e);
+        super.setEnabled(e);
     }
     
-    public void enable()
-    {
-        createDynamicOD.setEnabled(true);
-        AVs.setEditable(true);
-        changeType.setEnabled(true);
-    }
     
     public void reset()
     {
         if(project == null)
         {
-            disable();
+            setEnabled(false);
         }
         else
         {
-            enable();
+            setEnabled(true);
         }
     }
     

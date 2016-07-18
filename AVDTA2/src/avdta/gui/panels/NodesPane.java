@@ -3,10 +3,14 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package avdta.gui;
+package avdta.gui.panels;
 
+import avdta.gui.DTAGUI;
+import avdta.gui.GUI;
 import javax.swing.JPanel;
-import static avdta.gui.GraphicUtils.*;
+import static avdta.gui.util.GraphicUtils.*;
+import avdta.gui.util.StatusBar;
+import avdta.network.DownloadElevation;
 import avdta.network.ReadNetwork;
 import avdta.network.link.CTMLink;
 import avdta.network.link.LTMLink;
@@ -67,7 +71,9 @@ public class NodesPane extends JPanel
     
     private JCheckBox HVsUseReservations;
     private JRadioButton signal, stop, reservation;
-    private JButton save, reset;
+    private JButton save, reset, download;
+    
+    private StatusBar update;
     
     private static final String[] NODE_OPTIONS = new String[]{"FCFS", "backpressure", "P0", "Phased", "Signal weighted"};
     private JComboBox<String> nodeOptions;
@@ -85,6 +91,8 @@ public class NodesPane extends JPanel
         signal = new JRadioButton("Signals");
         reservation = new JRadioButton("Reservations");
         stop = new JRadioButton("Stop sign");
+        
+        
         
         ButtonGroup group = new ButtonGroup();
         group.add(signal);
@@ -104,18 +112,14 @@ public class NodesPane extends JPanel
         save = new JButton("Save");
         reset = new JButton("Reset");
         
+        download = new JButton("Download elevation");
+        update = new StatusBar();
+        
         save.addActionListener(new ActionListener()
         {
             public void actionPerformed(ActionEvent e)
             {
-                try
-                {
-                    save();
-                }
-                catch(IOException ex)
-                {
-                    DTAGUI.handleException(ex);
-                }
+                save();
             }
         });
         
@@ -124,6 +128,14 @@ public class NodesPane extends JPanel
             public void actionPerformed(ActionEvent e)
             {
                 reset();
+            }
+        });
+        
+        download.addActionListener(new ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                downloadElevation();
             }
         });
         
@@ -153,6 +165,11 @@ public class NodesPane extends JPanel
         constrain(p, reset, 1, 0, 1, 1 );
         constrain(this, p, 0, 4, 2, 1);
         
+        p = new JPanel();
+        p.setLayout(new GridBagLayout());
+        constrain(p, download, 0, 0, 1, 1);
+        constrain(p, update, 0, 1, 1, 1);
+        constrain(this, p, 0, 5, 2, 1);
         
         
         
@@ -302,117 +319,153 @@ public class NodesPane extends JPanel
                 }
             }
             
-            enable();
+            setEnabled(true);
         }
         else
         {
             HVsUseReservations.setSelected(false);
-            disable();
+            setEnabled(false);
         }
         
     }
     
-    public void save() throws IOException
+    public void downloadElevation()
     {
-        parent.disable();
+        parent.setEnabled(false);
         
+        final JPanel panel = this;
         
-        ArrayList<String> temp = new ArrayList<String>();
-        
-        Scanner filein = new Scanner(project.getNodesFile());
-        
-        temp.add(filein.nextLine());
-        
-        int newtype = 0;
-        
-        if(signal.isSelected())
+        Thread t = new Thread()
         {
-            newtype = ReadNetwork.SIGNAL;
-        }
-        else if(stop.isSelected())
-        {
-            newtype = ReadNetwork.STOPSIGN;
-        }
-        else if(reservation.isSelected())
-        {
-            newtype = ReadNetwork.RESERVATION;
-            
-            if(nodeOptions.getSelectedItem().equals("FCFS"))
+            public void run()
             {
-                newtype += ReadNetwork.FCFS;
+                try
+                {
+                    DownloadElevation dl = new DownloadElevation(update);
+                    dl.download(panel, project);
+                }
+                catch(IOException ex)
+                {
+                    GUI.handleException(ex);
+                }
+                
+                parent.setEnabled(true);
             }
-            else if(nodeOptions.getSelectedItem().equals("backpressure"))
-            {
-                newtype += ReadNetwork.PRESSURE;
-            }
-            else if(nodeOptions.getSelectedItem().equals("P0"))
-            {
-                newtype += ReadNetwork.P0;
-            }
-            else if(nodeOptions.getSelectedItem().equals("Phased"))
-            {
-                newtype += ReadNetwork.PHASED;
-            }
-            else if(nodeOptions.getSelectedItem().equals("Signal weighted"))
-            {
-                newtype += ReadNetwork.WEIGHTED;
-            }
-        }
-        
-        while(filein.hasNextInt())
-        {
-            int id = filein.nextInt();
-            int type = filein.nextInt();
-            double x = filein.nextDouble();
-            double y = filein.nextDouble();
-            double elevation = filein.nextDouble();
-            String line = filein.nextLine();
-            
-            if(type != ReadNetwork.CENTROID)
-            {
-                type = newtype;
-            }
-            
-            temp.add(id+"\t"+type+"\t"+x+"\t"+y+"\t"+elevation+line);
-        }
-        filein.close();
-        
-        PrintStream fileout = new PrintStream(new FileOutputStream(project.getNodesFile()), true);
-        
-        for(String x : temp)
-        {
-            fileout.println(x);
-        }
-        
-        fileout.close();
-        
-        
-        
-        project.loadSimulator();
-        parent.reset();
-        
-        parent.enable();
+        };
+        t.start();
     }
     
-    public void enable()
+    public void save()
     {
-        save.setEnabled(true);
-        reset.setEnabled(true);
-        signal.setEnabled(true);
-        stop.setEnabled(true);
-        reservation.setEnabled(true);
-        HVsUseReservations.setEnabled(true);
-        nodeOptions.setEnabled(reservation.isSelected());
+        parent.setEnabled(false);
+        
+        Thread t = new Thread()
+        {
+            public void run()
+            {
+                ArrayList<String> temp = new ArrayList<String>();
+        
+                try
+                {
+                    Scanner filein = new Scanner(project.getNodesFile());
+
+                    temp.add(filein.nextLine());
+
+                    int newtype = 0;
+
+                    if(signal.isSelected())
+                    {
+                        newtype = ReadNetwork.SIGNAL;
+                    }
+                    else if(stop.isSelected())
+                    {
+                        newtype = ReadNetwork.STOPSIGN;
+                    }
+                    else if(reservation.isSelected())
+                    {
+                        newtype = ReadNetwork.RESERVATION;
+
+                        if(nodeOptions.getSelectedItem().equals("FCFS"))
+                        {
+                            newtype += ReadNetwork.FCFS;
+                        }
+                        else if(nodeOptions.getSelectedItem().equals("backpressure"))
+                        {
+                            newtype += ReadNetwork.PRESSURE;
+                        }
+                        else if(nodeOptions.getSelectedItem().equals("P0"))
+                        {
+                            newtype += ReadNetwork.P0;
+                        }
+                        else if(nodeOptions.getSelectedItem().equals("Phased"))
+                        {
+                            newtype += ReadNetwork.PHASED;
+                        }
+                        else if(nodeOptions.getSelectedItem().equals("Signal weighted"))
+                        {
+                            newtype += ReadNetwork.WEIGHTED;
+                        }
+                    }
+
+                    while(filein.hasNextInt())
+                    {
+                        int id = filein.nextInt();
+                        int type = filein.nextInt();
+                        double x = filein.nextDouble();
+                        double y = filein.nextDouble();
+                        double elevation = filein.nextDouble();
+                        String line = filein.nextLine();
+
+                        if(type != ReadNetwork.CENTROID)
+                        {
+                            type = newtype;
+                        }
+
+                        temp.add(id+"\t"+type+"\t"+x+"\t"+y+"\t"+elevation+line);
+                    }
+                    filein.close();
+
+                    PrintStream fileout = new PrintStream(new FileOutputStream(project.getNodesFile()), true);
+
+                    for(String x : temp)
+                    {
+                        fileout.println(x);
+                    }
+
+                    fileout.close();
+                    
+                    project.loadSimulator();
+                }
+                catch(IOException ex)
+                {
+                    GUI.handleException(ex);
+                }
+                
+                
+                parent.reset();
+
+                parent.setEnabled(true);
+            }
+        };
+        t.start();
+        
+        
+        
+        
+        
     }
-    public void disable()
+    
+    public void setEnabled(boolean e)
     {
-        save.setEnabled(false);
-        reset.setEnabled(false);
-        signal.setEnabled(false);
-        stop.setEnabled(false);
-        reservation.setEnabled(false);
-        HVsUseReservations.setEnabled(false);
-        nodeOptions.setEnabled(false);
+        save.setEnabled(e);
+        reset.setEnabled(e);
+        signal.setEnabled(e);
+        stop.setEnabled(e);
+        reservation.setEnabled(e);
+        HVsUseReservations.setEnabled(e);
+        nodeOptions.setEnabled(e && reservation.isSelected());
+        download.setEnabled(e);
+        super.setEnabled(e);
     }
     
     public void setProject(Project project)

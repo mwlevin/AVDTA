@@ -3,13 +3,14 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package avdta.gui;
+package avdta.gui.panels;
 
+import avdta.gui.panels.MSAPane;
 import avdta.dta.Assignment;
 import avdta.project.DTAProject;
 import javax.swing.JPanel;
 import java.awt.GridBagLayout;
-import static avdta.gui.GraphicUtils.*;
+import static avdta.gui.util.GraphicUtils.*;
 
 /**
  *
@@ -37,17 +38,12 @@ public class DTAPane extends JPanel
         msaPane.setProject(project);
     }
     
-    public void enable()
+
+    public void setEnabled(boolean e)
     {
-        assignPane.enable();
-        msaPane.enable();
-    }
-    
-    
-    public void disable()
-    {
-        assignPane.disable();
-        msaPane.disable();
+        assignPane.setEnabled(e);
+        msaPane.setEnabled(e);
+        super.setEnabled(e);
     }
     
     public void reset()

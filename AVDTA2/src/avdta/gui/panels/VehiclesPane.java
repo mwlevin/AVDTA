@@ -3,15 +3,16 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package avdta.gui;
+package avdta.gui.panels;
 
 import avdta.dta.ReadDTANetwork;
+import avdta.gui.GUI;
 import avdta.project.DTAProject;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import java.awt.GridBagLayout;
-import static avdta.gui.GraphicUtils.*;
+import static avdta.gui.util.GraphicUtils.*;
 import avdta.vehicle.Bus;
 import avdta.vehicle.DriverType;
 import avdta.vehicle.PersonalVehicle;
@@ -72,17 +73,13 @@ public class VehiclesPane extends JPanel
         reset();
     }
     
-    public void enable()
+    public void setEnabled(boolean e)
     {
-        prop.setEditable(true);
-        prepareDemand.setEnabled(true);
+        prop.setEditable(e);
+        prepareDemand.setEnabled(e);
+        super.setEnabled(e);
     }
     
-    public void disable()
-    {
-        prop.setEditable(false);      
-        prepareDemand.setEnabled(false);
-    }
     
     public void prepareDemand() throws IOException
     {
@@ -96,7 +93,7 @@ public class VehiclesPane extends JPanel
             prop.requestFocus();
             return;
         }
-        parent.disable();
+        parent.setEnabled(false);
         
         ReadDTANetwork read = new ReadDTANetwork();
         read.prepareDemand(project, Double.parseDouble(prop.getText().trim())/100.0);
@@ -106,7 +103,7 @@ public class VehiclesPane extends JPanel
         prop.setText("100");
         
         parent.reset();
-        parent.enable();
+        parent.setEnabled(true);
     }
     
     public void reset()
@@ -192,11 +189,11 @@ public class VehiclesPane extends JPanel
                 data.append(BEV+"\tBEVs\n");
             }
             
-            enable();
+            setEnabled(true);
         }
         else
         {
-            disable();
+            setEnabled(false);
         }
     }
     
