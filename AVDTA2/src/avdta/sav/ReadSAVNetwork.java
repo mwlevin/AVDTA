@@ -5,12 +5,17 @@
 package avdta.sav;
 
 import avdta.dta.DTASimulator;
+import static avdta.dta.ReadDTANetwork.getDemandFileHeader;
+import avdta.dta.VehicleRecord;
+import avdta.network.AST;
+import avdta.network.DemandProfile;
 import avdta.network.ReadNetwork;
 import avdta.network.Simulator;
 import avdta.network.link.CentroidConnector;
 import avdta.network.link.Link;
 import avdta.network.node.Node;
 import avdta.network.node.Zone;
+import avdta.project.DTAProject;
 import avdta.sav.Traveler;
 import avdta.sav.SAVSimulator;
 import avdta.sav.SAVDest;
@@ -26,6 +31,9 @@ import java.util.Random;
 import java.util.Scanner;
 import java.util.Set;
 import avdta.project.SAVProject;
+import java.io.FileOutputStream;
+import java.io.PrintStream;
+import java.util.TreeSet;
 
 /**
  *
@@ -258,6 +266,156 @@ public class ReadSAVNetwork extends ReadNetwork
             }
             
         }
+    }
+    
+    public int prepareDemand(SAVProject project, double prop) throws IOException
+    {
+        DemandProfile profile = readDemandProfile(project);
+        Scanner filein = new Scanner(project.getDynamicODFile());
+        
+        PrintStream fileout = new PrintStream(new FileOutputStream(project.getTripsFile()), true);
+        fileout.println(getTripsFileHeader());
+        
+        filein.nextLine();
+        
+        Random rand = project.getRandom();
+        
+        int total = 0;
+
+        int new_id = 1;
+        while(filein.hasNextInt())
+        {
+            filein.nextInt();
+            int type = filein.nextInt();
+            int origin = filein.nextInt();
+            int dest = filein.nextInt();
+            int t = filein.nextInt();
+            double demand = filein.nextDouble() * prop;
+            
+            filein.nextLine();
+
+           
+            AST ast = profile.get(t);
+            
+            
+            
+            int num_trips = (int)Math.floor(demand);
+            double rem = demand - Math.floor(demand);
+            
+            
+            if(rand.nextDouble() < rem)
+            {
+                num_trips ++;
+            }
+            
+            int dtime_interval = ast.getDuration() / (num_trips+1);
+            
+            
+            for(int i = 0; i < num_trips; i++)
+            {
+                int dtime = ast.getStart() + (i+1) * dtime_interval;
+                
+                fileout.println((new_id++)+"\t"+type+"\t"+origin+"\t"+dest+"\t"+dtime);
+            }
+            
+            total += num_trips;
+           
+        }
+        
+        filein.close();       
+        fileout.close();
+        
+
+        return total;
+        
+    }
+    
+    public DemandProfile readDemandProfile(SAVProject project) throws IOException
+    {
+        DemandProfile output = new DemandProfile();
+        
+        Scanner filein = new Scanner(project.getDemandProfileFile());
+        
+        filein.nextLine();
+        
+        while(filein.hasNextInt())
+        {
+            int id = filein.nextInt();
+            double weight = filein.nextDouble();
+            int start = filein.nextInt();
+            int duration = filein.nextInt();
+            
+            filein.nextLine();
+            
+            output.put(id, new AST(id, start, duration, weight));
+        }
+        
+        filein.close();
+
+        output.normalizeWeights();
+        
+        return output;
+    }
+    
+    public void createDynamicOD(SAVProject project) throws IOException
+    {
+        DemandProfile profile = readDemandProfile(project);
+        
+        Scanner filein = new Scanner(project.getStaticODFile());
+        
+        if(!filein.hasNextInt())
+        {
+            filein.close();
+            
+            return;
+        }
+        
+        PrintStream fileout = new PrintStream(new FileOutputStream(project.getDynamicODFile()), true);
+        
+        fileout.println("id\ttype\torigin\tdest\tast\tdemand");
+        filein.nextLine();
+        
+        int new_id = 1;
+        while(filein.hasNextInt())
+        {
+            int id = filein.nextInt();
+            int type = filein.nextInt();
+            int origin = filein.nextInt();
+            int dest = filein.nextInt();
+            double demand = filein.nextDouble();
+            
+            filein.nextLine();
+            
+            for(int t : profile.keySet())
+            {
+                AST ast = profile.get(t);
+                
+                fileout.println((new_id++)+"\t"+type+"\t"+origin+"\t"+dest+"\t"+ast.getId() + "\t" + demand * ast.getWeight());
+            }
+        }
+        
+        filein.close();
+        fileout.close();
+    }
+    
+    public static String getTripsFileHeader()
+    {
+        return "id\ttype\torigin\tdest\tdtime";
+    }
+    
+    public static String getDemandProfileFileHeader()
+    {
+        return "id\tweight\tstart\tduration";
+    }
+    
+    public static String getDynamicODFileHeader()
+    {
+        return "id\ttype\torigin\tdestination\tast\tdemand";
+    }
+    
+    public static String getStaticODFileHeader()
+    {
+        return "id\ttype\torigin\tdestination\tdemand";
     }
     
 }

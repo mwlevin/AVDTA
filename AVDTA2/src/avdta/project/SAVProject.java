@@ -39,7 +39,7 @@ public class SAVProject extends Project
     
     public File getTripsFile()
     {
-        return new File(getProjectDirectory()+"/network/trips.txt");
+        return new File(getProjectDirectory()+"/network/demand.txt");
     }
     
     public File getFleetFile()
