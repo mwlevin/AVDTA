@@ -31,7 +31,6 @@ import java.util.TreeSet;
  */
 public class SAVSimulator extends Simulator
 { 
-    private int total_productions;
     
     private List<Taxi> taxis;
     private List<Traveler> travelers;
@@ -169,35 +168,15 @@ public class SAVSimulator extends Simulator
                 }
             }
         }
-        
-        total_productions = travelers.size();
-    }
-        
-    public void createTaxis(int total)
-    {
-        if(paths.size() == 0)
-        {
-            throw new RuntimeException("No nodes");
-        }
-        
-        int id = 1;
-        
-        for(SAVOrigin o : paths.keySet())
-        {
-            int num = (int)Math.round((double)total * o.getProductions() / total_productions);
-            o.setStoredGoal(num);
-            
-            for(int i = 0; i < num; i++)
-            {
-                Taxi taxi = new Taxi(id++, o);
-                taxis.add(taxi);
-                
-                o.addParkedTaxi(taxi);
-            }
-        }
-        
     }
     
+    public void addTaxi(Taxi taxi)
+    {
+        taxis.add(taxi);
+                
+        ((SAVOrigin)taxi.getOrigin()).addParkedTaxi(taxi);
+    }
+        
     
     public void setTaxis(List<Taxi> taxis)
     {

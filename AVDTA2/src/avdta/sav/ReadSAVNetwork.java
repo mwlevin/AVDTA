@@ -44,6 +44,8 @@ public class ReadSAVNetwork extends ReadNetwork
     public static final int TAXI = 200;
     
     public static final int TRAVELER = 100;
+    
+    private int total_productions;
 
     public ReadSAVNetwork()
     {
@@ -65,11 +67,12 @@ public class ReadSAVNetwork extends ReadNetwork
         createMissingZones(nodes, links);
         
         SAVSimulator sim = new SAVSimulator(project, nodes, links);
-        
+
         sim.initialize();
         
         
         sim.setTravelers(readTravelers(project));
+        readFleet(project, sim);
         
         return sim;
     }
@@ -119,6 +122,10 @@ public class ReadSAVNetwork extends ReadNetwork
         
         Scanner filein = new Scanner(project.getTripsFile());
         
+        filein.nextLine();
+        
+        total_productions = 0;
+        
         while(filein.hasNext())
         {
             int id = filein.nextInt();
@@ -133,7 +140,7 @@ public class ReadSAVNetwork extends ReadNetwork
             {
                 try
                 {
-                
+                    total_productions++;
                     SAVOrigin origin = (SAVOrigin)nodesmap.get(origin_id);
                     SAVDest dest = (SAVDest)nodesmap.get(dest_id);
 
@@ -417,5 +424,53 @@ public class ReadSAVNetwork extends ReadNetwork
     {
         return "id\ttype\torigin\tdestination\tdemand";
     }
+  
+    public static String getFleetFileHeader()
+    {
+        return "id\torigin\tcapacity";
+    }
     
+    public void createFleet(SAVProject project, int total) throws IOException
+    {
+        PrintStream fileout = new PrintStream(new FileOutputStream(project.getFleetFile()), true);
+        
+        int new_id = 1;
+        
+        for(int id : zones.keySet())
+        {
+            Zone z = zones.get(id);
+            
+            if(z instanceof SAVOrigin)
+            {
+                SAVOrigin o = (SAVOrigin)z;
+                
+                int num = (int)Math.round((double)total * o.getProductions() / total_productions);
+                
+                for(int i = 0; i < num; i++)
+                {
+                    fileout.println((new_id++)+"\t"+id+"\t"+4);
+                }
+            }
+        }
+        fileout.close();
+        
+    }
+    public void readFleet(SAVProject project, SAVSimulator sim) throws IOException
+    {
+        Scanner filein = new Scanner(project.getFleetFile());
+        
+        filein.nextLine();
+        
+        while(filein.hasNextInt())
+        {
+            int id = filein.nextInt();
+            int origin_id = filein.nextInt();
+            int capacity = filein.nextInt();
+            
+            Taxi taxi = new Taxi(id, (SAVOrigin)zones.get(origin_id), capacity);
+            sim.addTaxi(taxi);
+        }
+        
+        filein.close();
+    }
 }

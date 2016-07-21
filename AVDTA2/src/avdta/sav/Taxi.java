@@ -35,7 +35,10 @@ public class Taxi extends Vehicle
     
     public boolean tempTaxi = false;
     
-    public Taxi(int id, SAVOrigin startLocation)
+    
+    private int capacity;
+    
+    public Taxi(int id, SAVOrigin startLocation, int capacity)
     {
         super(id);
         setDriver(DriverType.AV);
@@ -46,6 +49,7 @@ public class Taxi extends Vehicle
         total_distance = 0;
         empty_distance = 0;
         
+        this.capacity = capacity;
         
         setEfficiency(1);
     }
