@@ -4,8 +4,8 @@
  */
 package avdta.sav;
 
-import avdta.network.Link;
-import avdta.network.Location;
+import avdta.network.link.Link;
+import avdta.network.node.Location;
 import avdta.network.Simulator;
 import avdta.vehicle.Vehicle;
 import java.util.ArrayList;

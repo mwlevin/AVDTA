@@ -5,7 +5,7 @@
 package avdta.sav;
 
 import avdta.network.Simulator;
-import avdta.vehicle.VehicleClass;
+import avdta.vehicle.fuel.VehicleClass;
 import avdta.vehicle.Vehicle;
 import avdta.vehicle.DriverType;
 import java.util.ArrayList;
@@ -73,7 +73,7 @@ public class Taxi extends Vehicle
     
     public int getType()
     {
-        return TAXI;
+        return ReadSAVNetwork.TAXI + getDriver().getType() + getVehClass().getType();
     }
     
     public void reset()

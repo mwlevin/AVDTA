@@ -4,16 +4,14 @@
  */
 package avdta.sav;
 
-import avdta.network.Link;
-import avdta.network.Node;
+import avdta.network.link.Link;
+import avdta.network.node.Node;
 import avdta.network.Path;
 import avdta.network.Simulator;
 import avdta.cost.TravelCost;
 import avdta.vehicle.Vehicle;
 import avdta.vehicle.DriverType;
-import avdta.intersection.FCFSPolicy;
-import static avdta.network.Simulator.ast_duration;
-import static avdta.network.Simulator.readTBRNetwork;
+import avdta.project.SAVProject;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -32,26 +30,7 @@ import java.util.TreeSet;
  * @author Michael
  */
 public class SAVSimulator extends Simulator
-{
-    public static SAVSimulator readTBRNetwork(String network, int linktype) throws IOException
-    {
-        return readTBRNetwork(network, new FCFSPolicy(), Node.CR, linktype);
-    }
-    public static SAVSimulator readTBRNetwork(String network, Object policy, int nodetype, int linktype) throws IOException
-    {
-        ReadSAVNetwork input = new ReadSAVNetwork();
-        SAVSimulator output = new SAVSimulator(network);
-        
-        input.readNetwork(output, linktype);
-        input.readTBR(output, policy, nodetype);
-        input.readTravelers(output);
-        
-        output.initialize();
-        
-        return output;
-    }
-    
-    
+{ 
     private int total_productions;
     
     private List<Taxi> taxis;
@@ -62,40 +41,42 @@ public class SAVSimulator extends Simulator
 
     private static Map<SAVOrigin, Map<SAVDest, Path>> paths;
     
-    public static boolean relocate = true;
-    public static boolean ride_share = true;
-    public static double cost_factor = 1.4;
+    public static boolean relocate;
+    public static boolean ride_share;
+    public static double cost_factor;
     
     private static int traveling;
 
-    public SAVSimulator(String name)
+    public SAVSimulator(SAVProject project)
     {
-        super(name);
-        ast_duration = 1*60;
-        duration = 8 * 3600;
+        super(project);
         
         taxis = new ArrayList<Taxi>();
         paths = new HashMap<SAVOrigin, Map<SAVDest, Path>>();
         waiting = new TreeSet<Traveler>();
         freeTaxis = new HashMap<SAVOrigin, TreeSet<Taxi>>();
 
-        setCostFunction(TravelCost.ffTime);
+        setCostFunction(TravelCost.dnlTime);
+        relocate = project.getOption("relocate").equalsIgnoreCase("true");
+        ride_share = project.getOption("ride-sharing").equalsIgnoreCase("true");
+        cost_factor = Double.parseDouble(project.getOption("cost-factor"));
 
     }
     
     
-    public SAVSimulator(String name, List<Node> nodes, List<Link> links, int linktype)
+    public SAVSimulator(SAVProject project, List<Node> nodes, List<Link> links)
     {
-        super(name, nodes, links, linktype);
-        ast_duration = 5*60;
-        duration = 6*3600;
+        super(project, nodes, links);
         
         taxis = new ArrayList<Taxi>();
         paths = new HashMap<SAVOrigin, Map<SAVDest, Path>>();
         waiting = new TreeSet<Traveler>();
         freeTaxis = new HashMap<SAVOrigin, TreeSet<Taxi>>();
 
-        setCostFunction(TravelCost.ffTime);
+        setCostFunction(TravelCost.dnlTime);
+        relocate = project.getOption("relocate").equalsIgnoreCase("true");
+        ride_share = project.getOption("ride-sharing").equalsIgnoreCase("true");
+        cost_factor = Double.parseDouble(project.getOption("cost-factor"));
 
     }
     
@@ -259,7 +240,7 @@ public class SAVSimulator extends Simulator
     
     int traveler_idx = 0;
     
-    protected void addVehicles()
+    public void addVehicles()
     {
         // update shortest paths if needed
         if(time % ast_duration == 0)

@@ -100,9 +100,9 @@ public class ReadNetwork
     
     
     
-    protected Map<Integer, Node> nodesmap;
-    protected Map<Integer, Link> linksmap;
-    protected Map<Integer, Zone> zones;
+    public Map<Integer, Node> nodesmap;
+    public Map<Integer, Link> linksmap;
+    public Map<Integer, Zone> zones;
     
     
     private double mesodelta;
@@ -509,6 +509,10 @@ public class ReadNetwork
                 else if(key.equals("simulation-duration"))
                 {
                     Simulator.duration = Integer.parseInt(val);
+                }
+                else if(key.equals("ast-duration"))
+                {
+                    Simulator.ast_duration = Integer.parseInt(val);
                 }
                 else if(key.equals("simulation-mesoscopic-step"))
                 {

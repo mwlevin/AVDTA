@@ -2,12 +2,13 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
+/*
 package avdta.sav;
 
-import avdta.network.Link;
-import avdta.network.Node;
+import avdta.network.link.Link;
+import avdta.network.node.Node;
 import avdta.network.Simulator;
-import avdta.intersection.IntersectionPolicy;
+import avdta.network.node.policy.IntersectionPolicy;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -19,6 +20,7 @@ import java.util.TreeMap;
  *
  * @author ut
  */
+/*
 public class SAVMain 
 {
     //static String network = "willco_regional_2008";
@@ -147,7 +149,7 @@ public class SAVMain
     }
     public static Object[] test(int taxis) throws IOException
     {
-        
+        /*
         
         long time = System.nanoTime();
         
@@ -155,8 +157,7 @@ public class SAVMain
         SAVSimulator test = new SAVSimulator(network);
         
         System.out.println("Reading network...");
-        input.readNetwork(test, Link.CTM);
-        input.readTBR(test, IntersectionPolicy.FCFS, Node.CR);
+        input.readNetwork(test);
         
         System.out.println("Reading demand...");
         input.readTravelers(test, 1);
@@ -237,15 +238,6 @@ public class SAVMain
         
         System.out.println("Accounted for: "+accountedFor+" / "+test.getTravelers().size());
         
-        /*
-        for(Taxi t : test.getTaxis())
-        {
-            if(t.getNumPassengers() > 0)
-            {
-                System.out.println(t.getPath());
-            }
-        }
-        */
 
         Object[] output = new Object[7];
 
@@ -260,3 +252,4 @@ public class SAVMain
         return output;
     }
 }
+*/

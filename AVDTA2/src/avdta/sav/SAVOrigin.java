@@ -4,10 +4,10 @@
  */
 package avdta.sav;
 
-import avdta.network.Location;
+import avdta.network.node.Location;
 import avdta.network.Simulator;
 import avdta.cost.TravelCost;
-import avdta.network.Zone;
+import avdta.network.node.Zone;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashSet;
