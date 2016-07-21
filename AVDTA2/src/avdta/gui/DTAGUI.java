@@ -89,7 +89,7 @@ public class DTAGUI extends GUI
         JMenuItem mi;
         
         me = new JMenu("File");
-        mi = new JMenuItem("New network");
+        mi = new JMenuItem("New project");
         
         mi.addActionListener(new ActionListener()
         {
@@ -100,7 +100,7 @@ public class DTAGUI extends GUI
         });
         me.add(mi);
         
-        mi = new JMenuItem("Open network");
+        mi = new JMenuItem("Open project");
         
         mi.addActionListener(new ActionListener()
         {
@@ -111,7 +111,7 @@ public class DTAGUI extends GUI
         });
         me.add(mi);
         
-        mi = new JMenuItem("Clone opened network");
+        mi = new JMenuItem("Clone opened project");
         
         mi.addActionListener(new ActionListener()
         {
@@ -125,7 +125,7 @@ public class DTAGUI extends GUI
         cloneMI = mi;
         cloneMI.setEnabled(false);
         
-        mi = new JMenuItem("Close network");
+        mi = new JMenuItem("Close project");
         mi.addActionListener(new ActionListener()
         {
             public void actionPerformed(ActionEvent e)
@@ -263,7 +263,7 @@ public class DTAGUI extends GUI
     {
         JFileChooser chooser = new ProjectChooser(new File(GUI.getDefaultDirectory()), "DTA");
         
-        int returnVal = chooser.showDialog(this, "Open network");
+        int returnVal = chooser.showDialog(this, "Open project");
         
         if(returnVal == chooser.APPROVE_OPTION)
         {

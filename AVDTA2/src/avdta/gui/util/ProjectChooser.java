@@ -4,6 +4,7 @@
  */
 package avdta.gui.util;
 
+import java.awt.Component;
 import java.io.File;
 import javax.swing.JFileChooser;
 
@@ -33,6 +34,10 @@ public class ProjectChooser extends JFileChooser
         setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
     }
     
+    public int showDialog(Component component)
+    {
+        return showDialog(component, "Open project");
+    }
     
     public boolean accept(File file)
     {

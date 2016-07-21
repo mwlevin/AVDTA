@@ -50,7 +50,7 @@ public class ImportNetworkPane extends JPanel
         
         FileFilter txtFiles = null;
         
-        importFromProject = new JFileField(10, null, "networks/")
+        importFromProject = new JFileField(10, null, "projects/")
         {
             public void valueChanged()
             {
@@ -62,7 +62,7 @@ public class ImportNetworkPane extends JPanel
                 chooser.setAcceptAll(true);
 
 
-                int returnVal = chooser.showDialog(this, "Open network");
+                int returnVal = chooser.showDialog(this);
 
                 if(returnVal == chooser.APPROVE_OPTION)
                 {

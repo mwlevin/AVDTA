@@ -49,7 +49,7 @@ public class ImportDemandPane extends JPanel
         
         FileFilter txtFiles = null;
         
-        importFromProject = new JFileField(10, null, "networks/")
+        importFromProject = new JFileField(10, null, "projects/")
         {
             public void valueChanged()
             {
@@ -59,7 +59,7 @@ public class ImportDemandPane extends JPanel
             {
                 JFileChooser chooser = new ProjectChooser(new File(GUI.getDefaultDirectory()), "DTA");
 
-                int returnVal = chooser.showDialog(this, "Open network");
+                int returnVal = chooser.showDialog(this, "Open projcet");
 
                 if(returnVal == chooser.APPROVE_OPTION)
                 {
