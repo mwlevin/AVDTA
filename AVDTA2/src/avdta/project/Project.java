@@ -199,8 +199,8 @@ public abstract class Project
         setOption("ast-duration","900");
         setOption("hv-reaction-time","1");
         setOption("av-reaction-time","0.5");
-        setOption("hvs-use-reservations","0");
-        setOption("dynamic-lane-reversal","0");
+        setOption("hvs-use-reservations","false");
+        setOption("dynamic-lane-reversal","false");
         setOption("simulation-mesoscopic-step","6");
         
         

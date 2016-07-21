@@ -54,6 +54,11 @@ public class Taxi extends Vehicle
         setEfficiency(1);
     }
     
+    public boolean isTransit()
+    {
+        return true;
+    }
+    
     public int getCapacity()
     {
         return 4;

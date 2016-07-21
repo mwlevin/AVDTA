@@ -1,8 +1,0 @@
-key	value
-av-reaction-time	1
-dynamic-lane-reversal	0
-hv-reaction-time	1
-hvs-use-reservations	0
-simulation-duration	36000
-simulation-mesoscopic-delta	0.5
-simulation-mesoscopic-step	6

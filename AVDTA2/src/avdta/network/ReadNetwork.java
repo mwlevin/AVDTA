@@ -528,9 +528,9 @@ public class ReadNetwork
                 }
                 else if(key.equals("hvs-use-reservations"))
                 {
-                    Network.HVs_use_reservations = Integer.parseInt(val) > 0;
+                    Network.HVs_use_reservations = val.equalsIgnoreCase("true");
                 }
-                else if(key.equals("dynamic-lane-reversal") && Integer.parseInt(val) == 1)
+                else if(key.equals("dynamic-lane-reversal") && val.equalsIgnoreCase("true"))
                 {
                     Network.setDLR(true);
                 }

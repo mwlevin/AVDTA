@@ -1,0 +1,27 @@
+This is BibTeX, Version 0.99dThe top-level auxiliary file: DTA.aux
+The style file: acm.bst
+I found no \citation commands---while reading file DTA.aux
+Database file #1: MWL.bib
+"{" immediately follows a field name---line 390 of file MWL.bib
+ :  title
+ :       {Motor Vehicle Emission Simulator},
+I'm skipping whatever remains of this entry
+I was expecting a `,' or a `}'---line 635 of file MWL.bib
+ :  
+ :  organization={Transportation Research Board}
+(Error may have been on previous line)
+I'm skipping whatever remains of this entry
+"{" immediately follows a field name---line 954 of file MWL.bib
+ :  title
+ :       {Motor Vehicle Emission Simulator},
+I'm skipping whatever remains of this entry
+I was expecting a `,' or a `}'---line 1038 of file MWL.bib
+ :  
+ :  organization={Transportation Research Board}
+(Error may have been on previous line)
+I'm skipping whatever remains of this entry
+"{" immediately follows a field name---line 1350 of file MWL.bib
+ :  title
+ :       {Motor Vehicle Emission Simulator},
+I'm skipping whatever remains of this entry
+(There were 6 error messages)

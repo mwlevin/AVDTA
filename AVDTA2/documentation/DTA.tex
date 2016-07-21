@@ -1,0 +1,70 @@
+\documentclass[12pt]{report}
+
+%\usepackage{enumitem}
+\usepackage{indentfirst}
+\usepackage{graphicx}
+\usepackage[labelfont=bf,justification=justified,singlelinecheck=false]{caption}
+
+\usepackage{tocloft}
+\usepackage{caption}
+\usepackage{enumerate}
+\usepackage[cal=boondoxo]{mathalfa}
+\usepackage{courier}
+\usepackage[hidelinks]{hyperref}
+
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{cite}
+\usepackage[mathscr]{euscript}
+
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{verbatim}
+
+
+\setcounter{secnumdepth}{5}
+\setcounter{tocdepth}{3}
+
+
+\newtheorem{prop}{Proposition}
+\newtheorem{lemma}{Lemma}
+\newtheorem{corollary}{Corollary}
+\newtheorem{property}{Property}
+
+\renewcommand{\bibname}{References}
+
+\usepackage{color}
+
+
+\title{AVDTA: Dynamic Traffic Assignment}
+\author{Michael W. Levin}
+
+\begin{document}
+	\allowdisplaybreaks
+	\pagenumbering{gobble}
+	
+	\maketitle
+	\newpage
+	
+	
+	
+	
+	
+	\pagenumbering{roman}
+	
+	\renewcommand*\contentsname{Table of Contents}
+	\tableofcontents
+	\newpage
+	
+	\pagenumbering{arabic}
+	
+	
+	
+	
+	
+	\addcontentsline{toc}{chapter}{References}
+	\bibliography{MWL}
+	\bibliographystyle{acm}
+	
+\end{document}
