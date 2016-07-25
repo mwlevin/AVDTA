@@ -540,7 +540,7 @@ public class ReadNetwork
         }
         catch(IOException ex)
         {
-            
+            ex.printStackTrace(System.err);
         }
     }
     

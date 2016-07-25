@@ -144,10 +144,6 @@ public class DTAProject extends Project
     }
     
     
-    public File getOptionsFile()
-    {
-        return new File(getProjectDirectory()+"/network/options.txt");
-    }
     
     public String getType()
     {

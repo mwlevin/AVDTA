@@ -63,7 +63,7 @@ key & value\\\hline
 
 
 \paragraph*{name}
-This is the project name that is displayed when AVDTA loads a project.
+This is the project name that is displayed when AVDTA loads a project. This does not have to correspond to the project folder name.
 
 \paragraph*{seed}
 This is the random number generator seed. If two projects have matching seeds, actions involving random numbers performed in the same order should have identical outputs.
@@ -100,6 +100,8 @@ This is the duration of the simulation, in seconds. The duration should be suffi
 \paragraph*{simulation-mesoscopic-step}
 This is the time step used in simulation. For CTM, a typical value is 6 (s). For LTM, a typical value is 10 (s).
 
+\paragraph*{ast-duration}
+This the interval for averaging travel times for calculating shortest paths. A typical value is 900 (s).
 
 
 

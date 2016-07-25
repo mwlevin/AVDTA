@@ -1,4 +1,5 @@
 \chapter{Traffic network}
+\label{sec:network}
 
 %Network structure
 %	Links
@@ -11,3 +12,43 @@
 
 \section{Introduction}
 A \textit{network} in AVDTA defines the 
+
+
+\section{Nodes}
+\label{sec:nodes}
+
+\section{Links}
+\label{sec:links}
+
+Each line in the links file corresponds to a link in the network. The links file has columns
+\begin{center}
+\begin{tabular}{ccccccccc}
+\hline
+id & type & source & dest & length & ffspd & w & capacity & num\_lanes \\\hline
+\end{tabular}
+\end{center}
+\paragraph*{id} The id of the link. Each link must have an unique, positive id, but the ids do not have to be consecutive.
+\paragraph*{type} This determines the flow model used for the link. The possible types are
+\begin{center}
+\begin{tabular}{lcl}
+\hline Flow model & type & description\\\hline
+CTM & 100 & Multiclass CTM~\cite{levin2016multiclass} \\
+& 102 & CTM with DLR~\cite{levin2016cell}\\
+& 103 & CTM with shared transit lane\\\hline
+LTM & 200 & Standard LTM~\cite{yperman2005link, yperman2007link}\\
+& 205 & LTM with CACC\\\hline
+Centroid connector & 1000 & Link between a centroid and a node\\\hline
+\end{tabular}
+\end{center}
+Standard CTM is achieved through type 100 with HVs.
+\paragraph*{source} The id of the source node.
+\paragraph*{dest} The id of the destination node.
+\paragraph*{length} The length of the link, in feet. 
+\paragraph*{ffspd} The free flow speed of the link, in miles per hour. Note that the free flow travel time is rounded up to the nearest time step.
+\paragraph*{w} The congested wave speed of the link, in miles per hour. For LTM links, the free flow speed, capacity, and congested wave speed must be consistent as the fundamental diagram is over-determined. This is not an issue with CTM because CTM accepts a trapezoidal fundamental diagram. A typical value is half of the free flow speed.
+\paragraph*{capacity} The capacity \textit{per lane} for the link, in vehicles per hour.
+\paragraph*{num\_lanes} The number of lanes on the link. This affects the total capacity as well as intersection dynamics.
+
+Note that for centroid connectors, the free flow travel time does not depend on the length and free flow speed, but is a constant 1 time step. Also, centroid connectors are not restricted by wavespeed or capacity limitations. 
+
+With CTM, the minimum number of cells per link is 2.

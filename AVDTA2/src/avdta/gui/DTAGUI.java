@@ -160,7 +160,7 @@ public class DTAGUI extends GUI
         {
             public void actionPerformed(ActionEvent e)
             {
-                JOptionPane.showMessageDialog(frame, "Contact michaellevin@utexas.edu", 
+                JOptionPane.showMessageDialog(frame, "Documentation is located in \"/documentation/DTA.pdf\"\n\nDeveloper email: michaellevin@utexas.edu", 
                         "Help", JOptionPane.INFORMATION_MESSAGE);
             }
         });

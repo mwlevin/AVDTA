@@ -69,6 +69,7 @@ public class ImportFromVISTA
             double length = filein.nextDouble();
             double ffspd = filein.nextDouble() * 60;
             double capacity = filein.nextDouble();
+            double wavespd = ffspd*0.5;
             int numLanes = filein.nextInt();
             
             if(type == 100)
@@ -80,7 +81,7 @@ public class ImportFromVISTA
                 type = ReadNetwork.CTM;
             }
             
-            fileout.println(id+"\t"+type+"\t"+source_id+"\t"+dest_id+"\t"+length+"\t"+ffspd+"\t"+capacity+"\t"+numLanes);
+            fileout.println(id+"\t"+type+"\t"+source_id+"\t"+dest_id+"\t"+length+"\t"+ffspd+"\t"+wavespd+"\t"+capacity+"\t"+numLanes);
         }
         
         filein.close();

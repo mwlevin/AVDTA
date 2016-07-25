@@ -289,7 +289,7 @@ public abstract class Project
     
     public File getOptionsFile()
     {
-        return new File(getProjectDirectory()+"/network/options.txt");
+        return new File(getProjectDirectory()+"/options.txt");
     }
     
     public String getProjectDirectory()
