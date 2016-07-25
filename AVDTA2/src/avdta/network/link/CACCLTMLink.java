@@ -7,6 +7,7 @@ package avdta.network.link;
 import avdta.network.Network;
 import avdta.network.Simulator;
 import avdta.network.node.Node;
+import avdta.vehicle.DriverType;
 
 /**
  *
@@ -113,5 +114,10 @@ public class CACCLTMLink extends LTMLink
     public int getDSLookBehind()
     {
         return (int)Math.ceil(Math.max(getLength()/wavespd1*3600, getLength()/wavespd2*3600) / Network.dt);
+    }
+    
+    public boolean canUseLink(DriverType driver)
+    {
+        return driver.isAV();
     }
 }

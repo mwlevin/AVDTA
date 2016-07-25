@@ -272,15 +272,6 @@ public class Network
         o.arr_time = dep_time;
         o.label = 0;
 
-        /*
-        Set<Node> Q = new TreeSet<Node>(new Comparator<Node>()
-        {
-            public int compare(Node lhs, Node rhs)
-            {
-                return (int)(10000*(lhs.label - rhs.label));
-            }
-        });
-        */
         
         Set<Node> Q = new HashSet<Node>();
 

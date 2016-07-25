@@ -60,7 +60,7 @@ public class Main
         
         PrintStream out = new PrintStream(new FileOutputStream(new File("CACC_results.txt")), true);
         
-        for(int i = 70; i <= 70; i+= 5)
+        for(int i = 70; i <= 150; i+= 5)
         {
             ReadDTANetwork read1 = new ReadDTANetwork();
             read1.prepareDemand(austinI35, i/100.0);
