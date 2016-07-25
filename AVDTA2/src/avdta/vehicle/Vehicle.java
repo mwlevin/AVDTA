@@ -29,7 +29,6 @@ public abstract class Vehicle implements Serializable, Comparable<Vehicle>
 {   
     public static final double vehicle_length = 19;
     
-    private static final Random rand = new Random(9000);
     
     private Wallet wallet;
     private int id;
@@ -95,7 +94,7 @@ public abstract class Vehicle implements Serializable, Comparable<Vehicle>
         path_idx = -1;
         arr_time = 0;
         
-        effFactor = .5 + Math.round(rand.nextDouble());
+        effFactor = .5 + Math.round(Simulator.rand.nextDouble());
     }
     
     public boolean isTransit()

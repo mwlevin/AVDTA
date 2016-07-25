@@ -100,14 +100,6 @@ public class CACCLTMLink extends LTMLink
                 + k2 * getLength() - getN_up(Simulator.time)),
                 getCurrentUpstreamCapacity());
         
-        /*
-        System.out.println("R= "+output);
-        if(output < -1)
-        {
-            System.out.println("\t"+k2+" "+kc+" "+getJamDensity()+" "+getNumLanes());
-        }
-        */
-        
         return output;
     }
     
@@ -118,6 +110,6 @@ public class CACCLTMLink extends LTMLink
     
     public boolean canUseLink(DriverType driver)
     {
-        return driver.isAV();
+        return driver.isCV();
     }
 }

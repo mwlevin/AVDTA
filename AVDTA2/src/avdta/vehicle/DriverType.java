@@ -15,15 +15,18 @@ import java.io.Serializable;
 public class DriverType implements Serializable
 {
     
-    public static final DriverType AV = new DriverType("AV", 1, true, false);
-    public static final DriverType HV = new DriverType("HV", 1, false, false);
-    public static final DriverType BUS_AV = new DriverType("AV", 1, true, true);
-    public static final DriverType BUS_HV = new DriverType("HV", 1, false, true);
+    public static final DriverType AV = new DriverType("AV", 1, true, true, false);
+    public static final DriverType HV = new DriverType("HV", 1, false, false, false);
+    public static final DriverType BUS_AV = new DriverType("AV", 1, true, true, true);
+    public static final DriverType BUS_HV = new DriverType("HV", 1, false, false, true);
     
+    public static final int AV_T = 2;
+    public static final int HV_T = 0;
+    public static final int CV_T = 1;
     
     
     private double reactionTime;
-    private boolean isAV;
+    private boolean isAV, isCV;
     private String name;
     private boolean isTransit;
     
@@ -34,12 +37,29 @@ public class DriverType implements Serializable
      * @param reactionTime Is the reaction time for given name.
      * @param isAV Boolean indicating if the driver type is {@code AV}.
      */
-    public DriverType(String name, double reactionTime, boolean isAV, boolean isTransit)
+    public DriverType(String name, double reactionTime, boolean isAV, boolean isCV, boolean isTransit)
     {
         this.name = name;
         this.reactionTime = reactionTime;
         this.isAV = isAV;
         this.isTransit = isTransit;
+        this.isCV = isCV;
+    }
+    
+    public boolean isCV()
+    {
+        return isCV;
+    }
+    
+    public boolean matches(int type)
+    {
+        switch(type)
+        {
+            case HV_T: return !isAV() && !isCV();
+            case AV_T: return isAV();
+            case CV_T: return isCV();
+            default: return false;
+        }
     }
     
     public int getType()

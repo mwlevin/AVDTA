@@ -448,6 +448,32 @@ public class Simulator extends Network
         }
     }
     
+    public double getAvgTT(int type)
+    {
+        double total = 0.0;
+        int count = 0;
+        
+        for(Vehicle v : vehicles)
+        {
+            boolean matches = false;
+            
+            if(v.getDriver().matches(type))
+            {
+                count++;
+                total += v.getTT();
+            }
+        }
+        
+        if(count > 0)
+        {
+            return total/count;
+        }
+        else
+        {
+            return 0;
+        }
+    }
+    
     public void printNodeVC() throws IOException
     {
         for(Node n : nodes)
