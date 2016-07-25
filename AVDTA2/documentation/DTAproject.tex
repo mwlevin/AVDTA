@@ -1,0 +1,18 @@
+\input{Project.tex}
+
+\subsubsection{\texttt{dta.dat}}
+The \texttt{dta.dat} file marks the project as a DTA project, and should not be modified.
+
+\subsubsection{\texttt{paths.dat}}
+The \texttt{paths.dat} file contains a list of all known paths in the network. AVDTA does not generate a complete list of paths, but all paths that are created during DTA are saved here. The file is used when loading and saving assignments.
+
+
+\input{Projectfolders.tex}
+
+\paragraph*{\texttt{demand} folder}
+The \texttt{demand} folder contains all demand data files, discussed in Chapter \ref{ch:demand}.
+
+\paragraph*{\texttt{assignments} folder}
+The \texttt{assignments} folder stores previous assignments for the project. Each assignment consists of a subfolder, usually named by the time at which the assignment was created. Previous assignments can be loaded through the AVDTA GUI.
+
+Each assignment subfolder contains several files. The \texttt{log.txt} file contains a log of the DTA run that created the assignment. It includes results from each iteration of DTA as well as summary statistics for the assignment. The \texttt{vehicles.dat} file contains summary statistics in a more readable form for AVDTA, and then a list of vehicles and the path they are assigned to. The path ids correspond to a path in the \texttt{paths.dat} file. Do not modify the \texttt{vehicles.dat} file.

@@ -55,7 +55,7 @@ public class ProjectChooser extends JFileChooser
         }
         else
         {
-            return code == 1 || (acceptAll && code == 2);
+            return code == 0 || code == 1 || (acceptAll && code == 2);
         }
     }
     

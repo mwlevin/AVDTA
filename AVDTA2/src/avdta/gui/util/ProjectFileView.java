@@ -49,7 +49,7 @@ public class ProjectFileView extends FileView
     {
         try
         {
-            File properties = new File(file.getCanonicalPath()+"/project.dat");
+            File properties = new File(file.getCanonicalPath()+"/project.txt");
             
             if(properties.exists())
             {

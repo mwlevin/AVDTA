@@ -1,6 +1,7 @@
 \documentclass[12pt]{report}
 
 %\usepackage{enumitem}
+\usepackage{fullpage}
 \usepackage{indentfirst}
 \usepackage{graphicx}
 \usepackage[labelfont=bf,justification=justified,singlelinecheck=false]{caption}
@@ -11,6 +12,7 @@
 \usepackage[cal=boondoxo]{mathalfa}
 \usepackage{courier}
 \usepackage[hidelinks]{hyperref}
+\usepackage{longtable}
 
 \usepackage{amsmath}
 \usepackage{amsthm}
@@ -24,8 +26,19 @@
 
 
 \setcounter{secnumdepth}{5}
-\setcounter{tocdepth}{3}
+\setcounter{tocdepth}{2}
+\usepackage[toc,page]{appendix}
+\usepackage{titlesec}
 
+
+%\titleformat{\chapter}
+%  {\Large\scshape\bfseries\centering\uppercase}{\thechapter}{1em}{}
+%\titleformat{\subsubsection}
+%  {\normalsize\scshape\slshape}{\thesubsubsection}{1em}{}
+%\titleformat{\subsection}
+%  {\normalsize\scshape\bfseries\slshape}{\thesubsection}{1em}{}
+%\titleformat{\section}
+%  {\large\scshape\bf}{\thesection}{1em}{}
 
 \newtheorem{prop}{Proposition}
 \newtheorem{lemma}{Lemma}
@@ -52,6 +65,7 @@
 	
 	
 	\pagenumbering{roman}
+	\setcounter{page}{2}
 	
 	\renewcommand*\contentsname{Table of Contents}
 	\tableofcontents
@@ -60,17 +74,19 @@
 	\pagenumbering{arabic}
 	
 	
+	
+	
 	% Introduction
 	% 	Organization
-	\include{DTAintro.tex}
+	\input{DTAintro.tex}
 	
 	%Project - definition
 	% 	File structure
 	%	Options
-	\include{Project.tex}
+	\input{DTAProject.tex}
 	
 	
-	\include{Network.tex}
+	\input{Network.tex}
 	
 	% Demand structure
 	%	Vehicles
@@ -80,9 +96,16 @@
 	%	GUI - include
 	%	Types - include
 	% 	Import from VISTA
-	\include{DTAdemand.tex}
+	\input{DTAdemand.tex}
 	
 	% DTA
+	
+	
+	
+	\begin{appendices}
+	
+	\input{glossary.tex}
+	\end{appendices}
 	
 	\addcontentsline{toc}{chapter}{References}
 	\bibliography{MWL}

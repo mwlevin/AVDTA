@@ -81,7 +81,7 @@ public abstract class Project
     
     public void setOption(String key, String val)
     {
-        networkOptions.put(key, val);
+        networkOptions.put(key.toLowerCase(), val);
     }
     
     public abstract String getType();
@@ -125,7 +125,7 @@ public abstract class Project
         
         while(filein.hasNext())
         {
-            map.put(filein.next().trim(), filein.next().trim());
+            map.put(filein.next().trim().toLowerCase(), filein.next().trim());
         }
        
         
@@ -274,7 +274,7 @@ public abstract class Project
     
     public File getPropertiesFile()
     {
-        return new File(getProjectDirectory()+"/project.dat");
+        return new File(getProjectDirectory()+"/project.txt");
     }
     
     public File getLinksFile()

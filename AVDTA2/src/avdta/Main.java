@@ -44,14 +44,14 @@ public class Main
     public static void main(String[] args) throws IOException
     {
         //transitTest();
-        caccTest2();
-        //GUI.main(args);
+        //caccTest2();
+        GUI.main(args);
     }
     
     public static void caccTest2() throws IOException
     {
-        DTAProject austinI35 = new DTAProject(new File("networks/austinI35"));
-        DTAProject austinI35_CACC = new DTAProject(new File("networks/austinI35_CACC2"));
+        DTAProject austinI35 = new DTAProject(new File("projects/austinI35"));
+        DTAProject austinI35_CACC = new DTAProject(new File("projects/austinI35_CACC2"));
         
         PrintStream out = new PrintStream(new FileOutputStream(new File("CACC_results.txt")), true);
         
@@ -90,8 +90,8 @@ public class Main
     
     public static void caccTest1() throws IOException
     {
-        DTAProject austinI35 = new DTAProject(new File("networks/austinI35"));
-        DTAProject austinI35_CACC = new DTAProject(new File("networks/austinI35_CACC"));
+        DTAProject austinI35 = new DTAProject(new File("projects/austinI35"));
+        DTAProject austinI35_CACC = new DTAProject(new File("projects/austinI35_CACC"));
         
         PrintStream out = new PrintStream(new FileOutputStream(new File("CACC_results.txt")), true);
         out.println("% demand\tTSTT\tTSTT w CACC\tDemand");

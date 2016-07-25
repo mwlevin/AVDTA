@@ -499,8 +499,8 @@ public class ReadNetwork
             
             while(filein.hasNext())
             {
-                String key = filein.next();
-                String val = filein.next();
+                String key = filein.next().toLowerCase();
+                String val = filein.next().toLowerCase();
                 
                 project.setOption(key, val);
                 
