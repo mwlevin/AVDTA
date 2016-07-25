@@ -5,6 +5,8 @@
  */
 package avdta.dta;
 
+import java.util.Scanner;
+
 /**
  * Used for prepare demand
  * @author micha
@@ -12,6 +14,17 @@ package avdta.dta;
 public class VehicleRecord implements Comparable<VehicleRecord>
 {
     private int id, dtime, origin, dest, type;
+    
+    public VehicleRecord(String line)
+    {
+        Scanner chopper = new Scanner(line);
+        
+        id = chopper.nextInt();
+        type = chopper.nextInt();
+        origin = chopper.nextInt();
+        dest = chopper.nextInt();
+        dtime = chopper.nextInt();
+    }
     
     public VehicleRecord(int id, int type, int origin, int dest, int dtime)
     {

@@ -7,6 +7,7 @@ package avdta.project;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintStream;
 
 /**
  *
@@ -37,28 +38,41 @@ public class SAVProject extends Project
         setOption("cost-factor", "1.4");
     }
     
+    public void createProjectFolders(File dir) throws IOException
+    {
+        super.createProjectFolders(dir);
+        
+        String dirStr = dir.getCanonicalPath();
+        
+        File file = new File(dirStr+"/demand");
+        file.mkdirs();
+
+        PrintStream fileout = new PrintStream(getProjectDirectory()+"/sav.dat");
+        fileout.close();
+    }
+    
     public File getTripsFile()
     {
-        return new File(getProjectDirectory()+"/network/demand.txt");
+        return new File(getProjectDirectory()+"/demand/demand.txt");
     }
     
     public File getFleetFile()
     {
-        return new File(getProjectDirectory()+"/network/fleet.txt");
+        return new File(getProjectDirectory()+"/demand/fleet.txt");
     }
     
     public File getStaticODFile()
     {
-        return new File(getProjectDirectory()+"/network/static_od.txt");
+        return new File(getProjectDirectory()+"/demand/static_od.txt");
     }
     
     public File getDynamicODFile()
     {
-        return new File(getProjectDirectory()+"/network/dynamic_od.txt");
+        return new File(getProjectDirectory()+"/demand/dynamic_od.txt");
     }
     
     public File getDemandProfileFile()
     {
-        return new File(getProjectDirectory()+"/network/demand_profile.txt");
+        return new File(getProjectDirectory()+"/demand/demand_profile.txt");
     }
 }

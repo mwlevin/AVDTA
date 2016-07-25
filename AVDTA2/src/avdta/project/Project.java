@@ -194,7 +194,6 @@ public abstract class Project
     
     public void fillOptions()
     {
-        setOption("simulation-mesoscopic-delta","0.5");
         setOption("simulation-duration","36000");
         setOption("ast-duration","900");
         setOption("hv-reaction-time","1");

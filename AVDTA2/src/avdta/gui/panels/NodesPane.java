@@ -25,6 +25,7 @@ import avdta.network.node.policy.IntersectionPolicy;
 import avdta.network.node.policy.MCKSTBR;
 import avdta.network.node.Merge;
 import avdta.network.node.Node;
+import avdta.network.node.NodeRecord;
 import avdta.network.node.obj.ObjFunction;
 import avdta.network.node.obj.P0Obj;
 import avdta.network.node.PhasedTBR;
@@ -363,13 +364,11 @@ public class NodesPane extends JPanel
         {
             public void run()
             {
-                ArrayList<String> temp = new ArrayList<String>();
+                ArrayList<NodeRecord> temp = new ArrayList<NodeRecord>();
         
                 try
                 {
                     Scanner filein = new Scanner(project.getNodesFile());
-
-                    temp.add(filein.nextLine());
 
                     int newtype = 0;
 
@@ -409,25 +408,21 @@ public class NodesPane extends JPanel
 
                     while(filein.hasNextInt())
                     {
-                        int id = filein.nextInt();
-                        int type = filein.nextInt();
-                        double x = filein.nextDouble();
-                        double y = filein.nextDouble();
-                        double elevation = filein.nextDouble();
-                        String line = filein.nextLine();
+                        NodeRecord node = new NodeRecord(filein.nextLine());
 
-                        if(type != ReadNetwork.CENTROID)
+                        if(node.getType() != ReadNetwork.CENTROID)
                         {
-                            type = newtype;
+                            node.setType(newtype);
                         }
 
-                        temp.add(id+"\t"+type+"\t"+x+"\t"+y+"\t"+elevation+line);
+                        temp.add(node);
                     }
                     filein.close();
 
                     PrintStream fileout = new PrintStream(new FileOutputStream(project.getNodesFile()), true);
+                    fileout.println(ReadNetwork.getNodesFileHeader());
 
-                    for(String x : temp)
+                    for(NodeRecord x : temp)
                     {
                         fileout.println(x);
                     }

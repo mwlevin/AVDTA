@@ -90,6 +90,9 @@ public class DTAProject extends Project
         File file = new File(dirStr+"/assignments");
         file.mkdirs();
         
+        file = new File(dirStr+"/demand");
+        file.mkdirs();
+        
         PrintStream fileout = new PrintStream(getProjectDirectory()+"/dta.dat");
         fileout.close();
     }
@@ -102,22 +105,22 @@ public class DTAProject extends Project
 
     public File getStaticODFile()
     {
-        return new File(getProjectDirectory()+"/network/static_od.txt");
+        return new File(getProjectDirectory()+"/demand/static_od.txt");
     }
     
     public File getDynamicODFile()
     {
-        return new File(getProjectDirectory()+"/network/dynamic_od.txt");
+        return new File(getProjectDirectory()+"/demand/dynamic_od.txt");
     }
     
     public File getDemandProfileFile()
     {
-        return new File(getProjectDirectory()+"/network/demand_profile.txt");
+        return new File(getProjectDirectory()+"/demand/demand_profile.txt");
     }
     
     public File getDemandFile()
     {
-        return new File(getProjectDirectory()+"/network/demand.txt");
+        return new File(getProjectDirectory()+"/demand/demand.txt");
     }
     
     public String getAssignmentsFolder()

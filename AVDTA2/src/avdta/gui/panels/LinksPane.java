@@ -14,6 +14,7 @@ import avdta.network.ReadNetwork;
 import avdta.network.link.CTMLink;
 import avdta.network.link.LTMLink;
 import avdta.network.link.Link;
+import avdta.network.link.LinkRecord;
 import avdta.project.DTAProject;
 import avdta.project.Project;
 import avdta.vehicle.Vehicle;
@@ -255,9 +256,11 @@ public class LinksPane extends JPanel
         {
             public void run()
             {
+                double mesodelta = -1;;
+                
                 try
                 {
-                    project.setOption("simulation-mesoscopic-delta", ""+Double.parseDouble(mesoDelta.getText().trim()));
+                   mesodelta = Double.parseDouble(mesoDelta.getText().trim());
                 }
                 catch(Exception ex)
                 {
@@ -321,47 +324,46 @@ public class LinksPane extends JPanel
                         }
                     }
 
-                    ArrayList<String> temp = new ArrayList<String>();
+                    ArrayList<LinkRecord> temp = new ArrayList<LinkRecord>();
 
                     try
                     {
 
                         Scanner filein = new Scanner(project.getLinksFile());
 
-                        temp.add(filein.nextLine());
+
 
                         while(filein.hasNext())
                         {
-                            int id = filein.nextInt();
-                            int type = filein.nextInt();
-                            int source_id = filein.nextInt();
-                            int dest_id = filein.nextInt();
-                            double length = filein.nextDouble();
-                            double ffspd = filein.nextDouble();
-                            double capacity = filein.nextDouble();
-                            int numLanes = filein.nextInt();
-                            double jamd = 5280.0/Vehicle.vehicle_length;
+                            LinkRecord link = new LinkRecord(filein.nextLine());
 
-                            String line = filein.nextLine();
 
-                            if(type != ReadNetwork.CENTROID)
+
+                            if(link.getType() != ReadNetwork.CENTROID)
                             {
-                                type = newtype;
+                                link.setType(newtype);
                             }
 
-                            if(ctm.isSelected() && ctmOptions.getSelectedItem().equals("Shared transit") && numLanes > 1)
+                            if(ctm.isSelected() && ctmOptions.getSelectedItem().equals("Shared transit") && link.getNumLanes() > 1)
                             {
-                                type += ReadNetwork.SHARED_TRANSIT;
+                                link.setType(link.getType()+ ReadNetwork.SHARED_TRANSIT);
+                            }
+                            
+                            if(mesodelta > 0)
+                            {
+                                link.setWavespd(link.getFFSpd() * mesodelta);
                             }
 
-                            temp.add(""+id+"\t"+type+"\t"+source_id+"\t"+dest_id+"\t"+length+"\t"+ffspd+"\t"+capacity+"\t"+numLanes+"\t"+line);
+                            temp.add(link);
                         }
 
                         filein.close();
 
                         PrintStream fileout = new PrintStream(new FileOutputStream(project.getLinksFile()), true);
 
-                        for(String x : temp)
+                        fileout.println(ReadNetwork.getLinksFileHeader());
+                        
+                        for(LinkRecord x : temp)
                         {
                             fileout.println(x);
                         }

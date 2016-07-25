@@ -272,9 +272,11 @@ public class ReadNetwork
             int dest_id = filein.nextInt();
             double length = filein.nextDouble() / 5280;
             double ffspd = filein.nextDouble();
+            double w = filein.nextDouble();
             double capacity = filein.nextDouble();
             int numLanes = filein.nextInt();
             double jamd = 5280.0/Vehicle.vehicle_length;
+            
             
             filein.nextLine();
             
@@ -292,13 +294,13 @@ public class ReadNetwork
                     {
                         if(CACCLTMLink.checkK2(capacity, ffspd, length))
                         {
-                            link = new CACCLTMLink(id, nodesmap.get(source_id), nodesmap.get(dest_id), capacity, ffspd, ffspd*mesodelta, jamd, length, numLanes);
+                            link = new CACCLTMLink(id, nodesmap.get(source_id), nodesmap.get(dest_id), capacity, ffspd, w, jamd, length, numLanes);
                             
                             CACCLTMLink l = (CACCLTMLink)link;
                         }
                         else
                         {
-                            link = new LTMLink(id, nodesmap.get(source_id), nodesmap.get(dest_id), capacity, ffspd, ffspd*mesodelta, jamd, length, numLanes);
+                            link = new LTMLink(id, nodesmap.get(source_id), nodesmap.get(dest_id), capacity, ffspd, w, jamd, length, numLanes);
                         }
                         
                         
@@ -307,25 +309,25 @@ public class ReadNetwork
                     }
                     else
                     {
-                        link = new LTMLink(id, nodesmap.get(source_id), nodesmap.get(dest_id), capacity, ffspd, ffspd*mesodelta, jamd, length, numLanes);
+                        link = new LTMLink(id, nodesmap.get(source_id), nodesmap.get(dest_id), capacity, ffspd, w, jamd, length, numLanes);
                     }
                     break;
                 case CTM/100:
                     if(type%10 == DLR)
                     {
                         Network.dlr = true;
-                        link = new DLRCTMLink(id, nodesmap.get(source_id), nodesmap.get(dest_id), capacity, ffspd, ffspd*mesodelta, jamd, length, numLanes);
+                        link = new DLRCTMLink(id, nodesmap.get(source_id), nodesmap.get(dest_id), capacity, ffspd, w, jamd, length, numLanes);
                     }
                     else if(type % 10 == SHARED_TRANSIT && numLanes > 1)
                     {
-                        TransitLane transitLane = new TransitLane(id, nodesmap.get(source_id), nodesmap.get(dest_id), capacity, ffspd, ffspd*mesodelta, jamd, length);
+                        TransitLane transitLane = new TransitLane(id, nodesmap.get(source_id), nodesmap.get(dest_id), capacity, ffspd, w, jamd, length);
                         links.add(transitLane);
                         link = new SharedTransitCTMLink(id, nodesmap.get(source_id), nodesmap.get(dest_id), capacity, 
                                 ffspd, ffspd*mesodelta, jamd, length, numLanes-1, transitLane);
                     }
                     else
                     {
-                        link = new CTMLink(id, nodesmap.get(source_id), nodesmap.get(dest_id), capacity, ffspd, ffspd*mesodelta, jamd, length, numLanes);
+                        link = new CTMLink(id, nodesmap.get(source_id), nodesmap.get(dest_id), capacity, ffspd, w, jamd, length, numLanes);
                     }
                     break;
                 default:
@@ -608,7 +610,7 @@ public class ReadNetwork
 
     public static String getLinksFileHeader()
     {
-        return "id\ttype\tsource\tdest\tlength (ft)\tffspd (mph)\tcapacity\tnum_lanes";
+        return "id\ttype\tsource\tdest\tlength (ft)\tffspd (mph)\tw (mph)\tcapacity\tnum_lanes";
     }
     
     public static String getNodesFileHeader()

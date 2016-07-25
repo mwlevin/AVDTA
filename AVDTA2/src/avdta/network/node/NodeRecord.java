@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package avdta.network;
+package avdta.network.node;
 
 import java.util.Scanner;
 
@@ -16,6 +16,8 @@ public class NodeRecord
     private int id, type;
     private double longitude, latitude, elevation;
     
+
+    
     public NodeRecord(int id, int type, double lng, double lat, double elev)
     {
         this.id = id;
@@ -24,7 +26,7 @@ public class NodeRecord
         this.latitude = latitude;
         this.elevation = elevation;
     }
-    
+
     public NodeRecord(String line)
     {
         Scanner chopper = new Scanner(line);
