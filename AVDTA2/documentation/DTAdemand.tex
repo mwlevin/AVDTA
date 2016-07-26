@@ -4,7 +4,6 @@
 \section{Introduction}
 
 The demand specifies personal vehicle trips in terms of origins, destinations, and departure times. This chapter discusses the organization of the demand inputs to DTA. All related data files are contained within the \texttt{demand} subfolder of a project. The demand is specified through four files. The \texttt{static\_od.txt} file is a static (time-invariant) trip table that is representative of the static data available to many planning organizations. The \texttt{dynamic\_od.txt} file is a dynamic trip table that specifies the number of trips per \textit{assignment interval} (AST). The \texttt{demand\_profile.txt} file specifies the weight, start time, and duration of each AST. The \texttt{demand.txt} file contains a list of discrete vehicles, each with a specific origin, destination, and departure time. The \texttt{dynamic\_od.txt} file can be generated from the \texttt{static\_od.txt} and the \texttt{demand\_profile.txt} files. The \texttt{demand.txt} file can be generated from the \texttt{dynamic\_od.txt} file and the \texttt{demand\_profile.txt} file.
-
 Vehicle types (i.e. HV, AV, etc.) are specified in the \texttt{static\_od.txt}, \texttt{dynamic\_od.txt}, and \texttt{demand.txt} files. The AVDTA GUI includes methods to generate the \texttt{dynamic\_od.txt} and \texttt{demand.txt} files given appropriate inputs.
 
 \section{Files} 

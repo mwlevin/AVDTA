@@ -1,7 +1,8 @@
-package avdta.network;
+package avdta.util;
 
 import avdta.gui.util.StatusUpdate;
 import avdta.network.node.NodeRecord;
+import avdta.network.ReadNetwork;
 import avdta.network.ReadNetwork;
 import avdta.project.Project;
 import java.awt.Component;

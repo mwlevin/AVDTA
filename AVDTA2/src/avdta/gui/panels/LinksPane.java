@@ -175,7 +175,7 @@ public class LinksPane extends JPanel
         if(project != null)
         {
             
-            mesoDelta.setText(project.getOption("simulation-mesoscopic-delta"));
+            mesoDelta.setText("");
             timestep.setText(project.getOption("simulation-mesoscopic-step"));
             HVtau.setText(project.getOption("hv-reaction-time"));
             AVtau.setText(project.getOption("av-reaction-time"));

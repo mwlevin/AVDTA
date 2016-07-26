@@ -10,7 +10,7 @@ import avdta.gui.GUI;
 import javax.swing.JPanel;
 import static avdta.gui.util.GraphicUtils.*;
 import avdta.gui.util.StatusBar;
-import avdta.network.DownloadElevation;
+import avdta.util.DownloadElevation;
 import avdta.network.ReadNetwork;
 import avdta.network.link.CTMLink;
 import avdta.network.link.LTMLink;
@@ -280,11 +280,19 @@ public class NodesPane extends JPanel
             data.append(total+"\tnodes\n\n");
             if(centroidCount > 0)
             {
-                data.append(total+"\tcentroids\n");
+                data.append(centroidCount+"\tcentroids\n");
             }
             if(signalCount > 0)
             {
                 data.append(signalCount+"\tsignals\n");
+            }
+            if(divergeCount > 0)
+            {
+                data.append(divergeCount+"\tdiverges\n");
+            }
+            if(mergeCount > 0)
+            {
+                data.append(mergeCount+"\tmerges\n");
             }
             if(stopCount > 0)
             {
