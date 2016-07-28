@@ -358,6 +358,7 @@ public class ReadNetwork
 
         while(filein.hasNext())
         {
+            int id = filein.nextInt();
             int nodeid = filein.nextInt();
             int type = filein.nextInt();
             int offset = filein.nextInt();
@@ -497,6 +498,8 @@ public class ReadNetwork
         {
             Scanner filein = new Scanner(project.getOptionsFile());
             
+            filein.nextLine();
+            
             while(filein.hasNext())
             {
                 String key = filein.next().toLowerCase();
@@ -620,6 +623,11 @@ public class ReadNetwork
     
     public static String getPhasesFileHeader()
     {
-        return "nodeid\ttype\toffset\tphase_id\ttime_red\ttime_yellow\ttime_green\tnum_moves\tlink_from\tlink_to";
+        return "id\tnode\ttype\toffset\tphase_id\ttime_red\ttime_yellow\ttime_green\tnum_moves\tlink_from\tlink_to";
+    }
+    
+    public static String getOptionsFileHeader()
+    {
+        return "name\tvalue";
     }
 }

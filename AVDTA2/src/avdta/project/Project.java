@@ -8,10 +8,14 @@ package avdta.project;
 import avdta.network.ReadNetwork;
 import avdta.network.Simulator;
 import avdta.util.FileTransfer;
+import java.sql.Connection;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -61,6 +65,119 @@ public abstract class Project
 
     }
     
+    public void exportNetworkToMySQL() throws SQLException, IOException
+    {
+        SQLLogin login = new SQLLogin(getDatabaseName());
+        Connection connect = DriverManager.getConnection(login.toString());
+        login = null;
+        
+        // nodes, links, options, phases
+        String dir = getProjectDirectory()+"/temp";
+        File folder = new File(dir);
+        folder.mkdirs();
+        
+        createTempFile(getNodesFile(), new File(dir+"/nodes.txt"));
+        createTempFile(getLinksFile(), new File(dir+"/links.txt"));
+        createTempFile(getPhasesFile(), new File(dir+"/phases.txt"));
+        createTempFile(getOptionsFile(), new File(dir+"/options.txt"));
+        
+        Statement st = connect.createStatement();
+        st.executeQuery("create table if not exists options (name varchar(255), value varchar(255));");
+        st.executeQuery("create table if not exists nodes (id int, type int, longitude float, latitude float, elevation float);");
+        st.executeQuery("create table if not exists links (id int, type int, source int, dest int, length float, ffspd float, w float, capacity float, num_lanes int);");
+        st.executeQuery("create table if not exists phases (id int, node int, offset int, phase_id int, time_red float, time_yellow float, "
+                + "time_green float, num_moves int, link_from varchar(255), link_to varchar(255)));");
+        
+        
+        st.executeQuery("\\copy nodes from temp/nodes.txt");
+        st.executeQuery("\\copy links from temp/links.txt");
+        st.executeQuery("\\copy options from temp/options.txt");
+        st.executeQuery("\\copy phases from temp/phases.txt");
+        
+        
+        for(File file : folder.listFiles())
+        {
+            file.delete();
+        }
+        folder.delete();
+        
+    }
+    
+    public void importNetworkFromMySQL() throws SQLException, IOException
+    {
+        SQLLogin login = new SQLLogin(getDatabaseName());
+        Connection connect = DriverManager.getConnection(login.toString());
+        login = null;
+        
+        String dir = getProjectDirectory()+"/temp";
+        File folder = new File(dir);
+        folder.mkdirs();
+        
+        Statement st = connect.createStatement();
+        st.executeQuery("\\copy nodes to temp/nodes.txt");
+        st.executeQuery("\\copy links to temp/links.txt");
+        st.executeQuery("\\copy options to temp/options.txt");
+        st.executeQuery("\\copy phases to temp/phases.txt");
+        
+        createRealFile(new File(dir+"/nodes.txt"), ReadNetwork.getNodesFileHeader(), getNodesFile());
+        createRealFile(new File(dir+"/links.txt"), ReadNetwork.getLinksFileHeader(), getLinksFile());
+        createRealFile(new File(dir+"/phases.txt"), ReadNetwork.getPhasesFileHeader(), getPhasesFile());
+        createRealFile(new File(dir+"/options.txt"), ReadNetwork.getOptionsFileHeader(), getOptionsFile());
+        
+        for(File file : folder.listFiles())
+        {
+            file.delete();
+        }
+        folder.delete();
+    }
+    
+    public void createTempFile(File input, File output) throws IOException
+    {
+        Scanner filein = new Scanner(input);
+        PrintStream fileout = new PrintStream(new FileOutputStream(output), true);
+        
+        filein.nextLine();
+        
+        while(filein.hasNextLine())
+        {
+            fileout.print(filein.nextLine());
+        }
+        filein.close();
+        fileout.close();
+    }
+    
+    public void createRealFile(File input, String header, File output) throws IOException
+    {
+        Scanner filein = new Scanner(input);
+        PrintStream fileout = new PrintStream(new FileOutputStream(output), true);
+        
+        fileout.println(header);
+        
+        while(filein.hasNextLine())
+        {
+            fileout.print(filein.nextLine());
+        }
+        filein.close();
+        fileout.close();
+    }
+    
+    
+    
+    
+    public void createDatabase() throws SQLException, IOException
+    {
+        SQLLogin login = new SQLLogin();
+        
+        Connection connection = DriverManager.getConnection(login.toString()); 
+        Statement s=connection.createStatement();
+        int Result=s.executeUpdate("CREATE DATABASE "+getDatabaseName());
+    }
+    
+    public String getDatabaseName()
+    {
+        return getName().replaceAll(" ", "_");
+    }
+    
     public String getOption(String k)
     {
         return networkOptions.get(k.toLowerCase());
@@ -70,7 +187,7 @@ public abstract class Project
     {
         PrintStream fileout = new PrintStream(new FileOutputStream(getOptionsFile()), true);
 
-        fileout.println("key\tvalue");
+        fileout.println(ReadNetwork.getOptionsFileHeader());
         for(String k : networkOptions.keySet())
         {
             fileout.println(k+"\t"+networkOptions.get(k));

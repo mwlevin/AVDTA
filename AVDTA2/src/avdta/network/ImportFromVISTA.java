@@ -37,14 +37,14 @@ public class ImportFromVISTA
         
         while(filein.hasNextInt())
         {
-            filein.next();
+            int id = filein.nextInt();
             int type = filein.nextInt();
             int nodeid = filein.nextInt();
             filein.next();
             int phaseid = filein.nextInt();
             String rest = filein.nextLine().trim();
             
-            fileout.println(nodeid+"\t"+type+"\t0\t"+phaseid+"\t"+rest);
+            fileout.println(id+"\t"+nodeid+"\t"+type+"\t0\t"+phaseid+"\t"+rest);
             
             
         }

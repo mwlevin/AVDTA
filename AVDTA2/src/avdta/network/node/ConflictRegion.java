@@ -1,7 +1,7 @@
 package avdta.network.node;
 
 
-//import ilog.concert.IloLinearNumExpr;
+import ilog.concert.IloLinearNumExpr;
 import avdta.network.link.Link;
 import avdta.network.Network;
 import java.io.Serializable;
@@ -30,7 +30,7 @@ public class ConflictRegion implements Serializable
     private static int id_count = 0;
     
     // IP
-    //protected IloLinearNumExpr capacityUseSum;
+    public IloLinearNumExpr capacityUseSum;
 
     public ConflictRegion(double capacity)
     {

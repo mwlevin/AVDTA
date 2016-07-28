@@ -4,7 +4,7 @@
  */
 package avdta.vehicle;
 
-//import ilog.concert.IloIntVar;
+import ilog.concert.IloIntVar;
 import avdta.network.Network;
 import avdta.vehicle.fuel.VehicleClass;
 import avdta.network.link.CTMLink;
@@ -58,7 +58,7 @@ public abstract class Vehicle implements Serializable, Comparable<Vehicle>
     private DriverType driver;
     
     // IP
-    //protected IloIntVar x;
+    public IloIntVar x;
     
     // MCKS
     public double efficiency;

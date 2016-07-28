@@ -4,12 +4,16 @@
  */
 package avdta.network.node;
 
+import avdta.network.ReadNetwork;
+import avdta.network.Simulator;
+import avdta.network.link.Link;
 import avdta.network.node.TBR;
+import avdta.network.node.obj.ObjFunction;
+import avdta.vehicle.Vehicle;
 import java.util.List;
 import java.util.Map;
-
-//import ilog.concert.*;
-//import ilog.cplex.*;
+import ilog.concert.*;
+import ilog.cplex.*;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -25,9 +29,7 @@ import java.util.Set;
  */
 public class IPTBR extends TBR
 {
-    public int step(){return 0;}
-    public int getType(){ return 0;}
-    /*
+    
     private ObjFunction objfunc;
     
     private static IloCplex cplex;
@@ -61,7 +63,10 @@ public class IPTBR extends TBR
         
     }
     
-
+    public int getType()
+    {
+        return objfunc.getType() + ReadNetwork.IP;
+    }
     
     private static final double M = 1.0e6;
 
@@ -338,5 +343,5 @@ public class IPTBR extends TBR
             return exited;
         }
     }
-    */
+    
 }
