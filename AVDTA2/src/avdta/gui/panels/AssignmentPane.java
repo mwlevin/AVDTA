@@ -51,6 +51,7 @@ public class AssignmentPane extends JPanel
         list = new JList();
         list.setListData(new String[]{});
         list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        list.setFixedCellWidth(200);
         
         list.addListSelectionListener(new ListSelectionListener()
         {

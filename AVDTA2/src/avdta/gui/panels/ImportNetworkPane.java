@@ -14,6 +14,7 @@ import static avdta.gui.util.GraphicUtils.*;
 import avdta.network.ImportFromVISTA;
 import avdta.project.DTAProject;
 import avdta.project.Project;
+import avdta.project.SQLLogin;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -34,19 +35,56 @@ public class ImportNetworkPane extends JPanel
     private NetworkPane parent;
     
     private JFileField importFromProject;
-    private JFileField linkdetails, nodes, elevation, phases;
+    private JFileField linkdetails, nodes, elevation, phases, signals;
     
     private JButton import1;
     private JButton import2;
+    private JButton sqlImport, sqlExport;
     
-    public ImportNetworkPane(NetworkPane parent)
+    
+    public ImportNetworkPane(NetworkPane parent_)
     {
-        this.parent = parent;
+        this.parent = parent_;
         
         import1 = new JButton("Import");
         import1.setEnabled(false);
         import2 = new JButton("Import");
         import2.setEnabled(false);
+        
+        sqlImport = new JButton("Import from SQL");
+        sqlExport = new JButton("Export to SQL");
+        
+        sqlImport.addActionListener(new ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                try
+                {
+                    project.importNetworkFromSQL();
+                    project.loadSimulator();
+                    parent.reset();
+                }
+                catch(Exception ex)
+                {
+                    GUI.handleException(ex);
+                }
+            }
+        });
+        
+        sqlExport.addActionListener(new ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                try
+                {
+                    project.exportNetworkToSQL();
+                }
+                catch(Exception ex)
+                {
+                    GUI.handleException(ex);
+                }
+            }
+        });
         
         FileFilter txtFiles = null;
         
@@ -83,6 +121,14 @@ public class ImportNetworkPane extends JPanel
             }
         };
         nodes = new JFileField(10, txtFiles, "data/")
+        {
+            public void valueChanged(File f)
+            {
+                checkForOtherFiles(f);
+                import2.setEnabled(nodes.getFile() != null && linkdetails.getFile() != null && phases.getFile() != null);
+            }
+        };
+        signals = new JFileField(10, txtFiles, "data/")
         {
             public void valueChanged(File f)
             {
@@ -161,11 +207,20 @@ public class ImportNetworkPane extends JPanel
         constrain(p, linkdetails, 1, 2, 1, 1);
         constrain(p, new JLabel("Phases: "), 0, 3, 1, 1);
         constrain(p, phases, 1, 3, 1, 1);
-        constrain(p, new JLabel("Elevation: "), 0, 4, 1, 1);
-        constrain(p, elevation, 1, 4, 1, 1);
+        constrain(p, new JLabel("Signals: "), 0, 4, 1, 1);
+        constrain(p, signals, 1, 4, 1, 1);
+        constrain(p, new JLabel("Elevation: "), 0, 5, 1, 1);
+        constrain(p, elevation, 1, 5, 1, 1);
         constrain(p, import2, 2, 1, 1, 4);
         
         constrain(this, p, 0, 2, 1, 1);
+        
+        p = new JPanel();
+        p.setLayout(new GridBagLayout());
+        constrain(p, sqlExport, 0, 0, 1, 1);
+        constrain(p, sqlImport, 0, 1, 1, 1);
+        
+        constrain(this, p, 0, 3, 1, 1);
         
         setEnabled(false);
     }
@@ -193,6 +248,14 @@ public class ImportNetworkPane extends JPanel
                 if(file.exists())
                 {
                     linkdetails.setFile(file);
+                }
+            }
+            if(signals.getFile() == null)
+            {
+                File file = new File(dir+"/signals.txt");
+                if(file.exists())
+                {
+                    signals.setFile(file);
                 }
             }
             if(phases.getFile() == null)
@@ -237,7 +300,7 @@ public class ImportNetworkPane extends JPanel
         parent.setEnabled(false);
         
         ImportFromVISTA read = new ImportFromVISTA(project, nodes.getFile(), linkdetails.getFile(), 
-                elevation.getFile(), phases.getFile());
+                elevation.getFile(), phases.getFile(), signals.getFile());
         
         project.loadSimulator();
         parent.reset();
@@ -276,6 +339,11 @@ public class ImportNetworkPane extends JPanel
         nodes.setEnabled(e);
         phases.setEnabled(e);
         importFromProject.setEnabled(e);
+        
+        boolean sqlCheck = SQLLogin.hasSQL();
+        sqlImport.setEnabled(e && sqlCheck);
+        sqlExport.setEnabled(e && sqlCheck);
+        
         super.setEnabled(e);
     }
 

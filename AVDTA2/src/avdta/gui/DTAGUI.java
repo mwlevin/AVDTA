@@ -31,6 +31,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.filechooser.FileView;
 import avdta.network.ReadNetwork;
+import avdta.project.Project;
 
 /**
  *
@@ -44,7 +45,7 @@ public class DTAGUI extends GUI
     private DTAPane dtaPane;
     
     
-    private JMenuItem cloneMI, closeMI;
+    
     
     public DTAGUI()
     {
@@ -84,92 +85,7 @@ public class DTAGUI extends GUI
         
         
         
-        JMenuBar menu = new JMenuBar();
-        JMenu me;
-        JMenuItem mi;
         
-        me = new JMenu("File");
-        mi = new JMenuItem("New project");
-        
-        mi.addActionListener(new ActionListener()
-        {
-            public void actionPerformed(ActionEvent e)
-            {
-                newProject();
-            }
-        });
-        me.add(mi);
-        
-        mi = new JMenuItem("Open project");
-        
-        mi.addActionListener(new ActionListener()
-        {
-            public void actionPerformed(ActionEvent e)
-            {
-                openProject();
-            }
-        });
-        me.add(mi);
-        
-        mi = new JMenuItem("Clone opened project");
-        
-        mi.addActionListener(new ActionListener()
-        {
-            public void actionPerformed(ActionEvent e)
-            {
-                cloneProject();
-            }
-        });
-        me.add(mi);
-        
-        cloneMI = mi;
-        cloneMI.setEnabled(false);
-        
-        mi = new JMenuItem("Close project");
-        mi.addActionListener(new ActionListener()
-        {
-            public void actionPerformed(ActionEvent e)
-            {
-                closeProject();
-            }
-        });
-        me.add(mi);
-        
-        closeMI = mi;
-        closeMI.setEnabled(false);
-        
-        menu.add(me);
-        
-        me = new JMenu("About");
-        mi = new JMenuItem("Version");
-        
-        mi.addActionListener(new ActionListener()
-        {
-            public void actionPerformed(ActionEvent e)
-            {
-                JOptionPane.showMessageDialog(frame, "AVDTA v"+Version.getVersion()+"\nCopyright © 2014 by "+Version.getAuthor(), 
-                        "About", JOptionPane.INFORMATION_MESSAGE);
-            }
-        });
-        
-        me.add(mi);
-        
-        mi = new JMenuItem("Help");
-        
-        mi.addActionListener(new ActionListener()
-        {
-            public void actionPerformed(ActionEvent e)
-            {
-                JOptionPane.showMessageDialog(frame, "Documentation is located in \"/documentation/DTA.pdf\"\n\nDeveloper email: michaellevin@utexas.edu", 
-                        "Help", JOptionPane.INFORMATION_MESSAGE);
-            }
-        });
-        
-        me.add(mi);
-        
-        menu.add(me);
-        
-        this.setJMenuBar(menu);
         
         
         
@@ -204,8 +120,12 @@ public class DTAGUI extends GUI
         }
     }
     
-    public void openProject(DTAProject project) throws IOException
+    public void openProject(Project p) throws IOException
     {
+        super.openProject(p);
+        
+        
+        DTAProject project = (DTAProject)p;
         this.project = project;
         
         
@@ -307,6 +227,25 @@ public class DTAGUI extends GUI
                     handleException(ex);
                 }
             }
+        }
+    }
+    
+    public void reset()
+    {
+        networkPane.reset();
+        demandPane.reset();
+        dtaPane.reset();
+    }
+    
+    public void createDatabase()
+    {
+        try
+        {
+            project.createDatabase();
+        }
+        catch(Exception ex)
+        {
+            GUI.handleException(ex);
         }
     }
 }

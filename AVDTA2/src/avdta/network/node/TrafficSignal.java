@@ -35,6 +35,8 @@ public class TrafficSignal extends IntersectionControl implements Signalized
     private double curr_time;
     private double total_time;
     
+    private double offset;
+    
     private Map<Link, Map<Link, PhaseMovement>> turns;
     /**
      * Instantiates a traffic signal with null.
@@ -89,6 +91,17 @@ public class TrafficSignal extends IntersectionControl implements Signalized
         total_time += p.getDuration();
     }
     
+    
+    public void setOffset(double offset)
+    {
+        this.offset = offset;
+    }
+    
+    public double getOffset()
+    {
+        return offset;
+    }
+    
     public List<Phase> getPhases()
     {
         return phases;
@@ -124,8 +137,22 @@ public class TrafficSignal extends IntersectionControl implements Signalized
             }
         }
         
+        curr_time = offset;
         curr_idx = 0;
-        curr_time = 0;
+        
+        double temp = curr_time;
+        for(Phase p : phases)
+        {
+            if(p.getDuration() >= temp)
+            {
+                temp -= p.getDuration();
+                curr_idx++;
+            }
+            else
+            {
+                break;
+            }
+        }
         
         for(Phase p : phases)
         {
@@ -157,8 +184,22 @@ public class TrafficSignal extends IntersectionControl implements Signalized
      */
     public void reset()
     {
+        curr_time = offset;
         curr_idx = 0;
-        curr_time = 0;
+        
+        double temp = curr_time;
+        for(Phase p : phases)
+        {
+            if(p.getDuration() >= temp)
+            {
+                temp -= p.getDuration();
+                curr_idx++;
+            }
+            else
+            {
+                break;
+            }
+        }
         
         if(phases.size() > 0)
         {

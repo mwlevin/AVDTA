@@ -5,6 +5,7 @@
  */
 package avdta.gui;
 
+import avdta.gui.util.Version;
 import java.awt.Color;
 import java.awt.Image;
 import java.io.File;
@@ -16,14 +17,21 @@ import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import avdta.network.node.PhasedTBR;
+import avdta.project.Project;
+import avdta.project.SQLLogin;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 
 /**
  *
  * @author micha
  */
-public class GUI extends JFrame
+public abstract class GUI extends JFrame
 {
     private static String directory = null;
     
@@ -85,11 +93,151 @@ public class GUI extends JFrame
         System.exit(1);
     }
     
+    protected JMenuItem cloneMI, closeMI, createDatabase;
+    
+    
     public GUI()
     {
         setTitle("AVDTA");
         setIconImage(GUI.getIcon());
         
         frame = this;
+        
+        JMenuBar menu = new JMenuBar();
+        JMenu me;
+        JMenuItem mi;
+        
+        me = new JMenu("File");
+        mi = new JMenuItem("New project");
+        
+        mi.addActionListener(new ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                newProject();
+            }
+        });
+        me.add(mi);
+        
+        mi = new JMenuItem("Open project");
+        
+        mi.addActionListener(new ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                openProject();
+            }
+        });
+        me.add(mi);
+        
+        mi = new JMenuItem("Clone opened project");
+        
+        mi.addActionListener(new ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                cloneProject();
+            }
+        });
+        me.add(mi);
+        
+        cloneMI = mi;
+        cloneMI.setEnabled(false);
+        
+        mi = new JMenuItem("Close project");
+        mi.addActionListener(new ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                closeProject();
+            }
+        });
+        me.add(mi);
+        
+        closeMI = mi;
+        closeMI.setEnabled(false);
+        
+        menu.add(me);
+        
+        me = new JMenu("SQL");
+        mi = new JMenuItem("Setup SQL");
+        createDatabase = new JMenuItem("Create database");
+        createDatabase.setEnabled(false);
+        
+        mi.addActionListener(new ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                setupSQL();
+                
+                createDatabase.setEnabled(SQLLogin.hasSQL());
+                reset();
+            }
+        });
+        
+        me.add(mi);
+        
+        
+        
+        createDatabase.addActionListener(new ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                createDatabase();
+            }
+        });
+        
+        me.add(createDatabase);
+        
+        menu.add(me);
+        
+        me = new JMenu("About");
+        mi = new JMenuItem("Version");
+        
+        mi.addActionListener(new ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                JOptionPane.showMessageDialog(frame, "AVDTA v"+Version.getVersion()+"\nCopyright © 2014 by "+Version.getAuthor(), 
+                        "About", JOptionPane.INFORMATION_MESSAGE);
+            }
+        });
+        
+        me.add(mi);
+        
+        mi = new JMenuItem("Help");
+        
+        mi.addActionListener(new ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                JOptionPane.showMessageDialog(frame, "Documentation is located in \"/documentation/DTA.pdf\"\n\nDeveloper email: michaellevin@utexas.edu", 
+                        "Help", JOptionPane.INFORMATION_MESSAGE);
+            }
+        });
+        
+        me.add(mi);
+        
+        menu.add(me);
+        
+        this.setJMenuBar(menu);
+    }
+    
+    public abstract void newProject();
+    public abstract void closeProject();
+    public abstract void openProject();
+    public abstract void cloneProject();
+    public abstract void reset();
+    
+    public abstract void createDatabase();
+    
+    public void openProject(Project p) throws IOException
+    {
+        createDatabase.setEnabled(SQLLogin.hasSQL());
+    }
+    
+    public void setupSQL()
+    {
+        
     }
 }

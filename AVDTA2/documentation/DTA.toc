@@ -6,31 +6,34 @@
 \contentsline {subsection}{\numberline {2.2.2}Open project}{3}{subsection.2.2.2}
 \contentsline {subsection}{\numberline {2.2.3}Clone opened project}{4}{subsection.2.2.3}
 \contentsline {section}{\numberline {2.3}Files and folders}{4}{section.2.3}
-\contentsline {subsection}{\numberline {2.3.1}Files}{5}{subsection.2.3.1}
-\contentsline {subsubsection}{\numberline {2.3.1.1}\texttt {project.txt}}{5}{subsubsection.2.3.1.1}
-\contentsline {subsubsection}{\numberline {2.3.1.2}\texttt {options.txt}}{5}{subsubsection.2.3.1.2}
-\contentsline {subsubsection}{\numberline {2.3.1.3}\texttt {dta.dat}}{6}{subsubsection.2.3.1.3}
-\contentsline {subsubsection}{\numberline {2.3.1.4}\texttt {paths.dat}}{6}{subsubsection.2.3.1.4}
-\contentsline {subsection}{\numberline {2.3.2}Folders}{6}{subsection.2.3.2}
-\contentsline {chapter}{\numberline {3}Traffic network}{7}{chapter.3}
-\contentsline {section}{\numberline {3.1}Introduction}{7}{section.3.1}
-\contentsline {section}{\numberline {3.2}Nodes}{7}{section.3.2}
-\contentsline {subsection}{\numberline {3.2.1}File structure}{8}{subsection.3.2.1}
-\contentsline {subsection}{\numberline {3.2.2}GUI panel}{9}{subsection.3.2.2}
-\contentsline {section}{\numberline {3.3}Links}{11}{section.3.3}
-\contentsline {subsection}{\numberline {3.3.1}File structure}{11}{subsection.3.3.1}
-\contentsline {subsection}{\numberline {3.3.2}GUI}{12}{subsection.3.3.2}
-\contentsline {section}{\numberline {3.4}Import network}{13}{section.3.4}
-\contentsline {chapter}{\numberline {4}Demand}{15}{chapter.4}
-\contentsline {section}{\numberline {4.1}Introduction}{15}{section.4.1}
-\contentsline {section}{\numberline {4.2}Files}{15}{section.4.2}
-\contentsline {subsection}{\numberline {4.2.1}\texttt {static\_od.txt}}{15}{subsection.4.2.1}
-\contentsline {subsection}{\numberline {4.2.2}\texttt {dynamic\_od.txt}}{16}{subsection.4.2.2}
-\contentsline {subsection}{\numberline {4.2.3}\texttt {demand\_profile.txt}}{16}{subsection.4.2.3}
-\contentsline {subsection}{\numberline {4.2.4}\texttt {demand.txt}}{17}{subsection.4.2.4}
-\contentsline {section}{\numberline {4.3}GUI}{17}{section.4.3}
-\contentsline {subsection}{\numberline {4.3.1}Import demand}{17}{subsection.4.3.1}
-\contentsline {subsection}{\numberline {4.3.2}Creating demand}{19}{subsection.4.3.2}
-\contentsline {chapter}{Appendices}{21}{section*.1}
-\contentsline {chapter}{\numberline {A}Abbreviations}{22}{Appendix.1.A}
-\contentsline {chapter}{References}{22}{table.1.A.1}
+\contentsline {subsection}{\numberline {2.3.1}Working with SQL}{5}{subsection.2.3.1}
+\contentsline {subsection}{\numberline {2.3.2}Files}{5}{subsection.2.3.2}
+\contentsline {subsubsection}{\numberline {2.3.2.1}\texttt {project.txt}}{5}{subsubsection.2.3.2.1}
+\contentsline {subsubsection}{\numberline {2.3.2.2}\texttt {options.txt}}{6}{subsubsection.2.3.2.2}
+\contentsline {subsubsection}{\numberline {2.3.2.3}\texttt {dta.dat}}{7}{subsubsection.2.3.2.3}
+\contentsline {subsubsection}{\numberline {2.3.2.4}\texttt {paths.dat}}{7}{subsubsection.2.3.2.4}
+\contentsline {subsection}{\numberline {2.3.3}Folders}{7}{subsection.2.3.3}
+\contentsline {chapter}{\numberline {3}Traffic network}{8}{chapter.3}
+\contentsline {section}{\numberline {3.1}Introduction}{8}{section.3.1}
+\contentsline {section}{\numberline {3.2}Nodes}{8}{section.3.2}
+\contentsline {subsection}{\numberline {3.2.1}\texttt {nodes.txt}}{9}{subsection.3.2.1}
+\contentsline {subsection}{\numberline {3.2.2}\texttt {phases.txt}}{10}{subsection.3.2.2}
+\contentsline {subsection}{\numberline {3.2.3}GUI panel}{10}{subsection.3.2.3}
+\contentsline {section}{\numberline {3.3}Links}{12}{section.3.3}
+\contentsline {subsection}{\numberline {3.3.1}\texttt {links.txt}}{12}{subsection.3.3.1}
+\contentsline {subsection}{\numberline {3.3.2}GUI}{13}{subsection.3.3.2}
+\contentsline {section}{\numberline {3.4}Import network}{15}{section.3.4}
+\contentsline {chapter}{\numberline {4}Demand}{17}{chapter.4}
+\contentsline {section}{\numberline {4.1}Introduction}{17}{section.4.1}
+\contentsline {section}{\numberline {4.2}Files}{17}{section.4.2}
+\contentsline {subsection}{\numberline {4.2.1}\texttt {static\_od.txt}}{17}{subsection.4.2.1}
+\contentsline {subsection}{\numberline {4.2.2}\texttt {dynamic\_od.txt}}{18}{subsection.4.2.2}
+\contentsline {subsection}{\numberline {4.2.3}\texttt {demand\_profile.txt}}{18}{subsection.4.2.3}
+\contentsline {subsection}{\numberline {4.2.4}\texttt {demand.txt}}{19}{subsection.4.2.4}
+\contentsline {section}{\numberline {4.3}GUI}{19}{section.4.3}
+\contentsline {subsection}{\numberline {4.3.1}Import demand}{19}{subsection.4.3.1}
+\contentsline {subsection}{\numberline {4.3.2}Creating demand}{21}{subsection.4.3.2}
+\contentsline {chapter}{\numberline {5}Dynamic traffic assignment}{24}{chapter.5}
+\contentsline {chapter}{Appendices}{26}{section*.1}
+\contentsline {chapter}{\numberline {A}Abbreviations}{27}{Appendix.1.A}
+\contentsline {chapter}{References}{27}{table.1.A.1}

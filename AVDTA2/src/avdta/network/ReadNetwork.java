@@ -360,9 +360,7 @@ public class ReadNetwork
         {
             int id = filein.nextInt();
             int nodeid = filein.nextInt();
-            int type = filein.nextInt();
             int offset = filein.nextInt();
-            int phaseid = filein.nextInt();
             double timered = filein.nextDouble();
             double timeyellow = filein.nextDouble();
             double timegreen = filein.nextDouble();
@@ -433,6 +431,31 @@ public class ReadNetwork
             }
         }
 
+        filein.close();
+        
+        filein = new Scanner(project.getSignalsFile());
+        
+        filein.nextLine();
+        
+        while(filein.hasNextInt())
+        {
+            int node = filein.nextInt();
+            double offset = filein.nextDouble();
+            filein.nextLine();
+            
+            Node n = nodesmap.get(node);
+            
+            if(n instanceof Intersection)
+            {
+                Intersection i = (Intersection)n;
+                
+                if(i.getControl() instanceof TrafficSignal)
+                {
+                    ((TrafficSignal)i.getControl()).setOffset(offset);
+                }
+            }
+        }
+        
         filein.close();
     }
     
@@ -623,7 +646,12 @@ public class ReadNetwork
     
     public static String getPhasesFileHeader()
     {
-        return "id\tnode\ttype\toffset\tphase_id\ttime_red\ttime_yellow\ttime_green\tnum_moves\tlink_from\tlink_to";
+        return "id\tnode\ttype\toffset\ttime_red\ttime_yellow\ttime_green\tnum_moves\tlink_from\tlink_to";
+    }
+    
+    public static String getSignalsFileHeader()
+    {
+        return "node id\ttime_offset";
     }
     
     public static String getOptionsFileHeader()

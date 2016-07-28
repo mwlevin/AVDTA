@@ -45,9 +45,20 @@ If a project is open, the AVDTA GUI enables the option of creating a clone. Foll
 
 A project consists of a file folder containing several specific files and subfolders. The project folder, along with many of its files and subfolders, is automatically generated when a new project is created. However, many files will be empty, requiring the import of data from other projects or other sources. Note that removal or modification of these files outside of the AVDTA GUI could result in errors when loading the project. However, adding files or folders will not affect the project. 
 
-Projects contain several types of files. Text files (\texttt{.txt}) contain project inputs or outputs and are intended to be read or modified. However, if modifying these files, ensure that the format and units are correct. Text files are tab-delimited, and have a header indicating the data in each column. Text files may be copied to and from Excel.
+Projects contain several types of files. Text files (\texttt{.txt}) contain project inputs or outputs and are intended to be read or modified. However, if modifying these files, ensure that the format and units are correct. Text files are tab-delimited, and have a header indicating the data in each column. Text files may be copied to and from Excel. In addition, AVDTA contains SQL support. A separate SQL installation is required to use SQL.
 
 Data files (\texttt{.dat}) are used to load the project and are not intended to be opened or modified. Similarly, files with other unknown extensions are not intended to be opened.
+
+\subsection{Working with SQL}
+\label{sec:setupsql}
+AVDTA uses an internal file structure that does not require the use of SQL. The purpose of the internal file structure is to allow easy installation and modification of files through other programs (such as Excel). However, if SQL is installed, AVDTA can export data as SQL tables and import data from SQL tables, which allows the use of SQL to work with input data and results.
+
+To use SQL in a project requires two initialization steps. First, set up the SQL connection. AVDTA requires the connection information (IP, port --- default 3306) and the username and password of an user account with the permissions to create databases. To set up the SQL connection, select the ``Setup SQL'' menu item. Note that if SQL is not set up, interface options for SQL support will not be enabled
+\begin{center}
+\includegraphics[width=0.8\textwidth]{images/sql1.png}
+\end{center}
+Next, the project must have an associated SQL database. To create a database, select the ``Create database'' option. The created database will have the same name as the project, except that all spaces will be replaced with underscores.
+
 
 \subsection{Files}
 
@@ -104,9 +115,6 @@ This is the time step used in simulation. For CTM, a typical value is 6 (s). For
 
 \paragraph*{ast-duration}
 This the interval for averaging travel times for calculating shortest paths. A typical value is 900 (s).
-
-
-
 
 
 

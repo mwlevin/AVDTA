@@ -1,5 +1,5 @@
 \chapter{Traffic network}
-\label{sec:network}
+\label{ch:network}
 
 %Network structure
 %	Links
@@ -24,7 +24,7 @@ Nodes are either intersections or zones. Intersections represent physical inters
 
 Each node has sets of incoming and outgoing links. During simulation, nodes determine vehicle flow from incoming links to outgoing links. Incoming links define \textit{sending flows} as a set of vehicles, and outgoing links define \textit{receiving flows}. Vehicle flow is constrained by sending and receiving flows, and may be additionally constrained by intersection conflict constraints. 
 
-\subsection{File structure}
+\subsection{\texttt{nodes.txt}}
 The \texttt{nodes.txt} file contains the data to describe intersections and zones, and consists of the following:
 \begin{center}
 \begin{tabular}{ccccc}
@@ -34,10 +34,10 @@ id & type & longitude & latitude  & elevation \\\hline
 \end{center}
 Columns are tab-delimited, and each line corresponds to a new node. Additional columns will be ignored, and may be deleted if the GUI is used to modify the file.
 
-\subsubsection*{Id}
+\paragraph*{id}
 Each node must be given an unique id, which is used to identify the node in other data files. Ids should be positive, but do not need to be consecutive.
 
-\subsubsection*{Type}
+\paragraph*{type}
 The type specifies whether the node is a zone or an intersection. If an intersection, the type also identifies the intersection control. Type options are given below.
 \begin{center}
 \begin{tabular}{lcl}
@@ -57,11 +57,37 @@ Centroid & 1000 & Centroid\\\hline
 \end{center}
 Note that merges and diverges will be automatically used. An intersection with only one incoming link will become a diverge, and an intersection with only one outgoing link will become a merge. This is because merges/diverges avoid the need for intersection controls, and also performed better than some reservation policies~\cite{levin2016paradoxes}.
 
-\subsubsection*{Longitude/latitude}
+\paragraph*{longitude/latitude}
 Longitude and latitudes are specified in decimal format, with the sign indicating west/east and north/south, respectively. The longitude/latitude data is used only for display purposes. False data will not affect vehicle loading or simulation. Zones doubling an intersection typically have the same coordinates.
 
-\subsubsection*{Elevation}
+\paragraph*{elevation}
 Elevation data is used to determine link grade for estimating vehicle fuel consumptions~\cite{levin2014effect}. False data will not affect vehicle loading or simulation. The GUI contains a method to download elevation data from Google Maps, given longitudes and latitudes.
+
+\subsection{\texttt{phases.txt}}
+The \texttt{phases.txt} file contains information about signal phases. Note that the order in which the phases appear is the order in which they will be created for the signal cycle. Each line in the \texttt{phases.txt} file is a separate phase, and the columns are
+\begin{center}
+\begin{tabular}{ccccccc}
+\hline
+id & nodeid & time\_red & time\_yellow & time\_green & num\_moves	link\_from & link\_to\\\hline
+\end{tabular}
+\end{center}
+\paragraph*{id} The id for the phases. Ids do not have to be consecutive, but they must be unique and positive.
+\paragraph*{nodeid} The node id for which the phase is valid.
+\paragraph*{time\_red, time\_yellow} Clearance interval times for this phase.
+\paragraph*{time\_green} Green time for this phase.
+\paragraph*{num\_moves} The number of protected turning movements, also the size of the ``link\_from'' and ``link\_to'' arrays.
+\paragraph*{link\_from, link\_to} Protected turning movements for this phase. These consist of two equal-length arrays, one of incoming links and one of outgoing links. A valid turning movement is a pair of an incoming link and an outgoing link. Consequently, links may appear multiple times in the arrays to enumerate all protected turning movements.
+
+The \texttt{signals.txt} file contains signal offsets for each node. Each node may have one entry. Duplicate entries will overwrite previous ones. A missing entry indicates an offset of $0$. The \texttt{signals.txt} file columns are
+\begin{center}
+\begin{tabular}{cc}
+\hline
+nodeid & offset\\\hline
+\end{tabular}
+\end{center}
+\paragraph*{nodeid} the node id for this signal
+\paragraph*{offset} the time offset (in seconds). This can be a floating point number.
+
 
 \subsection{GUI panel}
 
@@ -80,10 +106,14 @@ The final panel will attempt to download elevation data from the Google Maps API
 \includegraphics[width=0.8\textwidth]{images/nodes3.png}
 \end{center}
 
+
+
+
+
 \section{Links}
 \label{sec:links}
 
-\subsection{File structure}
+\subsection{\texttt{links.txt}}
 
 Each line in the \texttt{links.txt} file corresponds to a link in the network. The \texttt{links.txt} file has columns
 \begin{center}
@@ -139,8 +169,13 @@ The left hand side of the ``network tab'' contains an interface to import data f
 \end{center}
 Click on the text field to select a project file.
 
-The second option is to import from VISTA. Copy the \texttt{nodes}, \texttt{linkdetails}, and \texttt{phases} tables into text files, and select them by clicking on the text field. An optional elevation file can be used to fill node elevations. It is not required to import the network; if left blank, elevations of 0 will be used.
+The second option is to import from VISTA. Copy the \texttt{nodes}, \texttt{linkdetails}, \texttt{phases}, and \texttt{signals} tables into text files, and select them by clicking on the text field. An optional elevation file can be used to fill node elevations. It is not required to import the network; if left blank, elevations of 0 will be used.
 \begin{center}
 \includegraphics[width=0.8\textwidth]{images/network2.png}
 \end{center}
 AVDTA and VISTA use different file formats, so it is not recommended to copy VISTA tables into AVDTA directly.
+
+The third option is to export or import data to/from SQL. This allows data to be manipulated within SQL, then returned to AVDTA in the appropriate format. To use SQL, the connection must first be set up (Section \ref{sec:setupsql}). Exporting will create and populate \texttt{nodes}, \texttt{linkdetails}, \texttt{phases}, \texttt{signals}, and \texttt{options} tables in the SQL database. Importing will copy the contents of these tables into AVDTA.
+\begin{center}
+\includegraphics[width=0.8\textwidth]{images/sql2.png}
+\end{center}

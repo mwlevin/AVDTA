@@ -16,6 +16,7 @@ import java.awt.GridBagLayout;
 import static avdta.gui.util.GraphicUtils.*;
 import avdta.network.ImportFromVISTA;
 import avdta.project.Project;
+import avdta.project.SQLLogin;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -37,6 +38,7 @@ public class ImportDemandPane extends JPanel
     private JFileField importFromProject;
     private JFileField staticOD, dynamicOD, demandProfile, demand;
     private JButton import1, import2;
+    private JButton sqlImport, sqlExport;
     
     public ImportDemandPane(DemandPane parent)
     {
@@ -46,6 +48,39 @@ public class ImportDemandPane extends JPanel
         import1.setEnabled(false);
         import2 = new JButton("Import");
         import2.setEnabled(false);
+        
+        sqlImport = new JButton("Import from SQL");
+        sqlExport = new JButton("Export to SQL");
+        
+        sqlImport.addActionListener(new ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                try
+                {
+                    project.importDemandFromSQL();
+                }
+                catch(Exception ex)
+                {
+                    GUI.handleException(ex);
+                }
+            }
+        });
+        
+        sqlExport.addActionListener(new ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                try
+                {
+                    project.exportDemandToSQL();
+                }
+                catch(Exception ex)
+                {
+                    GUI.handleException(ex);
+                }
+            }
+        });
         
         FileFilter txtFiles = null;
         
@@ -166,7 +201,15 @@ public class ImportDemandPane extends JPanel
         constrain(p, demand, 1, 4, 1, 1);
         constrain(p, import2, 2, 1, 1, 4);
         
+        
         constrain(this, p, 0, 2, 1, 1);
+        
+        p = new JPanel();
+        p.setLayout(new GridBagLayout());
+        constrain(p, sqlExport, 0, 0, 1, 1);
+        constrain(p, sqlImport, 0, 1, 1, 1);
+        
+        constrain(this, p, 0, 3, 1, 1);
         
         setEnabled(false);
     }
@@ -265,6 +308,9 @@ public class ImportDemandPane extends JPanel
         import1.setEnabled(e && importFromProject.getFile() != null);
         import2.setEnabled(e && dynamicOD.getFile() != null && staticOD.getFile() != null 
                         && demand.getFile() != null && demandProfile != null);
+        boolean sqlCheck = SQLLogin.hasSQL();
+        sqlImport.setEnabled(e && sqlCheck);
+        sqlExport.setEnabled(e && sqlCheck);
         super.setEnabled(e);
     }
     

@@ -14,6 +14,10 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.Statement;
 
 /**
  *
@@ -163,5 +167,69 @@ public class DTAProject extends Project
         FileTransfer.copy(rhs.getStaticODFile(), getStaticODFile());
         FileTransfer.copy(rhs.getDynamicODFile(), getDynamicODFile());
         FileTransfer.copy(rhs.getDemandProfileFile(), getDemandProfileFile());
+    }
+    
+    public void exportDemandToSQL() throws SQLException, IOException
+    {
+        SQLLogin login = new SQLLogin(getDatabaseName());
+        Connection connect = DriverManager.getConnection(login.toString());
+        login = null;
+        
+        // nodes, links, options, phases
+        String dir = getProjectDirectory()+"/temp";
+        File folder = new File(dir);
+        folder.mkdirs();
+        
+        createTempFile(getDemandFile(), new File(dir+"/demand.txt"));
+        createTempFile(getStaticODFile(), new File(dir+"/static_od.txt"));
+        createTempFile(getDynamicODFile(), new File(dir+"/dynamic_od.txt"));
+        createTempFile(getDemandProfileFile(), new File(dir+"/demand_profile.txt"));
+        
+        Statement st = connect.createStatement();
+        st.executeQuery("create table if not exists demand (id int, type int, origin int, dest int, dtime int, vot float);");
+        st.executeQuery("create table if not exists demand_profile (id int, weight float, start int, duration int);");
+        st.executeQuery("create table if not exists dynamic_od (id int, type int, origin int, destination int, ast int, demand float);");
+        st.executeQuery("create table if not exists static_od (id int, type int, origin int, destination int, demand float);");
+        
+        st.executeQuery("\\copy demand from temp/demand.txt");
+        st.executeQuery("\\copy static_od from temp/static_od.txt");
+        st.executeQuery("\\copy dynamic_od from temp/dynamic_od.txt");
+        st.executeQuery("\\copy demand_profile from temp/demand_profile.txt");
+        
+        
+        for(File file : folder.listFiles())
+        {
+            file.delete();
+        }
+        folder.delete();
+        
+    }
+    
+    public void importDemandFromSQL() throws SQLException, IOException
+    {
+        SQLLogin login = new SQLLogin(getDatabaseName());
+        Connection connect = DriverManager.getConnection(login.toString());
+        login = null;
+        
+        String dir = getProjectDirectory()+"/temp";
+        File folder = new File(dir);
+        folder.mkdirs();
+        
+        Statement st = connect.createStatement();
+        st.executeQuery("\\copy demand to temp/demand.txt");
+        st.executeQuery("\\copy dynamic_od to temp/dynamic_od.txt");
+        st.executeQuery("\\copy static_od to temp/static_od.txt");
+        st.executeQuery("\\copy demand_profile to temp/demand_profile.txt");
+        
+        createRealFile(new File(dir+"/demand.txt"), ReadDTANetwork.getDemandFileHeader(), getDemandFile());
+        createRealFile(new File(dir+"/dynamic_od.txt"), ReadDTANetwork.getDynamicODFileHeader(), getDynamicODFile());
+        createRealFile(new File(dir+"/static_od.txt"), ReadDTANetwork.getStaticODFileHeader(), getStaticODFile());
+        createRealFile(new File(dir+"/demand_profile.txt"), ReadDTANetwork.getDemandProfileFileHeader(), getDemandProfileFile());
+        
+        for(File file : folder.listFiles())
+        {
+            file.delete();
+        }
+        folder.delete();
     }
 }

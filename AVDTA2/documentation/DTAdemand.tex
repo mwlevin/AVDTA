@@ -96,6 +96,12 @@ The second option is to import demand from VISTA. This requires the \texttt{stat
 \includegraphics[width=0.8\textwidth]{images/demand2.png}
 \end{center}
 
+The third option is to export or import data to/from SQL. This allows data to be manipulated within SQL, then returned to AVDTA in the appropriate format. To use SQL, the connection must first be set up (Section \ref{sec:setupsql}). Exporting will create and populate \texttt{static\_od}, \texttt{dynamic\_od}, \texttt{demand\_profile}, and \texttt{demand}, tables in the SQL database. Importing will copy the contents of these tables into AVDTA.
+\begin{center}
+\includegraphics[width=0.8\textwidth]{images/sql3.png}
+\end{center}
+
+
 \subsection{Creating demand}
 The middle section includes options to change the \texttt{dynamic\_od.txt} file. The first button will generate the \texttt{dynamic\_od.txt} file based on the \texttt{static\_od.txt} and the \texttt{demand\_profile.txt} files, as discussed in Section \ref{sec:dynamicod}. 
 \begin{center}
@@ -113,3 +119,4 @@ Preparing demand uses a random number generator when the number of trips is not 
 \begin{center}
 \includegraphics[width=0.8\textwidth]{images/demand4.png}
 \end{center}
+

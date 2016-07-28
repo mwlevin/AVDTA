@@ -65,7 +65,7 @@ public abstract class Project
 
     }
     
-    public void exportNetworkToMySQL() throws SQLException, IOException
+    public void exportNetworkToSQL() throws SQLException, IOException
     {
         SQLLogin login = new SQLLogin(getDatabaseName());
         Connection connect = DriverManager.getConnection(login.toString());
@@ -80,19 +80,22 @@ public abstract class Project
         createTempFile(getLinksFile(), new File(dir+"/links.txt"));
         createTempFile(getPhasesFile(), new File(dir+"/phases.txt"));
         createTempFile(getOptionsFile(), new File(dir+"/options.txt"));
+        createTempFile(getSignalsFile(), new File(dir+"/signals.txt"));
         
         Statement st = connect.createStatement();
         st.executeQuery("create table if not exists options (name varchar(255), value varchar(255));");
         st.executeQuery("create table if not exists nodes (id int, type int, longitude float, latitude float, elevation float);");
         st.executeQuery("create table if not exists links (id int, type int, source int, dest int, length float, ffspd float, w float, capacity float, num_lanes int);");
-        st.executeQuery("create table if not exists phases (id int, node int, offset int, phase_id int, time_red float, time_yellow float, "
+        st.executeQuery("create table if not exists phases (id int, node int, time_red float, time_yellow float, "
                 + "time_green float, num_moves int, link_from varchar(255), link_to varchar(255)));");
+        st.executeQuery("create table if not exists signals(nodeid int, offset float);");
         
         
         st.executeQuery("\\copy nodes from temp/nodes.txt");
         st.executeQuery("\\copy links from temp/links.txt");
         st.executeQuery("\\copy options from temp/options.txt");
         st.executeQuery("\\copy phases from temp/phases.txt");
+        st.executeQuery("\\copy signals from temp/signals.txt");
         
         
         for(File file : folder.listFiles())
@@ -103,7 +106,7 @@ public abstract class Project
         
     }
     
-    public void importNetworkFromMySQL() throws SQLException, IOException
+    public void importNetworkFromSQL() throws SQLException, IOException
     {
         SQLLogin login = new SQLLogin(getDatabaseName());
         Connection connect = DriverManager.getConnection(login.toString());
@@ -118,11 +121,13 @@ public abstract class Project
         st.executeQuery("\\copy links to temp/links.txt");
         st.executeQuery("\\copy options to temp/options.txt");
         st.executeQuery("\\copy phases to temp/phases.txt");
+        st.executeQuery("\\copy signals to temp/signals.txt");
         
         createRealFile(new File(dir+"/nodes.txt"), ReadNetwork.getNodesFileHeader(), getNodesFile());
         createRealFile(new File(dir+"/links.txt"), ReadNetwork.getLinksFileHeader(), getLinksFile());
         createRealFile(new File(dir+"/phases.txt"), ReadNetwork.getPhasesFileHeader(), getPhasesFile());
         createRealFile(new File(dir+"/options.txt"), ReadNetwork.getOptionsFileHeader(), getOptionsFile());
+        createRealFile(new File(dir+"/signals.txt"), ReadNetwork.getSignalsFileHeader(), getSignalsFile());
         
         for(File file : folder.listFiles())
         {
@@ -307,6 +312,10 @@ public abstract class Project
         fileout = new PrintStream(new FileOutputStream(getNodesFile()), true);
         fileout.println(ReadNetwork.getNodesFileHeader());
         fileout.close();
+        
+        fileout = new PrintStream(new FileOutputStream(getSignalsFile()), true);
+        fileout.println(ReadNetwork.getNodesFileHeader());
+        fileout.close();
     }
     
     public void fillOptions()
@@ -404,6 +413,11 @@ public abstract class Project
         return new File(getProjectDirectory()+"/network/phases.txt");
     }
     
+    public File getSignalsFile()
+    {
+        return new File(getProjectDirectory()+"/network/signals.txt");
+    }
+    
     public File getOptionsFile()
     {
         return new File(getProjectDirectory()+"/options.txt");
@@ -430,5 +444,6 @@ public abstract class Project
         FileTransfer.copy(rhs.getLinksFile(), getLinksFile());
         FileTransfer.copy(rhs.getOptionsFile(), getOptionsFile());
         FileTransfer.copy(rhs.getPhasesFile(), getPhasesFile());
+        FileTransfer.copy(rhs.getSignalsFile(), getSignalsFile());
     }
 }

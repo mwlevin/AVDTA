@@ -21,11 +21,32 @@ import java.util.Scanner;
  */
 public class ImportFromVISTA 
 {
-    public ImportFromVISTA(Project project, File nodes, File linkdetails, File elevation, File phases) throws IOException
+    public ImportFromVISTA(Project project, File nodes, File linkdetails, File elevation, File phases, File signals) throws IOException
     {
         convertNodes(project, nodes, elevation);
         convertLinks(project, linkdetails);
         convertPhases(project, phases);
+        convertSignals(project, signals);
+    }
+    
+    public void convertSignals(Project project, File signals) throws IOException
+    {
+        PrintStream fileout = new PrintStream(new FileOutputStream(project.getSignalsFile()), true);
+        
+        Scanner filein = new Scanner(signals);
+        
+        fileout.println(ReadNetwork.getSignalsFileHeader());
+        
+        while(filein.hasNext())
+        {
+            int id = filein.nextInt();
+            filein.next();
+            double offset = filein.nextDouble();
+            
+            fileout.println(id+"\t"+offset);
+        }
+        
+        fileout.close();
     }
     
     public void convertPhases(Project project, File phases) throws IOException
@@ -44,7 +65,7 @@ public class ImportFromVISTA
             int phaseid = filein.nextInt();
             String rest = filein.nextLine().trim();
             
-            fileout.println(id+"\t"+nodeid+"\t"+type+"\t0\t"+phaseid+"\t"+rest);
+            fileout.println(id+"\t"+nodeid+"\t0\t"+"\t"+rest);
             
             
         }

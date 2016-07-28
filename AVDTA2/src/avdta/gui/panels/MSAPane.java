@@ -86,15 +86,17 @@ public class MSAPane extends JPanel
         JPanel p = new JPanel();
         p.setLayout(new GridBagLayout());
         constrain(this, new JScrollPane(data), 0, 0, 1, 1);
+        constrain(this, fftime, 0, 1, 1, 1);
+        
         constrain(p, new JLabel("Start iteration:"), 0, 0, 1, 1);
         constrain(p, start_iter, 1, 0, 1, 1);
         constrain(p, new JLabel("Max. iteration:"), 0, 1, 1, 1);
         constrain(p, max_iter, 1, 1, 1, 1);
         constrain(p, new JLabel("Min. gap:"), 0, 2, 1, 1);
         constrain(p, min_gap, 1, 2, 1, 1);
-        constrain(this, p, 0, 1, 1, 1);
-        constrain(this, run, 0, 2, 2, 1);
-        constrain(p, fftime, 0, 3, 2, 1);
+        constrain(this, p, 0, 2, 1, 1);
+        constrain(this, run, 0, 3, 2, 1);
+        
         constrain(this, status, 0, 4, 2, 1);
         
         setEnabled(false);
