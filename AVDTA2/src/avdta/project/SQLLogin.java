@@ -15,6 +15,11 @@ import java.util.Scanner;
  */
 public class SQLLogin 
 {
+    public static boolean hasSQL()
+    {
+        return LOGIN_FILE.exists();
+    }
+    
     public static final File LOGIN_FILE = new File("SQL.dat");
     
     private String ip, user, password;
