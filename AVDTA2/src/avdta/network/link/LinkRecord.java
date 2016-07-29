@@ -31,6 +31,11 @@ public class LinkRecord
         this.numLanes = numLanes;
     }
     
+    public LinkRecord clone()
+    {
+        return new LinkRecord(id, type, source, dest, length, ffspd, wavespd, capacity, numLanes);
+    }
+    
     public LinkRecord(String line)
     {
         Scanner chopper = new Scanner(line);

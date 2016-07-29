@@ -45,7 +45,8 @@ public class Main
     {
         //transitTest();
         //caccTest2();
-        GUI.main(args);
+        //GUI.main(args);
+        CACCConvert.main(new File("projects/austinI35/network/links.txt"));
     }
     
     public static void caccTest2() throws IOException
