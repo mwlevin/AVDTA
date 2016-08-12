@@ -17,6 +17,11 @@ public class TransitFirst extends IntersectionPolicy
 {
     private IntersectionPolicy defaultPolicy;
     
+    public TransitFirst()
+    {
+        this(IntersectionPolicy.FCFS);
+    }
+    
     public TransitFirst(IntersectionPolicy defaultPolicy)
     {
         this.defaultPolicy = defaultPolicy;
