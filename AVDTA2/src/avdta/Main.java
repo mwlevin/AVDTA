@@ -20,6 +20,7 @@ import java.util.HashSet;
 import avdta.network.node.*;
 import avdta.network.link.*;
 import avdta.network.link.cell.Cell;
+import avdta.network.node.policy.TransitFirst;
 import avdta.util.RunningAvg;
 import avdta.vehicle.Bus;
 import avdta.vehicle.DriverType;
@@ -43,10 +44,9 @@ public class Main
 {
     public static void main(String[] args) throws IOException
     {
-        //transitTest();
+        transitTest2();
         //caccTest2();
         //GUI.main(args);
-        CACCConvert.main(new File("projects/austinI35/network/links.txt"));
     }
     
     public static void caccTest2() throws IOException
@@ -122,7 +122,21 @@ public class Main
         out.close();
     }
     
-    public static void transitTest() throws IOException
+    public static void transitTest2() throws IOException
+    {
+        transitTest2(1200, 200);
+        
+        PrintStream fileout = new PrintStream(new FileOutputStream(new File("shared_transit3.txt")), true);
+        fileout.println("DA rate\tDA TT\tBus TT");
+        for(int rate = 100; rate <= 1400; rate += 50)
+        {
+            double[] temp = transitTest2(rate, 200);
+            fileout.println(rate+"\t"+temp[0]+"\t"+temp[1]);
+        }
+        
+        fileout.close();
+    }
+    public static double[] transitTest2(int DArate, int busRate) throws IOException
     {
         DTAProject project = new DTAProject();
         project.createProject("transit", new File("projects/transit"));
@@ -131,52 +145,70 @@ public class Main
         List<Node> nodes = new ArrayList<Node>();
         List<Link> links = new ArrayList<Link>();
         
+        Node n5 = new Intersection(5, new Location(0, 0), new PriorityTBR(new TransitFirst()));
         
-        Node n1 = new Zone(1);
-        Node n2 = new Intersection(2, new PriorityTBR());
-        Node n3 = new Intersection(3, new PriorityTBR());
-        Node n4 = new Zone(4);
+        Node n3 = new Intersection(3, new Location(-1, 0), new PriorityTBR(new TransitFirst()));
+        Node n1 = new Zone(1, new Location(-2, 0));
+        Node n7 = new Intersection(7, new Location(1, 0), new PriorityTBR(new TransitFirst()));
+        Node n9 = new Zone(9, new Location(2, 0));
+        
+        Node n4 = new Intersection(4, new Location(0, -1), new PriorityTBR(new TransitFirst()));
+        Node n2 = new Zone(2, new Location(0, -2));
+        Node n6 = new Intersection(6, new Location(0, 1), new PriorityTBR(new TransitFirst()));
+        Node n8 = new Zone(8, new Location(0, 2));
         
         nodes.add(n1);
         nodes.add(n2);
         nodes.add(n3);
         nodes.add(n4);
+        nodes.add(n5);
+        nodes.add(n6);
+        nodes.add(n7);
+        nodes.add(n8);
+        nodes.add(n9);
         
-        Link l12 = new CentroidConnector(12, n1, n2);
-        TransitLane t23 = new TransitLane(230, n2, n3, 1200, 30, 15, 5280/Vehicle.vehicle_length, 2.0);
-        CTMLink l23 = new SharedTransitCTMLink(23, n2, n3, 1200, 30, 15, 5280.0/Vehicle.vehicle_length, 2.0, 1, t23);
-        Link l34 = new CentroidConnector(34, n3, n4);
         
-        links.add(l12);
-        links.add(t23);
-        links.add(l23);
-        links.add(l34);
+        Link l13 = new CentroidConnector(13, n1, n3);
+        Link l79 = new CentroidConnector(79, n7, n9);
+        Link l24 = new CentroidConnector(24, n2, n4);
+        Link l68 = new CentroidConnector(68, n6, n8);
+        Link l35 = new CTMLink(35, n3, n5, 1200, 30, 15, 5280/Vehicle.vehicle_length, 1.0, 1);
+        Link l57 = new CTMLink(57, n5, n7, 1200, 30, 15, 5280/Vehicle.vehicle_length, 1.0, 1);
+        Link l45 = new CTMLink(45, n4, n5, 1200, 30, 15, 5280/Vehicle.vehicle_length, 1.0, 1);
+        Link l56 = new CTMLink(56, n5, n6, 1200, 30, 15, 5280/Vehicle.vehicle_length, 1.0, 1);
+        
+        links.add(l13);
+        links.add(l79);
+        links.add(l24);
+        links.add(l68);
+        links.add(l35);
+        links.add(l57);
+        links.add(l45);
+        links.add(l56);
         
         sim.setNetwork(nodes, links);
         
         
         
         List<Vehicle> vehicles = new ArrayList<Vehicle>();
-        int rate = 1800;
         
-        int num = (int)(rate * 10.0/60);
+        int num = (int)(DArate * 60.0/60);
         
         for(int i = 0; i < num; i++)
         {
-            vehicles.add(new PersonalVehicle(i+1, n1, n4, (int)(600.0/num*i)));
+            vehicles.add(new PersonalVehicle(i+1, n1, n9, (int)(3600.0/num*i)));
         }
         
         
-        rate = 0;
         
-        num = (int)(rate * 10.0/60);
+        num = (int)(busRate * 60.0/60);
         ArrayList<BusLink> stops = new ArrayList<BusLink>();
-        stops.add(new BusLink(n1, n4));
-        Path path = new Path(l12, l23, l34);
+        stops.add(new BusLink(n2, n8));
+        Path path = new Path(l24, l45, l56, l68);
         
         for(int i = 0; i < num; i++)
         {
-            vehicles.add(new Bus(100+i+1, 1, (int)(600.0/num*i), path, stops));
+            vehicles.add(new Bus(100+i+1, 1, (int)(3600.0/num*i), path, stops));
         }
         
         Collections.sort(vehicles);
@@ -207,5 +239,123 @@ public class Main
         System.out.println("DA: "+vehTime.getAverage());
         
         sim.importResults();
+        
+        return new double[]{vehTime.getAverage(), busTime.getAverage()};
+    }
+    
+    public static void transitTest1() throws IOException
+    {
+
+        PrintStream fileout = new PrintStream(new FileOutputStream(new File("shared_transit1.txt")));
+        fileout.println("DA rate\tDA TT\tBus TT");
+        for(int rate = 1000; rate <= 2400; rate+=50)
+        {
+            double[] temp = transitTest1(rate, 200);
+            fileout.println(rate+"\t"+temp[0]+"\t"+temp[1]);
+        }
+        
+        fileout.close();
+        
+        fileout = new PrintStream(new FileOutputStream(new File("shared_transit2.txt")));
+        fileout.println("bus rate\tDA TT\tBus TT");
+        for(int rate = 0; rate <= 600; rate+=25)
+        {
+            double[] temp = transitTest1(1800, rate);
+            fileout.println(rate+"\t"+temp[0]+"\t"+temp[1]);
+        }
+        
+        fileout.close();
+        
+    }
+    
+    public static double[] transitTest1(int DArate, int busRate) throws IOException
+    {
+        DTAProject project = new DTAProject();
+        project.createProject("transit", new File("projects/transit"));
+        DTASimulator sim = project.createEmptySimulator();
+        
+        List<Node> nodes = new ArrayList<Node>();
+        List<Link> links = new ArrayList<Link>();
+        
+        
+        Node n1 = new Zone(1);
+        Node n2 = new Intersection(2, new PriorityTBR());
+        Node n3 = new Intersection(3, new PriorityTBR());
+        Node n4 = new Zone(4);
+        Node n1a = new Zone(10);
+        
+        nodes.add(n1);
+        nodes.add(n2);
+        nodes.add(n3);
+        nodes.add(n4);
+        nodes.add(n1a);
+        
+        Link l12 = new CentroidConnector(12, n1, n2);
+        Link l12a = new CentroidConnector(110, n1a, n2);
+        TransitLane t23 = new TransitLane(230, n2, n3, 1200, 30, 15, 5280/Vehicle.vehicle_length, 2.0);
+        CTMLink l23 = new SharedTransitCTMLink(23, n2, n3, 1200, 30, 15, 5280.0/Vehicle.vehicle_length, 2.0, 1, t23);
+        Link l34 = new CentroidConnector(34, n3, n4);
+        
+        links.add(l12);
+        links.add(t23);
+        links.add(l23);
+        links.add(l34);
+        links.add(l12a);
+        
+        sim.setNetwork(nodes, links);
+        
+        
+        
+        List<Vehicle> vehicles = new ArrayList<Vehicle>();
+        
+        int num = (int)(DArate * 60.0/60);
+        
+        for(int i = 0; i < num; i++)
+        {
+            vehicles.add(new PersonalVehicle(i+1, n1, n4, (int)(3600.0/num*i)));
+        }
+        
+        
+        
+        num = (int)(busRate * 60.0/60);
+        ArrayList<BusLink> stops = new ArrayList<BusLink>();
+        stops.add(new BusLink(n1a, n4));
+        Path path = new Path(l12a, l23, l34);
+        
+        for(int i = 0; i < num; i++)
+        {
+            vehicles.add(new Bus(100+i+1, 1, (int)(3600.0/num*i), path, stops));
+        }
+        
+        Collections.sort(vehicles);
+        
+        
+        
+        
+        sim.setVehicles(vehicles);
+        
+        sim.msa(2);
+
+        RunningAvg busTime = new RunningAvg();
+        RunningAvg vehTime = new RunningAvg();
+        
+        for(Vehicle v : vehicles)
+        {
+            if(v instanceof Bus)
+            {
+                busTime.add(v.getTT());
+            }
+            else
+            {
+                vehTime.add(v.getTT());
+            }
+        }
+        
+        System.out.println("Bus: "+busTime.getAverage());
+        System.out.println("DA: "+vehTime.getAverage());
+        
+        sim.importResults();
+        
+        return new double[]{vehTime.getAverage(), busTime.getAverage()};
     }
 }
