@@ -10,6 +10,7 @@ import avdta.network.Network;
 import avdta.network.ReadNetwork;
 import avdta.vehicle.Vehicle;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -114,10 +115,13 @@ public class TrafficSignal extends IntersectionControl implements Signalized
      */
     public void initialize()
     {
+        Collections.sort(phases);
+        
         if(phases.size() == 0)
         {
             // no phases:
             // create a phase for each incoming link
+            int seq = 1;
             Node node = getNode();
             for(Link i : node.getIncoming())
             {
@@ -132,7 +136,7 @@ public class TrafficSignal extends IntersectionControl implements Signalized
                         }
                     }
                     
-                    addPhase(new Phase(turns, 6, 6));
+                    addPhase(new Phase(seq, turns, 6, 6));
                 }
             }
         }

@@ -1,27 +1,152 @@
 This is BibTeX, Version 0.99dThe top-level auxiliary file: DTA.aux
 The style file: acm.bst
-I found no \citation commands---while reading file DTA.aux
 Database file #1: MWL.bib
-"{" immediately follows a field name---line 390 of file MWL.bib
+Repeated entry---line 274 of file MWL.bib
+ : @inproceedings{conde2013intelligent
+ :                                    ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 323 of file MWL.bib
+ : @article{daganzo1994cell
+ :                         ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 333 of file MWL.bib
+ : @article{daganzo1995cell
+ :                         ,
+I'm skipping whatever remains of this entry
+"{" immediately follows a field name---line 399 of file MWL.bib
  :  title
  :       {Motor Vehicle Emission Simulator},
 I'm skipping whatever remains of this entry
-I was expecting a `,' or a `}'---line 635 of file MWL.bib
+Repeated entry---line 485 of file MWL.bib
+ : @article{levin2016paradoxes
+ :                            ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 600 of file MWL.bib
+ : @article{fajardo2011automated
+ :                              ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 610 of file MWL.bib
+ : @inproceedings{wardrop1952road
+ :                               ,
+I'm skipping whatever remains of this entry
+I was expecting a `,' or a `}'---line 677 of file MWL.bib
  :  
  :  organization={Transportation Research Board}
 (Error may have been on previous line)
 I'm skipping whatever remains of this entry
-"{" immediately follows a field name---line 954 of file MWL.bib
+Repeated entry---line 681 of file MWL.bib
+ : @article{daganzo1994cell
+ :                         ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 692 of file MWL.bib
+ : @article{daganzo1995cell
+ :                         ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 703 of file MWL.bib
+ : @article{yperman2007link
+ :                         ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 774 of file MWL.bib
+ : @inproceedings{conde2013intelligent
+ :                                    ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 871 of file MWL.bib
+ : @inproceedings{conde2013intelligent
+ :                                    ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 913 of file MWL.bib
+ : @article{chiu2011dynamic
+ :                         ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 920 of file MWL.bib
+ : @article{daganzo1994cell
+ :                         ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 930 of file MWL.bib
+ : @article{daganzo1995cell
+ :                         ,
+I'm skipping whatever remains of this entry
+"{" immediately follows a field name---line 996 of file MWL.bib
  :  title
  :       {Motor Vehicle Emission Simulator},
 I'm skipping whatever remains of this entry
-I was expecting a `,' or a `}'---line 1038 of file MWL.bib
+Repeated entry---line 1015 of file MWL.bib
+ : @article{fajardo2011automated
+ :                              ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 1025 of file MWL.bib
+ : @inproceedings{wardrop1952road
+ :                               ,
+I'm skipping whatever remains of this entry
+I was expecting a `,' or a `}'---line 1080 of file MWL.bib
  :  
  :  organization={Transportation Research Board}
 (Error may have been on previous line)
 I'm skipping whatever remains of this entry
-"{" immediately follows a field name---line 1350 of file MWL.bib
+Repeated entry---line 1084 of file MWL.bib
+ : @article{daganzo1994cell
+ :                         ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 1095 of file MWL.bib
+ : @article{daganzo1995cell
+ :                         ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 1106 of file MWL.bib
+ : @article{yperman2007link
+ :                         ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 1170 of file MWL.bib
+ : @inproceedings{conde2013intelligent
+ :                                    ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 1267 of file MWL.bib
+ : @inproceedings{conde2013intelligent
+ :                                    ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 1309 of file MWL.bib
+ : @article{chiu2011dynamic
+ :                         ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 1316 of file MWL.bib
+ : @article{daganzo1994cell
+ :                         ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 1326 of file MWL.bib
+ : @article{daganzo1995cell
+ :                         ,
+I'm skipping whatever remains of this entry
+"{" immediately follows a field name---line 1392 of file MWL.bib
  :  title
  :       {Motor Vehicle Emission Simulator},
 I'm skipping whatever remains of this entry
-(There were 6 error messages)
+Repeated entry---line 1398 of file MWL.bib
+ : @article{fajardo2011automated
+ :                              ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 1643 of file MWL.bib
+ : @article{daganzo1994cell
+ :                         ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 1654 of file MWL.bib
+ : @article{daganzo1995cell
+ :                         ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 1718 of file MWL.bib
+ : @article{daganzo1994cell
+ :                         ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 1853 of file MWL.bib
+ : @article{fajardo2011automated
+ :                              ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 2309 of file MWL.bib
+ : @inproceedings{conde2013intelligent
+ :                                    ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 2429 of file MWL.bib
+ : @inproceedings{yperman2005link
+ :                               ,
+I'm skipping whatever remains of this entry
+Warning--there's a number but no series in duell2016system
+Warning--can't use both volume and number fields in wardrop1952road
+(There were 36 error messages)

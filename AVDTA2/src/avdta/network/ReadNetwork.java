@@ -351,16 +351,15 @@ public class ReadNetwork
         Scanner filein;
         
         
-        
         filein = new Scanner(project.getPhasesFile());
         
         filein.nextLine();
 
         while(filein.hasNext())
         {
-            int id = filein.nextInt();
+            
             int nodeid = filein.nextInt();
-            int offset = filein.nextInt();
+            int sequence = filein.nextInt();
             double timered = filein.nextDouble();
             double timeyellow = filein.nextDouble();
             double timegreen = filein.nextDouble();
@@ -423,7 +422,7 @@ public class ReadNetwork
             }
 
             double duration = timegreen + timeyellow + timered;
-            Phase phase = new Phase(turns, timegreen, duration);
+            Phase phase = new Phase(sequence, turns, timegreen, duration);
 
             if(turns.size() > 0)
             {   
@@ -449,9 +448,9 @@ public class ReadNetwork
             {
                 Intersection i = (Intersection)n;
                 
-                if(i.getControl() instanceof TrafficSignal)
+                if(i.getControl() instanceof Signalized)
                 {
-                    ((TrafficSignal)i.getControl()).setOffset(offset);
+                    ((Signalized)i.getControl()).setOffset(offset);
                 }
             }
         }
@@ -646,7 +645,7 @@ public class ReadNetwork
     
     public static String getPhasesFileHeader()
     {
-        return "id\tnode\ttype\toffset\ttime_red\ttime_yellow\ttime_green\tnum_moves\tlink_from\tlink_to";
+        return "node\ttype\tsequence\ttime_red\ttime_yellow\ttime_green\tnum_moves\tlink_from\tlink_to";
     }
     
     public static String getSignalsFileHeader()

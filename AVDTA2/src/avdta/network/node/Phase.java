@@ -14,12 +14,14 @@ import java.util.List;
  * move during that phase.
  * @author Michael
  */
-public class Phase 
+public class Phase implements Comparable<Phase>
 {
     private double start_time;
     
     private double duration;
     private double green_time;
+    
+    private int sequence;
     
     private Turn[] allowed;
     /**
@@ -29,8 +31,9 @@ public class Phase
      * @param green A double value indicating the green time of that phase.
      * @param duration A double value indicating the duration of that phase.
      */
-    public Phase(List<Turn> list, double green, double duration)
+    public Phase(int sequence, List<Turn> list, double green, double duration)
     {
+        this.sequence = sequence;
         this.allowed = new Turn[list.size()];
         
         for(int i = 0; i < allowed.length; i++)
@@ -42,11 +45,17 @@ public class Phase
         this.green_time = green;
     }
     
-    public Phase(Turn[] allowed, double green, double duration)
+    public Phase(int sequence, Turn[] allowed, double green, double duration)
     {
+        this.sequence = sequence;
         this.allowed = allowed;
         this.duration = duration;
         this.green_time = green;
+    }
+    
+    public int compareTo(Phase rhs)
+    {
+        return sequence - rhs.sequence;
     }
     
     public Turn[] getTurns()

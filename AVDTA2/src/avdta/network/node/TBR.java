@@ -16,7 +16,7 @@ import java.util.Set;
  *
  * @author ut
  */
-public abstract class TBR extends IntersectionControl implements Signalized
+public abstract class TBR extends IntersectionControl
 {
     protected Map<Link, Map<Link, TurningMovement>> conflicts;
     protected Set<ConflictRegion> allConflicts;
@@ -30,8 +30,7 @@ public abstract class TBR extends IntersectionControl implements Signalized
     {
         super(n);
     }
-    
-    public void addPhase(Phase p){}
+
     
     public TurningMovement getConflicts(Link i, Link j)
     {

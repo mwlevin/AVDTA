@@ -61,11 +61,11 @@ public class ImportFromVISTA
             int id = filein.nextInt();
             int type = filein.nextInt();
             int nodeid = filein.nextInt();
-            filein.next();
+            int linkid = filein.nextInt();
             int phaseid = filein.nextInt();
             String rest = filein.nextLine().trim();
             
-            fileout.println(id+"\t"+nodeid+"\t0\t"+"\t"+rest);
+            fileout.println(nodeid+"\t0\t"+phaseid+"\t"+"\t"+rest);
             
             
         }

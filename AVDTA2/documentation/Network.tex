@@ -68,11 +68,12 @@ The \texttt{phases.txt} file contains information about signal phases. Note that
 \begin{center}
 \begin{tabular}{ccccccc}
 \hline
-id & nodeid & time\_red & time\_yellow & time\_green & num\_moves	link\_from & link\_to\\\hline
+nodeid & type & sequence & time\_red & time\_yellow & time\_green & num\_moves	link\_from & link\_to\\\hline
 \end{tabular}
 \end{center}
-\paragraph*{id} The id for the phases. Ids do not have to be consecutive, but they must be unique and positive.
-\paragraph*{nodeid} The node id for which the phase is valid.
+\paragraph*{nodeid} The node id for which the phase is used.
+\paragraph*{type} denotes the type of the phase. Currently 1 for all phases.
+\paragraph*{sequence} the order in which the phase is used in the signal cycle.
 \paragraph*{time\_red, time\_yellow} Clearance interval times for this phase.
 \paragraph*{time\_green} Green time for this phase.
 \paragraph*{num\_moves} The number of protected turning movements, also the size of the ``link\_from'' and ``link\_to'' arrays.

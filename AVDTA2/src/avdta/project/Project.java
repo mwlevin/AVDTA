@@ -86,7 +86,7 @@ public abstract class Project
         st.executeQuery("create table if not exists options (name varchar(255), value varchar(255));");
         st.executeQuery("create table if not exists nodes (id int, type int, longitude float, latitude float, elevation float);");
         st.executeQuery("create table if not exists links (id int, type int, source int, dest int, length float, ffspd float, w float, capacity float, num_lanes int);");
-        st.executeQuery("create table if not exists phases (id int, node int, time_red float, time_yellow float, "
+        st.executeQuery("create table if not exists phases (node int, type int, sequence int, time_red float, time_yellow float, "
                 + "time_green float, num_moves int, link_from varchar(255), link_to varchar(255)));");
         st.executeQuery("create table if not exists signals(nodeid int, offset float);");
         
@@ -412,6 +412,7 @@ public abstract class Project
     {
         return new File(getProjectDirectory()+"/network/phases.txt");
     }
+    
     
     public File getSignalsFile()
     {

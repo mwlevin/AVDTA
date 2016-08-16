@@ -24,7 +24,7 @@ import java.util.TreeSet;
  *
  * @author ut
  */
-public class PriorityTBR extends TBR
+public class PriorityTBR extends TBR implements Signalized
 {
     private IntersectionPolicy policy;
 
@@ -67,7 +67,21 @@ public class PriorityTBR extends TBR
         return policy;
     }
     
-
+    public void addPhase(Phase p)
+    {
+        if(policy instanceof Signalized)
+        {
+            ((Signalized)policy).addPhase(p);
+        }
+    }
+    
+    public void setOffset(double o)
+    {
+        if(policy instanceof Signalized)
+        {
+            ((Signalized)policy).setOffset(o);
+        }
+    }
     public int step()
     {
         Node node = getNode();

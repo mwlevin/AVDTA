@@ -1,3 +1,100 @@
-\begin{thebibliography}{}
+\begin{thebibliography}{10}
+
+\bibitem{chiu2011dynamic}
+{\sc Chiu, Y.-C., Bottom, J., Mahut, M., Paz, A., Balakrishna, R., Waller, T.,
+  and Hicks, J.}
+\newblock Dynamic traffic assignment: A primer.
+\newblock {\em Transportation Research E-Circular}, E-C153 (2011).
+
+\bibitem{conde2013intelligent}
+{\sc Conde~Bento, L., Parafita, R., Santos, S., and Nunes, U.}
+\newblock Intelligent traffic management at intersections: Legacy mode for
+  vehicles not equipped with v2v and v2i communications.
+\newblock In {\em Intelligent Transportation Systems-(ITSC), 2013 16th
+  International IEEE Conference on\/} (2013), IEEE, pp.~726--731.
+
+\bibitem{daganzo1994cell}
+{\sc Daganzo, C.~F.}
+\newblock The cell transmission model: A dynamic representation of highway
+  traffic consistent with the hydrodynamic theory.
+\newblock {\em Transportation Research Part B: Methodological 28}, 4 (1994),
+  269--287.
+
+\bibitem{daganzo1995cell}
+{\sc Daganzo, C.~F.}
+\newblock The cell transmission model, part ii: network traffic.
+\newblock {\em Transportation Research Part B: Methodological 29}, 2 (1995),
+  79--93.
+
+\bibitem{duell2016system}
+{\sc Duell, M., Levin, M.~W., Boyles, S.~D., and Waller, S.~T.}
+\newblock On system optimal dynamic lane reversal to improve traffic efficiency
+  for autonomous vehicles.
+\newblock In {\em Transportation Research Board 95th Annual Meeting\/} (2016),
+  no.~16-4922.
+
+\bibitem{fajardo2011automated}
+{\sc Fajardo, D., Au, T.-C., Waller, S., Stone, P., and Yang, D.}
+\newblock Automated intersection control: Performance of future innovation
+  versus current traffic signal control.
+\newblock {\em Transportation Research Record: Journal of the Transportation
+  Research Board}, 2259 (2011), 223--232.
+
+\bibitem{levin2016cell}
+{\sc Levin, M.~W., and Boyles, S.~D.}
+\newblock A cell transmission model for dynamic lane reversal with autonomous
+  vehicles.
+\newblock {\em Transportation Research Part C: Emerging Technologies 68\/}
+  (2016), 126--143.
+
+\bibitem{levin2016multiclass}
+{\sc Levin, M.~W., and Boyles, S.~D.}
+\newblock A multiclass cell transmission model for shared human and autonomous
+  vehicle roads.
+\newblock {\em Transportation Research Part C: Emerging Technologies 62\/}
+  (2016), 103--116.
+
+\bibitem{levin2016paradoxes}
+{\sc Levin, M.~W., Boyles, S.~D., and Patel, R.}
+\newblock Paradoxes of reservation-based intersection controls in traffic
+  networks.
+\newblock {\em Transportation Research Part A: Policy and Practice 90\/}
+  (2016), 14--25.
+
+\bibitem{levin2014effect}
+{\sc Levin, M.~W., Duell, M., and Waller, S.~T.}
+\newblock The effect of road elevation on network wide vehicle energy
+  consumption and eco-routing.
+\newblock {\em Transportation Research Record: Journal of the Transportation
+  Research Board\/} (2014).
+
+\bibitem{levin2015optimizing}
+{\sc Levin, M.~W., Fritz, H., and Boyles, S.~D.}
+\newblock Optimizing reservation-based intersection controls.
+\newblock {\em In review at IEEE: Transactions on Intelligent Transportation
+  Systems\/} (2015).
+
+\bibitem{levin2014improving}
+{\sc Levin, M.~W., Pool, M., Owens, T., Juri, N.~R., and Waller, S.~T.}
+\newblock Improving the convergence of simulation-based dynamic traffic
+  assignment methodologies.
+\newblock {\em Networks and Spatial Economics\/} (2014), 1--22.
+
+\bibitem{wardrop1952road}
+{\sc Wardrop, J.~G.}
+\newblock Road paper. some theoretical aspects of road traffic research.
+\newblock In {\em ICE Proceedings: Engineering Divisions\/} (1952), vol.~1,
+  Thomas Telford, pp.~325--362.
+
+\bibitem{yperman2007link}
+{\sc Yperman, I.}
+\newblock The link transmission model for dynamic network loading.
+\newblock {\em status: published\/} (2007).
+
+\bibitem{yperman2005link}
+{\sc Yperman, I., Logghe, S., and Immers, B.}
+\newblock The link transmission model: An efficient implementation of the
+  kinematic wave theory in traffic networks.
+\newblock In {\em Proceedings of the 10th EWGT Meeting\/} (2005).
 
 \end{thebibliography}

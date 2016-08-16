@@ -42,6 +42,11 @@ public class SignalWeightedTBR extends PriorityTBR implements Signalized, DelayW
         setPolicy(new WeightedFCFSPolicy(this));
     }
     
+    public void setOffset(double o)
+    {
+        
+    }
+    
     public double getWeight(Link i, Link j)
     {
         if(total_weight == 0)

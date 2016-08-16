@@ -9,6 +9,7 @@ import avdta.network.link.Link;
 import avdta.network.Network;
 import avdta.vehicle.Vehicle;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +28,7 @@ public class PhasedTBR extends PriorityTBR implements Signalized
     private int curr_idx;
     private double curr_time;
     private double total_time;
+    private double offset;
     
     private Map<Link, Map<Link, PhaseMovement>> turns;
     
@@ -46,6 +48,11 @@ public class PhasedTBR extends PriorityTBR implements Signalized
         
         
         setPolicy(new PhasePriority(this));
+    }
+    
+    public void setOffset(double offset)
+    {
+        this.offset = offset;
     }
     
     public List<Phase> getPhases()
@@ -70,8 +77,24 @@ public class PhasedTBR extends PriorityTBR implements Signalized
     {
         super.initialize();
         
+        Collections.sort(phases);
+        
+        curr_time = offset;
         curr_idx = 0;
-        curr_time = 0;
+        
+        double temp = curr_time;
+        for(Phase p : phases)
+        {
+            if(p.getDuration() >= temp)
+            {
+                temp -= p.getDuration();
+                curr_idx++;
+            }
+            else
+            {
+                break;
+            }
+        }
         
         for(Phase p : phases)
         {

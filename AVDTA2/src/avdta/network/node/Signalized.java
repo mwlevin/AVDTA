@@ -12,4 +12,5 @@ package avdta.network.node;
 public interface Signalized 
 {
     public void addPhase(Phase p);
+    public void setOffset(double o);
 }
