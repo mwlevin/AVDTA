@@ -28,6 +28,8 @@ public class TransitPane extends JPanel
         
         constrain(this, importPane, 0, 0, 1, 1);
         constrain(this, viewPane, 1, 0, 1, 1);
+        
+        setEnabled(false);
     }
     
     public void setEnabled(boolean e)

@@ -36,23 +36,23 @@
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiCompsComponent">
     <ROW Component="AVDTA2.jar" ComponentId="{E6F3864E-5AEA-4A23-92B6-C8C891E5DB7D}" Directory_="APPDIR" Attributes="0" KeyPath="AVDTA2.jar"/>
+    <ROW Component="DTA.pdf" ComponentId="{87F193B2-D10E-4ABE-9691-A2B1F0D5DF01}" Directory_="Documentation_Dir" Attributes="0" KeyPath="DTA.pdf" Type="0"/>
     <ROW Component="ProductInformation" ComponentId="{8AB734D9-7E70-4691-BA39-D9297BFF454E}" Directory_="APPDIR" Attributes="4" KeyPath="Version"/>
     <ROW Component="SHORTCUTDIR" ComponentId="{69CDAF49-3B09-4331-9C2B-4A10611BCD36}" Directory_="SHORTCUTDIR" Attributes="0"/>
-    <ROW Component="Userguide.pdf" ComponentId="{04943F7D-7480-4BD1-B7AF-8A8A452978CB}" Directory_="Documentation_Dir" Attributes="0" KeyPath="Userguide.pdf" Type="0"/>
     <ROW Component="icon.png" ComponentId="{E7FDD646-41F6-443A-88E2-B02B4081A474}" Directory_="APPDIR" Attributes="0" KeyPath="icon.png" Type="0"/>
     <ROW Component="mysqlconnectorjava5.1.39bin.jar" ComponentId="{D432BF9D-8873-45BA-A6D5-A3C200951674}" Directory_="lib_Dir" Attributes="0" KeyPath="mysqlconnectorjava5.1.39bin.jar" Type="0"/>
     <ROW Component="networks" ComponentId="{1268D683-E7BD-41EF-94FA-95D8739B4662}" Directory_="networks_Dir" Attributes="0"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiFeatsComponent">
-    <ROW Feature="MainFeature" Title="MainFeature" Description="Description" Display="1" Level="1" Directory_="APPDIR" Attributes="0" Components="AVDTA2.jar ProductInformation SHORTCUTDIR Userguide.pdf icon.png mysqlconnectorjava5.1.39bin.jar networks"/>
+    <ROW Feature="MainFeature" Title="MainFeature" Description="Description" Display="1" Level="1" Directory_="APPDIR" Attributes="0" Components="AVDTA2.jar DTA.pdf ProductInformation SHORTCUTDIR icon.png mysqlconnectorjava5.1.39bin.jar networks"/>
     <ATTRIBUTE name="CurrentFeature" value="MainFeature"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiFilesComponent">
     <ROW File="AVDTA2.jar" Component_="AVDTA2.jar" FileName="AVDTA2.jar" Attributes="0" SourcePath="..\dist\AVDTA2.jar" SelfReg="false" NextFile="directory.txt"/>
-    <ROW File="Userguide.pdf" Component_="Userguide.pdf" FileName="USERGU~1.PDF|User guide.pdf" Attributes="0" SourcePath="..\documentation\User guide.pdf" SelfReg="false" NextFile="mysqlconnectorjava5.1.39bin.jar"/>
-    <ROW File="cplex.jar" Component_="mysqlconnectorjava5.1.39bin.jar" FileName="cplex.jar" Attributes="0" SourcePath="..\lib\cplex.jar" SelfReg="false"/>
+    <ROW File="DTA.pdf" Component_="DTA.pdf" FileName="DTA.pdf" Attributes="0" SourcePath="..\documentation\DTA.pdf" SelfReg="false"/>
+    <ROW File="cplex.jar" Component_="mysqlconnectorjava5.1.39bin.jar" FileName="cplex.jar" Attributes="0" SourcePath="..\lib\cplex.jar" SelfReg="false" NextFile="DTA.pdf"/>
     <ROW File="directory.txt" Component_="icon.png" FileName="DIRECT~1.TXT|directory.txt" Attributes="0" SourcePath="..\directory.txt" SelfReg="false" NextFile="icon.ico"/>
-    <ROW File="icon.ico" Component_="icon.png" FileName="icon.ico" Attributes="0" SourcePath="..\icon.ico" SelfReg="false" NextFile="Userguide.pdf"/>
+    <ROW File="icon.ico" Component_="icon.png" FileName="icon.ico" Attributes="0" SourcePath="..\icon.ico" SelfReg="false" NextFile="mysqlconnectorjava5.1.39bin.jar"/>
     <ROW File="icon.png" Component_="icon.png" FileName="icon.png" Attributes="0" SourcePath="..\icon.png" SelfReg="false" NextFile="AVDTA2.jar"/>
     <ROW File="mysqlconnectorjava5.1.39bin.jar" Component_="mysqlconnectorjava5.1.39bin.jar" FileName="MYSQL-~1.JAR|mysql-connector-java-5.1.39-bin.jar" Attributes="0" SourcePath="..\lib\mysql-connector-java-5.1.39-bin.jar" SelfReg="false" NextFile="cplex.jar"/>
   </COMPONENT>
