@@ -1,0 +1,82 @@
+\chapter{Transit}
+\label{ch:transit}
+
+\section{Introduction}
+% transit structure
+
+\section{Files}
+Transit is specified by four files, located in the \texttt{transit} subfolder within a project folder. The \texttt{bus\_period.txt} and \texttt{bus\_frequency.txt} files are used to generate buses. The \texttt{bus.txt} and \texttt{bus\_route\_link.txt} files actually specify the buses themselves. To add transit demand, define the routes in the \texttt{bus\_route\_link.txt} file. Define the frequency of each route in the \texttt{bus\_frequency.txt} file, and the period for which the frequency applies in the \texttt{bus\_period.txt} file. Then, use AVDTA to generate the \texttt{bus.txt} file.
+
+
+% bus
+\subsection{\texttt{bus.txt}}
+The \texttt{bus.txt} file contains a list of all buses. These are added as vehicles to the simulation. As buses travel from stop to stop, time-dependent transit travel times between pairs of stops are recorded. The \texttt{bus.txt} file consists of the following columns:
+\begin{center}
+\begin{tabular}{cccc}
+	\hline
+	id & type & route & dtime\\\hline
+\end{tabular}
+\end{center}
+\paragraph*{id} The unique id for the bus. These ids should not overlap with vehicle ids in demand. Ids must be positive and unique but do not have to be consecutive.
+\paragraph*{type} \paragraph*{type} The type indicates the type of vehicle, including the driver, engine, and vehicle behavior. The options for types are indicated below:
+\begin{center}
+	\begin{tabular}{lcl}
+		\hline
+		Category & type & description \\\hline
+		Driver & 10 & HV \\
+		& 20 & AV\\\hline
+		Engine & 1 & ICV \\
+		& 2 & BEV\\\hline
+		Behavior & 500 & transit (fixed route)\\hline
+	\end{tabular}
+\end{center}
+For instance, the type 511 indicates a bus that is human-driven and uses an internal combustion engine vehicle.
+
+\paragraph*{route} The id of the bus route, which corresponds to the id in the \texttt{bus\_route\_links.txt} file. This links an individual bus to a specific route.
+\paragraph*{dtime} The departure time of the bus.
+
+
+% bus route
+\subsection{\texttt{bus\_route\_link.txt}}
+The \texttt{bus\_route\_link.txt} file specifies the routes that buses follow. Each route is an ordered set of connected links. Buses stop at some of the links. The columns are as follows:
+\begin{center}
+\begin{tabular}{ccccc}
+\hline
+route & sequence & link & stop & dwelltime\\\hline	
+\end{tabular}
+\end{center}
+\paragraph*{route} This is the route id that connects this bus route with individual buses in the \texttt{bus.txt} file.
+\paragraph*{sequence} The order in which the bus visits links. The sequence must start at 1 and be consecutive. Consecutive links must be connected.
+\paragraph*{stop} This indicates whether a stop exists on this link. The values are either 1 (a stop exists) or 0 (no stop exists). The stop, if it exists, is set to the link's downstream node.
+\paragraph*{dwelltime} The time spent waiting at the stop on this link. This is currently not yet implemented.
+
+% bus period
+\subsection{\texttt{bus\_frequency.txt}}
+The \texttt{bus\_frequency.txt} file specifies the frequency at which buses operate on each route. (Routes are specified in the \texttt{bus\_route\_link.txt} file.) Note that each route may have multiple entries in this file if it operates at different frequencies in different periods. Each (route, period) combination is unique. The columns are as follows:
+\begin{center}
+\begin{tabular}{cccc}
+\hline
+route & period & frequency & offset\\\hline
+\end{tabular}
+\end{center}
+\paragraph*{route} This is the route id used in the \texttt{bus\_route\_link.txt} file.
+\paragraph*{period} This references a period in the \texttt{bus\_period.txt} file.
+\paragraph*{frequency} The time between individual buses on the specified route during the period.
+\paragraph*{offset} The time of the first bus during the period.
+
+
+% bus frequency
+\subsection{\texttt{bus\_period.txt}}
+The \texttt{bus\_period.txt} file specifies bus periods. Routes may have a different frequency for each period (specified in \texttt{bus\_frequency.txt}) which is used for creating individual buses. Bus periods can overlap. The columns are as follows:
+\begin{center}
+\begin{tabular}{ccc}
+\hline
+id & starttime & endtime\\\hline
+\end{tabular}
+\end{center}
+\paragraph*{id} The unique id for this bus period. Ids do not have to be consecutive, but they must be positive and unique.
+\paragraph*{starttime, endtime} The start and end time for this bus period.
+
+\section{GUI}
+% import from VISTA
+% GUI

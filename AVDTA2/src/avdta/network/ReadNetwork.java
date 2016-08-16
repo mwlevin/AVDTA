@@ -31,6 +31,7 @@ import avdta.network.node.policy.SignalWeightedTBR;
 import avdta.network.node.Signalized;
 import avdta.network.AST;
 import avdta.network.DemandProfile;
+import avdta.network.link.BusLink;
 import avdta.network.link.CACCLTMLink;
 import avdta.network.link.DLRCTMLink;
 import avdta.network.link.SharedTransitCTMLink;
@@ -40,6 +41,8 @@ import avdta.network.node.obj.P0Obj;
 import avdta.project.DTAProject;
 import avdta.network.node.PhasedTBR;
 import avdta.project.Project;
+import avdta.project.TransitProject;
+import avdta.vehicle.Bus;
 import avdta.vehicle.DriverType;
 import avdta.vehicle.fuel.VehicleClass;
 import java.io.File;
@@ -55,6 +58,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.TreeSet;
 
 /** 
@@ -98,11 +102,25 @@ public class ReadNetwork
     public static final int PHASED = SIGNALIZED_RESERVATION+1;
     public static final int WEIGHTED = SIGNALIZED_RESERVATION+2;
     
+    // vehicles
+    public static final int HV = 10;
+    public static final int AV = 20;
+    
+    
+    public static final int ICV = 1;
+    public static final int BEV = 2;
+    
+    public static final int DA_VEHICLE = 100;
+    public static final int BUS = 500;        
+    
     
     
     public Map<Integer, Node> nodesmap;
     public Map<Integer, Link> linksmap;
     public Map<Integer, Zone> zones;
+    
+    public List<Vehicle> vehicles;
+    public List<BusLink> busLinks;
     
     
     private double mesodelta;
@@ -113,6 +131,9 @@ public class ReadNetwork
         
         nodesmap = new HashMap<Integer, Node>();
         linksmap = new HashMap<Integer, Link>();
+        vehicles = new ArrayList<Vehicle>();
+        
+        busLinks = new ArrayList<BusLink>();
         
         mesodelta = 0.5;
     }
@@ -131,7 +152,214 @@ public class ReadNetwork
         
         sim.initialize();
         
+        
+        sim.setVehicles(vehicles);
+        
+        if(project instanceof TransitProject)
+        {
+            readTransit((TransitProject)project);
+        }
+        
         return sim;
+    }
+    
+    public void createTransit(TransitProject project) throws IOException
+    {
+        int curr_id = 100000000;
+        
+        Map<Integer, Integer[]> busPeriod = new HashMap<Integer, Integer[]>();
+        
+        Scanner filein = new Scanner(project.getBusPeriodFile());
+        filein.nextLine();
+        
+        while(filein.hasNextLine())
+        {
+            int id = filein.nextInt();
+            int starttime = filein.nextInt();
+            int endtime = filein.nextInt();
+            filein.nextLine();
+            
+            busPeriod.put(id, new Integer[]{starttime, endtime});
+        }     
+        filein.close();
+        
+        PrintStream fileout = new PrintStream(new FileOutputStream(project.getBusFile()), true);
+        fileout.println(getBusFileHeader());
+        
+        filein = new Scanner(project.getBusFrequencyFile());
+        filein.nextLine();
+        
+        int type = BUS + AV + ICV;
+        
+        while(filein.hasNextLine())
+        {
+            int routeId = filein.nextInt();
+            int periodId = filein.nextInt();
+            int frequency = filein.nextInt();
+            int offset = filein.nextInt();
+            filein.nextLine();
+            
+            Integer[] period = busPeriod.get(periodId);
+            
+            if(period == null)
+            {
+                throw new RuntimeException("Period not found - "+periodId);
+            }
+            
+            int starttime = period[0];
+            int endtime = period[1];
+            
+            for(int t = starttime + offset; t < endtime; t++)
+            {
+                fileout.println((++curr_id)+"\t"+type+"\t"+routeId+"\t"+t);
+            }
+        }
+        filein.close();
+        fileout.close();
+        
+        
+    }
+    
+    public void readTransit(TransitProject project) throws IOException
+    {
+        Map<Integer, Map<Integer, Object[]>> temproutes = new HashMap<Integer, Map<Integer, Object[]>>();
+        
+        Map<Node, Map<Node, BusLink>> tempLinks = new HashMap<Node, Map<Node, BusLink>>();
+        Map<Integer, ArrayList<BusLink>> routeStops = new HashMap<Integer, ArrayList<BusLink>>();
+        Map<Integer, Path> routes = new HashMap<Integer, Path>();
+        
+        Scanner filein = new Scanner(project.getBusRouteLinkFile());
+        
+        filein.nextLine();
+        
+        
+        while(filein.hasNextInt())
+        {
+            int routeid = filein.nextInt();
+            int sequence = filein.nextInt();
+            int linkid = filein.nextInt();
+            boolean stop = filein.nextInt() == 1;
+            int dwelltime = filein.nextInt();
+            filein.nextLine();
+            
+            Link link = linksmap.get(linkid);
+            
+            if(!temproutes.containsKey(routeid))
+            {
+                temproutes.put(routeid, new TreeMap<Integer, Object[]>());
+            }
+            
+            temproutes.get(routeid).put(sequence, new Object[]{linkid, stop, dwelltime});
+        }
+        
+        filein.close();
+        
+        // construct busLinks
+        for(int routeid : temproutes.keySet())
+        {
+            Map<Integer, Object[]> temp = temproutes.get(routeid);
+            
+            ArrayList<BusLink> stops = new ArrayList<BusLink>();
+            Path route = new Path();
+            routeStops.put(routeid, stops);
+            routes.put(routeid, route);
+            
+            Node prev = null;
+            
+            for(int seq : temp.keySet())
+            {
+                Object[] data = temp.get(seq);
+                Link link = linksmap.get((Integer)data[0]);
+                boolean stop = (Boolean)data[1];
+                double dwelltime = (Double)data[2];
+                
+                if(route.get(route.size()-1).getDest() != link.getSource())
+                {
+                    throw new RuntimeException("Route "+routeid+" is not connected around links "+route.get(route.size()-1).getId()+" and "+link.getId());
+                }
+                
+                route.add(link);
+                
+                
+                
+                if(stop)
+                {
+                    if(prev != null)
+                    {
+                        Node source = prev;
+                        Node dest = link.getDest();
+                        
+                        BusLink busLink;
+                        
+                        if(!tempLinks.containsKey(source))
+                        {
+                            tempLinks.put(source, new HashMap<Node, BusLink>());
+                        }
+                        if(!tempLinks.get(source).containsKey(dest))
+                        {
+                            tempLinks.get(source).put(dest, busLink = new BusLink(source, dest));
+                            busLinks.add(busLink);
+                        }
+                        else
+                        {
+                            busLink = tempLinks.get(source).get(dest);
+                        }
+                        
+                        stops.add(busLink);
+                    }
+                    
+                    prev = link.getDest();
+                }
+            }
+        }
+        
+        temproutes = null;
+        tempLinks = null;
+        
+        // create buses, assign to routes
+        
+        filein = new Scanner(project.getBusFile());
+        filein.nextLine();
+        
+        while(filein.hasNextInt())
+        {
+            int id = filein.nextInt();
+            int type = filein.nextInt();
+            int routeid = filein.nextInt();
+            int dtime = filein.nextInt();
+            filein.nextLine();
+            
+            VehicleClass vehClass = null;
+            DriverType driver = null;
+                
+            switch(type % 10)
+            {
+                case ICV:
+                    vehClass = VehicleClass.icv;
+                    break;
+                case BEV:
+                    vehClass = VehicleClass.bev;
+                    break;
+                default:
+                    throw new RuntimeException("Vehicle class not recognized - "+type);
+            }
+            
+            switch((type / 10 % 10)*10)
+            {
+                case HV:
+                    driver = DriverType.HV;
+                    break;
+                case AV:
+                    driver = DriverType.AV;
+                    break;
+                default:
+                    throw new RuntimeException("Vehicle class not recognized - "+type);
+            }
+            
+            Bus bus = new Bus(id, routeid, dtime, routes.get(routeid), routeStops.get(routeid), vehClass, driver);
+        }
+        filein.close();
+        
     }
     
     public void readIntersections(Project project) throws IOException
@@ -656,5 +884,25 @@ public class ReadNetwork
     public static String getOptionsFileHeader()
     {
         return "name\tvalue";
+    }
+    
+    public static String getBusFileHeader()
+    {
+        return "id\ttype\troute\tdtime";
+    }
+    
+    public static String getBusFrequencyFileHeader()
+    {
+        return "route\tperiod\tfrequency\toffset";
+    }
+    
+    public static String getBusRouteLinkFileHeader()
+    {
+        return "route\tsequence\tlink\tstop\tdwelltime";
+    }
+    
+    public static String getBusPeriodFileHeader()
+    {
+        return "id\tstarttime\tendtime";
     }
 }

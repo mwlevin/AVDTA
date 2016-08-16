@@ -68,17 +68,19 @@ The \texttt{phases.txt} file contains information about signal phases. Note that
 \begin{center}
 \begin{tabular}{ccccccc}
 \hline
-nodeid & type & sequence & time\_red & time\_yellow & time\_green & num\_moves	link\_from & link\_to\\\hline
+nodeid & type & sequence & time\_red & time\_yellow & time\_green & num\_moves	link\_from \\ \hline \hline
+link\_to\\\hline
 \end{tabular}
 \end{center}
 \paragraph*{nodeid} The node id for which the phase is used.
 \paragraph*{type} denotes the type of the phase. Currently 1 for all phases.
-\paragraph*{sequence} the order in which the phase is used in the signal cycle.
+\paragraph*{sequence} the order in which the phase is used in the signal cycle. The sequence count starts at 1.
 \paragraph*{time\_red, time\_yellow} Clearance interval times for this phase.
 \paragraph*{time\_green} Green time for this phase.
 \paragraph*{num\_moves} The number of protected turning movements, also the size of the ``link\_from'' and ``link\_to'' arrays.
 \paragraph*{link\_from, link\_to} Protected turning movements for this phase. These consist of two equal-length arrays, one of incoming links and one of outgoing links. A valid turning movement is a pair of an incoming link and an outgoing link. Consequently, links may appear multiple times in the arrays to enumerate all protected turning movements.
 
+\subsection{\texttt{signals.txt}}
 The \texttt{signals.txt} file contains signal offsets for each node. Each node may have one entry. Duplicate entries will overwrite previous ones. A missing entry indicates an offset of $0$. The \texttt{signals.txt} file columns are
 \begin{center}
 \begin{tabular}{cc}

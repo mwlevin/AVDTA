@@ -30,7 +30,11 @@ public class Bus extends PersonalVehicle
     
     public Bus(int id, int route_id, int dtime, Path path, ArrayList<BusLink> transitStops)
     {
-        super(id, path.getOrigin(), path.getDest(), dtime, Bus.VOT, Bus.wallet, path, VehicleClass.icv, DriverType.BUS_AV);
+        this(id, route_id, dtime, path, transitStops, VehicleClass.icv, DriverType.BUS_AV);
+    }
+    public Bus(int id, int route_id, int dtime, Path path, ArrayList<BusLink> transitStops, VehicleClass vehClass, DriverType driver)
+    {
+        super(id, path.getOrigin(), path.getDest(), dtime, Bus.VOT, Bus.wallet, path, vehClass, driver);
         
         this.transitStops = transitStops;
         this.route_id = route_id;
@@ -80,11 +84,6 @@ public class Bus extends PersonalVehicle
     public void exited()
     {
         super.exited();
-        
-        if(stop_arr_time > Simulator.time)
-            {
-                System.out.println("check2 "+stop_arr_time+" "+Simulator.time+" "+getDepTime());
-            }
         
         transitStops.get(stop_idx).setTT(stop_arr_time, Simulator.time);
     }

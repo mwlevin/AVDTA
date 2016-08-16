@@ -59,47 +59,49 @@ public class PrepareDemandPane extends JPanel
         {
             public void actionPerformed(ActionEvent e)
             {
-                try
-                {
-                    createDynamicOD();
-                }
-                catch(IOException ex)
-                {
-                   GUI.handleException(ex);
-                }
+                createDynamicOD();
             }
         });
         changeType.addActionListener(new ActionListener()
         {
             public void actionPerformed(ActionEvent e)
             {
-                try
-                {
-                    changeType();
-                }
-                catch(IOException ex)
-                {
-                   GUI.handleException(ex);
-                }
+                changeType();
             }
         });
 
         reset();
     }
     
-    public void createDynamicOD() throws IOException
+    public void createDynamicOD()
     {
         parent.setEnabled(false);
         
-        ReadDTANetwork read = new ReadDTANetwork();
+        Thread t = new Thread()
+        {
+            public void run()
+            {
+                try
+                {
+                    ReadDTANetwork read = new ReadDTANetwork();
         
-        read.createDynamicOD(project);
+                    read.createDynamicOD(project);
+
+                    parent.reset();
+                    parent.setEnabled(true); 
+                }
+                catch(IOException ex)
+                {
+                    GUI.handleException(ex);
+                }
+            }
+        };
+        t.start();
         
-        parent.reset();
-        parent.setEnabled(true); 
+        
     }
     
-    public void changeType() throws IOException
+    public void changeType()
     {
         try
         {
@@ -114,18 +116,33 @@ public class PrepareDemandPane extends JPanel
         
         parent.setEnabled(false);
         
-        Map<Integer, Double> proportionMap = new HashMap<Integer, Double>();
+        Thread t = new Thread()
+        {
+            public void run()
+            {
+                try
+                {
+                    Map<Integer, Double> proportionMap = new HashMap<Integer, Double>();
         
-        double prop = Double.parseDouble(AVs.getText().trim())/100.0;
+                    double prop = Double.parseDouble(AVs.getText().trim())/100.0;
+
+                    proportionMap.put(ReadDTANetwork.AV + ReadDTANetwork.DA_VEHICLE + ReadDTANetwork.ICV, prop);
+                    proportionMap.put(ReadDTANetwork.HV + ReadDTANetwork.DA_VEHICLE + ReadDTANetwork.ICV, 1-prop);
+
+                    ReadDTANetwork read = new ReadDTANetwork();
+                    read.changeType(project, proportionMap);
+
+                    parent.reset();
+                }
+                catch(IOException ex)
+                {
+                    
+                }
+            }
+        };
+        t.start();
         
-        proportionMap.put(ReadDTANetwork.AV + ReadDTANetwork.DA_VEHICLE + ReadDTANetwork.ICV, prop);
-        proportionMap.put(ReadDTANetwork.HV + ReadDTANetwork.DA_VEHICLE + ReadDTANetwork.ICV, 1-prop);
         
-        ReadDTANetwork read = new ReadDTANetwork();
-        read.changeType(project, proportionMap);
-        
-        parent.reset();
-        parent.setEnabled(true);
     }
     
     public void setEnabled(boolean e)

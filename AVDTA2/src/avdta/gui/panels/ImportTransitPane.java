@@ -5,44 +5,47 @@
  */
 package avdta.gui.panels;
 
-import avdta.dta.DTAImportFromVISTA;
 import avdta.gui.GUI;
+import static avdta.gui.util.GraphicUtils.constrain;
 import avdta.gui.util.JFileField;
 import avdta.gui.util.ProjectChooser;
-import javax.swing.JPanel;
-import avdta.project.DTAProject;
-import javax.swing.JTextArea;
-import java.awt.GridBagLayout;
-import static avdta.gui.util.GraphicUtils.*;
 import avdta.network.ImportFromVISTA;
+import avdta.network.TransitImportFromVISTA;
+import avdta.project.DTAProject;
+import avdta.project.TransitProject;
 import avdta.project.Project;
 import avdta.project.SQLLogin;
+import avdta.project.TransitProject;
+import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 import javax.swing.JButton;
-import javax.swing.JFileChooser;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.filechooser.FileFilter;
 
 /**
  *
- * @author micha
+ * @author Michael
  */
-public class ImportDemandPane extends JPanel
+public class ImportTransitPane extends JPanel
 {
-    private DTAProject project;
-    private DemandPane parent;
+    private TransitProject project;
+    private TransitPane parent;
     
     private JFileField importFromProject;
-    private JFileField staticOD, dynamicOD, demandProfile, demand;
-    private JButton import1, import2;
+    private JFileField bus, busfrequency, busperiod, busroutelink;
+    
+    private JButton import1;
+    private JButton import2;
     private JButton sqlImport, sqlExport;
     
-    public ImportDemandPane(DemandPane parent)
+    public ImportTransitPane(TransitPane parent_)
     {
-        this.parent = parent;
+        this.parent = parent_;
+        
         
         import1 = new JButton("Import");
         import1.setEnabled(false);
@@ -56,14 +59,24 @@ public class ImportDemandPane extends JPanel
         {
             public void actionPerformed(ActionEvent e)
             {
-                try
+                setEnabled(false);
+                Thread t = new Thread()
                 {
-                    project.importDemandFromSQL();
-                }
-                catch(Exception ex)
-                {
-                    GUI.handleException(ex);
-                }
+                    public void run()
+                    {
+                        try
+                        {
+                            project.importTransitFromSQL();
+                            project.loadSimulator();
+                            parent.reset();
+                        }
+                        catch(Exception ex)
+                        {
+                            GUI.handleException(ex);
+                        }
+                    }
+                };
+                t.start();
             }
         });
         
@@ -71,14 +84,24 @@ public class ImportDemandPane extends JPanel
         {
             public void actionPerformed(ActionEvent e)
             {
-                try
+                setEnabled(false);
+                Thread t =  new Thread()
                 {
-                    project.exportDemandToSQL();
-                }
-                catch(Exception ex)
-                {
-                    GUI.handleException(ex);
-                }
+                    public void run()
+                    {
+                        try
+                        {
+                            project.exportTransitToSQL();
+                            setEnabled(true);
+                        }
+                        catch(Exception ex)
+                        {
+                            GUI.handleException(ex);
+                        }
+                    }
+                };
+                t.start();
+                
             }
         });
         
@@ -92,9 +115,11 @@ public class ImportDemandPane extends JPanel
             }
             public File chooseFile()
             {
-                JFileChooser chooser = new ProjectChooser(new File(GUI.getDefaultDirectory()), "DTA");
+                ProjectChooser chooser = new ProjectChooser(new File(GUI.getDefaultDirectory()), "DTA");
+                chooser.setAcceptAll(true);
 
-                int returnVal = chooser.showDialog(this, "Open projcet");
+
+                int returnVal = chooser.showDialog(this);
 
                 if(returnVal == chooser.APPROVE_OPTION)
                 {
@@ -106,35 +131,34 @@ public class ImportDemandPane extends JPanel
                 }
             }
         };
-        demand = new JFileField(10, txtFiles, "data/")
+        bus = new JFileField(10, txtFiles, "data/")
         {
             public void valueChanged(File f)
             {
                 checkForOtherFiles(f);
             }
         };
-        demandProfile = new JFileField(10, txtFiles, "data/")
-        {
-            public void valueChanged(File f)
-            {
-                checkForOtherFiles(f);           
-            }
-        };
-        staticOD = new JFileField(10, txtFiles, "data/")
+        busperiod = new JFileField(10, txtFiles, "data/")
         {
             public void valueChanged(File f)
             {
                 checkForOtherFiles(f);
             }
         };
-        dynamicOD = new JFileField(10, txtFiles, "data/")
+        busfrequency = new JFileField(10, txtFiles, "data/")
         {
             public void valueChanged(File f)
             {
                 checkForOtherFiles(f);
             }
         };
-        
+        busroutelink = new JFileField(10, txtFiles, "data/")
+        {
+            public void valueChanged(File f)
+            {
+                checkForOtherFiles(f);
+            }
+        };
         
         import1.addActionListener(new ActionListener()
         {
@@ -148,7 +172,14 @@ public class ImportDemandPane extends JPanel
         {
             public void actionPerformed(ActionEvent e)
             {
-                importFromVISTA();
+                try
+                {
+                    importFromVISTA();
+                }
+                catch(IOException ex)
+                {
+                    GUI.handleException(ex);
+                }
             }
         });
         
@@ -158,7 +189,7 @@ public class ImportDemandPane extends JPanel
         
         JPanel p = new JPanel();
         p.setLayout(new GridBagLayout());
-        constrain(p, new JLabel("Import demand from project"), 0, 0, 3, 1);
+        constrain(p, new JLabel("Import transit from project"), 0, 0, 3, 1);
         constrain(p, new JLabel("Project: "), 0, 1, 1, 1);
         constrain(p, importFromProject, 1, 1, 1, 1);
         constrain(p, import1, 2, 1, 1, 1);
@@ -169,16 +200,15 @@ public class ImportDemandPane extends JPanel
         p.setLayout(new GridBagLayout());
         
         constrain(p, new JLabel("Import from VISTA"), 0, 0, 4, 1);
-        constrain(p, new JLabel("static OD: "), 0, 1, 1, 1);
-        constrain(p, staticOD, 1, 1, 1, 1);
-        constrain(p, new JLabel("dynamic OD: "), 0, 2, 1, 1);
-        constrain(p, dynamicOD, 1, 2, 1, 1);
-        constrain(p, new JLabel("demand profile: "), 0, 3, 1, 1);
-        constrain(p, demandProfile, 1, 3, 1, 1);
-        constrain(p, new JLabel("demand: "), 0, 4, 1, 1);
-        constrain(p, demand, 1, 4, 1, 1);
+        constrain(p, new JLabel("bus: "), 0, 1, 1, 1);
+        constrain(p, bus, 1, 1, 1, 1);
+        constrain(p, new JLabel("bus_route_link: "), 0, 2, 1, 1);
+        constrain(p, busroutelink, 1, 2, 1, 1);
+        constrain(p, new JLabel("bus_frequency: "), 0, 3, 1, 1);
+        constrain(p, busfrequency, 1, 3, 1, 1);
+        constrain(p, new JLabel("bus_period: "), 0, 4, 1, 1);
+        constrain(p, busperiod, 1, 4, 1, 1);
         constrain(p, import2, 2, 1, 1, 4);
-        
         
         constrain(this, p, 0, 2, 1, 1);
         
@@ -202,9 +232,9 @@ public class ImportDemandPane extends JPanel
             {
                 try
                 {
-                    DTAProject rhs = new DTAProject(importFromProject.getFile());
-        
-                    project.importDemandFromProject(rhs);
+                    TransitProject rhs = new DTAProject(importFromProject.getFile());
+
+                    project.importTransitFromProject(rhs);
                     project.loadSimulator();
 
                     importFromProject.setFile(null);
@@ -218,10 +248,44 @@ public class ImportDemandPane extends JPanel
                 }
             }
         };
-        t.start();    
+        
+        t.start();
+        
+        
     }
     
-    public void importFromVISTA()
+    public void setProject(TransitProject project)
+    {
+        this.project = project;
+        
+        if(project != null)
+        {
+            setEnabled(true);
+        }
+        else
+        {
+            setEnabled(false);
+        }
+    }
+    
+    public void setEnabled(boolean e)
+    {
+        import1.setEnabled(e && importFromProject.getFile() != null);
+        import2.setEnabled(e && bus.getFile() != null && busfrequency.getFile() != null && busperiod.getFile() != null && busroutelink.getFile() != null);
+        bus.setEnabled(e);
+        busfrequency.setEnabled(e);
+        busperiod.setEnabled(e);
+        busroutelink.setEnabled(e);
+        importFromProject.setEnabled(e);
+        
+        boolean sqlCheck = SQLLogin.hasSQL();
+        sqlImport.setEnabled(e && sqlCheck);
+        sqlExport.setEnabled(e && sqlCheck);
+        
+        super.setEnabled(e);
+    }
+    
+    public void importFromVISTA() throws IOException
     {
         parent.setEnabled(false);
         
@@ -231,18 +295,19 @@ public class ImportDemandPane extends JPanel
             {
                 try
                 {
-                    DTAImportFromVISTA read = new DTAImportFromVISTA(project, staticOD.getFile(), dynamicOD.getFile(), 
-                    demandProfile.getFile(), demand.getFile());
-        
+                    TransitImportFromVISTA read = new TransitImportFromVISTA(project, bus.getFile(), busperiod.getFile(), 
+                    busroutelink.getFile(), busfrequency.getFile());
+
                     project.loadSimulator();
                     parent.reset();
 
-                    staticOD.setFile(null);
-                    dynamicOD.setFile(null);
-                    demand.setFile(null);
-                    demandProfile.setFile(null);
+                    bus.setFile(null);
+                    busperiod.setFile(null);
+                    busroutelink.setFile(null);
+                    busfrequency.setFile(null);
 
                     parent.setEnabled(true);
+                    parent.reset();
                 }
                 catch(IOException ex)
                 {
@@ -251,6 +316,13 @@ public class ImportDemandPane extends JPanel
             }
         };
         t.start();
+        
+        
+    }
+    
+    public void reset()
+    {
+        
     }
     
     public void checkForOtherFiles(File f)
@@ -262,77 +334,46 @@ public class ImportDemandPane extends JPanel
             dir = dir.substring(0, dir.lastIndexOf("\\".charAt(0))+1);
             
 
-            if(staticOD.getFile() == null)
+            if(bus.getFile() == null)
             {
-                File file = new File(dir+"/static_od.txt");
+                File file = new File(dir+"/nodes.txt");
                 if(file.exists())
                 {
-                    staticOD.setFile(file);
+                    bus.setFile(file);
                 }
             }
-            if(dynamicOD.getFile() == null)
+            if(busfrequency.getFile() == null)
             {
-                File file = new File(dir+"/dynamic_od.txt");
+                File file = new File(dir+"/linkdetails.txt");
                 if(file.exists())
                 {
-                    dynamicOD.setFile(file);
+                    busfrequency.setFile(file);
                 }
             }
-            if(demandProfile.getFile() == null)
+            if(busperiod.getFile() == null)
             {
-                File file = new File(dir+"/demand_profile.txt");
+                File file = new File(dir+"/signals.txt");
                 if(file.exists())
                 {
-                    demandProfile.setFile(file);
+                    busperiod.setFile(file);
                 }
             }
-            if(demand.getFile() == null)
+            if(busroutelink.getFile() == null)
             {
-                File file = new File(dir+"/demand.txt");
+                File file = new File(dir+"/phases.txt");
                 if(file.exists())
                 {
-                    demand.setFile(file);
+                    busroutelink.setFile(file);
                 }
             }
+
         }
         catch(IOException ex)
         {
             ex.printStackTrace(System.err);
         }
         
-        import2.setEnabled(dynamicOD.getFile() != null && staticOD.getFile() != null 
-                        && demand.getFile() != null && demandProfile != null && demand.getFile() != null);
-    }
-    
-
-    
-    public void setEnabled(boolean e)
-    {
-        importFromProject.setEnabled(e);
-        staticOD.setEnabled(e);
-        dynamicOD.setEnabled(e);
-        demandProfile.setEnabled(e);
-        demand.setEnabled(e);
-        import1.setEnabled(e && importFromProject.getFile() != null);
-        import2.setEnabled(e && dynamicOD.getFile() != null && staticOD.getFile() != null 
-                        && demand.getFile() != null && demandProfile != null);
-        boolean sqlCheck = SQLLogin.hasSQL();
-        sqlImport.setEnabled(e && sqlCheck);
-        sqlExport.setEnabled(e && sqlCheck);
-        super.setEnabled(e);
-    }
-    
-    public void setProject(DTAProject project)
-    {
-        this.project = project;
+        import2.setEnabled(bus.getFile() != null && busperiod.getFile() != null && busroutelink.getFile() != null && busfrequency.getFile() != null);
         
-        if(project == null)
-        {
-            setEnabled(false);
-        }
-        else
-        {
-            setEnabled(true);
-        }
     }
 }

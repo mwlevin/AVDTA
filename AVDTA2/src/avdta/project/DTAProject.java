@@ -23,7 +23,7 @@ import java.sql.Statement;
  *
  * @author micha
  */
-public class DTAProject extends Project
+public class DTAProject extends TransitProject
 {
     public DTAProject()
     {

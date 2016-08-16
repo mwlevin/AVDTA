@@ -40,15 +40,7 @@ import java.util.TreeSet;
  */
 public class ReadDTANetwork extends ReadNetwork
 {
-    public static final int HV = 10;
-    public static final int AV = 20;
-    
-    
-    public static final int ICV = 1;
-    public static final int BEV = 2;
-    
-    public static final int DA_VEHICLE = 100;
-    public static final int BUS = 500;
+   
     
     public ReadDTANetwork()
     {
@@ -69,7 +61,10 @@ public class ReadDTANetwork extends ReadNetwork
         
         sim.initialize();
         
-        sim.setVehicles(readVehicles(project));
+        readTransit(project);
+        readVehicles(project);
+        
+        sim.setVehicles(vehicles);
         
         return sim;
     }

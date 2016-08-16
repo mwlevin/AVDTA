@@ -11,6 +11,7 @@ import avdta.gui.panels.DTAPane;
 import avdta.gui.panels.DemandPane;
 import avdta.gui.panels.NetworkPane;
 import avdta.dta.DTASimulator;
+import avdta.gui.panels.TransitPane;
 import avdta.project.DTAProject;
 import java.awt.GridBagLayout;
 import javax.swing.JFrame;
@@ -43,6 +44,7 @@ public class DTAGUI extends GUI
     private NetworkPane networkPane;
     private DemandPane demandPane;
     private DTAPane dtaPane;
+    private TransitPane transitPane;
     
     
     
@@ -63,10 +65,12 @@ public class DTAGUI extends GUI
         
         networkPane = new NetworkPane();
         demandPane = new DemandPane();
+        transitPane = new TransitPane();
         dtaPane = new DTAPane();
         
         tabs.add("Network", networkPane);
         tabs.add("Demand", demandPane);
+        tabs.add("Transit", transitPane);
         tabs.add("DTA", dtaPane);
         
         constrain(p, tabs, 0, 0, 1, 1);
@@ -141,6 +145,7 @@ public class DTAGUI extends GUI
         networkPane.setProject(project);
         demandPane.setProject(project);
         dtaPane.setProject(project);
+        transitPane.setProject(project);
         
         
         
@@ -235,6 +240,7 @@ public class DTAGUI extends GUI
         networkPane.reset();
         demandPane.reset();
         dtaPane.reset();
+        transitPane.reset();
     }
     
     public void createDatabase()

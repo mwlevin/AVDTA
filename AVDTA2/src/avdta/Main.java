@@ -44,9 +44,9 @@ public class Main
 {
     public static void main(String[] args) throws IOException
     {
-        transitTest2();
+        //transitTest2();
         //caccTest2();
-        //GUI.main(args);
+        GUI.main(args);
     }
     
     public static void caccTest2() throws IOException

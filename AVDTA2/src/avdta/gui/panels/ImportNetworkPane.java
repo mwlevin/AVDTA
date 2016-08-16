@@ -58,16 +58,24 @@ public class ImportNetworkPane extends JPanel
         {
             public void actionPerformed(ActionEvent e)
             {
-                try
+                setEnabled(false);
+                Thread t = new Thread()
                 {
-                    project.importNetworkFromSQL();
-                    project.loadSimulator();
-                    parent.reset();
-                }
-                catch(Exception ex)
-                {
-                    GUI.handleException(ex);
-                }
+                    public void run()
+                    {
+                        try
+                        {
+                            project.importNetworkFromSQL();
+                            project.loadSimulator();
+                            parent.reset();
+                        }
+                        catch(Exception ex)
+                        {
+                            GUI.handleException(ex);
+                        }
+                    }
+                };
+                t.start();
             }
         });
         
@@ -75,14 +83,24 @@ public class ImportNetworkPane extends JPanel
         {
             public void actionPerformed(ActionEvent e)
             {
-                try
+                setEnabled(false);
+                Thread t =  new Thread()
                 {
-                    project.exportNetworkToSQL();
-                }
-                catch(Exception ex)
-                {
-                    GUI.handleException(ex);
-                }
+                    public void run()
+                    {
+                        try
+                        {
+                            project.exportNetworkToSQL();
+                            setEnabled(true);
+                        }
+                        catch(Exception ex)
+                        {
+                            GUI.handleException(ex);
+                        }
+                    }
+                };
+                t.start();
+                
             }
         });
         
@@ -117,7 +135,6 @@ public class ImportNetworkPane extends JPanel
             public void valueChanged(File f)
             {
                 checkForOtherFiles(f);
-                import2.setEnabled(nodes.getFile() != null && linkdetails.getFile() != null && phases.getFile() != null);
             }
         };
         nodes = new JFileField(10, txtFiles, "data/")
@@ -125,7 +142,6 @@ public class ImportNetworkPane extends JPanel
             public void valueChanged(File f)
             {
                 checkForOtherFiles(f);
-                import2.setEnabled(nodes.getFile() != null && linkdetails.getFile() != null && phases.getFile() != null);
             }
         };
         signals = new JFileField(10, txtFiles, "data/")
@@ -133,7 +149,6 @@ public class ImportNetworkPane extends JPanel
             public void valueChanged(File f)
             {
                 checkForOtherFiles(f);
-                import2.setEnabled(nodes.getFile() != null && linkdetails.getFile() != null && phases.getFile() != null);
             }
         };
         elevation = new JFileField(10, txtFiles, "data/")
@@ -141,7 +156,6 @@ public class ImportNetworkPane extends JPanel
             public void valueChanged(File f)
             {
                 checkForOtherFiles(f);
-                import2.setEnabled(nodes.getFile() != null && linkdetails.getFile() != null && phases.getFile() != null);
             }
         };
         phases = new JFileField(10, txtFiles, "data/")
@@ -149,7 +163,6 @@ public class ImportNetworkPane extends JPanel
             public void valueChanged(File f)
             {
                 checkForOtherFiles(f);
-                import2.setEnabled(nodes.getFile() != null && linkdetails.getFile() != null && phases.getFile() != null);
             }
         };
         
@@ -158,14 +171,7 @@ public class ImportNetworkPane extends JPanel
         {
             public void actionPerformed(ActionEvent e)
             {
-                try
-                {
-                    importFromProject();
-                }
-                catch(IOException ex)
-                {
-                    GUI.handleException(ex);
-                }
+                importFromProject();
             }
         });
         
@@ -173,14 +179,7 @@ public class ImportNetworkPane extends JPanel
         {
             public void actionPerformed(ActionEvent e)
             {
-                try
-                {
-                    importFromVISTA();
-                }
-                catch(IOException ex)
-                {
-                    GUI.handleException(ex);
-                }
+                importFromVISTA();
             }
         });
         
@@ -201,15 +200,15 @@ public class ImportNetworkPane extends JPanel
         p.setLayout(new GridBagLayout());
         
         constrain(p, new JLabel("Import from VISTA"), 0, 0, 4, 1);
-        constrain(p, new JLabel("Nodes: "), 0, 1, 1, 1);
+        constrain(p, new JLabel("nodes: "), 0, 1, 1, 1);
         constrain(p, nodes, 1, 1, 1, 1);
-        constrain(p, new JLabel("Linkdetails: "), 0, 2, 1, 1);
+        constrain(p, new JLabel("linkdetails: "), 0, 2, 1, 1);
         constrain(p, linkdetails, 1, 2, 1, 1);
-        constrain(p, new JLabel("Phases: "), 0, 3, 1, 1);
+        constrain(p, new JLabel("phases: "), 0, 3, 1, 1);
         constrain(p, phases, 1, 3, 1, 1);
-        constrain(p, new JLabel("Signals: "), 0, 4, 1, 1);
+        constrain(p, new JLabel("signals: "), 0, 4, 1, 1);
         constrain(p, signals, 1, 4, 1, 1);
-        constrain(p, new JLabel("Elevation: "), 0, 5, 1, 1);
+        constrain(p, new JLabel("elevation: "), 0, 5, 1, 1);
         constrain(p, elevation, 1, 5, 1, 1);
         constrain(p, import2, 2, 1, 1, 4);
         
@@ -280,7 +279,10 @@ public class ImportNetworkPane extends JPanel
             ex.printStackTrace(System.err);
         }
         
+        import2.setEnabled(nodes.getFile() != null && linkdetails.getFile() != null && phases.getFile() != null && signals.getFile() != null);
+        
     }
+    
     public void setProject(Project project)
     {
         this.project = project;
@@ -295,49 +297,81 @@ public class ImportNetworkPane extends JPanel
         }
     }
     
-    public void importFromVISTA() throws IOException
+    public void importFromVISTA()
     {
         parent.setEnabled(false);
         
-        ImportFromVISTA read = new ImportFromVISTA(project, nodes.getFile(), linkdetails.getFile(), 
-                elevation.getFile(), phases.getFile(), signals.getFile());
+        Thread t = new Thread()
+        {
+            public void run()
+            {
+                try
+                {
+                    ImportFromVISTA read = new ImportFromVISTA(project, nodes.getFile(), linkdetails.getFile(), 
+                    elevation.getFile(), phases.getFile(), signals.getFile());
+
+                    project.loadSimulator();
+                    parent.reset();
+
+                    nodes.setFile(null);
+                    elevation.setFile(null);
+                    phases.setFile(null);
+                    linkdetails.setFile(null);
+                    signals.setFile(null);
+
+                    parent.setEnabled(true);
+                    parent.reset();
+                }
+                catch(IOException ex)
+                {
+                    GUI.handleException(ex);
+                }
+            }
+        };
+        t.start();
         
-        project.loadSimulator();
-        parent.reset();
-        
-        nodes.setFile(null);
-        elevation.setFile(null);
-        phases.setFile(null);
-        linkdetails.setFile(null);
-        
-        parent.setEnabled(true);
-        parent.reset();
     }
     
-    public void importFromProject() throws IOException
+    public void importFromProject()
     {
         parent.setEnabled(false);
         
-        Project rhs = new DTAProject(importFromProject.getFile());
+        Thread t = new Thread()
+        {
+            public void run()
+            {
+                try
+                {
+                    Project rhs = new DTAProject(importFromProject.getFile());
+
+                    project.importNetworkFromProject(rhs);
+                    project.loadSimulator();
+
+                    importFromProject.setFile(null);
+                    parent.reset();
+
+                    parent.setEnabled(true);
+                }
+                catch(IOException ex)
+                {
+                    GUI.handleException(ex);
+                }
+            }
+        };
+        t.start();
         
-        project.importNetworkFromProject(rhs);
-        project.loadSimulator();
-        
-        importFromProject.setFile(null);
-        parent.reset();
-        
-        parent.setEnabled(true);
     }
     
     
     public void setEnabled(boolean e)
     {
         import1.setEnabled(e && importFromProject.getFile() != null);
-        import2.setEnabled(e && nodes.getFile() != null && linkdetails.getFile() != null && phases.getFile() != null);
+        import2.setEnabled(e && nodes.getFile() != null && linkdetails.getFile() != null && phases.getFile() != null && signals.getFile() != null);
         elevation.setEnabled(e);
         linkdetails.setEnabled(e);
         nodes.setEnabled(e);
         phases.setEnabled(e);
+        signals.setEnabled(e);
         importFromProject.setEnabled(e);
         
         boolean sqlCheck = SQLLogin.hasSQL();
@@ -345,6 +379,11 @@ public class ImportNetworkPane extends JPanel
         sqlExport.setEnabled(e && sqlCheck);
         
         super.setEnabled(e);
+    }
+    
+    public void reset()
+    {
+        
     }
 
 }

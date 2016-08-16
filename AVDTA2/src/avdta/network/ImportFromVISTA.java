@@ -65,7 +65,7 @@ public class ImportFromVISTA
             int phaseid = filein.nextInt();
             String rest = filein.nextLine().trim();
             
-            fileout.println(nodeid+"\t0\t"+phaseid+"\t"+"\t"+rest);
+            fileout.println(nodeid+"\t1\t"+phaseid+"\t"+"\t"+rest);
             
             
         }
