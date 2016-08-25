@@ -84,30 +84,13 @@ public class DTAGUI extends GUI
         
         
         add(p);
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
         pack();
         setResizable(false);
         
 
         setLocationRelativeTo(null);
 
-        addWindowListener(new WindowAdapter()
-        {
-            public void windowClosing(WindowEvent e)
-            {
-                System.exit(0);
-            }
-        });
+        
         
         setVisible(true);
     }

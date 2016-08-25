@@ -47,6 +47,11 @@ public class DTAResults
         return mintt;
     }
     
+    protected void setMinTT(double m)
+    {
+        mintt = m;
+    }
+    
     // hours
     public double getTSTT()
     {

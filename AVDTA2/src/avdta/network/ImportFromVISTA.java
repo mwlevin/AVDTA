@@ -21,12 +21,36 @@ import java.util.Scanner;
  */
 public class ImportFromVISTA 
 {
-    public ImportFromVISTA(Project project, File nodes, File linkdetails, File elevation, File phases, File signals) throws IOException
+    public ImportFromVISTA(Project project, File nodes, File linkdetails, File elevation, File phases, File signals, File linkpoints) throws IOException
     {
         convertNodes(project, nodes, elevation);
         convertLinks(project, linkdetails);
         convertPhases(project, phases);
         convertSignals(project, signals);
+        convertLinkPoints(project, linkpoints);
+    }
+    
+    public void convertLinkPoints(Project project, File input) throws IOException
+    {
+        PrintStream fileout = new PrintStream(new FileOutputStream(project.getLinkPointsFile()), true);
+        
+        Scanner filein = new Scanner(input);
+        
+        fileout.println(ReadNetwork.getLinkPointsFileHeader());
+        
+        while(filein.hasNextInt())
+        {
+            int id = filein.nextInt();
+            String points = filein.nextLine().trim();
+            
+            // remove []
+            points = points.substring(0, points.length()-1);
+            
+
+            fileout.println(id+"\t"+points);
+        }
+        filein.close();
+        fileout.close();
     }
     
     public void convertSignals(Project project, File signals) throws IOException

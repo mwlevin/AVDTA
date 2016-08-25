@@ -46,7 +46,7 @@ public class DTASimulator extends Simulator
         
         iteration = 1;
     }
-    public DTASimulator(DTAProject project, List<Node> nodes, List<Link> links)
+    public DTASimulator(DTAProject project, Set<Node> nodes, Set<Link> links)
     {
         super(project, nodes, links);
         
@@ -470,6 +470,11 @@ public class DTASimulator extends Simulator
 
             double stepsize = 1.0/iteration;
             output = pathgen(stepsize);
+            
+            if(iteration == 1)
+            {
+                output.setMinTT(0);
+            }
 
 
             time = System.nanoTime() - time;

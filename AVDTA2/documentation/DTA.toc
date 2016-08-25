@@ -24,26 +24,27 @@
 \contentsline {subsection}{\numberline {3.2.4}GUI panel}{11}{subsection.3.2.4}
 \contentsline {section}{\numberline {3.3}Links}{12}{section.3.3}
 \contentsline {subsection}{\numberline {3.3.1}\texttt {links.txt}}{12}{subsection.3.3.1}
-\contentsline {subsection}{\numberline {3.3.2}GUI}{13}{subsection.3.3.2}
+\contentsline {subsection}{\numberline {3.3.2}\texttt {link\_coordinates.txt}}{13}{subsection.3.3.2}
+\contentsline {subsection}{\numberline {3.3.3}GUI}{14}{subsection.3.3.3}
 \contentsline {section}{\numberline {3.4}Import network}{15}{section.3.4}
-\contentsline {chapter}{\numberline {4}Transit}{17}{chapter.4}
-\contentsline {section}{\numberline {4.1}Introduction}{17}{section.4.1}
-\contentsline {section}{\numberline {4.2}Files}{17}{section.4.2}
-\contentsline {subsection}{\numberline {4.2.1}\texttt {bus.txt}}{17}{subsection.4.2.1}
-\contentsline {subsection}{\numberline {4.2.2}\texttt {bus\_route\_link.txt}}{18}{subsection.4.2.2}
-\contentsline {subsection}{\numberline {4.2.3}\texttt {bus\_frequency.txt}}{18}{subsection.4.2.3}
-\contentsline {subsection}{\numberline {4.2.4}\texttt {bus\_period.txt}}{19}{subsection.4.2.4}
-\contentsline {section}{\numberline {4.3}GUI}{19}{section.4.3}
-\contentsline {chapter}{\numberline {5}Demand}{20}{chapter.5}
-\contentsline {section}{\numberline {5.1}Introduction}{20}{section.5.1}
-\contentsline {section}{\numberline {5.2}Files}{20}{section.5.2}
-\contentsline {subsection}{\numberline {5.2.1}\texttt {static\_od.txt}}{20}{subsection.5.2.1}
-\contentsline {subsection}{\numberline {5.2.2}\texttt {dynamic\_od.txt}}{21}{subsection.5.2.2}
-\contentsline {subsection}{\numberline {5.2.3}\texttt {demand\_profile.txt}}{21}{subsection.5.2.3}
-\contentsline {subsection}{\numberline {5.2.4}\texttt {demand.txt}}{22}{subsection.5.2.4}
-\contentsline {section}{\numberline {5.3}GUI}{22}{section.5.3}
-\contentsline {subsection}{\numberline {5.3.1}Import demand}{22}{subsection.5.3.1}
-\contentsline {subsection}{\numberline {5.3.2}Creating demand}{24}{subsection.5.3.2}
-\contentsline {chapter}{\numberline {6}Dynamic traffic assignment}{27}{chapter.6}
-\contentsline {chapter}{\numberline {A}Abbreviations}{29}{Appendix.1.A}
-\contentsline {chapter}{References}{29}{table.1.A.1}
+\contentsline {chapter}{\numberline {4}Transit}{18}{chapter.4}
+\contentsline {section}{\numberline {4.1}Introduction}{18}{section.4.1}
+\contentsline {section}{\numberline {4.2}Files}{18}{section.4.2}
+\contentsline {subsection}{\numberline {4.2.1}\texttt {bus.txt}}{18}{subsection.4.2.1}
+\contentsline {subsection}{\numberline {4.2.2}\texttt {bus\_route\_link.txt}}{19}{subsection.4.2.2}
+\contentsline {subsection}{\numberline {4.2.3}\texttt {bus\_frequency.txt}}{19}{subsection.4.2.3}
+\contentsline {subsection}{\numberline {4.2.4}\texttt {bus\_period.txt}}{20}{subsection.4.2.4}
+\contentsline {section}{\numberline {4.3}GUI}{20}{section.4.3}
+\contentsline {chapter}{\numberline {5}Demand}{21}{chapter.5}
+\contentsline {section}{\numberline {5.1}Introduction}{21}{section.5.1}
+\contentsline {section}{\numberline {5.2}Files}{21}{section.5.2}
+\contentsline {subsection}{\numberline {5.2.1}\texttt {static\_od.txt}}{21}{subsection.5.2.1}
+\contentsline {subsection}{\numberline {5.2.2}\texttt {dynamic\_od.txt}}{22}{subsection.5.2.2}
+\contentsline {subsection}{\numberline {5.2.3}\texttt {demand\_profile.txt}}{22}{subsection.5.2.3}
+\contentsline {subsection}{\numberline {5.2.4}\texttt {demand.txt}}{23}{subsection.5.2.4}
+\contentsline {section}{\numberline {5.3}GUI}{23}{section.5.3}
+\contentsline {subsection}{\numberline {5.3.1}Import demand}{23}{subsection.5.3.1}
+\contentsline {subsection}{\numberline {5.3.2}Creating demand}{25}{subsection.5.3.2}
+\contentsline {chapter}{\numberline {6}Dynamic traffic assignment}{28}{chapter.6}
+\contentsline {chapter}{\numberline {A}Abbreviations}{30}{Appendix.1.A}
+\contentsline {chapter}{References}{30}{table.1.A.1}

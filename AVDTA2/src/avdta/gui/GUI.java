@@ -5,6 +5,7 @@
  */
 package avdta.gui;
 
+import avdta.gui.editor.Editor;
 import avdta.gui.util.Version;
 import java.awt.Color;
 import java.awt.Image;
@@ -21,6 +22,8 @@ import avdta.project.Project;
 import avdta.project.SQLLogin;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JMenu;
@@ -43,8 +46,8 @@ public abstract class GUI extends JFrame
     public static void main(String[] args) throws IOException
     {
         //System.setErr(new PrintStream(new FileOutputStream(new File("error_log.txt")), true));
-        
-        new DTAGUI();
+        // new Start();
+        new Editor();
         
     }
     
@@ -98,8 +101,8 @@ public abstract class GUI extends JFrame
     
     public GUI()
     {
-        setTitle("AVDTA");
-        setIconImage(GUI.getIcon());
+        setTitle(getTitleName());
+        setIconImage(getIcon());
         
         frame = this;
         
@@ -221,6 +224,14 @@ public abstract class GUI extends JFrame
         menu.add(me);
         
         this.setJMenuBar(menu);
+        
+        addWindowListener(new WindowAdapter()
+        {
+            public void windowClosing(WindowEvent e)
+            {
+                System.exit(0);
+            }
+        });
     }
     
     public abstract void newProject();
@@ -239,5 +250,10 @@ public abstract class GUI extends JFrame
     public void setupSQL()
     {
         
+    }
+    
+    public static String getTitleName()
+    {
+        return "AVDTA";
     }
 }

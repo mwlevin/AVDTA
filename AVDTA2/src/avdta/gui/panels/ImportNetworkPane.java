@@ -35,7 +35,7 @@ public class ImportNetworkPane extends JPanel
     private NetworkPane parent;
     
     private JFileField importFromProject;
-    private JFileField linkdetails, nodes, elevation, phases, signals;
+    private JFileField linkdetails, nodes, elevation, phases, signals, linkpoints;
     
     private JButton import1;
     private JButton import2;
@@ -144,6 +144,13 @@ public class ImportNetworkPane extends JPanel
                 checkForOtherFiles(f);
             }
         };
+        linkpoints = new JFileField(10, txtFiles, "data/")
+        {
+            public void valueChanged(File f)
+            {
+                checkForOtherFiles(f);
+            }
+        };
         signals = new JFileField(10, txtFiles, "data/")
         {
             public void valueChanged(File f)
@@ -202,15 +209,17 @@ public class ImportNetworkPane extends JPanel
         constrain(p, new JLabel("Import from VISTA"), 0, 0, 4, 1);
         constrain(p, new JLabel("nodes: "), 0, 1, 1, 1);
         constrain(p, nodes, 1, 1, 1, 1);
-        constrain(p, new JLabel("linkdetails: "), 0, 2, 1, 1);
-        constrain(p, linkdetails, 1, 2, 1, 1);
-        constrain(p, new JLabel("phases: "), 0, 3, 1, 1);
-        constrain(p, phases, 1, 3, 1, 1);
-        constrain(p, new JLabel("signals: "), 0, 4, 1, 1);
-        constrain(p, signals, 1, 4, 1, 1);
-        constrain(p, new JLabel("elevation: "), 0, 5, 1, 1);
-        constrain(p, elevation, 1, 5, 1, 1);
-        constrain(p, import2, 2, 1, 1, 4);
+        constrain(p, new JLabel("links: "), 0, 2, 1, 1);
+        constrain(p, linkpoints, 1, 2, 1, 1);
+        constrain(p, new JLabel("linkdetails: "), 0, 3, 1, 1);
+        constrain(p, linkdetails, 1, 3, 1, 1);
+        constrain(p, new JLabel("phases: "), 0, 4, 1, 1);
+        constrain(p, phases, 1, 4, 1, 1);
+        constrain(p, new JLabel("signals: "), 0, 5, 1, 1);
+        constrain(p, signals, 1, 5, 1, 1);
+        constrain(p, new JLabel("elevation: "), 0, 6, 1, 1);
+        constrain(p, elevation, 1, 6, 1, 1);
+        constrain(p, import2, 2, 1, 1, 7);
         
         constrain(this, p, 0, 2, 1, 1);
         
@@ -265,6 +274,14 @@ public class ImportNetworkPane extends JPanel
                     phases.setFile(file);
                 }
             }
+            if(linkpoints.getFile() == null)
+            {
+                File file = new File(dir+"/links.txt");
+                if(file.exists())
+                {
+                    linkpoints.setFile(file);
+                }
+            }
             if(elevation.getFile() == null)
             {
                 File file = new File(dir+"/elevation.txt");
@@ -308,7 +325,7 @@ public class ImportNetworkPane extends JPanel
                 try
                 {
                     ImportFromVISTA read = new ImportFromVISTA(project, nodes.getFile(), linkdetails.getFile(), 
-                    elevation.getFile(), phases.getFile(), signals.getFile());
+                    elevation.getFile(), phases.getFile(), signals.getFile(), linkpoints.getFile());
 
                     project.loadSimulator();
                     parent.reset();
@@ -372,6 +389,7 @@ public class ImportNetworkPane extends JPanel
         nodes.setEnabled(e);
         phases.setEnabled(e);
         signals.setEnabled(e);
+        linkpoints.setEnabled(e);
         importFromProject.setEnabled(e);
         
         boolean sqlCheck = SQLLogin.hasSQL();

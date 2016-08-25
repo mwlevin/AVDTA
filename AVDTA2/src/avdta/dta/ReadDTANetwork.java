@@ -51,8 +51,8 @@ public class ReadDTANetwork extends ReadNetwork
     public DTASimulator readNetwork(DTAProject project) throws IOException
     {
         readOptions(project);
-        List<Node> nodes = readNodes(project);
-        List<Link> links = readLinks(project);
+        Set<Node> nodes = readNodes(project);
+        Set<Link> links = readLinks(project);
         
         readIntersections(project);
         readPhases(project);

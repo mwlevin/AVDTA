@@ -55,8 +55,8 @@ public class ReadSAVNetwork extends ReadNetwork
     public SAVSimulator readNetwork(SAVProject project) throws IOException
     {
         readOptions(project);
-        List<Node> nodes = readNodes(project);
-        List<Link> links = readLinks(project);
+        Set<Node> nodes = readNodes(project);
+        Set<Link> links = readLinks(project);
         
         readIntersections(project);
         readPhases(project);
@@ -80,7 +80,7 @@ public class ReadSAVNetwork extends ReadNetwork
      * When origins/destinations have separate zones, this attempts to link these separated zones. Origins are expected to have id of 100000+x, with corresponding destination id of 200000+x. Linked zones can be accessed from {@link Zone}.
      * @param sim 
      */
-    public void linkZones(List<Node> nodes)
+    public void linkZones(Set<Node> nodes)
     {
         for(int id : zones.keySet())
         {
@@ -171,9 +171,9 @@ public class ReadSAVNetwork extends ReadNetwork
 
     
     
-    public List<Node> replaceZones(List<Node> nodes) throws IOException
+    public Set<Node> replaceZones(Set<Node> nodes) throws IOException
     {
-        ArrayList<Node> nodes2 = new ArrayList<Node>();
+        Set<Node> nodes2 = new HashSet<Node>();
         
         for(Node n : nodes)
         {
@@ -219,7 +219,7 @@ public class ReadSAVNetwork extends ReadNetwork
      * After linking zones, if some origins/destinations lack a counterpart, this creates the missing origins/destinations as well as their centroid connectors.
      * @param sim 
      */
-    public void createMissingZones(List<Node> nodes, List<Link> links)
+    public void createMissingZones(Set<Node> nodes, Set<Link> links)
     {
         for(int id : zones.keySet())
         {

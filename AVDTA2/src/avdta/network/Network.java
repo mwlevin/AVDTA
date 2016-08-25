@@ -34,8 +34,8 @@ public class Network
     public static boolean dlr;  
     
     
-    public List<Node> nodes;
-    public List<Link> links;
+    public Set<Node> nodes;
+    public Set<Link> links;
     
     protected static boolean HVs_use_reservations = false;
     
@@ -45,9 +45,9 @@ public class Network
     
     public Network()
     {
-        this(new ArrayList<Node>(), new ArrayList<Link>());
+        this(new HashSet<Node>(), new HashSet<Link>());
     }
-    public Network(List<Node> nodes, List<Link> links)
+    public Network(Set<Node> nodes, Set<Link> links)
     {
         setNetwork(nodes, links);
         
@@ -60,7 +60,7 @@ public class Network
         return HVs_use_reservations;
     }
     
-    public void setNodes(List<Node> nodes)
+    public void setNodes(Set<Node> nodes)
     {
         this.nodes = nodes;
         
@@ -70,12 +70,17 @@ public class Network
         }
     }
     
+    public Set<Link> getLinks()
+    {
+        return links;
+    }
+    
     public void setHVsUseReservations(boolean h)
     {
         HVs_use_reservations = h;
     }
     
-    public void setLinks(List<Link> links)
+    public void setLinks(Set<Link> links)
     {
         this.links = links;
         
@@ -101,7 +106,7 @@ public class Network
         
     }
     
-    public void setNetwork(List<Node> nodes, List<Link> links)
+    public void setNetwork(Set<Node> nodes, Set<Link> links)
     {
         setNodes(nodes);
         setLinks(links);
@@ -112,7 +117,7 @@ public class Network
     	link_dijkstras = l;
     }
     
-    public List<Node> getNodes()
+    public Set<Node> getNodes()
     {
         return nodes;
     }

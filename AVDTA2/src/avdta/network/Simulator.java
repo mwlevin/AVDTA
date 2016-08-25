@@ -122,7 +122,7 @@ public class Simulator extends Network
         vehicles = new ArrayList<Vehicle>();
         active = this;
     }
-    public Simulator(Project project, List<Node> nodes, List<Link> links)
+    public Simulator(Project project, Set<Node> nodes, Set<Link> links)
     {
         super(nodes, links);
         
@@ -218,10 +218,7 @@ public class Simulator extends Network
         return vehicles.size();
     }
     
-    public List<Link> getLinks()
-    {
-        return links;
-    }
+    
     
     
     

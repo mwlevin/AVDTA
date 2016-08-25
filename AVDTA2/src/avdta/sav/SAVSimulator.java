@@ -63,7 +63,7 @@ public class SAVSimulator extends Simulator
     }
     
     
-    public SAVSimulator(SAVProject project, List<Node> nodes, List<Link> links)
+    public SAVSimulator(SAVProject project, Set<Node> nodes, Set<Link> links)
     {
         super(project, nodes, links);
         
@@ -146,7 +146,7 @@ public class SAVSimulator extends Simulator
     {
         super.initialize();
         
-        List<Node> nodes = getNodes();
+        Set<Node> nodes = getNodes();
         
         for(Node n : nodes)
         {

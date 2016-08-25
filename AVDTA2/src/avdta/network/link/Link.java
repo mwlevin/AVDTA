@@ -11,6 +11,7 @@ import avdta.vehicle.Vehicle;
 import avdta.network.Network;
 import avdta.network.Simulator;
 import avdta.network.node.Intersection;
+import avdta.network.node.Location;
 import avdta.network.node.TBR;
 import avdta.vehicle.DriverType;
 import avdta.vehicle.fuel.ICV;
@@ -88,6 +89,8 @@ public abstract class Link implements Serializable, Comparable<Link>
     // upstream cumulative count
     public int[] flowin;
     
+    private Location[] coords;
+    
     public Link(int id, Node source, Node dest, double capacity, double ffspd, double wavespd, double jamd, double length, int numLanes)
     {
         this.id = id;
@@ -104,6 +107,11 @@ public abstract class Link implements Serializable, Comparable<Link>
         
         source.addLink(this);
         dest.addLink(this);
+        
+        coords = new Location[2];
+        coords[0] = source;
+        coords[1] = dest;
+        
         
         
         
@@ -123,6 +131,23 @@ public abstract class Link implements Serializable, Comparable<Link>
         
         flowin = new int[(int)Math.ceil((double)Simulator.duration / Simulator.ast_duration)+1];
         
+    }
+    
+    public void setCoordinates(Location[] array)
+    {
+        coords = array;
+    }
+    
+    public void setCoordinates(List<Location> list)
+    {
+        coords = new Location[list.size()];
+        
+        int idx = 0;
+        
+        for(Location l : list)
+        {
+            coords[idx++] = l;
+        }
     }
     
     /**
@@ -227,6 +252,10 @@ public abstract class Link implements Serializable, Comparable<Link>
         return 1.0;
     }
     
+    public Location[] getCoordinates()
+    {
+        return coords;
+    }
     
     public void setCapacity(double capacity)
     {

@@ -122,9 +122,9 @@ public class TransitViewPane extends JPanel
                 }
             }
             
-            data.append(total+"\t buses\n");
+            data.append(total+"\tbuses\n");
             data.append("\n"+(total-AV)+"\tHVs\n");
-            data.append(AV+"\t AVs\n");
+            data.append(AV+"\tAVs\n");
             setEnabled(true);
         }
         else

@@ -15,7 +15,7 @@ A \textit{network} in AVDTA defines the road structure through which vehicles ca
 
 A network consists of \textit{nodes} and (directed) \textit{links} connecting nodes. Nodes are further divided into \textit{intersections}, which connect roads, and \textit{zones}, where demand and vehicles can enter or exit the network. AVDTA includes several options for intersection controls and link flow models, which are discussed in Sections \ref{sec:nodes} and \ref{sec:links}, respectively. The discussion in this document pertains to using and modifying node and link data within AVDTA. References to the theoretical developments of flow models are included.
 
-Network data files are contained in the \texttt{network} subfolder within a project folder. Network files include \texttt{nodes.txt}, \texttt{links.txt}, and \texttt{phases.txt} (which defines signal phases for nodes). All data files include a header as the first line. 
+Network data files are contained in the \texttt{network} subfolder within a project folder. Network files include \texttt{nodes.txt}, \texttt{links.txt}, \texttt{link\_coordinates.txt}. \texttt{signals.txt}, and \texttt{phases.txt} (which defines signal phases for nodes). All data files include a header as the first line. 
 
 \section{Nodes}
 \label{sec:nodes}
@@ -150,6 +150,23 @@ Standard CTM is achieved through type 100 with HVs.
 Note that for centroid connectors, the free flow travel time does not depend on the length and free flow speed, but is a constant 1 time step. Also, centroid connectors are not restricted by wavespeed or capacity limitations. 
 
 With CTM, the minimum number of cells per link is two. This means the minimum free flow travel time is two time steps.
+
+\subsection{\texttt{link\_coordinates.txt}}
+The \texttt{link\_coordinates.txt} file contains an optional list of coordinates for each link used for display purposes only. The contents of this file will not affect simulation results. The columns are
+\begin{center}
+\begin{tabular}{cc}
+\hline
+id & coordinates\\\hline
+\end{tabular}
+\end{center}
+\paragraph*{id} The id of the link. This corresponds to the id used in the \texttt{links.txt} file.
+\paragraph*{coordinates} The list of coordinates used to display the link. Each coordinate should be surrounded by parentheses, with the $x$ and $y$ components separated by a comma. The list of coordinates should be delimited by commas. An example is
+\begin{center}
+\texttt{[(-97.7388,30.2788),(-97.739,30.2783)]}
+\end{center} 
+The default link visualization is a straight line from the source node to the destination node. If used, these coordinates will replace the link visualization, so it is advisable to include the source and destination node coordinates in the list.
+
+
 
 \subsection{GUI}
 

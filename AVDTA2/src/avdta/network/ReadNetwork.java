@@ -141,8 +141,8 @@ public class ReadNetwork
     public Simulator readNetwork(Project project) throws IOException
     {
         readOptions(project);
-        List<Node> nodes = readNodes(project);
-        List<Link> links = readLinks(project);
+        Set<Node> nodes = readNodes(project);
+        Set<Link> links = readLinks(project);
         
         readIntersections(project);
         readPhases(project);
@@ -446,9 +446,9 @@ public class ReadNetwork
         }
     }
     
-    public List<Node> readNodes(Project project) throws IOException
+    public Set<Node> readNodes(Project project) throws IOException
     {
-        List<Node> nodes = new ArrayList<Node>();
+        Set<Node> nodes = new HashSet<Node>();
         
         Scanner filein = new Scanner(project.getNodesFile());
         
@@ -484,9 +484,9 @@ public class ReadNetwork
     
     
     
-    public List<Link> readLinks(Project project) throws IOException
+    public Set<Link> readLinks(Project project) throws IOException
     {
-        List<Link> links = new ArrayList<Link>();
+        Set<Link> links = new HashSet<Link>();
         
         
         
@@ -571,6 +571,36 @@ public class ReadNetwork
             linksmap.put(id, link);
         }
         
+        filein.close();
+        
+        
+        filein = new Scanner(project.getLinkPointsFile());
+        
+        filein.nextLine();
+        
+        while(filein.hasNextInt())
+        {
+            int id = filein.nextInt();
+            String points = filein.nextLine().trim();
+
+            // create list of locations
+            ArrayList<Location> list = new ArrayList<Location>();
+            
+            while(points.indexOf(')')>0)
+            {
+                String point = points.substring(points.indexOf('(')+1, points.indexOf(')'));
+                points = points.substring(points.indexOf(')')+1);
+                
+                String x = point.substring(0, point.indexOf(','));
+                String y = point.substring(point.indexOf(',')+1);
+                
+                Location loc = new Location(Double.parseDouble(x), Double.parseDouble(y));
+                
+                list.add(loc);
+            }
+            
+            linksmap.get(id).setCoordinates(list);
+        }
         filein.close();
 
         return links;
@@ -871,6 +901,11 @@ public class ReadNetwork
     public static String getNodesFileHeader()
     {
         return "id\ttype\tlongitude\tlatitude\televation";
+    }
+    
+    public static String getLinkPointsFileHeader()
+    {
+        return "id\tcoordinates";
     }
     
     public static String getPhasesFileHeader()

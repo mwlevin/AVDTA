@@ -316,6 +316,10 @@ public abstract class Project
         fileout = new PrintStream(new FileOutputStream(getSignalsFile()), true);
         fileout.println(ReadNetwork.getNodesFileHeader());
         fileout.close();
+        
+        fileout = new PrintStream(new FileOutputStream(getLinkPointsFile()), true);
+        fileout.println(ReadNetwork.getLinkPointsFileHeader());
+        fileout.close();
     }
     
     public void fillOptions()
@@ -396,6 +400,11 @@ public abstract class Project
     public File getNodesFile()
     {
         return new File(getProjectDirectory()+"/network/nodes.txt");
+    }
+    
+    public File getLinkPointsFile()
+    {
+        return new File(getProjectDirectory()+"/network/link_coordinates.txt");
     }
     
     public File getPropertiesFile()

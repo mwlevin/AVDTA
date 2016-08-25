@@ -44,9 +44,9 @@ public class Main
 {
     public static void main(String[] args) throws IOException
     {
-        transitTest2();
+        //transitTest2();
         //caccTest2();
-        //GUI.main(args);
+        GUI.main(args);
     }
     
     public static void caccTest2() throws IOException
@@ -142,8 +142,8 @@ public class Main
         project.createProject("transit", new File("projects/transit"));
         DTASimulator sim = project.createEmptySimulator();
         
-        List<Node> nodes = new ArrayList<Node>();
-        List<Link> links = new ArrayList<Link>();
+        Set<Node> nodes = new HashSet<Node>();
+        Set<Link> links = new HashSet<Link>();
         
         Node n5 = new Intersection(5, new Location(0, 0), new PriorityTBR(new TransitFirst()));
         
@@ -307,8 +307,8 @@ public class Main
         project.createProject("transit", new File("projects/transit"));
         DTASimulator sim = project.createEmptySimulator();
         
-        List<Node> nodes = new ArrayList<Node>();
-        List<Link> links = new ArrayList<Link>();
+        Set<Node> nodes = new HashSet<Node>();
+        Set<Link> links = new HashSet<Link>();
         
         
         Node n1 = new Zone(1);
