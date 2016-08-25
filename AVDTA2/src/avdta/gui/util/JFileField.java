@@ -51,21 +51,12 @@ public class JFileField extends JTextField
                 }
             }
         });
-        
+        setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
     }
     
     public void setEnabled(boolean e)
     {
         super.setEnabled(e);
-        
-        if(e)
-        {
-           setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        }
-        else
-        {
-            setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
-        }
     }
     
     public File chooseFile()

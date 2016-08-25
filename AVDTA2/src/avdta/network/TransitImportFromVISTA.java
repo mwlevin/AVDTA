@@ -81,6 +81,8 @@ public class TransitImportFromVISTA
             int period = filein.nextInt();
             int frequency = filein.nextInt();
             int offset = filein.nextInt();
+            int preemption = filein.nextInt();
+            filein.nextLine();
             
             fileout.println(route+"\t"+period+"\t"+frequency+"\t"+offset);
         }
@@ -101,16 +103,19 @@ public class TransitImportFromVISTA
             int sequence = filein.nextInt();
             int link = filein.nextInt();
             
-            int next = filein.nextInt();
-            
             boolean stop = false;
-            int dwell = 0;
             
-            if(next > 0)
+            if(filein.hasNextInt())
             {
                 stop = true;
-                dwell = filein.nextInt();
             }
+            else
+            {
+                filein.next();
+            }
+
+            int dwell = filein.nextInt();
+            
             
             filein.nextLine();
             

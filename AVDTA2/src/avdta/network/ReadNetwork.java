@@ -203,13 +203,13 @@ public class ReadNetwork
             
             if(period == null)
             {
-                throw new RuntimeException("Period not found - "+periodId);
+                throw new RuntimeException("Period not found - "+periodId+" "+routeId);
             }
             
             int starttime = period[0];
             int endtime = period[1];
             
-            for(int t = starttime + offset; t < endtime; t++)
+            for(int t = starttime + offset; t < endtime; t+=frequency)
             {
                 fileout.println((++curr_id)+"\t"+type+"\t"+routeId+"\t"+t);
             }
@@ -271,9 +271,9 @@ public class ReadNetwork
                 Object[] data = temp.get(seq);
                 Link link = linksmap.get((Integer)data[0]);
                 boolean stop = (Boolean)data[1];
-                double dwelltime = (Double)data[2];
+                int dwelltime = (Integer)data[2];
                 
-                if(route.get(route.size()-1).getDest() != link.getSource())
+                if(route.size() > 0 && route.get(route.size()-1).getDest() != link.getSource())
                 {
                     throw new RuntimeException("Route "+routeid+" is not connected around links "+route.get(route.size()-1).getId()+" and "+link.getId());
                 }
@@ -357,6 +357,8 @@ public class ReadNetwork
             }
             
             Bus bus = new Bus(id, routeid, dtime, routes.get(routeid), routeStops.get(routeid), vehClass, driver);
+            
+            vehicles.add(bus);
         }
         filein.close();
         

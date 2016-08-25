@@ -283,6 +283,7 @@ public class ImportTransitPane extends JPanel
         sqlExport.setEnabled(e && sqlCheck);
         
         super.setEnabled(e);
+
     }
     
     public void importFromVISTA() throws IOException
@@ -336,7 +337,7 @@ public class ImportTransitPane extends JPanel
 
             if(bus.getFile() == null)
             {
-                File file = new File(dir+"/nodes.txt");
+                File file = new File(dir+"/bus.txt");
                 if(file.exists())
                 {
                     bus.setFile(file);
@@ -344,7 +345,7 @@ public class ImportTransitPane extends JPanel
             }
             if(busfrequency.getFile() == null)
             {
-                File file = new File(dir+"/linkdetails.txt");
+                File file = new File(dir+"/bus_frequency.txt");
                 if(file.exists())
                 {
                     busfrequency.setFile(file);
@@ -352,7 +353,7 @@ public class ImportTransitPane extends JPanel
             }
             if(busperiod.getFile() == null)
             {
-                File file = new File(dir+"/signals.txt");
+                File file = new File(dir+"/bus_period.txt");
                 if(file.exists())
                 {
                     busperiod.setFile(file);
@@ -360,7 +361,7 @@ public class ImportTransitPane extends JPanel
             }
             if(busroutelink.getFile() == null)
             {
-                File file = new File(dir+"/phases.txt");
+                File file = new File(dir+"/bus_route_link.txt");
                 if(file.exists())
                 {
                     busroutelink.setFile(file);

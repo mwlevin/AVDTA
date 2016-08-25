@@ -42,6 +42,7 @@ public class ReadDTANetwork extends ReadNetwork
 {
    
     
+    
     public ReadDTANetwork()
     {
         super();
@@ -61,6 +62,7 @@ public class ReadDTANetwork extends ReadNetwork
         
         sim.initialize();
         
+        vehicles = new ArrayList<Vehicle>();
         readTransit(project);
         readVehicles(project);
         
@@ -261,7 +263,7 @@ public class ReadDTANetwork extends ReadNetwork
     
     public List<Vehicle> readVehicles(DTAProject project) throws IOException
     {
-        List<Vehicle> vehicles = new ArrayList<Vehicle>();
+        
         
         Scanner filein = new Scanner(project.getDemandFile());
         
