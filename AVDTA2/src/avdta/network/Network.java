@@ -150,6 +150,30 @@ public class Network
         return null;
     }
     
+    public Node findNode(int id)
+    {
+        for(Node n : nodes)
+        {
+            if(n.getId() == id)
+            {
+                return n;
+            }
+        }
+        return null;
+    }
+    
+    public Link findLink(int id)
+    {
+        for(Link l : links)
+        {
+            if(l.getId() == id)
+            {
+                return l;
+            }
+        }
+        return null;
+    }
+    
     public Path findPath(Node o, Node d)
     {
         return findPath(o, d, 0, 0, DriverType.AV, costFunc);
@@ -202,11 +226,10 @@ public class Network
         for(Link l : o.getOutgoing())
         {
             double tt = l.getAvgTT(dep_time);
-            l.arr_time = (int)(dep_time + tt);
-            double fuel = l.getAvgFuel(dep_time);
+            l.arr_time = (int)(dep_time);
             
-            //l.label = vot * (tt / 3600) + fuel;
-            l.label = tt + 10;
+            
+            l.label = costFunc.cost(l, vot, dep_time);
             
             Q.add(l);
         }

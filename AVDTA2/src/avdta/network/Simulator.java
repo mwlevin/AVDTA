@@ -455,9 +455,31 @@ public class Simulator extends Network
         
         for(Vehicle v : vehicles)
         {
-            boolean matches = false;
-            
             if(v.getDriver().matches(type))
+            {
+                count++;
+                total += v.getTT();
+            }
+        }
+        
+        if(count > 0)
+        {
+            return total/count;
+        }
+        else
+        {
+            return 0;
+        }
+    }
+    
+    public double getAvgBusTT(boolean transit)
+    {
+        double total = 0.0;
+        int count = 0;
+        
+        for(Vehicle v : vehicles)
+        {
+            if(v.isTransit() == transit)
             {
                 count++;
                 total += v.getTT();

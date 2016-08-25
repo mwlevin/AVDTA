@@ -259,6 +259,18 @@ public class DTASimulator extends Simulator
         return currAssign;
     }
     
+    public Vehicle findVehicle(int id)
+    {
+        for(Vehicle v : vehicles)
+        {
+            if(v.getId() == id)
+            {
+                return v;
+            }
+        }
+        return null;
+    }
+    
     public void addVehicles()
     {
         List<Vehicle> vehicles = getVehicles();
@@ -491,11 +503,16 @@ public class DTASimulator extends Simulator
         out.println(String.format("TSTT\t%.1f", getTSTT()/3600.0)+"\thr\nAvg. TT\t"+String.format("%.2f", getTSTT() / 60 / vehicles.size())+"\tmin/veh");
         
         fileout.println(String.format("TSTT\t%.1f", getTSTT()/3600.0)+"\thr\nAvg. TT\t"+String.format("%.2f", getTSTT() / 60 / vehicles.size())+"\tmin/veh");
+        fileout.println();
         fileout.println("Energy:\t"+getTotalEnergy());
         fileout.println("VMT:\t"+getTotalVMT());
         fileout.println("MPG:\t"+(getTotalVMT() / (getTotalEnergy() / VehicleClass.E_PER_GALLON)));
+        fileout.println();
         fileout.println("HV TT:\t"+(getAvgTT(DriverType.HV)/60)+"\tmin");
         fileout.println("AV TT:\t"+(getAvgTT(DriverType.AV)/60)+"\tmin");
+        fileout.println();
+        fileout.println("DA TT:\t"+(getAvgBusTT(false)/60)+"\tmin");
+        fileout.println("Bus TT:\t"+(getAvgBusTT(true)/60)+"\tmin");
         
         fileout.close();
         
