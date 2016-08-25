@@ -44,9 +44,9 @@ public class Main
 {
     public static void main(String[] args) throws IOException
     {
-        //transitTest2();
+        transitTest2();
         //caccTest2();
-        GUI.main(args);
+        //GUI.main(args);
     }
     
     public static void caccTest2() throws IOException
@@ -124,13 +124,13 @@ public class Main
     
     public static void transitTest2() throws IOException
     {
-        transitTest2(1200, 200);
+
         
         PrintStream fileout = new PrintStream(new FileOutputStream(new File("shared_transit3.txt")), true);
         fileout.println("DA rate\tDA TT\tBus TT");
-        for(int rate = 100; rate <= 1400; rate += 50)
+        for(int rate = 100; rate <= 1600; rate += 50)
         {
-            double[] temp = transitTest2(rate, 200);
+            double[] temp = transitTest2(rate, 20);
             fileout.println(rate+"\t"+temp[0]+"\t"+temp[1]);
         }
         
@@ -149,13 +149,17 @@ public class Main
         
         Node n3 = new Intersection(3, new Location(-1, 0), new PriorityTBR(new TransitFirst()));
         Node n1 = new Zone(1, new Location(-2, 0));
+        Node t1 = new Zone(201, new Location(-2, 0));
         Node n7 = new Intersection(7, new Location(1, 0), new PriorityTBR(new TransitFirst()));
         Node n9 = new Zone(9, new Location(2, 0));
+        Node t9 = new Zone(209, new Location(2, 0));
         
         Node n4 = new Intersection(4, new Location(0, -1), new PriorityTBR(new TransitFirst()));
         Node n2 = new Zone(2, new Location(0, -2));
+        Node t2 = new Zone(202, new Location(0, -2));
         Node n6 = new Intersection(6, new Location(0, 1), new PriorityTBR(new TransitFirst()));
         Node n8 = new Zone(8, new Location(0, 2));
+        Node t8 = new Zone(208, new Location(0, 2));
         
         nodes.add(n1);
         nodes.add(n2);
@@ -166,17 +170,35 @@ public class Main
         nodes.add(n7);
         nodes.add(n8);
         nodes.add(n9);
+        nodes.add(t2);
+        nodes.add(t8);
+        nodes.add(t1);
+        nodes.add(t9);
         
         
         Link l13 = new CentroidConnector(13, n1, n3);
         Link l79 = new CentroidConnector(79, n7, n9);
         Link l24 = new CentroidConnector(24, n2, n4);
         Link l68 = new CentroidConnector(68, n6, n8);
-        Link l35 = new CTMLink(35, n3, n5, 1200, 30, 15, 5280/Vehicle.vehicle_length, 1.0, 1);
-        Link l57 = new CTMLink(57, n5, n7, 1200, 30, 15, 5280/Vehicle.vehicle_length, 1.0, 1);
-        Link l45 = new CTMLink(45, n4, n5, 1200, 30, 15, 5280/Vehicle.vehicle_length, 1.0, 1);
-        Link l56 = new CTMLink(56, n5, n6, 1200, 30, 15, 5280/Vehicle.vehicle_length, 1.0, 1);
         
+        Link t13 = new CentroidConnector(213, t1, n3);
+        Link t79 = new CentroidConnector(279, n7, t9);
+        Link t24 = new CentroidConnector(224, t2, n4);
+        Link t68 = new CentroidConnector(268, n6, t8);
+        
+        TransitLane t35 = new TransitLane(235, n3, n5, 1200, 30, 15, 5280/Vehicle.vehicle_length, 1.0);
+        Link l35 = new SharedTransitCTMLink(35, n3, n5, 1200, 30, 15, 5280/Vehicle.vehicle_length, 1.0, 1, t35);
+        TransitLane t57 = new TransitLane(257, n5, n7, 1200, 30, 15, 5280/Vehicle.vehicle_length, 1.0);
+        Link l57 = new SharedTransitCTMLink(57, n5, n7, 1200, 30, 15, 5280/Vehicle.vehicle_length, 1.0, 1, t57);
+        TransitLane t45 = new TransitLane(245, n4, n5, 1200, 30, 15, 5280/Vehicle.vehicle_length, 1.0);
+        Link l45 = new SharedTransitCTMLink(45, n4, n5, 1200, 30, 15, 5280/Vehicle.vehicle_length, 1.0, 1, t45);
+        TransitLane t56 = new TransitLane(256, n5, n6, 1200, 30, 15, 5280/Vehicle.vehicle_length, 1.0);
+        Link l56 = new SharedTransitCTMLink(56, n5, n6, 1200, 30, 15, 5280/Vehicle.vehicle_length, 1.0, 1, t56);
+        
+        links.add(t13);
+        links.add(t79);
+        links.add(t24);
+        links.add(t68);
         links.add(l13);
         links.add(l79);
         links.add(l24);
@@ -185,6 +207,10 @@ public class Main
         links.add(l57);
         links.add(l45);
         links.add(l56);
+        links.add(t35);
+        links.add(t57);
+        links.add(t45);
+        links.add(t56);
         
         sim.setNetwork(nodes, links);
         
@@ -199,12 +225,19 @@ public class Main
             vehicles.add(new PersonalVehicle(i+1, n1, n9, (int)(3600.0/num*i)));
         }
         
+        num = (int)(DArate * 60.0/60);
+        
+        for(int i = 0; i < num; i++)
+        {
+            vehicles.add(new PersonalVehicle(i+1, n2, n8, (int)(3600.0/num*i)));
+        }
+        
         
         
         num = (int)(busRate * 60.0/60);
         ArrayList<BusLink> stops = new ArrayList<BusLink>();
         stops.add(new BusLink(n2, n8));
-        Path path = new Path(l24, l45, l56, l68);
+        Path path = new Path(t24, l45, l56, t68);
         
         for(int i = 0; i < num; i++)
         {
