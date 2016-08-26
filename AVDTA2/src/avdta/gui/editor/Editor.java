@@ -22,6 +22,7 @@ import avdta.network.Simulator;
 import avdta.project.DTAProject;
 import avdta.project.Project;
 import java.awt.Dimension;
+import java.awt.Point;
 import java.io.File;
 import java.io.IOException;
 import javax.swing.JFileChooser;
@@ -40,11 +41,15 @@ public class Editor extends JFrame
     
     public Editor()
     {
+        this(null);
+    }
+    public Editor(Project project)
+    {
         setTitle(GUI.getTitleName());
         setIconImage(getIcon());
         
         display = new DefaultDisplayManager();
-        map = new Map(display);
+        map = new Map(display, 800, 800);
         JPanel p = new JPanel();
         p.setLayout(new GridBagLayout());
         
@@ -52,38 +57,45 @@ public class Editor extends JFrame
         scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
         scroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
         
-        constrain(p, scroll, 0, 0, 1, 1);
+        //scroll.getViewport().setViewPosition(new Point(500, 500));
         
+        constrain(p, scroll, 0, 0, 1, 1);
+        scroll.setWheelScrollingEnabled(false);
+        map.setScrollPane(scroll);
         
         
         add(p);
         
-        
-        
         JMenuBar menu = new JMenuBar();
         JMenu me;
         JMenuItem mi;
-        
-        me = new JMenu("File");
-        mi = new JMenuItem("New project");
-        
-        
-        mi = new JMenuItem("Open project");
-        
-        mi.addActionListener(new ActionListener()
+        if(project == null)
         {
-            public void actionPerformed(ActionEvent e)
+            
+
+            me = new JMenu("File");
+            mi = new JMenuItem("New project");
+
+
+            mi = new JMenuItem("Open project");
+
+            mi.addActionListener(new ActionListener()
             {
-                openProject();
-            }
-        });
-        me.add(mi);
-        
-        me.add(mi);
-        
-        menu.add(me);
+                public void actionPerformed(ActionEvent e)
+                {
+                    openProject();
+                }
+            });
+            me.add(mi);
+
+            me.add(mi);
+
+            menu.add(me);
+            
+        }
         
         this.setJMenuBar(menu);
+
         
         pack();
         setResizable(false);
@@ -100,7 +112,10 @@ public class Editor extends JFrame
 
         setVisible(true);
         
-        System.out.println(map.getSize());
+        if(project != null)
+        {
+            openProject(project);
+        }
     }
     
 

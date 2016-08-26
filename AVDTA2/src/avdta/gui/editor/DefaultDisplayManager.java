@@ -25,7 +25,7 @@ public class DefaultDisplayManager implements DisplayManager
     
     public int getWidth(Node n, Map m)
     {
-        return 5;
+        return 0;
     }
     public int getWidth(Link l, Map m)
     {

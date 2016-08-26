@@ -40,7 +40,7 @@ import avdta.project.Project;
  */
 public class DTAGUI extends GUI
 {
-    protected DTAProject project;
+   
     private NetworkPane networkPane;
     private DemandPane demandPane;
     private DTAPane dtaPane;
@@ -116,8 +116,7 @@ public class DTAGUI extends GUI
         this.project = project;
         
         
-        cloneMI.setEnabled(project != null);
-        closeMI.setEnabled(project != null);
+        
         
         if(project != null)
         {

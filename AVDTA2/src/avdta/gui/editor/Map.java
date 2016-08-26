@@ -14,13 +14,21 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
 import java.awt.geom.Line2D;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 import javax.swing.JComponent;
+import javax.swing.JScrollPane;
 import javax.swing.Scrollable;
 import javax.swing.Timer;
 
@@ -28,35 +36,115 @@ import javax.swing.Timer;
  *
  * @author ml26893
  */
-public class Map extends JComponent implements Scrollable
+public class Map extends JComponent implements Scrollable, MouseWheelListener, MouseListener, MouseMotionListener
 {
     private double minX, maxX, minY, maxY, xwidth, ywidth;
     
-    private Set<Node> nodes;
-    private Set<Link> links;
+    private HashMap<Integer, Node> nodes;
+    private HashMap<Integer, Link> links;
     
     private DisplayManager display;
     
-    public Map(DisplayManager display)
+    private int viewWidth, viewHeight;
+    
+    private int mouseX, mouseY;
+    
+    private JScrollPane scrollPane;
+    
+    public Map(DisplayManager display, int viewWidth, int viewHeight)
     {
         this.display = display;
         
-        nodes = new HashSet<Node>();
-        links = new HashSet<Link>();
+        nodes = new HashMap<Integer, Node>();
+        links = new HashMap<Integer, Link>();
         setRange(-10, 10, -10, 10);
         
-        setPreferredSize(new Dimension(1200, 1200));
+        this.viewWidth = viewWidth;
+        this.viewHeight = viewHeight;
+        
+        
+        setPreferredSize(new Dimension(viewWidth, viewHeight));
+        
+        addMouseListener(this);
+        addMouseMotionListener(this);
+        addMouseWheelListener(this);
         
     }
-    public Map(DisplayManager display, Network network)
+    
+    public Map(DisplayManager display, int viewWidth, int viewHeight, Network network)
     {
-        this(display);
+        this(display, viewWidth, viewHeight);
         setNetwork(network);
+    }
+    
+    public void setScrollPane(JScrollPane scrollPane)
+    {
+        this.scrollPane = scrollPane;
+    }
+    
+    
+    public void mouseMoved(MouseEvent e){}
+    public void mouseReleased(MouseEvent e){}
+    
+
+    public void mouseDragged(MouseEvent e)
+    {
+        int xDiff = e.getX() - mouseX;
+        int yDiff = e.getY() - mouseY;
+        
+        if(Math.sqrt(xDiff*xDiff + yDiff*yDiff) < 30)
+        {
+            return;
+        }
+        
+        mouseX = e.getX();
+        mouseY = e.getY();
+        
+        xDiff = -xDiff;
+        yDiff = -yDiff;
+        
+
+        Point point = scrollPane.getViewport().getViewPosition();
+        
+
+        int newX = (int)Math.min(Math.max(0, point.getX()+xDiff), getWidth()-viewWidth);
+        int newY = (int)Math.min(Math.max(0, point.getY()+yDiff), getHeight()-viewHeight);
+
+        scrollPane.getViewport().setViewPosition(new Point(newX, newY));
+    }
+    
+    public void mouseClicked(MouseEvent e){}
+    
+    public void mousePressed(MouseEvent e)
+    {
+        mouseX = e.getX();
+        mouseY = e.getY();
+        
+    }
+    
+    
+    public void mouseEntered(MouseEvent e){}
+    public void mouseExited(MouseEvent e){}
+    
+    public void mouseWheelMoved(MouseWheelEvent e)
+    {
+        int scale = -e.getWheelRotation();
+
+        int width = getWidth();
+        int height = getHeight();
+        
+        width = (int)Math.max(viewWidth, Math.round(width * Math.pow(1.2, scale)));
+        height = (int)Math.max(viewHeight, Math.round(height * Math.pow(1.2, scale)));
+        
+        setPreferredSize(new Dimension(width, height));
+        revalidate();
+
+
     }
     
     public Dimension getPreferredScrollableViewportSize()
     {
-        return new Dimension(800, 800);
+        return new Dimension(viewWidth, viewHeight);
     }
     
     public boolean getScrollableTracksViewportWidth()
@@ -80,7 +168,24 @@ public class Map extends JComponent implements Scrollable
     }
     
     
-    public void paint(Graphics window)
+    public void paint(Graphics g)
+    {
+        Graphics offgc;
+        Image offscreen = null;
+        Dimension d = getSize();
+
+        // create the offscreen buffer and associated Graphics
+        offscreen = createImage(d.width, d.height);
+        offgc = offscreen.getGraphics();
+        // clear the exposed area
+
+        // do normal redraw
+        paint_help(offgc);
+        // transfer offscreen to window
+        g.drawImage(offscreen, 0, 0, this);
+    }
+    
+    public void paint_help(Graphics window)
     {
         
         Graphics2D g = (Graphics2D)window;
@@ -88,8 +193,9 @@ public class Map extends JComponent implements Scrollable
         g.setColor(Color.white);
         g.fillRect(0, 0, getWidth(), getHeight());
         
-        for(Link l : links)
+        for(int id : links.keySet())
         {
+            Link l = links.get(id);
             if(l.isCentroidConnector())
             {
                 continue;
@@ -117,8 +223,10 @@ public class Map extends JComponent implements Scrollable
             }
         }
         
-        for(Node n : nodes)
+        for(int id : nodes.keySet())
         {
+            Node n = nodes.get(id);
+            
             if(n.isZone())
             {
                 continue;
@@ -127,27 +235,45 @@ public class Map extends JComponent implements Scrollable
             
             if(isValid(c))
             {
-                g.setColor(display.getColor(n, this));
+                
                 int width = display.getWidth(n, this);
-
-                g.fillOval(c.getX() - width/2, c.getY() - width/2, width, width);
+                
+                if(width > 0)
+                {
+                    g.setColor(display.getColor(n, this));
+                    g.fillOval(c.getX() - width/2, c.getY() - width/2, width, width);
+                }
             }
         }
     }
     
     
+    
+    
     public void setNetwork(Network net)
     {
-        nodes = net.getNodes();
-        links = net.getLinks();
+        nodes.clear();
+        links.clear();
+        
+        for(Node n : net.getNodes())
+        {
+            nodes.put(n.getId(), n);
+        }
+        
+        for(Link l : net.getLinks())
+        {
+            links.put(l.getId(), l);
+        }
         
         double minX = Integer.MAX_VALUE;
         double maxX = Integer.MIN_VALUE;
         double minY = Integer.MAX_VALUE;
         double maxY = Integer.MIN_VALUE;
         
-        for(Node n : nodes)
+        for(int id : nodes.keySet())
         {
+            Node n = nodes.get(id);
+            
             if(n.getX() < minX)
             {
                 minX = n.getX();

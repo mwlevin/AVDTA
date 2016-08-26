@@ -46,8 +46,8 @@ public abstract class GUI extends JFrame
     public static void main(String[] args) throws IOException
     {
         //System.setErr(new PrintStream(new FileOutputStream(new File("error_log.txt")), true));
-        // new Start();
         new Editor();
+        //new DTAGUI();
         
     }
     
@@ -96,7 +96,8 @@ public abstract class GUI extends JFrame
         System.exit(1);
     }
     
-    protected JMenuItem cloneMI, closeMI, createDatabase;
+    private JMenuItem cloneMI, closeMI, createDatabase, editor;
+    protected Project project;
     
     
     public GUI()
@@ -194,6 +195,23 @@ public abstract class GUI extends JFrame
         
         menu.add(me);
         
+        me = new JMenu("System");
+        
+        editor = new JMenuItem("Editor");
+        
+        editor.addActionListener(new ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                Editor editor = new Editor(project);
+            }
+        });
+        
+        me.add(editor);
+        menu.add(me);
+        
+        editor.setEnabled(false);
+        
         me = new JMenu("About");
         mi = new JMenuItem("Version");
         
@@ -244,7 +262,12 @@ public abstract class GUI extends JFrame
     
     public void openProject(Project p) throws IOException
     {
+        this.project = p;
         createDatabase.setEnabled(SQLLogin.hasSQL());
+        
+        cloneMI.setEnabled(project != null);
+        closeMI.setEnabled(project != null);
+        editor.setEnabled(project != null);
     }
     
     public void setupSQL()

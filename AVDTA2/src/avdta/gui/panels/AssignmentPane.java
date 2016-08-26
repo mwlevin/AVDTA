@@ -166,10 +166,14 @@ public class AssignmentPane extends JPanel
         
         assignments.clear();
         
-        for(File f : dir.listFiles())
+        if(dir.exists())
         {
-            assignments.add(readAssignment(f.getName()));
+            for(File f : dir.listFiles())
+            {
+                assignments.add(readAssignment(f.getName()));
+            }
         }
+        
         
         Collections.sort(assignments);
         
