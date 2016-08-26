@@ -29,4 +29,9 @@ public class TransitLane extends CTMLink
     {
         return ReadNetwork.CTM + ReadNetwork.TRANSIT_LANE;
     }
+    
+    public LinkRecord getLinkRecord()
+    {
+        return null;
+    }
 }

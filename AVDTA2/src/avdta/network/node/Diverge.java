@@ -40,6 +40,11 @@ public class Diverge extends IntersectionControl
         return ReadNetwork.SIGNAL;
     }
     
+    public Signalized getSignal()
+    {
+        return null;
+    }
+    
     
     /**
      * Calls each outgoing link from the diverge and puts their details in

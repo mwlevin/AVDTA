@@ -681,8 +681,7 @@ public class ReadNetwork
                 
             }
 
-            double duration = timegreen + timeyellow + timered;
-            Phase phase = new Phase(sequence, turns, timegreen, duration);
+            Phase phase = new Phase(sequence, turns, timegreen, timeyellow, timered);
 
             if(turns.size() > 0)
             {   

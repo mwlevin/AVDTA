@@ -106,6 +106,8 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
 
     protected EventListenerList evtListenerList = new EventListenerList();
 
+    private boolean displayOSM;
+    
     /**
      * Creates a standard {@link JMapViewer} instance that can be controlled via
      * mouse: hold right mouse button for moving, double click left mouse button
@@ -149,6 +151,12 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
         setMinimumSize(new Dimension(tileSource.getTileSize(), tileSource.getTileSize()));
         setPreferredSize(new Dimension(400, 400));
         setDisplayPosition(new Coordinate(50, 9), 3);
+    }
+    
+    public void setDisplayOSM(boolean s)
+    {
+        displayOSM = s;
+        repaint();
     }
 
     @Override
@@ -603,40 +611,44 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
         int gridLength = 1 << zoom;
 
         // paint the tiles in a spiral, starting from center of the map
-        boolean painted = true;
-        int x = 0;
-        while (painted) {
-            painted = false;
-            for (int i = 0; i < 4; i++) {
-                if (i % 2 == 0) {
-                    x++;
-                }
-                for (int j = 0; j < x; j++) {
-                    if (xMin <= posx && posx <= xMax && yMin <= posy && posy <= yMax) {
-                        // tile is visible
-                        Tile tile;
-                        if (scrollWrapEnabled) {
-                            // in case tilex is out of bounds, grab the tile to use for wrapping
-                            int tilexWrap = ((tilex % gridLength) + gridLength) % gridLength;
-                            tile = tileController.getTile(tilexWrap, tiley, zoom);
-                        } else {
-                            tile = tileController.getTile(tilex, tiley, zoom);
-                        }
-                        if (tile != null) {
-                            tile.paint(g, posx, posy, tilesize, tilesize);
-                            if (tileGridVisible) {
-                                g.drawRect(posx, posy, tilesize, tilesize);
-                            }
-                        }
-                        painted = true;
+        
+        if(displayOSM)
+        {
+            boolean painted = true;
+            int x = 0;
+            while (painted) {
+                painted = false;
+                for (int i = 0; i < 4; i++) {
+                    if (i % 2 == 0) {
+                        x++;
                     }
-                    Point p = move[iMove];
-                    posx += p.x * tilesize;
-                    posy += p.y * tilesize;
-                    tilex += p.x;
-                    tiley += p.y;
+                    for (int j = 0; j < x; j++) {
+                        if (xMin <= posx && posx <= xMax && yMin <= posy && posy <= yMax) {
+                            // tile is visible
+                            Tile tile;
+                            if (scrollWrapEnabled) {
+                                // in case tilex is out of bounds, grab the tile to use for wrapping
+                                int tilexWrap = ((tilex % gridLength) + gridLength) % gridLength;
+                                tile = tileController.getTile(tilexWrap, tiley, zoom);
+                            } else {
+                                tile = tileController.getTile(tilex, tiley, zoom);
+                            }
+                            if (tile != null) {
+                                tile.paint(g, posx, posy, tilesize, tilesize);
+                                if (tileGridVisible) {
+                                    g.drawRect(posx, posy, tilesize, tilesize);
+                                }
+                            }
+                            painted = true;
+                        }
+                        Point p = move[iMove];
+                        posx += p.x * tilesize;
+                        posy += p.y * tilesize;
+                        tilex += p.x;
+                        tiley += p.y;
+                    }
+                    iMove = (iMove + 1) % move.length;
                 }
-                iMove = (iMove + 1) % move.length;
             }
         }
         // outer border of the map

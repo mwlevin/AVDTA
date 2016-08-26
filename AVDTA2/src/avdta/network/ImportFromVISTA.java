@@ -44,7 +44,7 @@ public class ImportFromVISTA
             String points = filein.nextLine().trim();
             
             // remove []
-            points = points.substring(0, points.length()-1);
+            points = points.substring(1, points.length()-1);
             
 
             fileout.println(id+"\t"+points);

@@ -50,6 +50,16 @@ public class PhasedTBR extends PriorityTBR implements Signalized
         setPolicy(new PhasePriority(this));
     }
     
+    public Signalized getSignal()
+    {
+        return this;
+    }
+    
+    public double getOffset()
+    {
+        return offset;
+    }
+    
     public void setOffset(double offset)
     {
         this.offset = offset;

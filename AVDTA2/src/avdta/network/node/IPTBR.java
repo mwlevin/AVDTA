@@ -68,6 +68,11 @@ public class IPTBR extends TBR
         return objfunc.getType() + ReadNetwork.IP;
     }
     
+    public Signalized getSignal()
+    {
+        return (objfunc instanceof Signalized)? (Signalized)objfunc : null;
+    }
+    
     private static final double M = 1.0e6;
 
     public int step()

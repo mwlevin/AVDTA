@@ -47,33 +47,31 @@ import org.openstreetmap.gui.jmapviewer.tilesources.OsmTileSource;
  *
  * @author ml26893
  */
-public class MapViewer extends JMapViewer
+public class MapViewer extends avdta.gui.editor.JMapViewer
 {
 
-    private HashMap<Integer, Node> nodes;
-    private HashMap<Integer, Link> links;
-    
-    private DisplayManager display;
+
+    private Set<Node> nodes;
+    private Set<Link> links;
     
     private boolean displayLinks, displayNodes;
+    
 
-    public MapViewer(DisplayManager display, int viewWidth, int viewHeight)
+    public MapViewer(int viewWidth, int viewHeight)
     {
-        this.display = display;
-        
         setPreferredSize(new Dimension(viewWidth, viewHeight));
         
-        nodes = new HashMap<Integer, Node>();
-        links = new HashMap<Integer, Link>();
+        nodes = new HashSet<Node>();
+        links = new HashSet<Link>();
         
         displayLinks = true;
         displayNodes = true;
         
     }
     
-    public MapViewer(DisplayManager display, int viewWidth, int viewHeight, Network network)
+    public MapViewer(int viewWidth, int viewHeight, Network network)
     {
-        this(display, viewWidth, viewHeight);
+        this(viewWidth, viewHeight);
         setNetwork(network);
     }
     
@@ -94,28 +92,28 @@ public class MapViewer extends JMapViewer
     
     public void setNetwork(Network net)
     {
-        nodes.clear();
-        links.clear();
-        
-        for(Node n : net.getNodes())
+        if(net != null)
         {
-            nodes.put(n.getId(), n);
+            nodes = net.getNodes();
+            links = net.getLinks();
         }
-        
-        for(Link l : net.getLinks())
+        else
         {
-            links.put(l.getId(), l);
+            nodes = new HashSet<Node>();
+            links = new HashSet<Link>();
         }
-        
+    }
+    
+    
+    public void recenter()
+    {
         double minX = Integer.MAX_VALUE;
         double maxX = Integer.MIN_VALUE;
         double minY = Integer.MAX_VALUE;
         double maxY = Integer.MIN_VALUE;
         
-        for(int id : nodes.keySet())
+        for(Node n : nodes)
         {
-            Node n = nodes.get(id);
-            
             if(n.isZone())
             {
                 continue;
@@ -155,7 +153,7 @@ public class MapViewer extends JMapViewer
         double center_x = (maxX + minX)/2;
         double center_y = (maxY + minY)/2;
         
-        setDisplayPosition(new Point(getWidth()/2, getHeight()/2), new Coordinate(center_y, center_x), 12);
+        setDisplayPosition(new Point(getWidth()/2, getHeight()/2), new Coordinate(center_y, center_x), 15);
 
 
     }
@@ -168,10 +166,8 @@ public class MapViewer extends JMapViewer
         
         if(displayLinks)
         {
-            for(int id : links.keySet())
+            for(Link l : links)
             {
-                Link l = links.get(id);
-
                 if(l.isCentroidConnector())
                 {
                     continue;
@@ -183,8 +179,8 @@ public class MapViewer extends JMapViewer
                     continue;
                 }
 
-                g.setColor(display.getColor(l, this));
-                g.setStroke(new BasicStroke(display.getWidth(l, this)));
+                g.setColor(l.getColor());
+                g.setStroke(new BasicStroke(l.getWidth()));
 
                 ICoordinate prev = coords[0];
                 for(int i = 1; i < coords.length; i++)
@@ -202,10 +198,8 @@ public class MapViewer extends JMapViewer
         }
         if(displayNodes)
         {
-            for(int id : nodes.keySet())
+            for(Node n : nodes)
             {
-                Node n = nodes.get(id);
-                
                 if(n.isVisible())
                 {
                     paintMarker(g, n);
@@ -214,5 +208,25 @@ public class MapViewer extends JMapViewer
         }
     }
     
-
+    public void setDisplayNodes(boolean n)
+    {
+        displayNodes = n;
+        repaint();
+    }
+    
+    public void setDisplayLinks(boolean l)
+    {
+        displayLinks = l;
+        repaint();
+    }
+    
+    public boolean isDisplayNodes()
+    {
+        return displayNodes;
+    }
+    
+    public boolean isDisplayLinks()
+    {
+        return displayLinks;
+    }
 }

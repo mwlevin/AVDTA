@@ -135,12 +135,23 @@ public abstract class GUI extends JFrame
         me.add(mi);
         
         mi = new JMenuItem("Clone opened project");
-        
         mi.addActionListener(new ActionListener()
         {
             public void actionPerformed(ActionEvent e)
             {
                 cloneProject();
+            }
+        });
+        me.add(mi);
+        
+        me.addSeparator();
+        
+        mi = new JMenuItem("Exit");
+        mi.addActionListener(new ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                System.exit(0);
             }
         });
         me.add(mi);
@@ -212,8 +223,42 @@ public abstract class GUI extends JFrame
         
         editor.setEnabled(false);
         
-        me = new JMenu("About");
-        mi = new JMenuItem("Version");
+        
+        
+        
+        
+        menu.add(createHelpMenu());
+        
+        this.setJMenuBar(menu);
+        
+        addWindowListener(new WindowAdapter()
+        {
+            public void windowClosing(WindowEvent e)
+            {
+                System.exit(0);
+            }
+        });
+    }
+    
+    public static JMenu createHelpMenu()
+    {
+        JMenu me = new JMenu("Help");
+
+        JMenuItem mi = new JMenuItem("Help");
+        
+        mi.addActionListener(new ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                JOptionPane.showMessageDialog(frame, "Documentation is located in \"/documentation/DTA.pdf\"\n\nDeveloper email: michaellevin@utexas.edu", 
+                        "Help", JOptionPane.INFORMATION_MESSAGE);
+            }
+        });
+        me.add(mi);
+        
+        me.addSeparator();
+        
+        mi = new JMenuItem("About");
         
         mi.addActionListener(new ActionListener()
         {
@@ -226,30 +271,7 @@ public abstract class GUI extends JFrame
         
         me.add(mi);
         
-        mi = new JMenuItem("Help");
-        
-        mi.addActionListener(new ActionListener()
-        {
-            public void actionPerformed(ActionEvent e)
-            {
-                JOptionPane.showMessageDialog(frame, "Documentation is located in \"/documentation/DTA.pdf\"\n\nDeveloper email: michaellevin@utexas.edu", 
-                        "Help", JOptionPane.INFORMATION_MESSAGE);
-            }
-        });
-        
-        me.add(mi);
-        
-        menu.add(me);
-        
-        this.setJMenuBar(menu);
-        
-        addWindowListener(new WindowAdapter()
-        {
-            public void windowClosing(WindowEvent e)
-            {
-                System.exit(0);
-            }
-        });
+        return me;
     }
     
     public abstract void newProject();

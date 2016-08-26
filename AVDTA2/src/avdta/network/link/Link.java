@@ -15,6 +15,7 @@ import avdta.network.node.Location;
 import avdta.network.node.TBR;
 import avdta.vehicle.DriverType;
 import avdta.vehicle.fuel.ICV;
+import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -91,6 +92,8 @@ public abstract class Link implements Serializable, Comparable<Link>
     
     private Location[] coords;
     
+    private boolean selected;
+    
     public Link(int id, Node source, Node dest, double capacity, double ffspd, double wavespd, double jamd, double length, int numLanes)
     {
         this.id = id;
@@ -131,6 +134,32 @@ public abstract class Link implements Serializable, Comparable<Link>
         
         flowin = new int[(int)Math.ceil((double)Simulator.duration / Simulator.ast_duration)+1];
         
+    }
+    
+    public LinkRecord createLinkRecord()
+    {
+        return new LinkRecord(getId(), getType(), getSource().getId(), getDest().getId(), getLength(), getFFSpeed(), getWaveSpeed(), 
+                getCapacityPerLane(), getNumLanes());
+    }
+    
+    public boolean isSelected()
+    {
+        return selected;
+    }
+    
+    public void setSelected(boolean s)
+    {
+        selected = s;
+    }
+    
+    public Color getColor()
+    {
+        return selected? Color.red : Color.black;
+    }
+    
+    public int getWidth()
+    {
+        return selected? 5 : 3;
     }
     
     public void setCoordinates(Location[] array)

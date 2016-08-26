@@ -57,6 +57,17 @@ public class TrafficSignal extends IntersectionControl implements Signalized
         phases = new ArrayList<Phase>();
         turns = new HashMap<Link, Map<Link, PhaseMovement>>();
     }
+    
+    public Signalized getSignal()
+    {
+        return this;
+    }
+    
+    public double getOffset()
+    {
+        return offset;
+    }
+    
     /**
      * Gives the number of phases in the given signal.
      * @return Returns the number of phases in the signal.
@@ -98,10 +109,6 @@ public class TrafficSignal extends IntersectionControl implements Signalized
         this.offset = offset;
     }
     
-    public double getOffset()
-    {
-        return offset;
-    }
     
     public List<Phase> getPhases()
     {
@@ -136,7 +143,7 @@ public class TrafficSignal extends IntersectionControl implements Signalized
                         }
                     }
                     
-                    addPhase(new Phase(seq, turns, 6, 6));
+                    addPhase(new Phase(seq, turns, 6, 0, 0));
                 }
             }
         }

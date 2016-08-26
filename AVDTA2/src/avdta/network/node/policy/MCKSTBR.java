@@ -9,6 +9,7 @@ import avdta.network.node.Intersection;
 import avdta.network.node.Intersection;
 import avdta.network.node.PriorityTBR;
 import avdta.network.node.PriorityTBR;
+import avdta.network.node.Signalized;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -39,5 +40,11 @@ public class MCKSTBR extends PriorityTBR
     public ObjFunction getObj()
     {
         return ((MCKSPriority)getPolicy()).getObj();
+    }
+    
+    public Signalized getSignal()
+    {
+        ObjFunction obj = ((MCKSPriority)getPolicy()).getObj();
+        return (obj instanceof Signalized)? (Signalized)obj : null;
     }
 }

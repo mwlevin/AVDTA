@@ -99,4 +99,5 @@ public abstract class IntersectionControl
     public abstract void reset();
     public abstract void initialize();
     public abstract int getType();
+    public abstract Signalized getSignal();
 }

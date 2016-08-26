@@ -8,6 +8,7 @@ package avdta;
 import avdta.dta.DTAResults;
 import avdta.dta.DTASimulator;
 import avdta.dta.ReadDTANetwork;
+import avdta.gui.DTAGUI;
 import avdta.gui.GUI;
 import avdta.gui.editor.Editor;
 import avdta.network.Path;
@@ -51,14 +52,10 @@ public class Main
         //GUI.main(args);
         
         
-        Editor test = new Editor();
-        test.openProject(new DTAProject(new File("projects/coacongress2")));
+        Editor test = new Editor(new DTAProject(new File("projects/coacongress2")));
         
         
         //new DTAGUI();
-        
-        //Demo demo = new Demo();
-        //demo.setVisible(true);
     }
     
     public static void caccTest2() throws IOException

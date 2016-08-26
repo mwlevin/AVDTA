@@ -45,6 +45,7 @@ public class Intersection extends Node
         }
     }
     
+    
     public int getType()
     {
         return control.getType();

@@ -4,11 +4,18 @@ import avdta.cost.TravelCost;
 import avdta.network.link.CTMLink;
 import avdta.network.link.DLRCTMLink;
 import avdta.network.link.Link;
+import avdta.network.link.LinkRecord;
 import avdta.network.node.Intersection;
 import avdta.network.node.Node;
 import avdta.network.link.SharedTransitCTMLink;
+import avdta.network.node.Location;
+import avdta.network.node.NodeRecord;
+import avdta.network.node.Phase;
+import avdta.network.node.Signalized;
 import avdta.network.node.TBR;
+import avdta.network.node.Turn;
 import avdta.network.node.Zone;
+import avdta.project.Project;
 import avdta.vehicle.DriverType;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -498,6 +505,130 @@ public class Network
         }
         
         System.out.println("Tied "+count+" links");
+    }
+    
+    public void save(Project project) throws IOException
+    {
+        PrintStream fileout = new PrintStream(new FileOutputStream(project.getNodesFile()), true);
+        fileout.println(ReadNetwork.getNodesFileHeader());
+        
+        for(Node n : nodes)
+        {
+            NodeRecord record = n.createNodeRecord();
+            
+            if(record != null)
+            {
+                fileout.println(record);
+            }
+        }
+        
+        fileout.close();
+        
+        fileout = new PrintStream(new FileOutputStream(project.getLinksFile()), true);
+        fileout.println(ReadNetwork.getLinksFileHeader());
+        
+        for(Link l : links)
+        {
+            LinkRecord record = l.createLinkRecord();
+            
+            if(record != null)
+            {
+                fileout.println(record);
+            }
+        }
+        
+        fileout.close();
+        
+        fileout = new PrintStream(new FileOutputStream(project.getSignalsFile()), true);
+        fileout.println(ReadNetwork.getSignalsFileHeader());
+        
+        for(Node n : nodes)
+        {
+            if(n instanceof Intersection)
+            {
+                Intersection i = (Intersection)n;
+                
+                if(i instanceof Signalized)
+                {
+                    fileout.println(i.getId()+"\t"+((Signalized)i).getOffset());
+                }
+            }
+        }
+        fileout.close();
+        
+        
+        fileout = new PrintStream(new FileOutputStream(project.getPhasesFile()), true);
+        fileout.println(ReadNetwork.getPhasesFileHeader());
+        
+        for(Node n : nodes)
+        {
+            if(n instanceof Intersection)
+            {
+                Intersection i = (Intersection)n;
+                Signalized signal = i.getControl().getSignal();
+                   
+                if(signal != null)
+                {
+                    int count = 1;
+                    for(Phase p : signal.getPhases())
+                    {
+                        fileout.print(i.getId()+"\t1\t"+count+"\t"+p.getRedTime()+"\t"+p.getYellowTime()+"\t"+p.getGreenTime());
+                        
+                        fileout.print("\t{");
+                        Turn[] turns = p.getTurns();
+                        
+                        for(int t = 0; t < turns.length-1; t++)
+                        {
+                            fileout.print(turns[t].i.getId()+", ");
+                        }
+                        
+                        if(turns.length > 0)
+                        {
+                            fileout.print(turns[turns.length-1].i.getId());
+                        }
+                        
+                        fileout.print("}\t{");
+                        
+                        for(int t = 0; t < turns.length-1; t++)
+                        {
+                            fileout.print(turns[t].j.getId()+", ");
+                        }
+                        
+                        if(turns.length > 0)
+                        {
+                            fileout.print(turns[turns.length-1].j.getId());
+                        }
+                        
+                        fileout.print("}");
+                        fileout.println();
+                    }
+                }
+            }
+        }
+        fileout.close();
+        
+        fileout = new PrintStream(new FileOutputStream(project.getLinkPointsFile()));
+        fileout.println(ReadNetwork.getLinkPointsFileHeader());
+        
+        for(Link l : links)
+        {
+            fileout.print(l.getId());
+            
+            Location[] coords = l.getCoordinates();
+            
+            for(int i = 0; i < coords.length-1; i++)
+            {
+                fileout.print("("+coords[i].getX()+", "+coords[i].getY()+"), ");
+            }
+            
+            if(coords.length > 0)
+            {
+                fileout.print("("+coords[coords.length-1].getX()+", "+coords[coords.length-1].getY()+")");
+            }
+            
+            fileout.println();
+        }
+        fileout.close();
     }
     
     public Map<Integer, Link> createLinkIdsMap()

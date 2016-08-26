@@ -67,6 +67,11 @@ public class StopSign extends IntersectionControl
         };
     }
     
+    public Signalized getSignal()
+    {
+        return null;
+    }
+    
     public int getType()
     {
         return ReadNetwork.STOPSIGN;

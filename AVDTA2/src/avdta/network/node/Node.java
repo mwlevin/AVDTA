@@ -107,7 +107,7 @@ public abstract class Node extends Location implements Serializable, Comparable<
     }
     
     public double getRadius() {
-        return DOT_RADIUS;
+        return 0;
     }
     
     public boolean isVisible()
@@ -184,6 +184,11 @@ public abstract class Node extends Location implements Serializable, Comparable<
     public String toString()
     {
         return ""+id;
+    }
+    
+    public NodeRecord createNodeRecord()
+    {
+        return new NodeRecord(getId(), getType(), getX(), getY(), getElevation());
     }
     
     

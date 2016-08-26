@@ -79,4 +79,10 @@ public class SharedTransitCTMLink extends CTMLink
         }
     }
     
+    public LinkRecord createLinkRecord()
+    {
+        return new LinkRecord(getId(), getType(), getSource().getId(), getDest().getId(), getLength(), getFFSpeed(), getWaveSpeed(), 
+                getCapacityPerLane(), getNumLanes()+1);
+    }
+    
 }

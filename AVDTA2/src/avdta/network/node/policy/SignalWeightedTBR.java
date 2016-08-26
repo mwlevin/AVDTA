@@ -13,7 +13,9 @@ import avdta.network.node.Phase;
 import avdta.network.node.PriorityTBR;
 import avdta.network.node.Signalized;
 import avdta.network.node.Turn;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -24,10 +26,14 @@ public class SignalWeightedTBR extends PriorityTBR implements Signalized, DelayW
 {
     private Map<Link, Map<Link, Double>> weights;
     private double total_weight;
+    private double offset;
+    
+    private List<Phase> phases;
     
     public SignalWeightedTBR()
     {
         weights = new HashMap<Link, Map<Link, Double>>();
+        phases = new ArrayList<Phase>();
         total_weight = 0.0;
         
         setPolicy(new WeightedFCFSPolicy(this));
@@ -37,14 +43,25 @@ public class SignalWeightedTBR extends PriorityTBR implements Signalized, DelayW
     {
         super(n);
         weights = new HashMap<Link, Map<Link, Double>>();
+        phases = new ArrayList<Phase>();
         total_weight = 0.0;
         
         setPolicy(new WeightedFCFSPolicy(this));
     }
     
+    public List<Phase> getPhases()
+    {
+        return phases;
+    }
+    
     public void setOffset(double o)
     {
-        
+        this.offset = o;
+    }
+    
+    public double getOffset()
+    {
+        return offset;
     }
     
     public double getWeight(Link i, Link j)
@@ -66,6 +83,8 @@ public class SignalWeightedTBR extends PriorityTBR implements Signalized, DelayW
     
     public void addPhase(Phase p)
     {
+        phases.add(p);
+        
         for(Turn t : p.getTurns())
         {
             Link i = t.i;

@@ -43,6 +43,11 @@ public abstract class Project
         networkOptions = new TreeMap<String, String>();
     }
     
+    public void save() throws IOException
+    {
+        getSimulator().save(this);
+    }
+    
     public void setSimulator(Simulator sim)
     {
         this.simulator = sim;
