@@ -49,7 +49,12 @@ public class Main
         //transitTest2();
         //caccTest2();
         //GUI.main(args);
-        new Editor();
+        
+        
+        Editor test = new Editor();
+        test.openProject(new DTAProject(new File("projects/coacongress2")));
+        
+        
         //new DTAGUI();
         
         //Demo demo = new Demo();

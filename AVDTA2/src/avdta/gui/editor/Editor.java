@@ -53,15 +53,7 @@ public class Editor extends JFrame
         JPanel p = new JPanel();
         p.setLayout(new GridBagLayout());
         
-        JScrollPane scroll = new JScrollPane(map);
-        scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-        scroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
-        
-        //scroll.getViewport().setViewPosition(new Point(500, 500));
-        
-        constrain(p, scroll, 0, 0, 1, 1);
-        scroll.setWheelScrollingEnabled(false);
-        map.setScrollPane(scroll);
+        constrain(p, map, 0, 0, 1, 1);
         
         
         add(p);

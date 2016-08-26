@@ -7,11 +7,26 @@ package avdta.network.node;
 import avdta.network.link.TransitLink;
 import avdta.network.link.Link;
 import avdta.vehicle.DriverType;
+import java.awt.AlphaComposite;
+import java.awt.Color;
+import java.awt.Composite;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Point;
+import java.awt.Stroke;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
+import org.openstreetmap.gui.jmapviewer.Layer;
+import org.openstreetmap.gui.jmapviewer.MapMarkerDot;
+import static org.openstreetmap.gui.jmapviewer.MapMarkerDot.DOT_RADIUS;
+import static org.openstreetmap.gui.jmapviewer.MapMarkerDot.getDefaultStyle;
+import static org.openstreetmap.gui.jmapviewer.MapObjectImpl.getDefaultFont;
+import org.openstreetmap.gui.jmapviewer.Style;
+import org.openstreetmap.gui.jmapviewer.interfaces.MapMarker;
 
 /**
  * An abstract node in the traffic network. Nodes can be {@link Intersection}s 
@@ -25,8 +40,15 @@ import java.util.TreeSet;
  * and outgoing {@link Link}s.
  * @author Michael
  */
-public abstract class Node extends Location implements Serializable, Comparable<Node>
+public abstract class Node extends Location implements Serializable, Comparable<Node>, MapMarker
 {
+    private static final Layer NODES = new Layer("Nodes");
+    private static final Font NODE_FONT = getDefaultFont();
+    private static final Style NODE_STYLE = new Style(Color.BLACK, Color.YELLOW, null, NODE_FONT);
+    private static final Style SELECTED_STYLE = new Style(Color.BLACK, Color.RED, null, NODE_FONT);
+    private static final Style CENTROID_STYLE = new Style(Color.BLACK, Color.GREEN, null, NODE_FONT);
+    
+    private boolean selected;
     
     private Set<Link> incoming, outgoing;
     private int id;
@@ -67,7 +89,35 @@ public abstract class Node extends Location implements Serializable, Comparable<
         transitInc = new HashSet<TransitLink>();
         transitOut = new HashSet<TransitLink>();
         
-        
+        selected = false;
+    }
+    
+    public boolean isSelected()
+    {
+        return selected;
+    }
+    
+    public void setSelected(boolean s)
+    {
+        selected = s;
+    }
+    
+    public STYLE getMarkerStyle() {
+        return STYLE.FIXED;
+    }
+    
+    public double getRadius() {
+        return DOT_RADIUS;
+    }
+    
+    public boolean isVisible()
+    {
+        return !isZone();
+    }
+    
+    public String getName()
+    {
+        return ""+getId();
     }
     
     public void setIncoming(Set<Link> inc)
@@ -211,5 +261,69 @@ public abstract class Node extends Location implements Serializable, Comparable<
     public Set<TransitLink> getTransitOut()
     {
         return transitOut;
+    }
+    
+    public void paint(Graphics g, Point position, int radius) {
+        int sizeH = radius;
+        int size = sizeH * 2;
+
+        if (g instanceof Graphics2D && getBackColor() != null) {
+            Graphics2D g2 = (Graphics2D) g;
+            Composite oldComposite = g2.getComposite();
+            g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER));
+            g2.setPaint(getBackColor());
+            g.fillOval(position.x - sizeH, position.y - sizeH, size, size);
+            g2.setComposite(oldComposite);
+        }
+        g.setColor(getColor());
+        g.drawOval(position.x - sizeH, position.y - sizeH, size, size);
+
+        if (getLayer() == null || getLayer().isVisibleTexts()) paintText(g, position);
+    }
+    
+    public void paintText(Graphics g, Point position) {
+        String name = getName();
+        if (name != null && g != null && position != null) {
+            g.setColor(Color.DARK_GRAY);
+            g.setFont(getFont());
+            g.drawString(name, position.x+MapMarkerDot.DOT_RADIUS+2, position.y+MapMarkerDot.DOT_RADIUS);
+        }
+    }
+    
+    public Font getFont()
+    {
+        return NODE_FONT;
+    }
+    
+    public Layer getLayer()
+    {
+        return NODES;
+    }
+
+    public void setLayer(Layer layer){}
+
+    public Style getStyle()
+    {
+        return NODE_STYLE;
+    }
+
+    public Style getStyleAssigned()
+    {
+        return isSelected()? SELECTED_STYLE : isZone()? CENTROID_STYLE : NODE_STYLE;
+    }
+
+    public Color getColor()
+    {
+        return getStyleAssigned().getColor();
+    }
+
+    public Color getBackColor()
+    {
+        return getStyleAssigned().getBackColor();
+    }
+
+    public Stroke getStroke()
+    {
+        return getStyleAssigned().getStroke();
     }
 }

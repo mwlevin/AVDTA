@@ -4,7 +4,9 @@
  */
 package avdta.network.node;
 
+import org.openstreetmap.gui.jmapviewer.interfaces.ICoordinate;
 import java.io.Serializable;
+import org.openstreetmap.gui.jmapviewer.Coordinate;
 
 /**
  * This class stores the <b>location</b> and <b>elevation</b> of a node. <br>
@@ -14,7 +16,7 @@ import java.io.Serializable;
  * @see Node
  * @author Michael
  */
-public class Location implements Serializable
+public class Location implements Serializable, ICoordinate
 {
     private double x, y;
     private double elevation;
@@ -35,6 +37,11 @@ public class Location implements Serializable
     public Location(Location rhs)
     {
         this(rhs.x, rhs.y);
+    }
+    
+    public Coordinate getCoordinate()
+    {
+        return new Coordinate(y, x);
     }
     /**
      * Gets the elevation of a {@link Node}.
@@ -83,5 +90,25 @@ public class Location implements Serializable
     public void setY(double y)
     {
         this.y = y;
+    }
+    
+    public double getLat()
+    {
+        return getY();
+    }
+
+    public void setLat(double lat)
+    {
+        setY(lat);
+    }
+
+    public double getLon()
+    {
+        return getX();
+    }
+
+    public void setLon(double lon)
+    {
+        setX(lon);
     }
 }
