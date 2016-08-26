@@ -31,12 +31,19 @@ import javax.swing.JComponent;
 import javax.swing.JScrollPane;
 import javax.swing.Scrollable;
 import javax.swing.Timer;
+import static org.openstreetmap.gui.jmapviewer.JMapViewer.MIN_ZOOM;
+import org.openstreetmap.gui.jmapviewer.MemoryTileCache;
+import org.openstreetmap.gui.jmapviewer.Tile;
+import org.openstreetmap.gui.jmapviewer.TileController;
+import org.openstreetmap.gui.jmapviewer.interfaces.TileLoaderListener;
+import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
+import org.openstreetmap.gui.jmapviewer.tilesources.OsmTileSource;
 
 /**
  *
  * @author ml26893
  */
-public class Map extends JComponent implements Scrollable, MouseWheelListener, MouseListener, MouseMotionListener
+public class MapViewer extends JComponent implements Scrollable, MouseWheelListener, MouseListener, MouseMotionListener, TileLoaderListener
 {
     private double minX, maxX, minY, maxY, xwidth, ywidth;
     
@@ -51,9 +58,26 @@ public class Map extends JComponent implements Scrollable, MouseWheelListener, M
     
     private JScrollPane scrollPane;
     
-    public Map(DisplayManager display, int viewWidth, int viewHeight)
+    private int zoom;
+    
+    private static final int MIN_ZOOM = 0;
+    private static final int MAX_ZOOM = 22;
+    /**
+     * Vectors for clock-wise tile painting
+     */
+    private static final Point[] move = {new Point(1, 0), new Point(0, 1), new Point(-1, 0), new Point(0, -1)};
+    
+    private TileController tileController;
+    private TileSource tileSource;
+    
+    private boolean osmEnabled;
+    private Point center;
+    
+    public MapViewer(DisplayManager display, int viewWidth, int viewHeight)
     {
         this.display = display;
+        
+        zoom = 1;
         
         nodes = new HashMap<Integer, Node>();
         links = new HashMap<Integer, Link>();
@@ -61,6 +85,12 @@ public class Map extends JComponent implements Scrollable, MouseWheelListener, M
         
         this.viewWidth = viewWidth;
         this.viewHeight = viewHeight;
+        
+        osmEnabled = false;
+        
+        
+        tileSource = new OsmTileSource.Mapnik();
+        tileController = new TileController(tileSource, new MemoryTileCache(), this);
         
         
         setPreferredSize(new Dimension(viewWidth, viewHeight));
@@ -71,7 +101,7 @@ public class Map extends JComponent implements Scrollable, MouseWheelListener, M
         
     }
     
-    public Map(DisplayManager display, int viewWidth, int viewHeight, Network network)
+    public MapViewer(DisplayManager display, int viewWidth, int viewHeight, Network network)
     {
         this(display, viewWidth, viewHeight);
         setNetwork(network);
@@ -82,6 +112,20 @@ public class Map extends JComponent implements Scrollable, MouseWheelListener, M
         this.scrollPane = scrollPane;
     }
     
+    public void setOSMEnabled(boolean o)
+    {
+        osmEnabled = o;
+    }
+    
+    public boolean isOSMEnabled()
+    {
+        return osmEnabled;
+    }
+    
+    public void tileLoadingFinished(Tile tile, boolean success) {
+        tile.setLoaded(success);
+        repaint();
+    }
     
     public void mouseMoved(MouseEvent e){}
     public void mouseReleased(MouseEvent e){}
@@ -89,6 +133,11 @@ public class Map extends JComponent implements Scrollable, MouseWheelListener, M
 
     public void mouseDragged(MouseEvent e)
     {
+        if(e.getButton() != MouseEvent.BUTTON3)
+        {
+            return;
+        }
+        
         int xDiff = e.getX() - mouseX;
         int yDiff = e.getY() - mouseY;
         
@@ -117,6 +166,11 @@ public class Map extends JComponent implements Scrollable, MouseWheelListener, M
     
     public void mousePressed(MouseEvent e)
     {
+        if(e.getButton() != MouseEvent.BUTTON3)
+        {
+            return;
+        }
+        
         mouseX = e.getX();
         mouseY = e.getY();
         
@@ -128,18 +182,21 @@ public class Map extends JComponent implements Scrollable, MouseWheelListener, M
     
     public void mouseWheelMoved(MouseWheelEvent e)
     {
-        int scale = -e.getWheelRotation();
-
-        int width = getWidth();
-        int height = getHeight();
+        int rotation = -e.getWheelRotation();
         
-        width = (int)Math.max(viewWidth, Math.round(width * Math.pow(1.2, scale)));
-        height = (int)Math.max(viewHeight, Math.round(height * Math.pow(1.2, scale)));
         
-        setPreferredSize(new Dimension(width, height));
+        
+        setZoom(zoom + rotation);
+    }
+    
+    public void setZoom(int zoom_param)
+    {
+        zoom = (int)Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, zoom_param));
+        
+        double scale = Math.pow(1.2, zoom);
+        
+        setPreferredSize(new Dimension((int)Math.round(viewWidth * scale), (int)Math.round(viewHeight * scale)));
         revalidate();
-
-
     }
     
     public Dimension getPreferredScrollableViewportSize()
@@ -190,8 +247,74 @@ public class Map extends JComponent implements Scrollable, MouseWheelListener, M
         
         Graphics2D g = (Graphics2D)window;
         
+        int width = getWidth();
+        int height = getHeight();
+        
         g.setColor(Color.white);
-        g.fillRect(0, 0, getWidth(), getHeight());
+        g.fillRect(0, 0, width, height);
+        
+        g.setColor(Color.black);
+        g.drawRect(0, 0, width, height);
+        
+        // drawing OSM
+        if(osmEnabled)
+        {
+            int iMove = 0;
+
+            int tilesize = tileSource.getTileSize();
+            int tilex = center.x / tilesize;
+            int tiley = center.y / tilesize;
+            int offsx = center.x % tilesize;
+            int offsy = center.y % tilesize;
+
+            int w2 = getWidth() / 2;
+            int h2 = getHeight() / 2;
+            int posx = w2 - offsx;
+            int posy = h2 - offsy;
+
+            int diffLeft = offsx;
+            int diffRight = tilesize - offsx;
+            int diffTop = offsy;
+            int diffBottom = tilesize - offsy;
+
+            boolean startLeft = diffLeft < diffRight;
+            boolean startTop = diffTop < diffBottom;
+
+            
+            int xMin = -tilesize;
+            int yMin = -tilesize;
+            int xMax = width;
+            int yMax = height;
+            
+            boolean painted = true;
+            int x = 0;
+            while (painted) {
+                painted = false;
+                for (int i = 0; i < 4; i++) {
+                    if (i % 2 == 0) {
+                        x++;
+                    }
+                    for (int j = 0; j < x; j++) {
+                        if (xMin <= posx && posx <= xMax && yMin <= posy && posy <= yMax) {
+                            // tile is visible
+                            Tile tile = tileController.getTile(tilex, tiley, zoom);
+                            
+                            if (tile != null) {
+                                tile.paint(g, posx, posy, tilesize, tilesize);
+
+                            }
+                            painted = true;
+                        }
+                        Point p = move[iMove];
+                        posx += p.x * tilesize;
+                        posy += p.y * tilesize;
+                        tilex += p.x;
+                        tiley += p.y;
+                    }
+                    iMove = (iMove + 1) % move.length;
+                }
+            }
+        }
         
         for(int id : links.keySet())
         {
@@ -236,12 +359,12 @@ public class Map extends JComponent implements Scrollable, MouseWheelListener, M
             if(isValid(c))
             {
                 
-                int width = display.getWidth(n, this);
+                int nwidth = display.getWidth(n, this);
                 
                 if(width > 0)
                 {
                     g.setColor(display.getColor(n, this));
-                    g.fillOval(c.getX() - width/2, c.getY() - width/2, width, width);
+                    g.fillOval(c.getX() - nwidth/2, c.getY() - nwidth/2, nwidth, nwidth);
                 }
             }
         }
@@ -350,5 +473,14 @@ public class Map extends JComponent implements Scrollable, MouseWheelListener, M
         double y = l.getY();
         
         return (x >= minX && x <= maxX && y >= minY && y <= maxY);
+    }
+    
+    public void setDisplayPosition(Point mapPoint, int x, int y) 
+    {
+        // Get the plain tile number
+        Point p = new Point();
+        p.x = x - mapPoint.x + getWidth() / 2;
+        p.y = y - mapPoint.y + getHeight() / 2;
+        center = p;
     }
 }

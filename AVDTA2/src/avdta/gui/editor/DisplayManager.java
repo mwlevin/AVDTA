@@ -15,9 +15,9 @@ import java.awt.Graphics;
  */
 public interface DisplayManager 
 {
-    public Color getColor(Node n, Map m);
-    public Color getColor(Link l, Map m);
+    public Color getColor(Node n, MapViewer m);
+    public Color getColor(Link l, MapViewer m);
     
-    public int getWidth(Node n, Map m);
-    public int getWidth(Link l, Map m);
+    public int getWidth(Node n, MapViewer m);
+    public int getWidth(Link l, MapViewer m);
 }

@@ -14,20 +14,20 @@ import java.awt.Color;
  */
 public class DefaultDisplayManager implements DisplayManager
 {
-    public Color getColor(Node n, Map m)
+    public Color getColor(Node n, MapViewer m)
     {
         return Color.black;
     }
-    public Color getColor(Link l, Map m)
+    public Color getColor(Link l, MapViewer m)
     {
         return Color.black;
     }
     
-    public int getWidth(Node n, Map m)
+    public int getWidth(Node n, MapViewer m)
     {
         return 0;
     }
-    public int getWidth(Link l, Map m)
+    public int getWidth(Link l, MapViewer m)
     {
         return 3;
     }

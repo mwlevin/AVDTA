@@ -9,6 +9,7 @@ import avdta.dta.DTAResults;
 import avdta.dta.DTASimulator;
 import avdta.dta.ReadDTANetwork;
 import avdta.gui.GUI;
+import avdta.gui.editor.Editor;
 import avdta.network.Path;
 import avdta.network.Simulator;
 import avdta.project.DTAProject;
@@ -33,6 +34,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.openstreetmap.gui.jmapviewer.Demo;
 
 
 
@@ -46,7 +48,12 @@ public class Main
     {
         //transitTest2();
         //caccTest2();
-        GUI.main(args);
+        //GUI.main(args);
+        new Editor();
+        //new DTAGUI();
+        
+        //Demo demo = new Demo();
+        //demo.setVisible(true);
     }
     
     public static void caccTest2() throws IOException

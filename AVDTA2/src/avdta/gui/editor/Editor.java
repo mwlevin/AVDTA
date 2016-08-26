@@ -36,7 +36,7 @@ import javax.swing.ScrollPaneConstants;
  */
 public class Editor extends JFrame
 {
-    private Map map;
+    private MapViewer map;
     private DisplayManager display;
     
     public Editor()
@@ -49,7 +49,7 @@ public class Editor extends JFrame
         setIconImage(getIcon());
         
         display = new DefaultDisplayManager();
-        map = new Map(display, 800, 800);
+        map = new MapViewer(display, 800, 800);
         JPanel p = new JPanel();
         p.setLayout(new GridBagLayout());
         
