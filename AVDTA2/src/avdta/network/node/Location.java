@@ -39,6 +39,16 @@ public class Location implements Serializable, ICoordinate
         this(rhs.x, rhs.y);
     }
     
+    public Location(ICoordinate rhs)
+    {
+        this(rhs.getLon(), rhs.getLat());
+    }
+    
+    public double distanceTo(Location rhs)
+    {
+        return Math.sqrt((rhs.x - x) * (rhs.x - x) + (rhs.y - y) * (rhs.y - y));
+    }
+    
     public Coordinate getCoordinate()
     {
         return new Coordinate(y, x);

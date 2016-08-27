@@ -136,6 +136,45 @@ public abstract class Link implements Serializable, Comparable<Link>
         
     }
     
+    public double distanceTo(Location loc)
+    {
+        return pDistance(loc.getX(), loc.getY(), source.getX(), source.getY(), dest.getX(), dest.getY());
+    }
+    
+    private double pDistance(double x, double y,  double x1, double y1, double x2, double y2) 
+    {
+
+        double A = x - x1;
+        double B = y - y1;
+        double C = x2 - x1;
+        double D = y2 - y1;
+
+        double dot = A * C + B * D;
+        double len_sq = C * C + D * D;
+        double param = -1;
+        if (len_sq != 0) //in case of 0 length line
+            param = dot / len_sq;
+
+        double xx, yy;
+
+        if (param < 0) {
+          xx = x1;
+          yy = y1;
+        }
+        else if (param > 1) {
+          xx = x2;
+          yy = y2;
+        }
+        else {
+          xx = x1 + param * C;
+          yy = y1 + param * D;
+        }
+
+        double dx = x - xx;
+        double dy = y - yy;
+        return Math.sqrt(dx * dx + dy * dy);
+      }
+    
     public LinkRecord createLinkRecord()
     {
         return new LinkRecord(getId(), getType(), getSource().getId(), getDest().getId(), getLength(), getFFSpeed(), getWaveSpeed(), 

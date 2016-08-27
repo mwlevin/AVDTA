@@ -574,8 +574,9 @@ public class Network
                     {
                         fileout.print(i.getId()+"\t1\t"+count+"\t"+p.getRedTime()+"\t"+p.getYellowTime()+"\t"+p.getGreenTime());
                         
-                        fileout.print("\t{");
+                        
                         Turn[] turns = p.getTurns();
+                        fileout.print("\t"+turns.length+"\t{");
                         
                         for(int t = 0; t < turns.length-1; t++)
                         {
@@ -612,7 +613,7 @@ public class Network
         
         for(Link l : links)
         {
-            fileout.print(l.getId());
+            fileout.print(l.getId()+"\t");
             
             Location[] coords = l.getCoordinates();
             

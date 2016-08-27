@@ -8,8 +8,10 @@ import avdta.network.Network;
 import avdta.network.link.Link;
 import avdta.network.node.Location;
 import avdta.network.node.Node;
+import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Composite;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -34,6 +36,7 @@ import javax.swing.Timer;
 import org.openstreetmap.gui.jmapviewer.Coordinate;
 import org.openstreetmap.gui.jmapviewer.JMapViewer;
 import static org.openstreetmap.gui.jmapviewer.JMapViewer.MIN_ZOOM;
+import org.openstreetmap.gui.jmapviewer.MapMarkerDot;
 import org.openstreetmap.gui.jmapviewer.MemoryTileCache;
 import org.openstreetmap.gui.jmapviewer.Tile;
 import org.openstreetmap.gui.jmapviewer.TileController;
@@ -54,25 +57,33 @@ public class MapViewer extends avdta.gui.editor.JMapViewer
     private Set<Node> nodes;
     private Set<Link> links;
     
-    private boolean displayLinks, displayNodes;
+    
+    
+    private DisplayManager display;
+    
+    private int time;
     
 
-    public MapViewer(int viewWidth, int viewHeight)
+    public MapViewer(DisplayManager display, int viewWidth, int viewHeight)
     {
+        this.display = display;
         setPreferredSize(new Dimension(viewWidth, viewHeight));
         
         nodes = new HashSet<Node>();
         links = new HashSet<Link>();
         
-        displayLinks = true;
-        displayNodes = true;
-        
     }
     
-    public MapViewer(int viewWidth, int viewHeight, Network network)
+    public MapViewer(DisplayManager display, int viewWidth, int viewHeight, Network network)
     {
-        this(viewWidth, viewHeight);
+        this(display, viewWidth, viewHeight);
         setNetwork(network);
+    }
+    
+    public void setTime(int t)
+    {
+        this.time = t;
+        repaint();
     }
     
     public void center(Node n)
@@ -164,69 +175,94 @@ public class MapViewer extends avdta.gui.editor.JMapViewer
         
         super.paintComponent(g);
         
-        if(displayLinks)
+
+        for(Link l : links)
         {
-            for(Link l : links)
+            if(!l.isCentroidConnector() || display.isDisplayCentroids())
             {
-                if(l.isCentroidConnector())
-                {
-                    continue;
-                }
-                Location[] coords = l.getCoordinates();
-
-                if(coords.length < 2)
-                {
-                    continue;
-                }
-
-                g.setColor(l.getColor());
-                g.setStroke(new BasicStroke(l.getWidth()));
-
-                ICoordinate prev = coords[0];
-                for(int i = 1; i < coords.length; i++)
-                {
-                    ICoordinate next = coords[i];
-
-                    Point p_start = getMapPosition(prev, false);
-                    Point p_end = getMapPosition(next, false);
-
-                    g.draw(new Line2D.Float(p_start, p_end));
-
-                    prev = next;
-                }
+                paintLink(g, l);
             }
+            
         }
-        if(displayNodes)
+
+        for(Node n : nodes)
         {
-            for(Node n : nodes)
+            if(!n.isZone() || display.isDisplayCentroids())
             {
-                if(n.isVisible())
-                {
-                    paintMarker(g, n);
-                }
+                paintNode(g, n);
             }
         }
     }
     
-    public void setDisplayNodes(boolean n)
+    protected void paintLink(Graphics2D g, Link l)
     {
-        displayNodes = n;
+        if(!display.isDisplayLinks())
+        {
+            return;
+        }
+        
+        Location[] coords = l.getCoordinates();
+
+        if(coords.length < 2)
+        {
+            return;
+        }
+
+        g.setColor(display.getColor(l));
+        g.setStroke(new BasicStroke(display.getWidth(l)));
+
+        ICoordinate prev = coords[0];
+        for(int i = 1; i < coords.length; i++)
+        {
+            ICoordinate next = coords[i];
+
+            Point p_start = getMapPosition(prev, false);
+            Point p_end = getMapPosition(next, false);
+
+            g.draw(new Line2D.Float(p_start, p_end));
+
+            prev = next;
+        }
+    }
+    
+    public void paintNode(Graphics2D g, Node n)
+    {
+        if(!display.isDisplayNodes())
+        {
+            return;
+        }
+        
+        int sizeH = (int)display.getRadius(n);
+        Point position = getMapPosition(n, false);
+        int size = sizeH * 2;
+
+        if (display.getBackColor(n) != null) {
+            Graphics2D g2 = (Graphics2D) g;
+            Composite oldComposite = g2.getComposite();
+            g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER));
+            g2.setPaint(n.getBackColor());
+            g.fillOval(position.x - sizeH, position.y - sizeH, size, size);
+            g2.setComposite(oldComposite);
+        }
+        g.setColor(display.getColor(n));
+        g.drawOval(position.x - sizeH, position.y - sizeH, size, size);
+
+        paintText(g, n.getName(), position, sizeH);
+    
+    }
+    
+    public void paintText(Graphics g, String name, Point position, int radius) {
+
+        if (name != null && g != null && position != null) {
+            g.setColor(Color.DARK_GRAY);
+            g.setFont(getFont());
+            g.drawString(name, position.x+radius+2, position.y+radius);
+        }
+    }
+    
+    public void setDisplayManager(DisplayManager display)
+    {
+        this.display = display;
         repaint();
-    }
-    
-    public void setDisplayLinks(boolean l)
-    {
-        displayLinks = l;
-        repaint();
-    }
-    
-    public boolean isDisplayNodes()
-    {
-        return displayNodes;
-    }
-    
-    public boolean isDisplayLinks()
-    {
-        return displayLinks;
     }
 }

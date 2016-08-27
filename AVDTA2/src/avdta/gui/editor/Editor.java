@@ -21,17 +21,21 @@ import static avdta.gui.util.GraphicUtils.*;
 import avdta.gui.util.ProjectChooser;
 import avdta.network.Simulator;
 import avdta.network.link.Link;
+import avdta.network.node.Location;
 import avdta.network.node.Node;
 import avdta.project.DTAProject;
 import avdta.project.Project;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Point;
+import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.swing.BorderFactory;
@@ -41,6 +45,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
+import org.openstreetmap.gui.jmapviewer.interfaces.ICoordinate;
 
 /**
  *
@@ -51,6 +56,9 @@ public class Editor extends JFrame
     public static final int PAN = 0;
     public static final int NODE = 1;
     public static final int LINK = 2;
+    public static final int POINT = 3;
+    
+    private int mode;
     
     private MapViewer map;
     
@@ -67,6 +75,9 @@ public class Editor extends JFrame
     
     private JLabel instructions;
     
+    private DisplayManager display;
+    
+    private Set<SelectListener> listeners;
     
     public Editor()
     {
@@ -80,6 +91,8 @@ public class Editor extends JFrame
         selectedNodes = new HashSet<Node>();
         selectedLinks = new HashSet<Link>();
         
+        listeners = new HashSet<SelectListener>();
+        
         
         nodes = new HashMap<Integer, Node>();
         links = new HashMap<Integer, Link>();
@@ -87,9 +100,11 @@ public class Editor extends JFrame
         GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
         int width = gd.getDisplayMode().getWidth();
         int height = gd.getDisplayMode().getHeight();
-        int size = (int)Math.min(width, height)-200;
+        int size = (int)Math.min(width-400, height-200);
 
-        map = new MapViewer(size, size);
+        display = new DefaultDisplayManager();
+        
+        map = new MapViewer(display, size, size);
         JPanel p = new JPanel();
         p.setLayout(new GridBagLayout());
         
@@ -104,15 +119,16 @@ public class Editor extends JFrame
         nodesSelect = new JCheckBox("Nodes");
         osmSelect = new JCheckBox("OpenStreetMaps");
         
-        linksSelect.setSelected(map.isDisplayLinks());
-        nodesSelect.setSelected(map.isDisplayNodes());
+        linksSelect.setSelected(display.isDisplayLinks());
+        nodesSelect.setSelected(display.isDisplayNodes());
         osmSelect.setSelected(map.isDisplayOSM());
         
         linksSelect.addActionListener(new ActionListener()
         {
             public void actionPerformed(ActionEvent e)
             {
-                map.setDisplayLinks(linksSelect.isSelected());
+                display.setDisplayLinks(linksSelect.isSelected());
+                map.repaint();
             }
         });
         
@@ -120,7 +136,8 @@ public class Editor extends JFrame
         {
             public void actionPerformed(ActionEvent e)
             {
-                map.setDisplayNodes(nodesSelect.isSelected());
+                display.setDisplayNodes(nodesSelect.isSelected());
+                map.repaint();
             }
         });
         
@@ -131,6 +148,8 @@ public class Editor extends JFrame
                 map.setDisplayOSM(osmSelect.isSelected());
             }
         });
+        
+        mode = PAN;
         
         
         JPanel layers = new JPanel();
@@ -384,16 +403,24 @@ public class Editor extends JFrame
     
     public void setMode(int mode)
     {
+        this.mode = mode;
         switch(mode)
         {
             case PAN:
                 instructions.setText("Use right mouse button to move; use mouse wheel to zoom");
+                map.setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
                 break;
             case NODE:
                 instructions.setText("Click on a node to select it.");
+                map.setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
                 break;
             case LINK:
                 instructions.setText("Click on a link to select it.");
+                map.setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
+                break;
+            case POINT:
+                instructions.setText("Click on the map to select a point.");
+                map.setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
                 break;
         }
     }
@@ -613,4 +640,126 @@ public class Editor extends JFrame
         clearSelectedNodes();
         clearSelectedLinks();
     }
+    
+    public void addSelectListener(SelectListener s)
+    {
+        listeners.add(s);
+    }
+    
+    public void removeSelectListener(SelectListener s)
+    {
+        listeners.remove(s);
+    }
+    
+    public void mouseClicked(MouseEvent e)
+    {
+        switch(mode)
+        {
+            case PAN: 
+                break;
+            case NODE:
+                Node n = findClosestNode(e.getX(), e.getY());
+                
+                if(n != null)
+                {
+                    for(SelectListener l : listeners)
+                    {
+                        l.nodeSelected(n);
+                    }
+                }
+                break;
+            case LINK:
+                Link l = findClosestLink(e.getX(), e.getY());
+
+                if(l != null)
+                {
+                    for(SelectListener listener : listeners)
+                    {
+                        listener.linkSelected(l);
+                    }
+                } 
+                break;
+            case POINT:
+                ICoordinate coord = map.getPosition(e.getPoint());
+                Location loc = new Location(coord);
+                for(SelectListener liste :listeners)
+                {
+                    liste.pointSelected(loc);
+                }
+                break;
+        }
+        
+    }
+    
+    protected Node findClosestNode(int x, int y)
+    {
+        Location loc = new Location(map.getPosition(new Point(x, y)));
+        
+        double min = Integer.MAX_VALUE;
+        Node closest = null;
+        
+        for(int id : nodes.keySet())
+        {
+            Node n = nodes.get(id);
+            double dist = loc.distanceTo(n);
+            
+            if(dist < min)
+            {
+                min = dist;
+                closest = n;
+            }
+            
+        }
+        
+        return closest;
+    }
+    
+    protected Link findClosestLink(int x, int y)
+    {
+        Location loc = new Location(map.getPosition(new Point(x, y)));
+        
+        double min = Integer.MAX_VALUE;
+        Link closest = null;
+        
+        for(int id : links.keySet())
+        {
+            Link l = links.get(id);
+            double dist = l.distanceTo(loc);
+            
+            if(dist < min)
+            {
+                min = dist;
+                closest = l;
+            }
+            
+        }
+        
+        return closest;
+    }
+    
+    public void saveLink(Link prev, Link newLink)
+    {
+        Set<Link> netLinks = project.getSimulator().getLinks();
+        
+        if(prev != null)
+        {
+           netLinks.remove(prev);
+           links.remove(prev.getId());
+        }
+        
+        netLinks.add(newLink);
+        links.put(newLink.getId(), newLink);
+        
+    }
+    
+    public Node getNode(int id)
+    {
+        return nodes.get(id);
+    }
+    
+    public Link getLink(int id)
+    {
+        return links.get(id);
+    }
 }
+

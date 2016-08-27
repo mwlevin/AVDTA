@@ -4,6 +4,7 @@
  */
 package avdta.network.node;
 
+import avdta.gui.editor.DisplayManager;
 import avdta.network.link.TransitLink;
 import avdta.network.link.Link;
 import avdta.vehicle.DriverType;
@@ -269,6 +270,7 @@ public abstract class Node extends Location implements Serializable, Comparable<
     }
     
     public void paint(Graphics g, Point position, int radius) {
+        
         int sizeH = radius;
         int size = sizeH * 2;
 
