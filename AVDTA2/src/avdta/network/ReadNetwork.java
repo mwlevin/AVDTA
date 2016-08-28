@@ -165,8 +165,7 @@ public class ReadNetwork
     
     public void createTransit(TransitProject project) throws IOException
     {
-        int curr_id = 100000000;
-        
+        int curr_id = -1;
         Map<Integer, Integer[]> busPeriod = new HashMap<Integer, Integer[]>();
         
         Scanner filein = new Scanner(project.getBusPeriodFile());
@@ -211,7 +210,7 @@ public class ReadNetwork
             
             for(int t = starttime + offset; t < endtime; t+=frequency)
             {
-                fileout.println((++curr_id)+"\t"+type+"\t"+routeId+"\t"+t);
+                fileout.println((--curr_id)+"\t"+type+"\t"+routeId+"\t"+t);
             }
         }
         filein.close();
@@ -552,7 +551,7 @@ public class ReadNetwork
                     {
                         TransitLane transitLane = new TransitLane(id, nodesmap.get(source_id), nodesmap.get(dest_id), capacity, ffspd, w, jamd, length);
                         links.add(transitLane);
-                        link = new SharedTransitCTMLink(id, nodesmap.get(source_id), nodesmap.get(dest_id), capacity, 
+                        link = new SharedTransitCTMLink(-id, nodesmap.get(source_id), nodesmap.get(dest_id), capacity, 
                                 ffspd, ffspd*mesodelta, jamd, length, numLanes-1, transitLane);
                     }
                     else

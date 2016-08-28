@@ -72,6 +72,7 @@ public class MapViewer extends avdta.gui.editor.JMapViewer
         nodes = new HashSet<Node>();
         links = new HashSet<Link>();
         
+        
     }
     
     public MapViewer(DisplayManager display, int viewWidth, int viewHeight, Network network)

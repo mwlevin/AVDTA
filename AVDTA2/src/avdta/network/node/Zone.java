@@ -40,6 +40,11 @@ public class Zone extends Node
         parkingFee = 5;
     }
     
+    public Signalized getSignal()
+    {
+        return null;
+    }
+    
     public void setLinkedZone(Zone z)
     {
         linkedZone = z;

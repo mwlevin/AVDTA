@@ -25,4 +25,14 @@ public class Turn implements java.io.Serializable
         this.i = i;
         this.j = j;
     }
+    
+    public int hashCode()
+    {
+        return i.getId()+j.getId();
+    }
+    
+    public boolean equals(Turn rhs)
+    {
+        return i == rhs.i && j == rhs.j;
+    }
 }

@@ -13,9 +13,9 @@ import avdta.network.node.Node;
  *
  * @author micha
  */
-public interface SelectListener 
+public class SelectAdapter implements SelectListener
 {
-    public void nodeSelected(Node n);
-    public void linkSelected(Link[] l);
-    public void pointSelected(Location loc);
+    public void nodeSelected(Node n){}
+    public void linkSelected(Link[] l){}
+    public void pointSelected(Location loc){}
 }

@@ -269,6 +269,8 @@ public abstract class Node extends Location implements Serializable, Comparable<
         return transitOut;
     }
     
+    public abstract Signalized getSignal();
+    
     public void paint(Graphics g, Point position, int radius) {
         
         int sizeH = radius;

@@ -57,6 +57,28 @@ public class Phase implements Comparable<Phase>
         this.green_time = green;
     }
     
+    public Phase(Phase rhs)
+    {
+        this.sequence = rhs.sequence;
+        allowed = new Turn[rhs.allowed.length];
+        
+        for(int i = 0; i < allowed.length; i++)
+        {
+            allowed[i] = rhs.allowed[i];
+        }
+        
+        green_time = rhs.green_time;
+        red = rhs.red;
+        yellow = rhs.yellow;
+        duration = rhs.duration;
+        start_time = rhs.start_time;
+    }
+    
+    public Phase clone()
+    {
+        return new Phase(this);
+    }
+    
     public double getRedTime()
     {
         return red;
@@ -121,6 +143,19 @@ public class Phase implements Comparable<Phase>
     {
         return green_time;
     }
+    
+
+    
+    public void setYellowTime(double y)
+    {
+        yellow = y;
+    }
+    
+    public void setRedTime(double r)
+    {
+        red = r;
+    }
+    
     /**
      * Gets start time of the phase.
      * @return Returns a double value indicating the start time of the phase.

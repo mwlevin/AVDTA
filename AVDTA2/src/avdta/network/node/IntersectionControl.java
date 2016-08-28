@@ -45,6 +45,7 @@ public abstract class IntersectionControl
             node.setControl(this);
         }
     }
+
     /**
      * Returns the name of the instance of the Intersection Control class.
      * @return A String which has the name of the instance of the intersection 

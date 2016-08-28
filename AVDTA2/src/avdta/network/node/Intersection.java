@@ -45,6 +45,11 @@ public class Intersection extends Node
         }
     }
     
+    public Signalized getSignal()
+    {
+        return control.getSignal();
+    }
+    
     
     public int getType()
     {

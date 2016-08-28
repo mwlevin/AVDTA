@@ -43,6 +43,8 @@ public abstract class GUI extends JFrame
     private static Image icon;
     
     
+    
+    
     public static void main(String[] args) throws IOException
     {
         System.setErr(new PrintStream(new FileOutputStream(new File("error_log.txt")), true));
@@ -98,6 +100,8 @@ public abstract class GUI extends JFrame
     
     private JMenuItem cloneMI, closeMI, createDatabase, editor;
     protected Project project;
+    
+    private Editor openEditor;
     
     
     public GUI()
@@ -214,7 +218,7 @@ public abstract class GUI extends JFrame
         {
             public void actionPerformed(ActionEvent e)
             {
-                Editor editor = new Editor(project);
+                openEditor = new Editor(project);
             }
         });
         
@@ -284,6 +288,11 @@ public abstract class GUI extends JFrame
     
     public void openProject(Project p) throws IOException
     {
+        if(openEditor != null)
+        {
+            openEditor.setVisible(false);
+            openEditor = null;
+        }
         this.project = p;
         createDatabase.setEnabled(SQLLogin.hasSQL());
         
