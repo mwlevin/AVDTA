@@ -44,6 +44,8 @@ public class AssignmentPane extends JPanel
     
     private ArrayList<Assignment> assignments;
     
+    private Assignment mostRecent;
+    
     public AssignmentPane(DTAPane parent_)
     {
         this.parent = parent_;
@@ -120,6 +122,11 @@ public class AssignmentPane extends JPanel
         
     }
     
+    public Assignment getMostRecentAssignment()
+    {
+        return mostRecent;
+    }
+    
     public void loadAssignment(String name) throws IOException
     {
         parent.setEnabled(false);
@@ -166,11 +173,21 @@ public class AssignmentPane extends JPanel
         
         assignments.clear();
         
+        long lastModified = Long.MAX_VALUE;
+        
+        
         if(dir.exists())
         {
             for(File f : dir.listFiles())
             {
-                assignments.add(readAssignment(f.getName()));
+                Assignment assign = readAssignment(f.getName());
+                assignments.add(assign);
+                
+                if(f.lastModified() < lastModified)
+                {
+                    lastModified = f.lastModified();
+                    mostRecent = assign;
+                }
             }
         }
         

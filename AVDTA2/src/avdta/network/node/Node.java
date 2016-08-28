@@ -4,7 +4,7 @@
  */
 package avdta.network.node;
 
-import avdta.gui.editor.DisplayManager;
+import avdta.gui.editor.visual.DisplayManager;
 import avdta.network.link.TransitLink;
 import avdta.network.link.Link;
 import avdta.vehicle.DriverType;

@@ -4,6 +4,7 @@
  */
 package avdta.gui.editor;
 
+import avdta.gui.editor.visual.DisplayManager;
 import avdta.network.Network;
 import avdta.network.link.Link;
 import avdta.network.node.Location;

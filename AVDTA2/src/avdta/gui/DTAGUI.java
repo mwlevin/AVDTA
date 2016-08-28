@@ -5,6 +5,8 @@
  */
 package avdta.gui;
 
+import avdta.dta.Assignment;
+import avdta.dta.DTAResults;
 import avdta.gui.util.ProjectChooser;
 import avdta.gui.util.Version;
 import avdta.gui.panels.DTAPane;
@@ -33,6 +35,7 @@ import javax.swing.JTextField;
 import javax.swing.filechooser.FileView;
 import avdta.network.ReadNetwork;
 import avdta.project.Project;
+import avdta.vehicle.DriverType;
 
 /**
  *
@@ -46,14 +49,11 @@ public class DTAGUI extends GUI
     private DTAPane dtaPane;
     private TransitPane transitPane;
     
-    
+    private JMenuItem lastAssignment;
     
     
     public DTAGUI()
     {
-        
-        
-        final JFrame frame = this;
 
         
         JPanel p = new JPanel();
@@ -95,6 +95,43 @@ public class DTAGUI extends GUI
         setVisible(true);
     }
     
+    public JMenuBar createMenuBar()
+    {
+        final JFrame frame = this;
+        
+        JMenuBar menu = super.createMenuBar();
+        
+        JMenu me = new JMenu("DTA");
+        lastAssignment = new JMenuItem();
+        lastAssignment.addActionListener(new ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                Assignment assign = dtaPane.getMostRecentAssignment();
+                
+                if(assign == null)
+                {
+                    JOptionPane.showMessageDialog(frame, "No assignments found", "Last assignment", JOptionPane.ERROR_MESSAGE);
+                }
+                else
+                {
+                    DTAResults results = assign.getResults();
+                    
+                    JOptionPane.showMessageDialog(frame, "Gap: "+String.format("%.2f", results.getGapPercent())+
+                            "\nTrips: "+results.getTrips()+
+                            "\nNon-exiting: "+results.getNonExiting()+
+                            "\nTSTT: "+String.format("%.1f", results.getTSTT())+" hr\nAvg. time: "+String.format("%.2f", results.getAvgTT())+" min",
+                            "Last assignment", JOptionPane.PLAIN_MESSAGE);
+                }
+            }
+        });
+        me.add(lastAssignment);
+        
+        menu.add(me);
+        
+        return menu;
+    }
+    
     public void closeProject()
     {
         try
@@ -120,7 +157,11 @@ public class DTAGUI extends GUI
         
         if(project != null)
         {
-            setTitle(project.getName()+" - AVDTA");
+            setTitle(project.getName()+" - "+ GUI.getTitleName());
+        }
+        else
+        {
+            setTitle(GUI.getTitleName());
         }
         
         

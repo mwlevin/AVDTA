@@ -49,7 +49,19 @@ public abstract class GUI extends JFrame
     {
         System.setErr(new PrintStream(new FileOutputStream(new File("error_log.txt")), true));
         
-        new DTAGUI();
+        if(args.length > 0 && args[0].equalsIgnoreCase("editor"))
+        {
+            new Editor();
+        }
+        else if(args.length > 0 && args[0].equalsIgnoreCase("dta"))
+        {
+            new DTAGUI();
+        }
+        else
+        {
+            new DTAGUI();
+        }
+        
         
     }
     
@@ -110,7 +122,23 @@ public abstract class GUI extends JFrame
         setIconImage(getIcon());
         
         frame = this;
+
+        JMenuBar menu = createMenuBar();
+        menu.add(createHelpMenu());
         
+        this.setJMenuBar(menu);
+        
+        addWindowListener(new WindowAdapter()
+        {
+            public void windowClosing(WindowEvent e)
+            {
+                System.exit(0);
+            }
+        });
+    }
+    
+    protected JMenuBar createMenuBar()
+    {
         JMenuBar menu = new JMenuBar();
         JMenu me;
         JMenuItem mi;
@@ -230,18 +258,7 @@ public abstract class GUI extends JFrame
         
         
         
-        
-        menu.add(createHelpMenu());
-        
-        this.setJMenuBar(menu);
-        
-        addWindowListener(new WindowAdapter()
-        {
-            public void windowClosing(WindowEvent e)
-            {
-                System.exit(0);
-            }
-        });
+        return menu;
     }
     
     public static JMenu createHelpMenu()

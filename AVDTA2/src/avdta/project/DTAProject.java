@@ -5,6 +5,7 @@
  */
 package avdta.project;
 
+import avdta.dta.Assignment;
 import avdta.dta.DTASimulator;
 import avdta.dta.ReadDTANetwork;
 import avdta.network.ReadNetwork;
@@ -34,6 +35,7 @@ public class DTAProject extends TransitProject
     {
         super(directory);
     }
+
     
     public void cloneFromProject(DTAProject rhs) throws IOException
     {
@@ -231,5 +233,10 @@ public class DTAProject extends TransitProject
             file.delete();
         }
         folder.delete();
+    }
+    
+    public void loadProject() throws IOException
+    {
+        super.loadProject();
     }
 }

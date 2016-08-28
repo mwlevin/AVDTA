@@ -31,6 +31,10 @@ public class DTAPane extends JPanel
         constrain(this, msaPane, 1, 0, 1, 1);
     }
     
+    public Assignment getMostRecentAssignment()
+    {
+        return assignPane.getMostRecentAssignment();
+    }
     
     public void setProject(DTAProject project)
     {

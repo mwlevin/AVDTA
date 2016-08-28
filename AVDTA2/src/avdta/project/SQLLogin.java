@@ -26,6 +26,19 @@ public class SQLLogin
     private int port;
     private String database;
     
+    public SQLLogin(String ip, String user, String password, int port)
+    {
+        this(ip, user, password, port, "");
+    }
+    public SQLLogin(String ip, String user, String password, int port, String database)
+    {
+        this.ip = ip;
+        this.user = user;
+        this.password = password;
+        this.port = port;
+        this.database = database;
+    }
+    
     public SQLLogin() throws IOException
     {
         database="";

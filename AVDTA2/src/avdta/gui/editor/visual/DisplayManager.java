@@ -3,11 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package avdta.gui.editor;
+package avdta.gui.editor.visual;
 
 import avdta.network.link.Link;
 import avdta.network.node.Node;
 import java.awt.Color;
+import java.io.File;
+import java.io.IOException;
 
 /**
  *
@@ -28,4 +30,7 @@ public interface DisplayManager
     public Color getBackColor(Node n);
     public Color getColor(Node n);
     public int getRadius(Node n);
+    
+    public void save(File file) throws IOException;
+    public void open(File file) throws IOException;
 }

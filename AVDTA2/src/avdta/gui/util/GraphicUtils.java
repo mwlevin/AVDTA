@@ -12,10 +12,10 @@ public abstract class GraphicUtils
 	// only static methods, don't instantiate
 
 	public static void constrain(Container container, Component component, int grid_x, int grid_y, int grid_width, int grid_height){
-		constrain(container, component, grid_x, grid_y, grid_width, grid_height, GridBagConstraints.NONE, GridBagConstraints.NORTHWEST, 0.0, 0.0, 5, 5, 5, 5);
+		constrain(container, component, grid_x, grid_y, grid_width, grid_height, GridBagConstraints.NONE, GridBagConstraints.NORTHWEST, 0.0, 0.0, 2, 2, 2, 2);
 	}
 	public static void constrain(Container container, Component component, int grid_x, int grid_y, int grid_width, int grid_height, int align){
-		constrain(container, component, grid_x, grid_y, grid_width, grid_height, GridBagConstraints.NONE, align, 0.0, 0.0, 5, 5, 5, 5);
+		constrain(container, component, grid_x, grid_y, grid_width, grid_height, GridBagConstraints.NONE, align, 0.0, 0.0, 2, 2, 2, 2);
 	}
 	public static void constrain(Container container, Component component, int grid_x, int grid_y, int grid_width, int grid_height, int top, int left, int bottom, int right){
 		constrain(container, component, grid_x, grid_y, grid_width, grid_height, GridBagConstraints.NONE, GridBagConstraints.NORTHWEST, 0.0, 0.0, top, left, bottom, right);

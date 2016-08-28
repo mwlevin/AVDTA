@@ -4,9 +4,14 @@
  */
 package avdta.gui.editor;
 
+import avdta.gui.editor.visual.DefaultDisplayManager;
+import avdta.gui.editor.visual.DisplayManager;
 import avdta.gui.GUI;
 import static avdta.gui.GUI.getIcon;
 import static avdta.gui.GUI.handleException;
+import avdta.gui.editor.visual.RuleDisplay;
+import avdta.gui.editor.visual.rules.LinkRulePanel;
+import avdta.gui.editor.visual.rules.NodeRulePanel;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -34,6 +39,7 @@ import java.awt.GraphicsEnvironment;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -43,6 +49,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
 import javax.swing.JDesktopPane;
@@ -55,6 +62,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import org.openstreetmap.gui.jmapviewer.interfaces.ICoordinate;
 
 /**
@@ -80,14 +88,33 @@ public class Editor extends JFrame implements MouseListener
     
     
     private JCheckBox linksSelect, nodesSelect, osmSelect, centroidSelect;
+    private JMenuItem save, close;
     
     private Project project;
     
     private JLabel instructions;
     
-    private DisplayManager display;
+    private RuleDisplay display;
     
     private Set<SelectListener> listeners;
+    
+    
+    private NodeRulePanel nodePanel;
+    private LinkRulePanel linkPanel;
+    
+    
+    
+    
+    
+    
+    
+    
+   
+    
+    public static String getTitleName()
+    {
+        return GUI.getTitleName() + " Editor";
+    }
     
     public Editor()
     {
@@ -97,7 +124,7 @@ public class Editor extends JFrame implements MouseListener
     {
         final Editor thisEditor = this;
         
-        setTitle(GUI.getTitleName());
+        setTitle(getTitleName());
         setIconImage(getIcon());
         
         selectedNodes = new HashSet<Node>();
@@ -114,7 +141,7 @@ public class Editor extends JFrame implements MouseListener
         int height = gd.getDisplayMode().getHeight();
         int size = (int)Math.min(width-400, height-200);
 
-        display = new DefaultDisplayManager();
+        display = new RuleDisplay();
         
         map = new MapViewer(display, size, size);
         
@@ -190,6 +217,12 @@ public class Editor extends JFrame implements MouseListener
         p2.setLayout(new GridBagLayout());
         constrain(p2, layers, 0, 0, 1, 1);
         
+        nodePanel = new NodeRulePanel(this, display.getNodeRules());
+        linkPanel = new LinkRulePanel(this, display.getLinkRules());
+        
+        constrain(p2, nodePanel, 0, 1, 1, 1);
+        constrain(p2, linkPanel, 0, 2, 1, 1);
+        
         constrain(p, p2, 0, 0, 1, 2);
         
         instructions = new JLabel(" ");
@@ -200,11 +233,11 @@ public class Editor extends JFrame implements MouseListener
         JMenuBar menu = new JMenuBar();
         JMenu me;
         JMenuItem mi;
-        //if(project == null)
+        
+        me = new JMenu("File");
+        
+        if(project == null)
         {
-            
-
-            me = new JMenu("File");
             mi = new JMenuItem("New project");
             mi.addActionListener(new ActionListener()
             {
@@ -224,17 +257,22 @@ public class Editor extends JFrame implements MouseListener
                 }
             });
             me.add(mi);
+        }
             
-            mi = new JMenuItem("Save project");
-            mi.addActionListener(new ActionListener()
+        mi = new JMenuItem("Save project");
+        mi.addActionListener(new ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
             {
-                public void actionPerformed(ActionEvent e)
-                {
-                    saveProject();
-                }
-            });
-            me.add(mi);
-            
+                saveProject();
+            }
+        });
+        me.add(mi);
+        save = mi;
+        save.setEnabled(false);
+        
+        if(project == null)
+        {
             mi = new JMenuItem("Close project");
             mi.addActionListener(new ActionListener()
             {
@@ -244,22 +282,24 @@ public class Editor extends JFrame implements MouseListener
                 }
             });
             me.add(mi);
-            
-            me.addSeparator();
-
-            mi = new JMenuItem("Exit");
-            mi.addActionListener(new ActionListener()
-            {
-                public void actionPerformed(ActionEvent e)
-                {
-                    System.exit(0);
-                }
-            });
-            me.add(mi);
-
-            menu.add(me);
-            
+            close = mi;
+            close.setEnabled(false);
         }
+        me.addSeparator();
+        
+        mi = new JMenuItem("Exit");
+        mi.addActionListener(new ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                System.exit(0);
+            }
+        });
+        me.add(mi);
+        
+        
+
+        menu.add(me);
         
         me = new JMenu("View");
         
@@ -291,6 +331,40 @@ public class Editor extends JFrame implements MouseListener
             public void actionPerformed(ActionEvent e)
             {
                 map.zoomOut();
+            }
+        });
+        me.add(mi);
+        
+        me.addSeparator();
+        
+        mi = new JMenuItem("Take screenshot");
+        mi.addActionListener(new ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                saveScreenshot();
+            }
+        });
+        me.add(mi);
+        
+        me.addSeparator();
+        
+        mi = new JMenuItem("Open visualization");
+        mi.addActionListener(new ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                openVisualization();
+            }
+        });
+        me.add(mi);
+        
+        mi = new JMenuItem("Save visualization");
+        mi.addActionListener(new ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                saveVisualization();
             }
         });
         me.add(mi);
@@ -706,6 +780,92 @@ public class Editor extends JFrame implements MouseListener
         catch(IOException ex){}
         
     }
+    
+    public void openVisualization()
+    {
+        JFileChooser chooser = new JFileChooser(GUI.getDefaultDirectory());
+        chooser.addChoosableFileFilter(new FileNameExtensionFilter("Vizualization files", "viz"));
+        chooser.setAcceptAllFileFilterUsed(false);
+        chooser.setMultiSelectionEnabled(false);
+        
+        int returnVal = chooser.showOpenDialog(this);
+        
+        if(returnVal == JFileChooser.APPROVE_OPTION)
+        {
+            try
+            {
+                File file = chooser.getSelectedFile();
+                
+                display.open(chooser.getSelectedFile());
+            }
+            catch(IOException ex)
+            {
+                GUI.handleException(ex);
+            }
+        }
+    }
+    
+    public void saveVisualization()
+    {
+        JFileChooser chooser = new JFileChooser(GUI.getDefaultDirectory());
+        chooser.addChoosableFileFilter(new FileNameExtensionFilter("Vizualization files", "viz"));
+        chooser.setAcceptAllFileFilterUsed(false);
+        chooser.setMultiSelectionEnabled(false);
+        
+        int returnVal = chooser.showSaveDialog(this);
+        
+        if(returnVal == JFileChooser.APPROVE_OPTION)
+        {
+            try
+            {
+                File file = chooser.getSelectedFile();
+            
+                if(file.getName().indexOf('.') < 0)
+                {
+                    file = new File(file.getCanonicalPath()+".viz");
+                }
+                
+                display.save(chooser.getSelectedFile());
+            }
+            catch(IOException ex)
+            {
+                GUI.handleException(ex);
+            }
+        }
+    }
+    
+    public void saveScreenshot()
+    {
+        JFileChooser chooser = new JFileChooser(GUI.getDefaultDirectory());
+        chooser.addChoosableFileFilter(new FileNameExtensionFilter("PNG images", "png"));
+        chooser.setAcceptAllFileFilterUsed(false);
+        chooser.setMultiSelectionEnabled(false);
+        
+        int returnVal = chooser.showSaveDialog(this);
+        
+        if(returnVal == JFileChooser.APPROVE_OPTION)
+        {
+            try
+            {
+                File file = chooser.getSelectedFile();
+            
+                if(file.getName().indexOf('.') < 0)
+                {
+                    file = new File(file.getCanonicalPath()+".png");
+                }
+
+                BufferedImage image = new BufferedImage(map.getWidth(), map.getHeight(), BufferedImage.TYPE_INT_ARGB);
+                map.paint(image.getGraphics());
+            
+                ImageIO.write(image, "png", file);
+            }
+            catch(Exception ex)
+            {
+                GUI.handleException(ex);
+            }
+        }
+    }
+    
     public void newProject()
     {
         JFileChooser chooser = new ProjectChooser(new File(GUI.getDefaultDirectory()));
@@ -761,6 +921,31 @@ public class Editor extends JFrame implements MouseListener
     public void openProject(Project project)
     {
         this.project = project;
+        
+        boolean enable = project != null;
+        
+        if(close != null)
+        {
+            close.setEnabled(enable);
+        }
+        
+        save.setEnabled(enable);
+        nodesSelect.setEnabled(enable);
+        linksSelect.setEnabled(enable);
+        centroidSelect.setEnabled(enable);
+        nodePanel.setEnabled(enable);
+        linkPanel.setEnabled(enable);
+        
+        
+        
+        if(project != null)
+        {
+            setTitle(project.getName()+" - "+getTitleName());
+        }
+        else
+        {
+            setTitle(getTitleName());
+        }
         
         clearSelected();
         
@@ -969,7 +1154,7 @@ public class Editor extends JFrame implements MouseListener
         
     }
     
-    private static final double epsilon = 1;
+    private static final double epsilon = 0.5;
     
     protected Node findClosestNode(int x, int y)
     {
