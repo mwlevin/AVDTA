@@ -135,10 +135,12 @@ public class Editor extends JFrame implements MouseListener
         linksSelect = new JCheckBox("Links");
         nodesSelect = new JCheckBox("Nodes");
         osmSelect = new JCheckBox("OpenStreetMaps");
+        centroidSelect = new JCheckBox("Centroids");
         
         linksSelect.setSelected(display.isDisplayLinks());
         nodesSelect.setSelected(display.isDisplayNodes());
         osmSelect.setSelected(map.isDisplayOSM());
+        centroidSelect.setSelected(display.isDisplayCentroids());
         
         linksSelect.addActionListener(new ActionListener()
         {
@@ -158,6 +160,15 @@ public class Editor extends JFrame implements MouseListener
             }
         });
         
+        nodesSelect.addActionListener(new ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                display.setDisplayCentroids(centroidSelect.isSelected());
+                map.repaint();
+            }
+        });
+        
         osmSelect.addActionListener(new ActionListener()
         {
             public void actionPerformed(ActionEvent e)
@@ -170,7 +181,8 @@ public class Editor extends JFrame implements MouseListener
         layers.setLayout(new GridBagLayout());
         constrain(layers, nodesSelect, 0, 0, 1, 1);
         constrain(layers, linksSelect, 0, 1, 1, 1);
-        constrain(layers, osmSelect, 0, 2, 1, 1);
+        constrain(layers, osmSelect, 0, 3, 1, 1);
+        constrain(layers, centroidSelect, 0, 2, 1, 1);
         
         layers.setBorder(BorderFactory.createTitledBorder("Layers"));
         
@@ -188,7 +200,7 @@ public class Editor extends JFrame implements MouseListener
         JMenuBar menu = new JMenuBar();
         JMenu me;
         JMenuItem mi;
-        if(project == null)
+        //if(project == null)
         {
             
 
