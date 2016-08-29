@@ -515,6 +515,7 @@ public abstract class Link implements Serializable, Comparable<Link>
         return getAvgTT((int)enter);
     }
     
+    
     /**
      * 
      * @param enter An integer indicating the time entered.
@@ -531,6 +532,21 @@ public abstract class Link implements Serializable, Comparable<Link>
         else
         {
             return getFFTime();
+        }
+    }
+    
+    public RunningAvg[] getAvgTTs()
+    {
+        return avgTT;
+    }
+    
+    public void setAvgTT(int enter, double tt)
+    {
+        int idx = (int)Math.min(Simulator.num_asts-1, enter / Simulator.ast_duration);
+        
+        if(idx >= 0 && idx < avgTT.length && avgTT[idx].getCount() > 0)
+        {
+            avgTT[idx].setValue(Math.max(getFFTime(), tt));
         }
     }
     

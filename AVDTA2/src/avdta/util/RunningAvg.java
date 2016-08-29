@@ -20,6 +20,12 @@ public class RunningAvg implements Serializable
 		value = 0;
                 count = 0;
 	}
+        
+        public void setValue(double v)
+        {
+            value = v;
+            count = 1;
+        }
 	
 	public void add(double val)
 	{

@@ -136,8 +136,7 @@ public class AssignmentPane extends JPanel
         DTASimulator sim = project.getSimulator();
         
         PathList paths = new PathList(sim, project.getPathsFile());
-        assign.readFromFile(sim.getVehicles(), paths, 
-                new File(project.getAssignmentsFolder()+"/"+name+"/vehicles.dat"));
+        assign.readFromFile(project, sim.getVehicles(), paths);
         parent.loadAssignment(assign);
         
         JOptionPane.showMessageDialog(this, "Loaded assignment "+name, "Complete", JOptionPane.INFORMATION_MESSAGE);

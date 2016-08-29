@@ -249,7 +249,7 @@ public class DTASimulator extends Simulator
         PathList paths = new PathList(this, project.getPathsFile());
         
         Assignment assign = new Assignment(file);
-        assign.readFromFile(getVehicles(), paths, file);
+        assign.readFromFile(project, getVehicles(), paths);
         
         currAssign = assign;
     }

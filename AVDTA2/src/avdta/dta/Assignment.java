@@ -7,12 +7,16 @@ package avdta.dta;
 
 import avdta.network.Path;
 import avdta.network.PathList;
+import avdta.network.Simulator;
+import avdta.network.link.Link;
 import avdta.project.DTAProject;
+import avdta.util.RunningAvg;
 import avdta.vehicle.Vehicle;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
@@ -94,10 +98,19 @@ public class Assignment implements Comparable<Assignment>
         return results;
     }
     
+    public File getVehiclesFile(DTAProject project)
+    {
+        return new File(project.getAssignmentsFolder()+"/"+getName()+"/vehicles.dat");
+    }
+    
+    public File getTimesFile(DTAProject project)
+    {
+        return new File(project.getAssignmentsFolder()+"/"+getName()+"/linktt.dat");
+    }
+    
     public void writeToFile(List<Vehicle> vehicles, DTAProject project) throws IOException
     {
-        File file = new File(project.getAssignmentsFolder()+"/"+getName()+"/vehicles.dat");
-        PrintStream fileout = new PrintStream(new FileOutputStream(file), true);
+        PrintStream fileout = new PrintStream(new FileOutputStream(getVehiclesFile(project)), true);
         fileout.println(getHeaderData());
         
         for(Vehicle v : vehicles)
@@ -107,6 +120,22 @@ public class Assignment implements Comparable<Assignment>
         
         fileout.close();
         
+        fileout = new PrintStream(new FileOutputStream(getTimesFile(project)), true);
+        for(Link l : project.getSimulator().getLinks())
+        {
+            fileout.print(l.getId());
+            
+            RunningAvg[] tts = l.getAvgTTs();
+            
+            for(int t = 0; t < tts.length; t++)
+            {
+                fileout.print("\t"+(t*Simulator.ast_duration)+"\t"+tts[t].getAverage());
+            }
+            
+            fileout.println();
+        }
+        fileout.close();
+        
     }
     
     public String getHeaderData()
@@ -114,11 +143,12 @@ public class Assignment implements Comparable<Assignment>
         return (results.getMinTT()/3600.0)+"\t"+results.getTSTT()+"\t"+results.getNumVeh()+"\t"+results.getNumExiting();
     }
     
-    public void readFromFile(List<Vehicle> vehicles, PathList pathlist, File file) throws IOException
+    
+    public void readFromFile(DTAProject project, List<Vehicle> vehicles, PathList pathlist) throws IOException
     {
         Map<Integer, Path> paths = pathlist.createPathIdsMap();
         
-        Scanner filein = new Scanner(file);
+        Scanner filein = new Scanner(getVehiclesFile(project));
         
         filein.nextLine();
         
@@ -141,6 +171,43 @@ public class Assignment implements Comparable<Assignment>
             
             v.setPath(p);
         }
+        filein.close();
+        
+        Map<Integer, Link> linksMap = new HashMap<Integer, Link>();
+        
+        for(Link l : project.getSimulator().getLinks())
+        {
+            linksMap.put(l.getId(), l);
+        }
+        
+        filein = new Scanner(getTimesFile(project));
+        
+        while(filein.hasNextInt())
+        {
+            int id = filein.nextInt();
+            Scanner chopper = new Scanner(filein.nextLine());
+            
+            Link link = linksMap.get(id);
+            
+            if(link == null)
+            {
+                continue;
+            }
+            
+            int prev_t = 0;
+            double prev_tt = link.getFFTime();
+            while(chopper.hasNextInt())
+            {
+                int t = chopper.nextInt();
+                double tt = chopper.nextDouble();
+                
+                link.setAvgTT(t, tt);
+                
+                prev_t = t;
+                prev_tt = tt;
+            }
+        }
+        filein.close();
     }
     
     
