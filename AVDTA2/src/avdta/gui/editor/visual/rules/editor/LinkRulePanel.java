@@ -193,7 +193,7 @@ public class LinkRulePanel extends JPanel
                         frame.setVisible(false);
                     }
                     
-                    public void addRule(LinkTypeRule rule)
+                    public void addRule(LinkDataRule rule)
                     {
                         newRule(rule);
                     }

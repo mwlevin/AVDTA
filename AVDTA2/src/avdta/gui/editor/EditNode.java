@@ -48,25 +48,25 @@ import javax.swing.event.DocumentListener;
  */
 public class EditNode extends JPanel
 {
-    private static final String[] TYPES = new String[]{"Centroid", "Intersection"};
+    public static final String[] TYPES = new String[]{"Centroid", "Intersection"};
     
-    private static final int CENTROID = 0;
-    private static final int INTERSECTION = 1;
+    public static final int CENTROID = 0;
+    public static final int INTERSECTION = 1;
     
-    private static final String[] CONTROLS = new String[]{"Signals", "Stop sign", "Reservations"};
+    public static final String[] CONTROLS = new String[]{"Signals", "Stop sign", "Reservations"};
     
-    private static final int SIGNALS = 0;
-    private static final int STOP_SIGN = 1;
-    private static final int RESERVATIONS = 2;
+    public static final int SIGNALS = 0;
+    public static final int STOP_SIGN = 1;
+    public static final int RESERVATIONS = 2;
     
-    private static final String[] POLICIES = new String[]{"FCFS", "Auction", "Backpressure", "P0", "Phased", "Signal-weighted"};
+    public static final String[] POLICIES = new String[]{"FCFS", "Auction", "Backpressure", "P0", "Phased", "Signal-weighted"};
     
-    private static final int FCFS = 0;
-    private static final int AUCTION = 1;
-    private static final int BACKPRESSURE = 2;
-    private static final int P0 = 3;
-    private static final int PHASED = 4;
-    private static final int SIGNAL_WEIGHTED = 5;
+    public static final int FCFS = 0;
+    public static final int AUCTION = 1;
+    public static final int BACKPRESSURE = 2;
+    public static final int P0 = 3;
+    public static final int PHASED = 4;
+    public static final int SIGNAL_WEIGHTED = 5;
     
     private Location loc;
     private Editor editor;

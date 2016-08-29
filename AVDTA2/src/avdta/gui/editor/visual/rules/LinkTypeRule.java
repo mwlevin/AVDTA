@@ -42,6 +42,11 @@ public class LinkTypeRule extends LinkRule
         this.width = width;
     }
     
+    public int getType()
+    {
+        return type;
+    }
+    
     public void setWidth(int width)
     {
         this.width = width;
