@@ -8,6 +8,7 @@ package avdta.gui.editor.visual;
 import avdta.gui.GUI;
 import avdta.gui.editor.visual.rules.LinkRule;
 import avdta.gui.editor.visual.rules.NodeRule;
+import avdta.network.link.CentroidConnector;
 import avdta.network.link.Link;
 import avdta.network.node.Node;
 import java.awt.Color;
@@ -35,14 +36,70 @@ public class RuleDisplay extends DefaultDisplayManager
     private Node cachedNode;
     private NodeRule cachedNodeRule;
     private LinkRule cachedLinkRule;
+    private int cachedNodeT;
+    private int cachedLinkT;
+    
+    private LinkRule defaultLinkRule;
+    private NodeRule defaultNodeRule;
     
     public RuleDisplay()
     {
         nodeRules = new ArrayList<NodeRule>();
         linkRules = new ArrayList<LinkRule>();
+        
+        defaultLinkRule = new LinkRule()
+        {
+            public String getName()
+            {
+                return "default";
+            }
+            
+            public int getWidth(Link l, int t)
+            {
+                return 3;
+            }
+            
+            public Color getColor(Link l, int t)
+            {
+                return Color.black;
+            }
+            
+            public boolean matches(Link l, int t)
+            {
+                return true;
+            }
+        };
 
+        defaultNodeRule = new NodeRule()
+        {
+            public String getName()
+            {
+                return "default";
+            }
+            
+            public boolean matches(Node n, int t)
+            {
+                return true;
+            }
+            
+            public int getRadius(Node n, int t)
+            {
+                return 0;
+            }
+            
+            public Color getColor(Node n, int t)
+            {
+                return Color.black;
+            }
+            
+            public Color getBackColor(Node n, int t)
+            {
+                return Color.yellow;
+            }
+        };
     }
     
+
     public List<NodeRule> getNodeRules()
     {
         return nodeRules;
@@ -54,146 +111,75 @@ public class RuleDisplay extends DefaultDisplayManager
     }
     
     
-    public Color getColor(Link l)
+    public Color getColor(Link l, int t)
     {
-        if(l == cachedLink)
+        return findLinkRule(l, t).getColor(l, t);
+    }
+    
+    public int getWidth(Link l, int t)
+    {
+        return findLinkRule(l, t).getWidth(l, t);
+    }
+    
+    public Color getColor(Node n, int t)
+    {
+        return findNodeRule(n, t).getColor(n, t);
+    }
+    
+    public Color getBackColor(Node n, int t)
+    {
+        return findNodeRule(n, t).getBackColor(n, t);
+    }
+    
+    public int getRadius(Node n, int t)
+    {
+        return findNodeRule(n, t).getRadius(n, t);
+    }
+    
+    protected NodeRule findNodeRule(Node n, int t)
+    {
+        if(n == cachedNode && t == cachedNodeT)
         {
-            return cachedLinkRule.getColor(l);
-        }
-        else
-        {
-            cachedLinkRule = findLinkRule(l);
-            
-            if(cachedLink != null)
-            {
-                cachedLink = l;
-                return cachedLinkRule.getColor(l);
-            }
-            else
-            {
-                cachedLink = null;
-                return super.getColor(l);
-            }  
+            return cachedNodeRule;
         }
         
-    }
-    
-    public int getWidth(Link l)
-    {
-        if(l == cachedLink)
-        {
-            return cachedLinkRule.getWidth(l);
-        }
-        else
-        {
-            cachedLinkRule = findLinkRule(l);
-            
-            if(cachedLink != null)
-            {
-                cachedLink = l;
-                return cachedLinkRule.getWidth(l);
-            }
-            else
-            {
-                cachedLink = null;
-                return super.getWidth(l);
-            }  
-        }
-    }
-    
-    public Color getColor(Node n)
-    {
-        if(n == cachedNode)
-        {
-            return cachedNodeRule.getColor(n);
-        }
-        else
-        {
-            cachedNodeRule = findNodeRule(n);
-            
-            if(cachedNode != null)
-            {
-                cachedNode = n;
-                return cachedNodeRule.getColor(n);
-            }
-            else
-            {
-                cachedNode = null;
-                return super.getColor(n);
-            }  
-        }
-    }
-    
-    public Color getBackColor(Node n)
-    {
-        if(n == cachedNode)
-        {
-            return cachedNodeRule.getBackColor(n);
-        }
-        else
-        {
-            cachedNodeRule = findNodeRule(n);
-            
-            if(cachedNode != null)
-            {
-                cachedNode = n;
-                return cachedNodeRule.getBackColor(n);
-            }
-            else
-            {
-                cachedNode = null;
-                return super.getBackColor(n);
-            }  
-        }
-    }
-    
-    public int getRadius(Node n)
-    {
-        if(n == cachedNode)
-        {
-            return cachedNodeRule.getRadius(n);
-        }
-        else
-        {
-            cachedNodeRule = findNodeRule(n);
-            
-            if(cachedNode != null)
-            {
-                cachedNode = n;
-                return cachedNodeRule.getRadius(n);
-            }
-            else
-            {
-                cachedNode = null;
-                return super.getRadius(n);
-            }  
-        }
-    }
-    
-    protected NodeRule findNodeRule(Node n)
-    {
+        cachedNode = n;
+        cachedNodeT = t;
+        
         for(NodeRule rule : nodeRules)
         {
-            if(rule.matches(n))
+            if(rule.matches(n, t))
             {
+                cachedNodeRule = rule;
                 return rule;
             }
         }
         
-        return null;
+        cachedNodeRule = defaultNodeRule;
+        return defaultNodeRule;
     }
     
-    protected LinkRule findLinkRule(Link l)
+    protected LinkRule findLinkRule(Link l, int t)
     {
+        if(l == cachedLink && t == cachedLinkT)
+        {
+            return cachedLinkRule;
+        }
+        
+        cachedLink = l;
+        cachedLinkT = t;
+        
         for(LinkRule rule : linkRules)
         {
-            if(rule.matches(l))
+            if(rule.matches(l, t))
             {
+                cachedLinkRule = rule;
                 return rule;
             }
         }
-        
-        return null;
+
+        cachedLinkRule = defaultLinkRule;
+        return defaultLinkRule;
     }
     
     public void save(File file) throws IOException

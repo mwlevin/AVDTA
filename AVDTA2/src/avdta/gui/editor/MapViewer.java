@@ -7,6 +7,7 @@ package avdta.gui.editor;
 import avdta.gui.editor.visual.DisplayManager;
 import avdta.network.Network;
 import avdta.network.link.Link;
+import avdta.network.link.TransitLane;
 import avdta.network.node.Location;
 import avdta.network.node.Node;
 import java.awt.AlphaComposite;
@@ -176,11 +177,10 @@ public class MapViewer extends avdta.gui.editor.JMapViewer
         Graphics2D g = (Graphics2D)window;
         
         super.paintComponent(g);
-        
 
         for(Link l : links)
         {
-            if(!l.isCentroidConnector() || display.isDisplayCentroids())
+            if((!l.isCentroidConnector() || display.isDisplayCentroids()) && !(l instanceof TransitLane))
             {
                 paintLink(g, l);
             }
@@ -210,8 +210,9 @@ public class MapViewer extends avdta.gui.editor.JMapViewer
             return;
         }
 
-        g.setColor(display.getColor(l));
-        g.setStroke(new BasicStroke(display.getWidth(l)));
+        g.setColor(display.getColor(l, time));
+        
+        g.setStroke(new BasicStroke(display.getWidth(l, time)));
 
         ICoordinate prev = coords[0];
         for(int i = 1; i < coords.length; i++)
@@ -234,19 +235,20 @@ public class MapViewer extends avdta.gui.editor.JMapViewer
             return;
         }
         
-        int sizeH = (int)display.getRadius(n);
+        int sizeH = (int)display.getRadius(n, time);
         Point position = getMapPosition(n, false);
         int size = sizeH * 2;
 
-        if (display.getBackColor(n) != null) {
+        Color color = display.getBackColor(n, time);
+        if (color != null) {
             Graphics2D g2 = (Graphics2D) g;
             Composite oldComposite = g2.getComposite();
             g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER));
-            g2.setPaint(n.getBackColor());
+            g2.setPaint(color);
             g.fillOval(position.x - sizeH, position.y - sizeH, size, size);
             g2.setComposite(oldComposite);
         }
-        g.setColor(display.getColor(n));
+        g.setColor(display.getColor(n, time));
         g.drawOval(position.x - sizeH, position.y - sizeH, size, size);
 
         paintText(g, n.getName(), position, sizeH);

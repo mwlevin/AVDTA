@@ -10,8 +10,8 @@ import avdta.gui.GUI;
 import static avdta.gui.GUI.getIcon;
 import static avdta.gui.GUI.handleException;
 import avdta.gui.editor.visual.RuleDisplay;
-import avdta.gui.editor.visual.rules.LinkRulePanel;
-import avdta.gui.editor.visual.rules.NodeRulePanel;
+import avdta.gui.editor.visual.rules.editor.LinkRulePanel;
+import avdta.gui.editor.visual.rules.editor.NodeRulePanel;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -187,7 +187,7 @@ public class Editor extends JFrame implements MouseListener
             }
         });
         
-        nodesSelect.addActionListener(new ActionListener()
+        centroidSelect.addActionListener(new ActionListener()
         {
             public void actionPerformed(ActionEvent e)
             {
@@ -413,12 +413,6 @@ public class Editor extends JFrame implements MouseListener
                         
                         EditNode edit = new EditNode(thisEditor)
                         {
-                            public void save()
-                            {
-                                frame.setVisible(false);
-                                super.save();
-                            }
-                            
                             public void cancel()
                             {
                                 frame.setVisible(false);
@@ -473,12 +467,6 @@ public class Editor extends JFrame implements MouseListener
                         
                         frame.add(new EditNode(thisEditor, node)
                         {
-                            public void save()
-                            {
-                                frame.setVisible(false);
-                                super.save();
-                            }
-
                             public void cancel()
                             {
                                 frame.setVisible(false);
@@ -579,11 +567,6 @@ public class Editor extends JFrame implements MouseListener
                             {
                                 frame.setVisible(false);
                             }
-                            public void save()
-                            {
-                                frame.setVisible(false);
-                                super.save();
-                            }
                         });
 
                         
@@ -638,11 +621,6 @@ public class Editor extends JFrame implements MouseListener
                                 public void cancel()
                                 {
                                     frame.setVisible(false);
-                                }
-                                public void save()
-                                {
-                                    frame.setVisible(false);
-                                    super.save();
                                 }
                             });
                         }

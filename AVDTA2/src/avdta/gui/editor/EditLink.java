@@ -37,15 +37,15 @@ import javax.swing.event.DocumentListener;
  */
 public class EditLink extends JPanel
 {
-    private static final Integer[] LANE_OPTIONS = new Integer[]{1, 2, 3, 4, 5, 6};
-    private static final String[] FLOW_MODELS = new String[]{"Centroid", "CTM", "LTM", "Shared transit CTM", "DLR CTM", "CACC LTM"};
+    public static final Integer[] LANE_OPTIONS = new Integer[]{1, 2, 3, 4, 5, 6};
+    public static final String[] FLOW_MODELS = new String[]{"Centroid", "CTM", "LTM", "Shared transit CTM", "DLR CTM", "CACC LTM"};
     
-    private static final int CTM = 1;
-    private static final int LTM = 2;
-    private static final int CENTROID = 0;
-    private static final int SHARED_TRANSIT_CTM = 3;
-    private static final int DLR_CTM = 4;
-    private static final int CACC_LTM = 5;
+    public static final int CTM = 1;
+    public static final int LTM = 2;
+    public static final int CENTROID = 0;
+    public static final int SHARED_TRANSIT_CTM = 3;
+    public static final int DLR_CTM = 4;
+    public static final int CACC_LTM = 5;
     
     
     private Editor editor;
@@ -145,7 +145,10 @@ public class EditLink extends JPanel
         {
             public void actionPerformed(ActionEvent e)
             {
-                save();
+                if(save())
+                {
+                    cancel();
+                }
             }
         });
         
@@ -268,7 +271,8 @@ public class EditLink extends JPanel
         save.setEnabled(false);
     }
     
-    public void save()
+
+    public boolean save()
     {
         int source_id = 0;
         int dest_id = 0;
@@ -286,21 +290,21 @@ public class EditLink extends JPanel
         {
             JOptionPane.showMessageDialog(this, "Id must be a positive integer", "Error", JOptionPane.ERROR_MESSAGE);
             id.requestFocus();
-            return;
+            return false;
         }
         
         if(id_ <= 0)
         {
             JOptionPane.showMessageDialog(this, "Id must be a positive integer", "Error", JOptionPane.ERROR_MESSAGE);
             id.requestFocus();
-            return;
+            return false;
         }
         
         if((prev == null || prev.getId() != id_) && editor.getLink(id_) != null)
         {
             JOptionPane.showMessageDialog(this, "Duplicate id", "Error", JOptionPane.ERROR_MESSAGE);
             id.requestFocus();
-            return;
+            return false;
         }
         
         try
@@ -311,7 +315,7 @@ public class EditLink extends JPanel
         {
             JOptionPane.showMessageDialog(this, "Destination must be a positive integer", "Error", JOptionPane.ERROR_MESSAGE);
             dest.requestFocus();
-            return;
+            return false;
         }
         
         try
@@ -322,14 +326,14 @@ public class EditLink extends JPanel
         {
             JOptionPane.showMessageDialog(this, "Source must be a positive integer", "Error", JOptionPane.ERROR_MESSAGE);
             source.requestFocus();
-            return;
+            return false;
         }
         
         if(source_id <= 0)
         {
             JOptionPane.showMessageDialog(this, "Source must be a positive integer", "Error", JOptionPane.ERROR_MESSAGE);
             source.requestFocus();
-            return;
+            return false;
         }
         
         if(flowModel.getSelectedIndex() != CENTROID)
@@ -342,14 +346,14 @@ public class EditLink extends JPanel
             {
                 JOptionPane.showMessageDialog(this, "Congested wave speed must be a positive number", "Error", JOptionPane.ERROR_MESSAGE);
                 wavespd.requestFocus();
-                return;
+                return false;
             }
 
             if(wavespd_ <= 0)
             {
                 JOptionPane.showMessageDialog(this, "Congested wave speed must be a positive number", "Error", JOptionPane.ERROR_MESSAGE);
                 wavespd.requestFocus();
-                return;
+                return false;
             }
         
             try
@@ -360,14 +364,14 @@ public class EditLink extends JPanel
             {
                 JOptionPane.showMessageDialog(this, "Capacity must be a positive number", "Error", JOptionPane.ERROR_MESSAGE);
                 capacity.requestFocus();
-                return;
+                return false;
             }
         
             if(capacity_ <= 0)
             {
                 JOptionPane.showMessageDialog(this, "Capacity must be a positive number", "Error", JOptionPane.ERROR_MESSAGE);
                 capacity.requestFocus();
-                return;
+                return false;
             }
 
             try
@@ -378,14 +382,14 @@ public class EditLink extends JPanel
             {
                 JOptionPane.showMessageDialog(this, "Free flow speed must be a positive number", "Error", JOptionPane.ERROR_MESSAGE);
                 ffspd.requestFocus();
-                return;
+                return false;
             }
 
             if(ffspd_ <= 0)
             {
                 JOptionPane.showMessageDialog(this, "Free flow speed must be a positive number", "Error", JOptionPane.ERROR_MESSAGE);
                 ffspd.requestFocus();
-                return;
+                return false;
             }
         
             try
@@ -396,14 +400,14 @@ public class EditLink extends JPanel
             {
                 JOptionPane.showMessageDialog(this, "Length must be a positive number", "Error", JOptionPane.ERROR_MESSAGE);
                 length.requestFocus();
-                return;
+                return false;
             }
 
             if(length_ <= 0)
             {
                 JOptionPane.showMessageDialog(this, "Length must be a positive number", "Error", JOptionPane.ERROR_MESSAGE);
                 length.requestFocus();
-                return;
+                return false;
             }
         }
         
@@ -414,14 +418,14 @@ public class EditLink extends JPanel
         {
             JOptionPane.showMessageDialog(this, "Node "+source_id+" not found", "Error", JOptionPane.ERROR_MESSAGE);
             source.requestFocus();
-            return;
+            return false;
         }
         
         if(dest_ == null)
         {
             JOptionPane.showMessageDialog(this, "Node "+dest_id+" not found", "Error", JOptionPane.ERROR_MESSAGE);
             dest.requestFocus();
-            return;
+            return false;
         }
         
         int numLanes_ = numLanes.getSelectedIndex()+1;
@@ -453,10 +457,11 @@ public class EditLink extends JPanel
                 break;
             default:
                 JOptionPane.showMessageDialog(this, "Could not find flow model", "Error", JOptionPane.ERROR_MESSAGE);
-                return;
+                return false;
         }
         
         saveLink(prev, newLink);
+        return true;
     }
     
     public void saveLink(Link prev, Link newLink)

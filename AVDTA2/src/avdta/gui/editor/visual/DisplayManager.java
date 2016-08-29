@@ -24,12 +24,12 @@ public interface DisplayManager
     public void setDisplayCentroids(boolean c);
     public boolean isDisplayCentroids();
     
-    public Color getColor(Link l);
-    public int getWidth(Link l);
+    public Color getColor(Link l, int t);
+    public int getWidth(Link l, int t);
     
-    public Color getBackColor(Node n);
-    public Color getColor(Node n);
-    public int getRadius(Node n);
+    public Color getBackColor(Node n, int t);
+    public Color getColor(Node n, int t);
+    public int getRadius(Node n, int t);
     
     public void save(File file) throws IOException;
     public void open(File file) throws IOException;

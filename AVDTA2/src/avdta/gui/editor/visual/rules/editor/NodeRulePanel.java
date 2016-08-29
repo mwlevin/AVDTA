@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package avdta.gui.editor.visual.rules;
+package avdta.gui.editor.visual.rules.editor;
 
+import avdta.gui.editor.visual.rules.NodeRule;
 import java.awt.Component;
 import java.util.List;
 import javax.swing.JPanel;
@@ -24,22 +25,22 @@ import javax.swing.event.ListSelectionListener;
  *
  * @author micha
  */
-public class LinkRulePanel extends JPanel
+public class NodeRulePanel extends JPanel
 {
     private JList list;
     
     private JButton up, down, newType, newData, edit, remove;
     
-    private List<LinkRule> rules;
+    private List<NodeRule> rules;
     private Component parent;
     
-    public LinkRulePanel(Component parent_, List<LinkRule> rules_)
+    public NodeRulePanel(Component parent_, List<NodeRule> rules_)
     {
         this.parent = parent_;
         this.rules = rules_;
         
         setLayout(new GridBagLayout());
-        setBorder(BorderFactory.createTitledBorder("Link visualization"));
+        setBorder(BorderFactory.createTitledBorder("Node visualization"));
         
         up = new JButton("↑");
         down = new JButton("↓");
@@ -59,7 +60,7 @@ public class LinkRulePanel extends JPanel
         list.setListData(new String[]{});
         list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         list.setFixedCellWidth(200);
-        
+        list.setVisibleRowCount(7);
         
         remove.addActionListener(new ActionListener()
         {
@@ -76,7 +77,7 @@ public class LinkRulePanel extends JPanel
             {
                 int idx = list.getSelectedIndex();
                 
-                LinkRule rule = rules.remove(idx);
+                NodeRule rule = rules.remove(idx);
                 rules.add(idx-1, rule);
                 refresh();
                 list.setSelectedIndex(idx-1);
@@ -89,7 +90,7 @@ public class LinkRulePanel extends JPanel
             {
                 int idx = list.getSelectedIndex();
                 
-                LinkRule rule = rules.remove(idx);
+                NodeRule rule = rules.remove(idx);
                 rules.add(idx+1, rule);
                 refresh();
                 list.setSelectedIndex(idx+1);
@@ -113,9 +114,9 @@ public class LinkRulePanel extends JPanel
         constrain(this, new JScrollPane(list), 0, 0, 3, 4);
         constrain(this, up, 0, 4, 1, 1);
         constrain(this, down, 1, 4, 1, 1);
-        constrain(this, remove, 2, 4, 1, 10);
-        constrain(this, newData, 3, 0, 1, 1);
-        constrain(this, newType, 3, 1, 1, 1);
+        constrain(this, remove, 2, 4, 1, 1);
+        constrain(this, newType, 3, 0, 1, 1);
+        constrain(this, newData, 3, 1, 1, 1);
         constrain(this, edit, 3, 2, 1, 1);
         
         setMinimumSize(getPreferredSize());

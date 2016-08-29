@@ -35,7 +35,7 @@ public class JColorButton extends JButton
             }
         });
         
-        setColor(Color.white);
+        setColor(Color.black);
     }
     
     public void chooseColor()
@@ -63,11 +63,11 @@ public class JColorButton extends JButton
     {
         public int getIconHeight()
         {
-            return 10;
+            return 15;
         }
         public int getIconWidth()
         {
-            return 10;
+            return 15;
         }
         
         public void paintIcon(Component c, Graphics g, int x, int y)
@@ -80,7 +80,7 @@ public class JColorButton extends JButton
             {
                 setColor(getBackground());
             }
-            g.fillRect(x, y, c.getWidth(), c.getHeight());
+            g.fillRect(x, y, getIconWidth(), getIconHeight());
         }
     }
 }

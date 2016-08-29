@@ -13,13 +13,18 @@ import java.io.Serializable;
  *
  * @author micha
  */
-public interface NodeRule extends Serializable
+public abstract class NodeRule implements Serializable
 {
-    public Color getColor(Node n);
-    public Color getBackColor(Node n);
-    public int getRadius(Node n);
+    public abstract Color getColor(Node n, int t);
+    public abstract Color getBackColor(Node n, int t);
+    public abstract int getRadius(Node n, int t);
     
-    public boolean matches(Node n);
+    public abstract boolean matches(Node n, int t);
     
-    public String getName();
+    public abstract String getName();
+    
+    public String toString()
+    {
+        return getName();
+    }
 }

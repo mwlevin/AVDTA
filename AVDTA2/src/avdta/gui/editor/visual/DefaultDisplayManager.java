@@ -57,27 +57,27 @@ public class DefaultDisplayManager implements DisplayManager
         return displayLinks;
     }
     
-    public Color getColor(Link l)
+    public Color getColor(Link l, int t)
     {
         return Color.black;
     }
     
-    public int getWidth(Link l)
+    public int getWidth(Link l, int t)
     {
         return 3;
     }
     
-    public Color getColor(Node n)
+    public Color getColor(Node n, int t)
     {
         return Color.black;
     }
     
-    public Color getBackColor(Node n)
+    public Color getBackColor(Node n, int t)
     {
         return Color.yellow;
     }
     
-    public int getRadius(Node n)
+    public int getRadius(Node n, int t)
     {
         return 0;
     }

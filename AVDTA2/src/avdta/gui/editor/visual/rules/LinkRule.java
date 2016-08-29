@@ -13,12 +13,17 @@ import java.io.Serializable;
  *
  * @author micha
  */
-public interface LinkRule extends Serializable
+public abstract class LinkRule implements Serializable
 {
-    public Color getColor(Link l);
-    public int getWidth(Link l);
+    public abstract Color getColor(Link l, int t);
+    public abstract int getWidth(Link l, int t);
     
-    public boolean matches(Link l);
+    public abstract boolean matches(Link l, int t);
     
-    public String getName();
+    public abstract String getName();
+    
+    public String toString()
+    {
+        return getName();
+    }
 }

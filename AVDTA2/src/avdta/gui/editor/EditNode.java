@@ -132,7 +132,10 @@ public class EditNode extends JPanel
         {
             public void actionPerformed(ActionEvent e)
             {
-                save();
+                if(save())
+                {
+                    cancel();
+                }
             }
         });
         
@@ -287,7 +290,14 @@ public class EditNode extends JPanel
             
             if(result == JOptionPane.YES_OPTION)
             {
-                save();
+                if(save())
+                {
+                    cancel();
+                }
+                else
+                {
+                    return;
+                }
             }
             else
             {
@@ -299,11 +309,6 @@ public class EditNode extends JPanel
                         
         frame.add(new EditSignal(prev.getSignal(), prev)
         {
-            public void save()
-            {
-                frame.setVisible(false);
-                super.save();
-            }
 
             public void cancel()
             {
@@ -333,7 +338,7 @@ public class EditNode extends JPanel
         this.loc = loc;
     }
     
-    public void save()
+    public boolean save()
     {
         int id_ = 0;
         
@@ -345,21 +350,21 @@ public class EditNode extends JPanel
         {
             JOptionPane.showMessageDialog(this, "Id must be a positive integer", "Error", JOptionPane.ERROR_MESSAGE);
             id.requestFocus();
-            return;
+            return false;
         }
         
         if(id_ <= 0)
         {
             JOptionPane.showMessageDialog(this, "Id must be a positive integer", "Error", JOptionPane.ERROR_MESSAGE);
             id.requestFocus();
-            return;
+            return false;
         }
         
         if((prev == null || prev.getId() != id_) && editor.getNode(id_) != null)
         {
             JOptionPane.showMessageDialog(this, "Duplicate id", "Error", JOptionPane.ERROR_MESSAGE);
             id.requestFocus();
-            return;
+            return false;
         }
         
         Node node = null;
@@ -387,10 +392,13 @@ public class EditNode extends JPanel
                         editor.replaceNode(prev, node);
                     }
                     break;
+                default:
+                    return false;
             }
         }
         
         saveNode(node);
+        return true;
     }
     public void cancel(){}
     
