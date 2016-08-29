@@ -47,7 +47,7 @@ public class NodeTypeRulePanel extends JPanel
         policy = new JComboBox(EditNode.POLICIES);
         
         width = new JTextField(3);
-        width.setText("3");
+        width.setText("5");
         
         type.addItemListener(new ItemListener()
         {

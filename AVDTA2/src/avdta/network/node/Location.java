@@ -20,6 +20,11 @@ public class Location implements Serializable, ICoordinate
 {
     private double x, y;
     private double elevation;
+    
+    public Location()
+    {
+        
+    }
     /**
      * Instantiates the location of a node with (x, y).
      * @param x Input for abscissa of the location of a node.
@@ -42,6 +47,11 @@ public class Location implements Serializable, ICoordinate
     public Location(ICoordinate rhs)
     {
         this(rhs.getLon(), rhs.getLat());
+    }
+    
+    public String toString()
+    {
+        return "("+x+", "+y+")";
     }
     
     public double angleTo(Location rhs)

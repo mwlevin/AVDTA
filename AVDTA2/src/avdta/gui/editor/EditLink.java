@@ -17,6 +17,7 @@ import avdta.network.link.DLRCTMLink;
 import avdta.network.link.LTMLink;
 import avdta.network.link.SharedTransitCTMLink;
 import avdta.network.link.TransitLane;
+import avdta.network.node.Location;
 import avdta.network.node.Node;
 import avdta.vehicle.Vehicle;
 import java.awt.GridBagLayout;
@@ -24,18 +25,25 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
+import javax.swing.ListSelectionModel;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 /**
  *
  * @author micha
  */
-public class EditLink extends JPanel
+public class EditLink extends JPanel implements SelectListener
 {
     public static final Integer[] LANE_OPTIONS = new Integer[]{1, 2, 3, 4, 5, 6};
     public static final String[] FLOW_MODELS = new String[]{"Centroid", "CTM", "LTM", "Shared transit CTM", "DLR CTM", "CACC LTM"};
@@ -55,6 +63,11 @@ public class EditLink extends JPanel
     private JComboBox numLanes, flowModel;
     private JButton save;
     
+    private JTextField lat, lon;
+    private JList coordsList;
+    private JButton up, down, remove, add, saveCoord;
+    private List<Location> coords;
+    
     public EditLink(Editor editor)
     {
         this(editor, null);
@@ -66,10 +79,10 @@ public class EditLink extends JPanel
         source.setText(""+n1.getId());
         dest.setText(""+n2.getId());
     }
-    public EditLink(Editor editor, Link prev)
+    public EditLink(Editor editor_, Link prev)
     {
         this.prev = prev;
-        this.editor = editor;
+        this.editor = editor_;
         
         setLayout(new GridBagLayout());
         
@@ -77,8 +90,25 @@ public class EditLink extends JPanel
         source = new JTextField(6);
         dest = new JTextField(6);
         
+        lat = new JTextField(8);
+        lon = new JTextField(8);
+        coordsList = new JList();
+        coordsList.setListData(new String[]{});
+        coordsList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        coordsList.setFixedCellWidth(150);
+        coordsList.setFixedCellHeight(20);
+        coordsList.setVisibleRowCount(4);
+        
+        up = new JButton("↑");
+        down = new JButton("↓");
+        remove = new JButton("Remove");
+        add = new JButton("Add coordinate");
+        saveCoord = new JButton("Save coordinate");
+        
+        coords = new ArrayList<Location>();
+        
         JPanel p = new JPanel();
-        p.setBorder(BorderFactory.createTitledBorder("Location"));
+        p.setBorder(BorderFactory.createTitledBorder("Id"));
         p.setLayout(new GridBagLayout());
         constrain(p, new JLabel("Id: "), 0, 0, 1, 1);
         constrain(p, id, 1, 0, 1, 1);
@@ -110,6 +140,30 @@ public class EditLink extends JPanel
         
         constrain(this, p, 1, 0, 1, 1);
         
+        
+        p = new JPanel();
+        p.setBorder(BorderFactory.createTitledBorder("Location"));
+        p.setLayout(new GridBagLayout());
+        
+        constrain(p, new JScrollPane(coordsList), 0, 0, 3, 1);
+        constrain(p, up, 0, 1, 1, 1);
+        constrain(p, down, 1, 1, 1, 1);
+        constrain(p, remove, 2, 1, 1, 1);
+        
+        JPanel p2 = new JPanel();
+        p2.setLayout(new GridBagLayout());
+        
+        constrain(p2, add, 0, 0, 2, 1);
+        constrain(p2, new JLabel("Latitude: "), 0, 1, 1, 1);
+        constrain(p2, lat, 1, 1, 1, 1);
+        constrain(p2, new JLabel("Longitude: "), 0, 2, 1, 1);
+        constrain(p2, lon, 1, 2, 1, 1);
+        constrain(p2, saveCoord, 0, 3, 2, 1);
+        
+        constrain(p, p2, 3, 0, 1, 2);
+        
+        constrain(this, p, 0, 1, 2, 1);
+        
         p = new JPanel();
         p.setBorder(BorderFactory.createTitledBorder("Flow model"));
         p.setLayout(new GridBagLayout());
@@ -126,7 +180,7 @@ public class EditLink extends JPanel
         constrain(p, new JLabel("Flow model: "), 0, 0, 1, 1);
         constrain(p, flowModel, 1, 0, 2, 1);
         
-        constrain(this, p, 0, 1, 2, 1);
+        constrain(this, p, 0, 2, 2, 1);
         
         p = new JPanel();
         p.setLayout(new GridBagLayout());
@@ -139,7 +193,141 @@ public class EditLink extends JPanel
         constrain(p, save, 0, 0, 1, 1);
         constrain(p, cancel, 1, 0, 1, 1);
         
-        constrain(this, p, 0, 2, 1, 1);
+        constrain(this, p, 0, 3, 1, 1);
+        
+        
+        saveCoord.addActionListener(new ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                double lat_ = 0;
+                double lon_ = 0;
+                
+                try
+                {
+                    lon_ = Double.parseDouble(lon.getText().trim());
+                }
+                catch(NumberFormatException ex)
+                {
+                    JOptionPane.showMessageDialog(editor, "Longitude must be a number", "Error", JOptionPane.ERROR_MESSAGE);
+                    lon.requestFocus();
+                    return;
+                }
+
+                if(lon_ < -180 || lon_ > 180)
+                {
+                    JOptionPane.showMessageDialog(editor, "Longitude must be a number", "Error", JOptionPane.ERROR_MESSAGE);
+                    lon.requestFocus();
+                    return;
+                }
+
+                try
+                {
+                    lat_ = Double.parseDouble(lat.getText().trim());
+                }
+                catch(NumberFormatException ex)
+                {
+                    JOptionPane.showMessageDialog(editor, "Latitude must be a number", "Error", JOptionPane.ERROR_MESSAGE);
+                    lat.requestFocus();
+                    return;
+                }
+
+                if(lat_ < -90 || lat_ > 90)
+                {
+                    JOptionPane.showMessageDialog(editor, "Latitude must be a number", "Error", JOptionPane.ERROR_MESSAGE);
+                    lat.requestFocus();
+                    return;
+                }
+        
+                Location loc;
+                if(coordsList.getSelectedIndex() >= 0)
+                {
+                    loc = (Location)coordsList.getSelectedValue();
+                    
+                }
+                else
+                {
+                    loc = new Location();
+                    coords.add(loc);
+                }
+                
+                loc.setLat(lat_);
+                loc.setLon(lon_);
+                lat.setText("");
+                lon.setText("");
+                refreshCoords();
+            }
+        });
+        
+        coordsList.addListSelectionListener(new ListSelectionListener()
+        {
+            public void valueChanged(ListSelectionEvent e)
+            {
+                int idx = coordsList.getSelectedIndex();
+                up.setEnabled(idx > 0);
+                down.setEnabled(idx < coords.size()-1 && idx >= 0);
+                remove.setEnabled(idx >= 0);
+                
+                if(idx >= 0)
+                {
+                    Location loc = (Location)coordsList.getSelectedValue();
+                    lat.setText(""+loc.getLat());
+                    lon.setText(""+loc.getLon());
+                }
+                else
+                {
+                    lat.setText("");
+                    lon.setText("");
+                }
+            }
+        });
+        
+        remove.addActionListener(new ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                coords.remove(coordsList.getSelectedIndex());
+                refreshCoords();
+            }
+        });
+        
+        add.addActionListener(new ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                coordsList.clearSelection();
+                editor.setMode(Editor.POINT);
+            }
+        });
+        editor.addSelectListener(this);
+        
+        up.addActionListener(new ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                int idx = coordsList.getSelectedIndex();
+                
+                Location loc = coords.remove(idx);
+                coords.add(idx-1, loc);
+                refreshCoords();
+                coordsList.setSelectedIndex(idx-1);
+            }
+        });
+        down.addActionListener(new ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                int idx = coordsList.getSelectedIndex();
+                
+                Location loc = coords.remove(idx);
+                coords.add(idx+1, loc);
+                refreshCoords();
+                coordsList.setSelectedIndex(idx+1);
+            }
+        });
+        up.setEnabled(false);
+        down.setEnabled(false);
+        remove.setEnabled(false);
         
         save.addActionListener(new ActionListener()
         {
@@ -206,14 +394,22 @@ public class EditLink extends JPanel
             }
         });
         
+        editor.addSelectListener(this);
+        
         setMinimumSize(getPreferredSize());
         
         loadLink(prev);
     }
     
+    public void setPoint(Location loc)
+    {
+        lat.setText(String.format("%.7f", loc.getLat()));
+        lon.setText(String.format("%.7f", loc.getLon()));
+    }
+    
     public void cancel()
     {
-        
+        editor.removeSelectListener(this);
     }
         
     
@@ -230,6 +426,7 @@ public class EditLink extends JPanel
             flowModel.setSelectedIndex(0);
             length.setText("");
             capacity.setText("");
+            coordsList.setListData(new String[]{});
         }
         else
         {
@@ -241,6 +438,16 @@ public class EditLink extends JPanel
             ffspd.setText(String.format("%.2f", prev.getFFSpeed()));
             wavespd.setText(String.format("%.2f", prev.getWaveSpeed()));
             length.setText(String.format("%.1f", prev.getLength()*5280));
+            
+            Location[] c = prev.getCoordinates();
+            coords.clear();
+
+            for(int i = 1; i < c.length-1; i++)
+            {
+                coords.add(c[i]);
+            }
+            
+            refreshCoords();
             
             if(prev.isCentroidConnector())
             {
@@ -271,6 +478,10 @@ public class EditLink extends JPanel
         save.setEnabled(false);
     }
     
+    public void refreshCoords()
+    {
+        coordsList.setListData(coords.toArray());
+    }
 
     public boolean save()
     {
@@ -460,6 +671,17 @@ public class EditLink extends JPanel
                 return false;
         }
         
+        Location[] newCoords = new Location[coords.size()+2];
+        newCoords[0] = newLink.getSource();
+        newCoords[newCoords.length-1] = newLink.getDest();
+        
+        for(int i = 0; i < coords.size(); i++)
+        {
+            newCoords[i+1] = coords.get(i);
+        }
+        
+        newLink.setCoordinates(newCoords);
+        
         saveLink(prev, newLink);
         return true;
     }
@@ -467,5 +689,13 @@ public class EditLink extends JPanel
     public void saveLink(Link prev, Link newLink)
     {
         editor.saveLink(prev, newLink);
+    }
+    
+    public void nodeSelected(Node n){}
+    public void linkSelected(Link[] l){}
+    public void pointSelected(Location loc)
+    {
+        editor.setMode(Editor.PAN);
+        setPoint(loc);
     }
 }

@@ -5,9 +5,11 @@
  */
 package avdta.gui.editor.visual.rules.editor;
 
+import avdta.gui.GUI;
 import avdta.gui.editor.visual.rules.editor.LinkDataRulePanel;
 import avdta.gui.editor.Editor;
 import avdta.gui.editor.visual.rules.LinkDataRule;
+import avdta.gui.editor.visual.rules.LinkFileRule;
 import avdta.gui.editor.visual.rules.LinkRule;
 import avdta.gui.editor.visual.rules.LinkTypeRule;
 import java.awt.Component;
@@ -17,8 +19,10 @@ import static avdta.gui.util.GraphicUtils.*;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JInternalFrame;
 import javax.swing.JLayeredPane;
 import javax.swing.JList;
@@ -26,6 +30,7 @@ import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
  *
@@ -35,7 +40,7 @@ public class LinkRulePanel extends JPanel
 {
     private JList list;
     
-    private JButton up, down, newType, newData, edit, remove;
+    private JButton up, down, newType, newData, newFile, edit, remove;
     
     private List<LinkRule> rules;
     private Editor editor;
@@ -46,7 +51,7 @@ public class LinkRulePanel extends JPanel
         this.rules = rules_;
         
         setLayout(new GridBagLayout());
-        setBorder(BorderFactory.createTitledBorder("Link visualization"));
+        setBorder(BorderFactory.createTitledBorder("Links"));
         
         up = new JButton("↑");
         down = new JButton("↓");
@@ -54,6 +59,7 @@ public class LinkRulePanel extends JPanel
         
         newType = new JButton("New type rule");
         newData = new JButton("New data rule");
+        newFile = new JButton("New file rule");
         edit = new JButton("Edit");
         remove = new JButton("Remove");
         
@@ -66,7 +72,8 @@ public class LinkRulePanel extends JPanel
         list.setListData(new String[]{});
         list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         list.setFixedCellWidth(200);
-        list.setVisibleRowCount(7);
+        list.setFixedCellHeight(15);
+        list.setVisibleRowCount(6);
         
         
         edit.addActionListener(new ActionListener()
@@ -85,6 +92,7 @@ public class LinkRulePanel extends JPanel
                     {
                         public void cancel()
                         {
+                            super.cancel();
                             frame.setVisible(false);
                         }
                         public void addRule(LinkTypeRule rule)
@@ -106,6 +114,7 @@ public class LinkRulePanel extends JPanel
                     {
                         public void cancel()
                         {
+                            super.cancel();
                             frame.setVisible(false);
                         }
                         public void addRule(LinkDataRule rule)
@@ -140,6 +149,28 @@ public class LinkRulePanel extends JPanel
             }
         });
         
+        newFile.addActionListener(new ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                JFileChooser chooser = new JFileChooser();
+                chooser.addChoosableFileFilter(new FileNameExtensionFilter("Text files", "txt"));
+                
+                int val = chooser.showOpenDialog(editor);
+                if(val == JFileChooser.APPROVE_OPTION)
+                {
+                    try
+                    {
+                        newRule(new LinkFileRule(chooser.getSelectedFile()));
+                    }
+                    catch(IOException ex)
+                    {
+                        GUI.handleException(ex);
+                    }
+                }
+            }
+        });
+        
         newType.addActionListener(new ActionListener()
         {
             public void actionPerformed(ActionEvent e)
@@ -150,6 +181,7 @@ public class LinkRulePanel extends JPanel
                 {
                     public void cancel()
                     {
+                        super.cancel();
                         frame.setVisible(false);
                     }
                     
@@ -190,6 +222,7 @@ public class LinkRulePanel extends JPanel
                 {
                     public void cancel()
                     {
+                        super.cancel();
                         frame.setVisible(false);
                     }
                     
@@ -270,13 +303,19 @@ public class LinkRulePanel extends JPanel
             }
         });
         
-        constrain(this, new JScrollPane(list), 0, 0, 3, 4);
-        constrain(this, up, 0, 4, 1, 1);
-        constrain(this, down, 1, 4, 1, 1);
-        constrain(this, remove, 2, 4, 1, 10);
-        constrain(this, newType, 3, 0, 1, 1);
-        constrain(this, newData, 3, 1, 1, 1);
-        constrain(this, edit, 3, 2, 1, 1);
+        constrain(this, new JScrollPane(list), 0, 0, 3, 1);
+        constrain(this, up, 0, 1, 1, 1);
+        constrain(this, down, 1, 1, 1, 1);
+        constrain(this, remove, 2, 1, 1, 1);
+        
+        JPanel p = new JPanel();
+        p.setLayout(new GridBagLayout());
+        constrain(p, newType, 0, 0, 1, 1);
+        constrain(p, newData, 0, 1, 1, 1);
+        constrain(p, newFile, 0, 2, 1, 1);
+        constrain(p, edit, 0, 3, 1, 1);
+        
+        constrain(this, p, 3, 0, 1, 2);
         
         setMinimumSize(getPreferredSize());
     }
@@ -316,5 +355,6 @@ public class LinkRulePanel extends JPanel
         
         list.setSelectedIndex(-1);
         list.setListData(data);
+        editor.repaint();
     }
 }

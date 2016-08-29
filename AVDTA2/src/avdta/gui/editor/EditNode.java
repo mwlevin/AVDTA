@@ -37,6 +37,7 @@ import avdta.network.node.policy.IntersectionPolicy;
 import avdta.network.node.policy.MCKSPriority;
 import avdta.network.node.policy.MCKSTBR;
 import avdta.network.node.policy.SignalWeightedTBR;
+import javax.swing.BorderFactory;
 import javax.swing.JInternalFrame;
 import javax.swing.JLayeredPane;
 import javax.swing.event.DocumentEvent;
@@ -71,7 +72,7 @@ public class EditNode extends JPanel
     private Location loc;
     private Editor editor;
     
-    private JTextField id;
+    private JTextField id, lat, lon;
     private JComboBox type, control, policy;
     private JButton editSignal, save;
 
@@ -86,6 +87,9 @@ public class EditNode extends JPanel
         control = new JComboBox(CONTROLS);
         policy = new JComboBox(POLICIES);
         
+        lat = new JTextField(8);
+        lon = new JTextField(8);
+        
         control.setEnabled(false);
         
         editSignal = new JButton("Edit signal");
@@ -99,16 +103,41 @@ public class EditNode extends JPanel
         constrain(p2, id, 1, 0, 1, 1);
         constrain(p2, new JLabel("Type: "), 0, 1, 1, 1);
         constrain(p2, type, 1, 1, 1, 1);
-        constrain(p2, new JLabel("Control: "), 0, 2, 1, 1);
-        constrain(p2, control, 1, 2, 1, 1);
-        constrain(p2, new JLabel("Policy: "), 0, 3, 1, 1);
-        constrain(p2, policy, 1, 3, 1, 1);
-        constrain(p2, editSignal, 0, 4, 2, 1);
+        constrain(p, p2, 0, 0, 1, 1);
         
-        constrain(p, p2, 0, 0, 2, 1);
+        p2 = new JPanel();
+        p2.setLayout(new GridBagLayout());
+        p2.setBorder(BorderFactory.createTitledBorder("Location"));
+        constrain(p2, new JLabel("Latitude: "), 0, 0, 1, 1);
+        constrain(p2, lat, 1, 0, 1, 1);
+        constrain(p2, new JLabel("Longitude: "), 0, 1, 1, 1);
+        constrain(p2, lon, 1, 1, 1, 1);
+        
+        constrain(p, p2, 0, 1, 1, 1);
+                
+        
+        p2 = new JPanel();
+        p2.setLayout(new GridBagLayout());
+        p2.setBorder(BorderFactory.createTitledBorder("Intersection control"));
+        constrain(p2, new JLabel("Control: "), 0, 0, 1, 1);
+        constrain(p2, control, 1, 0, 1, 1);
+        constrain(p2, new JLabel("Policy: "), 0, 1, 1, 1);
+        constrain(p2, policy, 1, 1, 1, 1);
+        constrain(p2, editSignal, 0, 2, 2, 1);
+        
+        constrain(p, p2, 1, 0, 1, 2);
         
         save = new JButton("Save");
         save.setEnabled(false);
+        
+        JButton cancel = new JButton("Cancel");
+        
+        p2 = new JPanel();
+        p2.setLayout(new GridBagLayout());
+        constrain(p2, save, 0, 3, 1, 1);
+        constrain(p2, cancel, 1, 3, 1, 1);
+        
+        constrain(p, p2, 0, 2, 2, 1);
         
         DocumentListener changeListener = new DocumentListener()
         {
@@ -139,7 +168,7 @@ public class EditNode extends JPanel
             }
         });
         
-        JButton cancel = new JButton("Cancel");
+        
         
         cancel.addActionListener(new ActionListener()
         {
@@ -159,8 +188,7 @@ public class EditNode extends JPanel
         
         editSignal.setEnabled(false);
         
-        constrain(p, save, 0, 1, 1, 1);
-        constrain(p, cancel, 1, 1, 1, 1);
+        
                 
               
         
@@ -218,6 +246,8 @@ public class EditNode extends JPanel
         this.loc = node;
         
         id.setText(""+prev.getId());
+        lat.setText(""+prev.getLat());
+        lon.setText(""+prev.getLon());
         
         if(node instanceof Zone)
         {
@@ -312,6 +342,7 @@ public class EditNode extends JPanel
 
             public void cancel()
             {
+                super.cancel();
                 frame.setVisible(false);
             }
         });
@@ -336,11 +367,16 @@ public class EditNode extends JPanel
     public void setLocation(Location loc)
     {
         this.loc = loc;
+        lat.setText(""+loc.getLat());
+        lon.setText(""+loc.getLon());
     }
     
     public boolean save()
     {
         int id_ = 0;
+        
+        double lat_ = 0;
+        double lon_ = 0;
         
         try
         {
@@ -357,6 +393,44 @@ public class EditNode extends JPanel
         {
             JOptionPane.showMessageDialog(this, "Id must be a positive integer", "Error", JOptionPane.ERROR_MESSAGE);
             id.requestFocus();
+            return false;
+        }
+        
+        
+        
+        try
+        {
+            lon_ = Double.parseDouble(lon.getText().trim());
+        }
+        catch(NumberFormatException ex)
+        {
+            JOptionPane.showMessageDialog(this, "Longitude must be a number", "Error", JOptionPane.ERROR_MESSAGE);
+            lon.requestFocus();
+            return false;
+        }
+        
+        if(lon_ < -180 || lon_ > 180)
+        {
+            JOptionPane.showMessageDialog(this, "Longitude must be a number", "Error", JOptionPane.ERROR_MESSAGE);
+            lon.requestFocus();
+            return false;
+        }
+        
+        try
+        {
+            lat_ = Double.parseDouble(lat.getText().trim());
+        }
+        catch(NumberFormatException ex)
+        {
+            JOptionPane.showMessageDialog(this, "Latitude must be a number", "Error", JOptionPane.ERROR_MESSAGE);
+            lat.requestFocus();
+            return false;
+        }
+        
+        if(lat_ < -90 || lat_ > 90)
+        {
+            JOptionPane.showMessageDialog(this, "Latitude must be a number", "Error", JOptionPane.ERROR_MESSAGE);
+            lat.requestFocus();
             return false;
         }
         

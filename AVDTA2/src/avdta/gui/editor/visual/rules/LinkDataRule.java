@@ -4,6 +4,7 @@
  */
 package avdta.gui.editor.visual.rules;
 
+import avdta.gui.editor.visual.rules.data.LinkDataSource;
 import avdta.network.link.Link;
 import java.awt.Color;
 
@@ -13,6 +14,9 @@ import java.awt.Color;
  */
 public class LinkDataRule extends LinkRule
 {
+    private static final String[] RULES = new String[]{"Travel time"};
+    private static final int TT = 0;
+    
     private double minValue, maxValue;
     private LinkDataSource data;
     private int minWidth, maxWidth;

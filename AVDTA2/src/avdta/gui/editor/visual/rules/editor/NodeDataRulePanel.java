@@ -5,21 +5,25 @@
 package avdta.gui.editor.visual.rules.editor;
 
 import avdta.gui.editor.visual.rules.NodeDataRule;
-import avdta.gui.editor.visual.rules.NodeDataSource;
+import avdta.gui.editor.visual.rules.data.NodeDataSource;
 import avdta.gui.util.JColorButton;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import static avdta.gui.util.GraphicUtils.*;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import javax.swing.BorderFactory;
+import javax.swing.DefaultListCellRenderer;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -30,6 +34,8 @@ import javax.swing.event.DocumentListener;
  */
 public class NodeDataRulePanel extends JPanel
 {
+    private static final NodeDataSource[] SOURCES = new NodeDataSource[]{NodeDataSource.max_delay};
+    
     private NodeDataRule prev;
     
     private JTextField minWidth, maxWidth;
@@ -43,13 +49,26 @@ public class NodeDataRulePanel extends JPanel
     {
         minWidth = new JTextField(3);
         maxWidth = new JTextField(3);
-        minWidth.setText("3");
-        maxWidth.setText("3");
+        minWidth.setText("5");
+        maxWidth.setText("5");
         
         save = new JButton("Save");
         JButton cancel = new JButton("Cancel");
         
-        sources = new JComboBox();
+        sources = new JComboBox(SOURCES);
+        sources.setRenderer(new DefaultListCellRenderer()
+        {
+           public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus)
+           {
+               JComponent comp = (JComponent)super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+               
+               if(value != null)
+               {
+                   list.setToolTipText(((NodeDataSource)value).getDescription());
+               }
+               return comp;
+           }
+        });
         
         minValue = new JTextField(3);
         maxValue = new JTextField(3);
@@ -237,7 +256,7 @@ public class NodeDataRulePanel extends JPanel
         }
         
         
-        NodeDataSource source = null;
+        NodeDataSource source = (NodeDataSource)sources.getSelectedItem();
         
         boolean addRule = false;
         

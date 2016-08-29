@@ -228,6 +228,9 @@ public abstract class Link implements Serializable, Comparable<Link>
     public void setCoordinates(Location[] array)
     {
         coords = array;
+        
+        coords[0] = source;
+        coords[coords.length-1] = dest;
     }
     
     public void setCoordinates(List<Location> list)
@@ -240,6 +243,9 @@ public abstract class Link implements Serializable, Comparable<Link>
         {
             coords[idx++] = l;
         }
+        
+        coords[0] = source;
+        coords[coords.length-1] = dest;
     }
     
     /**

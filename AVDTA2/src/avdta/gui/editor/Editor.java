@@ -59,9 +59,12 @@ import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
+import javax.swing.JSlider;
 import javax.swing.JTabbedPane;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import org.openstreetmap.gui.jmapviewer.interfaces.ICoordinate;
 
@@ -116,6 +119,11 @@ public class Editor extends JFrame implements MouseListener
         return GUI.getTitleName() + " Editor";
     }
     
+    
+    
+    
+    private JSlider timeSlider;
+    
     public Editor()
     {
         this(null);
@@ -146,6 +154,9 @@ public class Editor extends JFrame implements MouseListener
         map = new MapViewer(display, size, size);
         
         map.addMouseListener(this);
+        
+        timeSlider = new JSlider(0, 3600, 0);
+        timeSlider.setEnabled(false);
         
         JPanel p = new JPanel();
         p.setLayout(new GridBagLayout());
@@ -204,6 +215,15 @@ public class Editor extends JFrame implements MouseListener
             }
         });
         
+        timeSlider.addChangeListener(new ChangeListener()
+        {
+            public void stateChanged(ChangeEvent e)
+            {
+                map.setTime(timeSlider.getValue());
+                map.repaint();
+            }
+        });
+        
         JPanel layers = new JPanel();
         layers.setLayout(new GridBagLayout());
         constrain(layers, nodesSelect, 0, 0, 1, 1);
@@ -220,8 +240,14 @@ public class Editor extends JFrame implements MouseListener
         nodePanel = new NodeRulePanel(this, display.getNodeRules());
         linkPanel = new LinkRulePanel(this, display.getLinkRules());
         
-        constrain(p2, nodePanel, 0, 1, 1, 1);
-        constrain(p2, linkPanel, 0, 2, 1, 1);
+        JPanel p3 = new JPanel();
+        p3.setLayout(new GridBagLayout());
+        p3.setBorder(BorderFactory.createTitledBorder("Visualization"));
+        constrain(p3, nodePanel, 0, 0, 2, 1);
+        constrain(p3, linkPanel, 0, 1, 2, 1);
+        constrain(p3, new JLabel("Time: "), 0, 2, 1, 1);
+        constrain(p3, timeSlider, 1, 2, 1, 1);
+        constrain(p2, p3, 0, 1, 1, 1);
         
         constrain(p, p2, 0, 0, 1, 2);
         
@@ -415,6 +441,7 @@ public class Editor extends JFrame implements MouseListener
                         {
                             public void cancel()
                             {
+                                super.cancel();
                                 frame.setVisible(false);
                             }
                         };
@@ -469,6 +496,7 @@ public class Editor extends JFrame implements MouseListener
                         {
                             public void cancel()
                             {
+                                super.cancel();
                                 frame.setVisible(false);
                             }
                         });
@@ -565,6 +593,7 @@ public class Editor extends JFrame implements MouseListener
                         {
                             public void cancel()
                             {
+                                super.cancel();
                                 frame.setVisible(false);
                             }
                         });
@@ -610,22 +639,42 @@ public class Editor extends JFrame implements MouseListener
                             return;
                         }
                         
-                        final JInternalFrame frame = new JInternalFrame("Edit links");
+                        final JInternalFrame frame = new JInternalFrame("Edit link");
                         
-                        JTabbedPane tabs = new JTabbedPane();
-                        
-                        for(Link link : links)
+                        if(links.length == 1)
                         {
-                            tabs.add(""+link.getId(), new EditLink(thisEditor, link)
+                            frame.add(new EditLink(thisEditor, links[0])
                             {
                                 public void cancel()
                                 {
+                                    super.cancel();
                                     frame.setVisible(false);
                                 }
                             });
                         }
-                        
-                        frame.add(tabs);
+                        else
+                        {
+                            JTabbedPane tabs = new JTabbedPane();
+
+                            for(Link link : links)
+                            {
+                                tabs.add(""+link.getId(), new EditLink(thisEditor, link)
+                                {
+                                    public boolean save()
+                                    {
+                                        super.save();
+                                        return false;
+                                    }
+                                    public void cancel()
+                                    {
+                                        super.cancel();
+                                        frame.setVisible(false);
+                                    }
+                                });
+                            }
+
+                            frame.add(tabs);
+                        }
                         frame.pack();
                         frame.setResizable(false);
                         frame.setClosable(true);
@@ -914,12 +963,15 @@ public class Editor extends JFrame implements MouseListener
         centroidSelect.setEnabled(enable);
         nodePanel.setEnabled(enable);
         linkPanel.setEnabled(enable);
-        
+        timeSlider.setEnabled(enable);
         
         
         if(project != null)
         {
             setTitle(project.getName()+" - "+getTitleName());
+            timeSlider.setValue(0);
+            timeSlider.setMaximum(Simulator.duration);
+            
         }
         else
         {

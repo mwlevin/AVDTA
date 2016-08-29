@@ -78,12 +78,15 @@ public class EditSignal extends JPanel
         phasesList.setListData(new String[]{});
         phasesList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         phasesList.setFixedCellWidth(120);
+        phasesList.setFixedCellHeight(20);
         phasesList.setVisibleRowCount(6);
+        
         
         turnsList = new JList();
         turnsList.setListData(new String[]{});
         turnsList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         turnsList.setFixedCellWidth(120);
+        turnsList.setFixedCellHeight(20);
         turnsList.setVisibleRowCount(6);
         
         saveTurn = new JButton("Add turn");
