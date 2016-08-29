@@ -151,6 +151,11 @@ public class Phase implements Comparable<Phase>
         yellow = y;
     }
     
+    public String toString()
+    {
+        return ""+hashCode();
+    }
+    
     public void setRedTime(double r)
     {
         red = r;

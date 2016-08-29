@@ -26,6 +26,23 @@ public class Turn implements java.io.Serializable
         this.j = j;
     }
     
+    public int compareTo(Turn rhs)
+    {
+        if(rhs.i != i)
+        {
+            return i.getId() - rhs.i.getId();
+        }
+        else
+        {
+            return j.getId() - rhs.j.getId();
+        }
+    }
+    
+    public String toString()
+    {
+        return ""+i.getId()+"-"+j.getId();
+    }
+    
     public int hashCode()
     {
         return i.getId()+j.getId();

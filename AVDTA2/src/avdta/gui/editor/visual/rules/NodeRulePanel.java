@@ -108,13 +108,13 @@ public class NodeRulePanel extends JPanel
             }
         });
         
-        constrain(this, new JScrollPane(list), 0, 0, 2, 4);
+        constrain(this, new JScrollPane(list), 0, 0, 3, 4);
         constrain(this, up, 0, 4, 1, 1);
         constrain(this, down, 1, 4, 1, 1);
-        constrain(this, newData, 2, 0, 1, 1);
-        constrain(this, newType, 2, 1, 1, 1);
-        constrain(this, edit, 2, 2, 1, 1);
-        constrain(this, remove, 2, 3, 1, 1);
+        constrain(this, remove, 2, 4, 1, 1);
+        constrain(this, newData, 3, 0, 1, 1);
+        constrain(this, newType, 3, 1, 1, 1);
+        constrain(this, edit, 3, 2, 1, 1);
     }
     
     
