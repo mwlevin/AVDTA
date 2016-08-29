@@ -23,7 +23,7 @@ public class DefaultDisplayManager implements DisplayManager
     public DefaultDisplayManager()
     {
         displayLinks = true;
-        displayNodes = true;
+        displayNodes = false;
         displayCentroids = false;
     }
     
