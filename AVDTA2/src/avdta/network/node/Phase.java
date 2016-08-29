@@ -74,6 +74,16 @@ public class Phase implements Comparable<Phase>
         start_time = rhs.start_time;
     }
     
+    public void setTurns(Turn[] t)
+    {
+        allowed = t;
+    }
+    
+    public void setSequence(int seq)
+    {
+        sequence = seq;
+    }
+    
     public Phase clone()
     {
         return new Phase(this);

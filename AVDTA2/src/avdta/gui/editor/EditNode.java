@@ -23,6 +23,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import static avdta.gui.util.GraphicUtils.*;
+import avdta.network.node.PhasedTBR;
 import avdta.network.node.PriorityTBR;
 import avdta.network.node.StopSign;
 import avdta.network.node.TBR;
@@ -35,6 +36,11 @@ import avdta.network.node.policy.FCFSPolicy;
 import avdta.network.node.policy.IntersectionPolicy;
 import avdta.network.node.policy.MCKSPriority;
 import avdta.network.node.policy.MCKSTBR;
+import avdta.network.node.policy.SignalWeightedTBR;
+import javax.swing.JInternalFrame;
+import javax.swing.JLayeredPane;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 /**
  *
@@ -53,20 +59,24 @@ public class EditNode extends JPanel
     private static final int STOP_SIGN = 1;
     private static final int RESERVATIONS = 2;
     
-    private static final String[] POLICIES = new String[]{"FCFS", "Auction", "Backpressure", "P0"};
+    private static final String[] POLICIES = new String[]{"FCFS", "Auction", "Backpressure", "P0", "Phased", "Signal-weighted"};
     
     private static final int FCFS = 0;
     private static final int AUCTION = 1;
     private static final int BACKPRESSURE = 2;
     private static final int P0 = 3;
+    private static final int PHASED = 4;
+    private static final int SIGNAL_WEIGHTED = 5;
     
     private Location loc;
     private Editor editor;
     
     private JTextField id;
     private JComboBox type, control, policy;
+    private JButton editSignal, save;
 
     private Node prev;
+    
     
     public EditNode(Editor editor)
     {
@@ -77,6 +87,8 @@ public class EditNode extends JPanel
         policy = new JComboBox(POLICIES);
         
         control.setEnabled(false);
+        
+        editSignal = new JButton("Edit signal");
         
         JPanel p = new JPanel();
         p.setLayout(new GridBagLayout());
@@ -91,10 +103,30 @@ public class EditNode extends JPanel
         constrain(p2, control, 1, 2, 1, 1);
         constrain(p2, new JLabel("Policy: "), 0, 3, 1, 1);
         constrain(p2, policy, 1, 3, 1, 1);
+        constrain(p2, editSignal, 0, 4, 2, 1);
         
         constrain(p, p2, 0, 0, 2, 1);
         
-        JButton save = new JButton("Save");
+        save = new JButton("Save");
+        save.setEnabled(false);
+        
+        DocumentListener changeListener = new DocumentListener()
+        {
+            public void insertUpdate(DocumentEvent e)
+            {
+                save.setEnabled(true);
+            }
+            public void changedUpdate(DocumentEvent e)
+            {
+                save.setEnabled(true);
+            }
+            public void removeUpdate(DocumentEvent e)
+            {
+                save.setEnabled(true);
+            }
+        };
+        
+        id.getDocument().addDocumentListener(changeListener);
         
         save.addActionListener(new ActionListener()
         {
@@ -114,39 +146,66 @@ public class EditNode extends JPanel
             }
         });
         
+        editSignal.addActionListener(new ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                editSignal();
+            }
+        });
+        
+        editSignal.setEnabled(false);
+        
         constrain(p, save, 0, 1, 1, 1);
         constrain(p, cancel, 1, 1, 1, 1);
                 
               
         
-        JTabbedPane tabs = new JTabbedPane();
-        tabs.addTab("Node", p);
 
         policy.setEnabled(false);
         
         control.addItemListener(new ItemListener()
         {
-            public void itemStateChanged(ItemEvent event) {
-                if (event.getStateChange() == ItemEvent.SELECTED) {
+            public void itemStateChanged(ItemEvent e) 
+            {
+                if (e.getStateChange() == ItemEvent.SELECTED) 
+                {
                     policy.setEnabled(control.getSelectedIndex() == RESERVATIONS);
                 }
+                save.setEnabled(true);
+                
+                checkEditSignal();
             }    
         });
         
         type.addItemListener(new ItemListener()
         {
-            public void itemStateChanged(ItemEvent event) {
-                if (event.getStateChange() == ItemEvent.SELECTED) {
+            public void itemStateChanged(ItemEvent e) 
+            {
+                if (e.getStateChange() == ItemEvent.SELECTED) 
+                {
                     boolean enable = type.getSelectedIndex() != CENTROID;
                     policy.setEnabled(enable && control.getSelectedIndex() == RESERVATIONS);
                     control.setEnabled(enable);
                 }
+                save.setEnabled(true);
             }    
         });
         
+        policy.addItemListener(new ItemListener()
+        {
+            public void itemStateChanged(ItemEvent e)
+            {
+                checkEditSignal();
+            }
+        });
         
-        add(tabs);
+        
+        add(p);
+        
+        setMinimumSize(getPreferredSize());
     }
+    
     
     public EditNode(Editor editor, Node node)
     {
@@ -209,6 +268,64 @@ public class EditNode extends JPanel
                 }
             }
         }
+        
+        save.setEnabled(false);
+        checkEditSignal();
+    }
+    
+    public void checkEditSignal()
+    {
+        editSignal.setEnabled(control.getSelectedIndex() == SIGNALS || 
+                        (control.getSelectedIndex() == RESERVATIONS && (policy.getSelectedIndex() == SIGNAL_WEIGHTED || policy.getSelectedIndex() == PHASED)));
+    }
+    
+    public void editSignal()
+    {
+        if(save.isEnabled())
+        {
+            int result = JOptionPane.showConfirmDialog(this, "Save changes?", "Unsaved changes", JOptionPane.YES_NO_OPTION);
+            
+            if(result == JOptionPane.YES_OPTION)
+            {
+                save();
+            }
+            else
+            {
+                return;
+            }
+        }
+        
+        final JInternalFrame frame = new JInternalFrame("Edit signal");
+                        
+        frame.add(new EditSignal(prev.getSignal(), prev)
+        {
+            public void save()
+            {
+                frame.setVisible(false);
+                super.save();
+            }
+
+            public void cancel()
+            {
+                frame.setVisible(false);
+            }
+        });
+
+        cancel();
+        
+        frame.pack();
+        frame.setResizable(false);
+        frame.setClosable(true);
+        frame.setLocation(editor.getWidth()/2 - frame.getWidth()/2, editor.getHeight()/2 - frame.getHeight()/2);
+        frame.setVisible(true);
+
+        JLayeredPane toUse = JLayeredPane.getLayeredPaneAbove(editor.getPanel());
+        toUse.add(frame);
+        try
+        {
+            frame.setSelected(true);
+        }
+        catch(Exception ex){}
     }
 
     public void setLocation(Location loc)
@@ -306,21 +423,18 @@ public class EditNode extends JPanel
                         case P0:
                             i.setControl(new MCKSTBR(new P0Obj()));
                             break;
+                        case PHASED:
+                            i.setControl(new PhasedTBR());
+                            break;
+                        case SIGNAL_WEIGHTED:
+                            i.setControl(new SignalWeightedTBR());
+                            break;
                     }
                     break;
             }
         }
         
-        Signalized signal = node.getSignal();
-        
-        if(signal != null)
-        {
-            saveSignal(signal);
-        }
+        prev = node;
     }
-    
-    public void saveSignal(Signalized signal)
-    {
-        
-    }
+
 }

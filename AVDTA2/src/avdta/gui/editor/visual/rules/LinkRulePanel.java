@@ -79,6 +79,7 @@ public class LinkRulePanel extends JPanel
                 LinkRule rule = rules.remove(idx);
                 rules.add(idx-1, rule);
                 refresh();
+                list.setSelectedIndex(idx-1);
             }
         });
         
@@ -89,8 +90,9 @@ public class LinkRulePanel extends JPanel
                 int idx = list.getSelectedIndex();
                 
                 LinkRule rule = rules.remove(idx);
-                rules.add(idx, rule);
+                rules.add(idx+1, rule);
                 refresh();
+                list.setSelectedIndex(idx+1);
             }
         });
         
@@ -115,6 +117,8 @@ public class LinkRulePanel extends JPanel
         constrain(this, newData, 3, 0, 1, 1);
         constrain(this, newType, 3, 1, 1, 1);
         constrain(this, edit, 3, 2, 1, 1);
+        
+        setMinimumSize(getPreferredSize());
     }
     
     

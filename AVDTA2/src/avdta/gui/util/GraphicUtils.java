@@ -60,24 +60,5 @@ public abstract class GraphicUtils
 
 
 	}
-	
-	
-	public static BufferedImage screenshot()
-	{
-		try
-		{
-			Robot robot = new Robot();
-			Rectangle captureSize = new Rectangle(Toolkit.getDefaultToolkit().getScreenSize());
-			BufferedImage bufferedImage = robot.createScreenCapture(captureSize);
-			
-			return bufferedImage;
-		}
-		catch(AWTException e)
-		{
-			System.err.println("Someone call a doctor!");
-			
-			return null;
-		}
-	}
 
 }

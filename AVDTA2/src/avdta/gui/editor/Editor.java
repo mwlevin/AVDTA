@@ -108,7 +108,7 @@ public class Editor extends JFrame implements MouseListener
     
     
     
-    
+    private JPanel thisPanel;
    
     
     public static String getTitleName()
@@ -150,7 +150,7 @@ public class Editor extends JFrame implements MouseListener
         JPanel p = new JPanel();
         p.setLayout(new GridBagLayout());
         
-        final JPanel thisPanel = p;
+         thisPanel = p;
         
         JPanel mapPanel = new JPanel();
         mapPanel.add(map);
@@ -715,6 +715,7 @@ public class Editor extends JFrame implements MouseListener
         
         this.setJMenuBar(menu);
 
+        thisPanel.setMinimumSize(getPreferredSize());
         
         pack();
         setResizable(false);
@@ -1080,6 +1081,16 @@ public class Editor extends JFrame implements MouseListener
         selectedNodes.remove(n);
         
         map.repaint();
+    }
+    
+    public MapViewer getMap()
+    {
+        return map;
+    }
+    
+    public JPanel getPanel()
+    {
+        return thisPanel;
     }
     
     public void deselectLink(Link l)

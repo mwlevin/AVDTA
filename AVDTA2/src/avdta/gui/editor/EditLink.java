@@ -22,10 +22,14 @@ import avdta.vehicle.Vehicle;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 /**
  *
@@ -49,6 +53,7 @@ public class EditLink extends JPanel
     
     private JTextField id, source, dest, capacity, ffspd, wavespd, length;
     private JComboBox numLanes, flowModel;
+    private JButton save;
     
     public EditLink(Editor editor)
     {
@@ -91,6 +96,7 @@ public class EditLink extends JPanel
         
         numLanes = new JComboBox(LANE_OPTIONS);
         flowModel = new JComboBox(FLOW_MODELS);
+
         
         p = new JPanel();
         p.setBorder(BorderFactory.createTitledBorder("Characteristics"));
@@ -125,7 +131,8 @@ public class EditLink extends JPanel
         p = new JPanel();
         p.setLayout(new GridBagLayout());
         
-        JButton save = new JButton("Save");
+        save = new JButton("Save");
+        save.setEnabled(false);
         
         JButton cancel = new JButton("Cancel");
         
@@ -149,6 +156,54 @@ public class EditLink extends JPanel
                 cancel();
             }
         });
+        
+        DocumentListener changeListener = new DocumentListener()
+        {
+            public void insertUpdate(DocumentEvent e)
+            {
+                save.setEnabled(true);
+            }
+            public void changedUpdate(DocumentEvent e)
+            {
+                save.setEnabled(true);
+            }
+            public void removeUpdate(DocumentEvent e)
+            {
+                save.setEnabled(true);
+            }
+        };
+        id.getDocument().addDocumentListener(changeListener);
+        dest.getDocument().addDocumentListener(changeListener);
+        source.getDocument().addDocumentListener(changeListener);
+        capacity.getDocument().addDocumentListener(changeListener);
+        ffspd.getDocument().addDocumentListener(changeListener);
+        wavespd.getDocument().addDocumentListener(changeListener);
+        length.getDocument().addDocumentListener(changeListener);
+        
+        numLanes.addItemListener(new ItemListener()
+        {
+            public void itemStateChanged(ItemEvent e)
+            {
+                save.setEnabled(true);
+            }
+        });
+        
+        flowModel.addItemListener(new ItemListener()
+        {
+            public void itemStateChanged(ItemEvent e)
+            {
+                boolean enable = flowModel.getSelectedIndex() != CENTROID;
+                capacity.setEnabled(enable);
+                ffspd.setEnabled(enable);
+                wavespd.setEnabled(enable);
+                length.setEnabled(enable);
+                numLanes.setEnabled(enable);
+                
+                save.setEnabled(true);
+            }
+        });
+        
+        setMinimumSize(getPreferredSize());
         
         loadLink(prev);
     }
@@ -209,6 +264,8 @@ public class EditLink extends JPanel
                 flowModel.setSelectedIndex(LTM);
             }
         }
+        
+        save.setEnabled(false);
     }
     
     public void save()
@@ -275,76 +332,79 @@ public class EditLink extends JPanel
             return;
         }
         
-        try
+        if(flowModel.getSelectedIndex() != CENTROID)
         {
-            wavespd_ = Double.parseDouble(wavespd.getText().trim());
-        }
-        catch(NumberFormatException ex)
-        {
-            JOptionPane.showMessageDialog(this, "Congested wave speed must be a positive number", "Error", JOptionPane.ERROR_MESSAGE);
-            wavespd.requestFocus();
-            return;
-        }
+            try
+            {
+                wavespd_ = Double.parseDouble(wavespd.getText().trim());
+            }
+            catch(NumberFormatException ex)
+            {
+                JOptionPane.showMessageDialog(this, "Congested wave speed must be a positive number", "Error", JOptionPane.ERROR_MESSAGE);
+                wavespd.requestFocus();
+                return;
+            }
+
+            if(wavespd_ <= 0)
+            {
+                JOptionPane.showMessageDialog(this, "Congested wave speed must be a positive number", "Error", JOptionPane.ERROR_MESSAGE);
+                wavespd.requestFocus();
+                return;
+            }
         
-        if(wavespd_ <= 0)
-        {
-            JOptionPane.showMessageDialog(this, "Congested wave speed must be a positive number", "Error", JOptionPane.ERROR_MESSAGE);
-            wavespd.requestFocus();
-            return;
-        }
+            try
+            {
+                capacity_ = Double.parseDouble(capacity.getText().trim());
+            }
+            catch(NumberFormatException ex)
+            {
+                JOptionPane.showMessageDialog(this, "Capacity must be a positive number", "Error", JOptionPane.ERROR_MESSAGE);
+                capacity.requestFocus();
+                return;
+            }
         
-        try
-        {
-            capacity_ = Double.parseDouble(capacity.getText().trim());
-        }
-        catch(NumberFormatException ex)
-        {
-            JOptionPane.showMessageDialog(this, "Capacity must be a positive number", "Error", JOptionPane.ERROR_MESSAGE);
-            capacity.requestFocus();
-            return;
-        }
+            if(capacity_ <= 0)
+            {
+                JOptionPane.showMessageDialog(this, "Capacity must be a positive number", "Error", JOptionPane.ERROR_MESSAGE);
+                capacity.requestFocus();
+                return;
+            }
+
+            try
+            {
+                ffspd_ = Double.parseDouble(ffspd.getText().trim());
+            }
+            catch(NumberFormatException ex)
+            {
+                JOptionPane.showMessageDialog(this, "Free flow speed must be a positive number", "Error", JOptionPane.ERROR_MESSAGE);
+                ffspd.requestFocus();
+                return;
+            }
+
+            if(ffspd_ <= 0)
+            {
+                JOptionPane.showMessageDialog(this, "Free flow speed must be a positive number", "Error", JOptionPane.ERROR_MESSAGE);
+                ffspd.requestFocus();
+                return;
+            }
         
-        if(capacity_ <= 0)
-        {
-            JOptionPane.showMessageDialog(this, "Capacity must be a positive number", "Error", JOptionPane.ERROR_MESSAGE);
-            capacity.requestFocus();
-            return;
-        }
-        
-        try
-        {
-            ffspd_ = Double.parseDouble(ffspd.getText().trim());
-        }
-        catch(NumberFormatException ex)
-        {
-            JOptionPane.showMessageDialog(this, "Free flow speed must be a positive number", "Error", JOptionPane.ERROR_MESSAGE);
-            ffspd.requestFocus();
-            return;
-        }
-        
-        if(ffspd_ <= 0)
-        {
-            JOptionPane.showMessageDialog(this, "Free flow speed must be a positive number", "Error", JOptionPane.ERROR_MESSAGE);
-            ffspd.requestFocus();
-            return;
-        }
-        
-        try
-        {
-            length_ = Double.parseDouble(length.getText().trim())/5280;
-        }
-        catch(NumberFormatException ex)
-        {
-            JOptionPane.showMessageDialog(this, "Length must be a positive number", "Error", JOptionPane.ERROR_MESSAGE);
-            length.requestFocus();
-            return;
-        }
-        
-        if(length_ <= 0)
-        {
-            JOptionPane.showMessageDialog(this, "Length must be a positive number", "Error", JOptionPane.ERROR_MESSAGE);
-            length.requestFocus();
-            return;
+            try
+            {
+                length_ = Double.parseDouble(length.getText().trim())/5280;
+            }
+            catch(NumberFormatException ex)
+            {
+                JOptionPane.showMessageDialog(this, "Length must be a positive number", "Error", JOptionPane.ERROR_MESSAGE);
+                length.requestFocus();
+                return;
+            }
+
+            if(length_ <= 0)
+            {
+                JOptionPane.showMessageDialog(this, "Length must be a positive number", "Error", JOptionPane.ERROR_MESSAGE);
+                length.requestFocus();
+                return;
+            }
         }
         
         Node source_ = editor.getNode(source_id);

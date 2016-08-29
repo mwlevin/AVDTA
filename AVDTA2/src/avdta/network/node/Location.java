@@ -44,6 +44,18 @@ public class Location implements Serializable, ICoordinate
         this(rhs.getLon(), rhs.getLat());
     }
     
+    public double angleTo(Location rhs)
+    {
+        double output = Math.atan2(rhs.getY() - getY(), rhs.getX() - getX());
+        
+        if(output < 0)
+        {
+            output += 2*Math.PI;
+        }
+        
+        return output;
+    }
+    
     public double distanceTo(Location rhs)
     {
         return Math.sqrt((rhs.x - x) * (rhs.x - x) + (rhs.y - y) * (rhs.y - y));

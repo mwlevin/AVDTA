@@ -136,6 +136,30 @@ public abstract class Link implements Serializable, Comparable<Link>
         
     }
     
+    public double getIncomingAngle()
+    {
+        if(coords.length >= 2)
+        {
+            return coords[coords.length-2].angleTo(coords[coords.length-1]);
+        }
+        else
+        {
+            return getDirection();
+        }
+    }
+    
+    public double getOutgoingAngle()
+    {
+        if(coords.length >= 2)
+        {
+            return coords[0].angleTo(coords[1]);
+        }
+        else
+        {
+            return getDirection();
+        }
+    }
+    
     public double distanceTo(Location loc)
     {
         return pDistance(loc.getX(), loc.getY(), source.getX(), source.getY(), dest.getX(), dest.getY());
@@ -411,14 +435,7 @@ public abstract class Link implements Serializable, Comparable<Link>
      */
     public double getDirection()
     {
-        double output = Math.atan2(dest.getY() - source.getY(), dest.getX() - source.getX());
-        
-        if(output < 0)
-        {
-            output += 2*Math.PI;
-        }
-        
-        return output;
+        return source.angleTo(dest);
     }
     
     /**

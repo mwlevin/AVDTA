@@ -11,7 +11,7 @@ import avdta.network.link.Link;
  * data-types ({@code i} and {@code j}).
  * @author Michael
  */
-public class Turn implements java.io.Serializable
+public class Turn implements java.io.Serializable, Comparable<Turn>
 {
     public Link i, j;
     /**
