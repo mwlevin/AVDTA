@@ -35,6 +35,12 @@ public class Location implements Serializable, ICoordinate
         this.x = x;
         this.y = y;
     }
+    
+    public Location add(Location rhs)
+    {
+        return new Location(x+rhs.x, y+rhs.y);
+    }
+    
     /**
      * Instantiates the location of a node with ({@code rhs.x}, {@code rhs.y})
      * @param rhs Input for location coordinates of type {@link Location}.

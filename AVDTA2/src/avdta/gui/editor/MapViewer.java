@@ -54,7 +54,7 @@ import org.openstreetmap.gui.jmapviewer.tilesources.OsmTileSource;
  */
 public class MapViewer extends avdta.gui.editor.JMapViewer
 {
-
+    private static final Point[] move = {new Point(1, 0), new Point(0, 1), new Point(-1, 0), new Point(0, -1)};
 
     private Set<Node> nodes;
     private Set<Link> links;
@@ -172,6 +172,10 @@ public class MapViewer extends avdta.gui.editor.JMapViewer
 
     }
     
+    public void setZoomControlsVisible(boolean visible) {
+        super.setZoomContolsVisible(visible);
+    }
+    
     protected void paintComponent(Graphics window) 
     {
         Graphics2D g = (Graphics2D)window;
@@ -196,6 +200,8 @@ public class MapViewer extends avdta.gui.editor.JMapViewer
         }
     }
     
+    private static final double shift_r = 0.00005;
+    
     protected void paintLink(Graphics2D g, Link l)
     {
         if(!display.isDisplayLinks())
@@ -214,13 +220,17 @@ public class MapViewer extends avdta.gui.editor.JMapViewer
         
         g.setStroke(new BasicStroke(display.getWidth(l, time)));
 
-        ICoordinate prev = coords[0];
+        double angle = l.getDirection() - Math.PI/2;
+        
+        Location shift = new Location(shift_r * Math.cos(angle), shift_r * Math.sin(angle));
+        
+        Location prev = coords[0];
         for(int i = 1; i < coords.length; i++)
         {
-            ICoordinate next = coords[i];
+            Location next = coords[i];
 
-            Point p_start = getMapPosition(prev, false);
-            Point p_end = getMapPosition(next, false);
+            Point p_start = getMapPosition(prev.add(shift), false);
+            Point p_end = getMapPosition(next.add(shift), false);
 
             g.draw(new Line2D.Float(p_start, p_end));
 

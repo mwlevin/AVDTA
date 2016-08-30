@@ -34,7 +34,16 @@ public class LinkDataRule extends LinkRule
     
     public int getWidth(Link l, int t)
     {
-        double val = Math.max(minValue, Math.min(maxValue, data.getData(l, t)));
+        double val = data.getData(l, t);
+        
+        if(val < minValue)
+        {
+            return minWidth;
+        }
+        else if(val >= maxValue)
+        {
+            return maxWidth;
+        }
         double scale = (val - minValue) / (maxValue - minValue);
         
         return (int)Math.round(minWidth + scale * (maxWidth - minWidth));
@@ -42,7 +51,16 @@ public class LinkDataRule extends LinkRule
     
     public Color getColor(Link l, int t)
     {
-        double val = Math.max(minValue, Math.min(maxValue, data.getData(l, t)));
+        double val = data.getData(l, t);
+        
+        if(val < minValue)
+        {
+            return minColor;
+        }
+        else if(val >= maxValue)
+        {
+            return maxColor;
+        }
         
         int r1 = minColor.getRed();
         int r2 = maxColor.getRed();

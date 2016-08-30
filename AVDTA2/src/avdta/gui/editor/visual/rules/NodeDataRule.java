@@ -32,7 +32,18 @@ public class NodeDataRule extends NodeRule
     
     public int getRadius(Node n, int t)
     {
-        double val = Math.max(minValue, Math.min(maxValue, data.getData(n, t)));
+        double val = data.getData(n, t);
+        
+        if(val < minValue)
+        {
+            return minWidth;
+        }
+        else if(val >= maxValue)
+        {
+            return maxWidth;
+        }
+        
+        
         double scale = (val - minValue) / (maxValue - minValue);
         
         return (int)Math.round(minWidth + scale * (maxWidth - minWidth));
@@ -45,7 +56,16 @@ public class NodeDataRule extends NodeRule
     
     public Color getBackColor(Node n, int t)
     {
-        double val = Math.max(minValue, Math.min(maxValue, data.getData(n, t)));
+        double val = data.getData(n, t);
+        
+        if(val < minValue)
+        {
+            return minColor;
+        }
+        else if(val >= maxValue)
+        {
+            return maxColor;
+        }
         
         int r1 = minColor.getRed();
         int r2 = maxColor.getRed();

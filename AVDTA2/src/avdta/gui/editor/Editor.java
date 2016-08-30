@@ -126,12 +126,16 @@ public class Editor extends JFrame implements MouseListener
     
     public Editor()
     {
-        this(null);
+        this(null, true);
     }
     public Editor(Project project)
     {
+        this(project, true);
+    }
+    public Editor(Project project, final boolean exitOnClose)
+    {
         final Editor thisEditor = this;
-        
+
         setTitle(getTitleName());
         setIconImage(getIcon());
         
@@ -318,7 +322,14 @@ public class Editor extends JFrame implements MouseListener
         {
             public void actionPerformed(ActionEvent e)
             {
-                System.exit(0);
+                if(exitOnClose)
+                {
+                    exit();
+                }
+                else
+                {
+                    setVisible(false);
+                }
             }
         });
         me.add(mi);
@@ -443,6 +454,7 @@ public class Editor extends JFrame implements MouseListener
                             {
                                 super.cancel();
                                 frame.setVisible(false);
+                                map.repaint();
                             }
                         };
                         edit.setLocation(loc);
@@ -498,6 +510,7 @@ public class Editor extends JFrame implements MouseListener
                             {
                                 super.cancel();
                                 frame.setVisible(false);
+                                map.repaint();
                             }
                         });
                         
@@ -536,6 +549,7 @@ public class Editor extends JFrame implements MouseListener
                         removeSelectListener(this);
                         setMode(PAN);
                         removeNode(n);
+                        map.repaint();
                     }
                 });
                 setMode(NODE);
@@ -595,6 +609,7 @@ public class Editor extends JFrame implements MouseListener
                             {
                                 super.cancel();
                                 frame.setVisible(false);
+                                map.repaint();
                             }
                         });
 
@@ -649,6 +664,7 @@ public class Editor extends JFrame implements MouseListener
                                 {
                                     super.cancel();
                                     frame.setVisible(false);
+                                    map.repaint();
                                 }
                             });
                         }
@@ -727,6 +743,7 @@ public class Editor extends JFrame implements MouseListener
                                 removeLink(input);
                             }
                         }
+                        map.repaint();
                     }
                 });
                 setMode(LINK);
@@ -751,7 +768,14 @@ public class Editor extends JFrame implements MouseListener
         {
             public void windowClosing(WindowEvent e)
             {
-                System.exit(0);
+                if(exitOnClose)
+                {
+                    exit();
+                }
+                else
+                {
+                    setVisible(false);
+                }
             }
         });
         
@@ -767,6 +791,21 @@ public class Editor extends JFrame implements MouseListener
         setMode(PAN);
     }
     
+    public void exit()
+    {
+        setVisible(false);
+
+        try
+        {
+            Thread.sleep(1*1000);
+        }
+        catch(InterruptedException ex)
+        {
+
+        }
+
+        System.exit(0);
+    }
     public void setMode(int mode)
     {
         this.mode = mode;
@@ -862,36 +901,46 @@ public class Editor extends JFrame implements MouseListener
         }
     }
     
+    private static final int screenshot_size = 1600;
+    
     public void saveScreenshot()
     {
+
+        
         JFileChooser chooser = new JFileChooser(GUI.getDefaultDirectory());
         chooser.addChoosableFileFilter(new FileNameExtensionFilter("PNG images", "png"));
         chooser.setAcceptAllFileFilterUsed(false);
         chooser.setMultiSelectionEnabled(false);
-        
+
         int returnVal = chooser.showSaveDialog(this);
-        
+
         if(returnVal == JFileChooser.APPROVE_OPTION)
         {
             try
             {
                 File file = chooser.getSelectedFile();
-            
+
                 if(file.getName().indexOf('.') < 0)
                 {
                     file = new File(file.getCanonicalPath()+".png");
                 }
 
+
                 BufferedImage image = new BufferedImage(map.getWidth(), map.getHeight(), BufferedImage.TYPE_INT_ARGB);
+                map.setZoomControlsVisible(false);
                 map.paint(image.getGraphics());
-            
+                map.setZoomControlsVisible(true);
+                
                 ImageIO.write(image, "png", file);
+
             }
             catch(Exception ex)
             {
                 GUI.handleException(ex);
             }
         }
+
+        
     }
     
     public void newProject()
