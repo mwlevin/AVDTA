@@ -175,7 +175,7 @@ public class AssignmentPane extends GUIPanel
         assignments.clear();
         
         long lastModified = Long.MAX_VALUE;
-        
+        mostRecent = null;
         
         if(dir.exists())
         {

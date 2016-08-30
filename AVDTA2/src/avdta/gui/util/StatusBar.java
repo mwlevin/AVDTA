@@ -89,6 +89,10 @@ public class StatusBar extends JComponent implements StatusUpdate
     }
     public void update(double p)
     {
+        if(p == 0)
+        {
+            resetTime();
+        }
         long time = System.nanoTime();
         
         if(startTime > 0)

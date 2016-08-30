@@ -491,7 +491,7 @@ public class DTASimulator extends Simulator
 
             if(statusUpdate != null)
             {
-                statusUpdate.update((double)iteration / (max_iter - start_iter + 1), "Iteration "+iteration);
+                statusUpdate.update((double)(iteration - start_iter)/ (max_iter - start_iter + 1), "Iteration "+iteration);
             }
         }
         while(iteration++ < max_iter && (iteration == 2 || min_gap < output.getGapPercent()));

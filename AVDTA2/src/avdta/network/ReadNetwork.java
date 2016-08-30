@@ -618,6 +618,7 @@ public class ReadNetwork
         {
             
             int nodeid = filein.nextInt();
+            int type = filein.nextInt();
             int sequence = filein.nextInt();
             double timered = filein.nextDouble();
             double timeyellow = filein.nextDouble();
