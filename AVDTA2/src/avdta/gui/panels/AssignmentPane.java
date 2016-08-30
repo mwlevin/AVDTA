@@ -53,7 +53,7 @@ public class AssignmentPane extends GUIPanel
         list = new JList();
         list.setListData(new String[]{});
         list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        list.setFixedCellWidth(200);
+        list.setFixedCellWidth(150);
         list.setFixedCellHeight(15);
         list.setVisibleRowCount(6);
         
@@ -173,6 +173,7 @@ public class AssignmentPane extends GUIPanel
         File dir = new File(project.getAssignmentsFolder());
         
         assignments.clear();
+        mostRecent = null;
         
         long lastModified = Long.MAX_VALUE;
         mostRecent = null;

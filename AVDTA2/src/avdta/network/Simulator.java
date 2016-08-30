@@ -809,31 +809,5 @@ public class Simulator extends Network
         return output;
     }
     
-/*
-    public void checkVehicles()
-    {
-        for(Vehicle v : vehicles)
-        {
-            if(!v.isExited())
-            {
-                System.out.println(v.getId()+" "+v.getPrevLink()+" "+v.getNextLink()+" "+
-                        v.getPrevLink().getDest().canMove(v.getPrevLink(), v.getNextLink(), v.getDriver()));
-                System.out.println("\t"+v.getPath());
-                if(v.getPrevLink().getDest() instanceof Intersection)
-                {
-                    Intersection i = (Intersection)v.getPrevLink().getDest();
-                    System.out.print("\t"+i.getControl().getClass()+" ");
-                    
-                    if(i.getControl() instanceof TrafficSignal)
-                    {
-                        TrafficSignal signal = (TrafficSignal)i.getControl();
-                        
-                        signal.flowAvailable(v.getPrevLink(), v.getNextLink());
-                    }
-                    System.out.println();
-                }
-            }
-        }
-    }
-    */
+
 }
