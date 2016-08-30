@@ -29,10 +29,9 @@ import javax.swing.filechooser.FileFilter;
  *
  * @author micha
  */
-public class ImportNetworkPane extends JPanel
+public class ImportNetworkPane extends GUIPanel
 {
     private Project project;
-    private NetworkPane parent;
     
     private JFileField importFromProject;
     private JFileField linkdetails, nodes, elevation, phases, signals, linkpoints;
@@ -42,9 +41,9 @@ public class ImportNetworkPane extends JPanel
     private JButton sqlImport, sqlExport;
     
     
-    public ImportNetworkPane(NetworkPane parent_)
+    public ImportNetworkPane(NetworkPane parent)
     {
-        this.parent = parent_;
+        super(parent);
         
         import1 = new JButton("Import");
         import1.setEnabled(false);
@@ -67,7 +66,7 @@ public class ImportNetworkPane extends JPanel
                         {
                             project.importNetworkFromSQL();
                             project.loadSimulator();
-                            parent.reset();
+                            parentReset();
                         }
                         catch(Exception ex)
                         {
@@ -232,6 +231,7 @@ public class ImportNetworkPane extends JPanel
         
         setEnabled(false);
     }
+
     
     public void checkForOtherFiles(File f)
     {
@@ -316,7 +316,7 @@ public class ImportNetworkPane extends JPanel
     
     public void importFromVISTA()
     {
-        parent.setEnabled(false);
+        parentSetEnabled(false);
         
         Thread t = new Thread()
         {
@@ -328,7 +328,7 @@ public class ImportNetworkPane extends JPanel
                     elevation.getFile(), phases.getFile(), signals.getFile(), linkpoints.getFile());
 
                     project.loadSimulator();
-                    parent.reset();
+                    parentReset();
 
                     nodes.setFile(null);
                     elevation.setFile(null);
@@ -336,8 +336,8 @@ public class ImportNetworkPane extends JPanel
                     linkdetails.setFile(null);
                     signals.setFile(null);
 
-                    parent.setEnabled(true);
-                    parent.reset();
+                    parentSetEnabled(true);
+                    parentReset();
                 }
                 catch(IOException ex)
                 {
@@ -351,7 +351,7 @@ public class ImportNetworkPane extends JPanel
     
     public void importFromProject()
     {
-        parent.setEnabled(false);
+        parentSetEnabled(false);
         
         Thread t = new Thread()
         {
@@ -365,9 +365,9 @@ public class ImportNetworkPane extends JPanel
                     project.loadSimulator();
 
                     importFromProject.setFile(null);
-                    parent.reset();
+                    parentReset();
 
-                    parent.setEnabled(true);
+                    parentSetEnabled(true);
                 }
                 catch(IOException ex)
                 {

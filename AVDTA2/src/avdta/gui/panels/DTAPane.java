@@ -7,6 +7,7 @@ package avdta.gui.panels;
 
 import avdta.gui.panels.MSAPane;
 import avdta.dta.Assignment;
+import avdta.gui.DTAGUI;
 import avdta.project.DTAProject;
 import javax.swing.JPanel;
 import java.awt.GridBagLayout;
@@ -16,13 +17,15 @@ import static avdta.gui.util.GraphicUtils.*;
  *
  * @author micha
  */
-public class DTAPane extends JPanel
+public class DTAPane extends GUIPanel
 {
     private AssignmentPane assignPane;
     private MSAPane msaPane;
-    
-    public DTAPane()
+
+    public DTAPane(DTAGUI parent)
     {
+        super(parent);
+        
         assignPane = new AssignmentPane(this);
         msaPane = new MSAPane(this);
         
@@ -31,6 +34,7 @@ public class DTAPane extends JPanel
         constrain(this, msaPane, 1, 0, 1, 1);
     }
     
+
     public Assignment getMostRecentAssignment()
     {
         return assignPane.getMostRecentAssignment();

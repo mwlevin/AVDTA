@@ -63,9 +63,8 @@ import javax.swing.event.ChangeListener;
  *
  * @author micha
  */
-public class NodesPane extends JPanel
+public class NodesPane extends GUIPanel
 {
-    private NetworkPane parent;
     private Project project;
     
     private JTextArea data;
@@ -81,7 +80,7 @@ public class NodesPane extends JPanel
     
     public NodesPane(NetworkPane parent)
     {
-        this.parent = parent;
+        super(parent);
         data = new JTextArea(5, 20);
         data.setEditable(false);
         
@@ -180,6 +179,7 @@ public class NodesPane extends JPanel
         reset();
     }
     
+ 
     public void reset()
     {
         signal.setSelected(false);
@@ -343,7 +343,7 @@ public class NodesPane extends JPanel
     
     public void downloadElevation()
     {
-        parent.setEnabled(false);
+        parentSetEnabled(false);
         
         final JPanel panel = this;
         
@@ -361,7 +361,7 @@ public class NodesPane extends JPanel
                     GUI.handleException(ex);
                 }
                 
-                parent.setEnabled(true);
+                parentSetEnabled(true);
             }
         };
         t.start();
@@ -369,7 +369,7 @@ public class NodesPane extends JPanel
     
     public void save()
     {
-        parent.setEnabled(false);
+        parentSetEnabled(false);
         
         Thread t = new Thread()
         {
@@ -380,6 +380,7 @@ public class NodesPane extends JPanel
                 try
                 {
                     Scanner filein = new Scanner(project.getNodesFile());
+                    filein.nextLine();
 
                     int newtype = 0;
 
@@ -448,9 +449,9 @@ public class NodesPane extends JPanel
                 }
                 
                 
-                parent.reset();
+                parentReset();
 
-                parent.setEnabled(true);
+                parentSetEnabled(true);
             }
         };
         t.start();

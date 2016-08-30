@@ -33,11 +33,10 @@ import javax.swing.JTextArea;
  *
  * @author ml26893
  */
-public class MSAPane extends JPanel
+public class MSAPane extends GUIPanel
 {
     
     private DTAProject project;
-    private DTAPane parent;
     
     private StatusBar status;
     
@@ -51,7 +50,7 @@ public class MSAPane extends JPanel
     
     public MSAPane(DTAPane parent)
     {
-        this.parent = parent;
+        super(parent);
         
         max_iter = new JTextField(5);       
         start_iter = new JTextField(5);
@@ -136,6 +135,8 @@ public class MSAPane extends JPanel
         }
     }
     
+    
+    
     public void loadAssignment(Assignment assign)
     {
         if(assign instanceof MSAAssignment)
@@ -165,7 +166,7 @@ public class MSAPane extends JPanel
     
     public void ffTime()
     {
-        parent.setEnabled(false);
+        parentSetEnabled(false);
         
         
         final JPanel panel = this;
@@ -187,8 +188,8 @@ public class MSAPane extends JPanel
                 status.update(0, "");
                 status.resetTime();
 
-                parent.reset();
-                parent.setEnabled(true);
+                parentReset();
+                parentSetEnabled(true);
             }
         };
         t.start();
@@ -230,7 +231,7 @@ public class MSAPane extends JPanel
         }
         
         
-        parent.setEnabled(false);
+        parentSetEnabled(false);
         
         
         final JPanel panel = this;
@@ -277,8 +278,8 @@ public class MSAPane extends JPanel
                     status.update(0, "");
                     status.resetTime();
 
-                    parent.reset();
-                    parent.setEnabled(true);
+                    parentReset();
+                    parentSetEnabled(true);
                 }
                 catch(IOException ex)
                 {

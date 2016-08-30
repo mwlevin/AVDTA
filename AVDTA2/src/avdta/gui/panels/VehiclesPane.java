@@ -28,10 +28,9 @@ import javax.swing.JTextField;
  *
  * @author micha
  */
-public class VehiclesPane extends JPanel
+public class VehiclesPane extends GUIPanel
 {
     private DTAProject project;
-    private DemandPane parent;
     
     private JTextArea data;
     
@@ -40,7 +39,7 @@ public class VehiclesPane extends JPanel
     
     public VehiclesPane(DemandPane parent)
     {
-        this.parent = parent;
+        super(parent);
         data = new JTextArea(10, 20);
         data.setEditable(false);
         
@@ -96,7 +95,7 @@ public class VehiclesPane extends JPanel
             prop.requestFocus();
             return;
         }
-        parent.setEnabled(false);
+        parentSetEnabled(false);
         
         ReadDTANetwork read = new ReadDTANetwork();
         read.prepareDemand(project, Double.parseDouble(prop.getText().trim())/100.0);
@@ -105,9 +104,10 @@ public class VehiclesPane extends JPanel
      
         prop.setText("100");
         
-        parent.reset();
-        parent.setEnabled(true);
+        parentReset();
+        parentSetEnabled(true);
     }
+    
     
     public void reset()
     {

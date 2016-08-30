@@ -30,19 +30,18 @@ import javax.swing.filechooser.FileFilter;
  *
  * @author micha
  */
-public class ImportDemandPane extends JPanel
+public class ImportDemandPane extends GUIPanel
 {
-    private DTAProject project;
-    private DemandPane parent;
     
     private JFileField importFromProject;
     private JFileField staticOD, dynamicOD, demandProfile, demand;
     private JButton import1, import2;
     private JButton sqlImport, sqlExport;
+    private DTAProject project;
     
     public ImportDemandPane(DemandPane parent)
     {
-        this.parent = parent;
+        super(parent);
         
         import1 = new JButton("Import");
         import1.setEnabled(false);
@@ -194,7 +193,7 @@ public class ImportDemandPane extends JPanel
     
     public void importFromProject()
     {
-        parent.setEnabled(false);
+        parentSetEnabled(false);
         
         Thread t = new Thread()
         {
@@ -208,9 +207,9 @@ public class ImportDemandPane extends JPanel
                     project.loadSimulator();
 
                     importFromProject.setFile(null);
-                    parent.reset();
+                    parentReset();
 
-                    parent.setEnabled(true);
+                    parentSetEnabled(true);
                 }
                 catch(IOException ex)
                 {
@@ -223,7 +222,7 @@ public class ImportDemandPane extends JPanel
     
     public void importFromVISTA()
     {
-        parent.setEnabled(false);
+        parentSetEnabled(false);
         
         Thread t = new Thread()
         {
@@ -235,14 +234,14 @@ public class ImportDemandPane extends JPanel
                     demandProfile.getFile(), demand.getFile());
         
                     project.loadSimulator();
-                    parent.reset();
+                    parentReset();
 
                     staticOD.setFile(null);
                     dynamicOD.setFile(null);
                     demand.setFile(null);
                     demandProfile.setFile(null);
 
-                    parent.setEnabled(true);
+                    parentSetEnabled(true);
                 }
                 catch(IOException ex)
                 {

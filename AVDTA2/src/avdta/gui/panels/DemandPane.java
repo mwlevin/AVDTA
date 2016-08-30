@@ -5,6 +5,7 @@
  */
 package avdta.gui.panels;
 
+import avdta.gui.DTAGUI;
 import avdta.gui.panels.ImportDemandPane;
 import avdta.gui.panels.VehiclesPane;
 import avdta.gui.panels.PrepareDemandPane;
@@ -16,14 +17,15 @@ import static avdta.gui.util.GraphicUtils.*;
  *
  * @author micha
  */
-public class DemandPane extends JPanel
+public class DemandPane extends GUIPanel
 {
     private ImportDemandPane importDemandPane;
     private PrepareDemandPane prepareDemandPane;
     private VehiclesPane vehiclesPane;
-    
-    public DemandPane()
+
+    public DemandPane(DTAGUI parent)
     {
+        super(parent);
         setLayout(new GridBagLayout());
         
         importDemandPane = new ImportDemandPane(this);
@@ -36,7 +38,7 @@ public class DemandPane extends JPanel
         
         setMinimumSize(getPreferredSize());
     }
-    
+
     public void reset()
     {
         vehiclesPane.reset();

@@ -25,20 +25,17 @@ import javax.swing.JTextField;
  *
  * @author micha
  */
-public class PrepareDemandPane extends JPanel
+public class PrepareDemandPane extends GUIPanel
 {
     private DTAProject project;
-    private DemandPane parent;
-    
     private JButton createDynamicOD;
     
     private JTextField AVs;
     private JButton changeType;
     
-    public PrepareDemandPane(DemandPane parent)
+    public PrepareDemandPane(GUIPane parent)
     {
-        this.parent = parent;
-        
+       super(parent);
         setLayout(new GridBagLayout());
         
         changeType = new JButton("Change type");
@@ -75,7 +72,7 @@ public class PrepareDemandPane extends JPanel
     
     public void createDynamicOD()
     {
-        parent.setEnabled(false);
+        parentSetEnabled(false);
         
         Thread t = new Thread()
         {
@@ -87,8 +84,8 @@ public class PrepareDemandPane extends JPanel
         
                     read.createDynamicOD(project);
 
-                    parent.reset();
-                    parent.setEnabled(true); 
+                    parentReset();
+                    parentSetEnabled(true); 
                 }
                 catch(IOException ex)
                 {
@@ -114,7 +111,7 @@ public class PrepareDemandPane extends JPanel
             return;
         }
         
-        parent.setEnabled(false);
+        parentSetEnabled(false);
         
         Thread t = new Thread()
         {
@@ -132,7 +129,7 @@ public class PrepareDemandPane extends JPanel
                     ReadDTANetwork read = new ReadDTANetwork();
                     read.changeType(project, proportionMap);
 
-                    parent.reset();
+                    parentReset();
                 }
                 catch(IOException ex)
                 {
@@ -145,6 +142,7 @@ public class PrepareDemandPane extends JPanel
         
     }
     
+
     public void setEnabled(boolean e)
     {
         createDynamicOD.setEnabled(e);

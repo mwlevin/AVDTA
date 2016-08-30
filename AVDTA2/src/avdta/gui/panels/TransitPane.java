@@ -5,6 +5,7 @@
  */
 package avdta.gui.panels;
 
+import avdta.gui.DTAGUI;
 import static avdta.gui.util.GraphicUtils.constrain;
 import avdta.project.TransitProject;
 import java.awt.GridBagLayout;
@@ -14,13 +15,14 @@ import javax.swing.JPanel;
  *
  * @author Michael
  */
-public class TransitPane extends JPanel
+public class TransitPane extends GUIPanel
 {
     private ImportTransitPane importPane;
     private TransitViewPane viewPane;
     
-    public TransitPane()
+    public TransitPane(DTAGUI parent)
     {
+        super(parent);
         importPane = new ImportTransitPane(this);
         viewPane = new TransitViewPane(this);
         
@@ -50,4 +52,5 @@ public class TransitPane extends JPanel
         importPane.reset();
         viewPane.reset();
     }
+
 }

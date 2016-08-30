@@ -32,11 +32,10 @@ import javax.swing.event.ListSelectionListener;
  *
  * @author micha
  */
-public class AssignmentPane extends JPanel
+public class AssignmentPane extends GUIPanel
 {
-    private DTAPane parent;
-    
     private DTAProject project;
+    private DTAPane parent;
     
     private JList list;
     private JButton loadAssignment;
@@ -48,6 +47,7 @@ public class AssignmentPane extends JPanel
     
     public AssignmentPane(DTAPane parent_)
     {
+        super(parent_);
         this.parent = parent_;
         
         list = new JList();
@@ -131,7 +131,7 @@ public class AssignmentPane extends JPanel
     
     public void loadAssignment(String name) throws IOException
     {
-        parent.setEnabled(false);
+        parentSetEnabled(false);
         
         Assignment assign = readAssignment(name);
         
@@ -144,7 +144,7 @@ public class AssignmentPane extends JPanel
         JOptionPane.showMessageDialog(this, "Loaded assignment "+name, "Complete", JOptionPane.INFORMATION_MESSAGE);
         list.setSelectedIndex(-1);
         
-        parent.setEnabled(true);
+        parentSetEnabled(true);
     }
     
     public Assignment readAssignment(String name) throws IOException

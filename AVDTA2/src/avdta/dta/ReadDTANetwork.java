@@ -76,6 +76,7 @@ public class ReadDTANetwork extends ReadNetwork
         DemandProfile profile = readDemandProfile(project);
         
         Scanner filein = new Scanner(project.getStaticODFile());
+        filein.nextLine();
         
         if(!filein.hasNextInt())
         {
@@ -84,10 +85,10 @@ public class ReadDTANetwork extends ReadNetwork
             return;
         }
         
+        
         PrintStream fileout = new PrintStream(new FileOutputStream(project.getDynamicODFile()), true);
         
         fileout.println("id\ttype\torigin\tdest\tast\tdemand");
-        filein.nextLine();
         
         int new_id = 1;
         while(filein.hasNextInt())
@@ -117,6 +118,7 @@ public class ReadDTANetwork extends ReadNetwork
         Map<Integer, Map<Integer, Map<Integer, Double>>> demands = new TreeMap<Integer, Map<Integer, Map<Integer, Double>>>();
         
         Scanner filein = new Scanner(project.getDynamicODFile());
+        filein.nextLine();
         
         while(filein.hasNextInt())
         {
@@ -171,7 +173,7 @@ public class ReadDTANetwork extends ReadNetwork
             
             for(int d : temp.keySet())
             {
-                Map<Integer, Double> temp2 = temp.get(o);
+                Map<Integer, Double> temp2 = temp.get(d);
                 
                 for(int t : temp2.keySet())
                 {
@@ -181,7 +183,10 @@ public class ReadDTANetwork extends ReadNetwork
                     {
                         double dem = total * proportionMap.get(type);
                         
-                        fileout.println((new_id++)+"\t"+type+"\t"+o+"\t"+d+"\t"+t + "\t" + dem);            
+                        if(dem > 0)
+                        {
+                            fileout.println((new_id++)+"\t"+type+"\t"+o+"\t"+d+"\t"+t + "\t" + dem);     
+                        }
                     }
                 }
             }

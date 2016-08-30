@@ -30,10 +30,9 @@ import javax.swing.filechooser.FileFilter;
  *
  * @author Michael
  */
-public class ImportTransitPane extends JPanel
+public class ImportTransitPane extends GUIPanel
 {
     private TransitProject project;
-    private TransitPane parent;
     
     private JFileField importFromProject;
     private JFileField bus, busfrequency, busperiod, busroutelink;
@@ -42,9 +41,9 @@ public class ImportTransitPane extends JPanel
     private JButton import2;
     private JButton sqlImport, sqlExport;
     
-    public ImportTransitPane(TransitPane parent_)
+    public ImportTransitPane(TransitPane parent)
     {
-        this.parent = parent_;
+        super(parent);
         
         
         import1 = new JButton("Import");
@@ -68,7 +67,7 @@ public class ImportTransitPane extends JPanel
                         {
                             project.importTransitFromSQL();
                             project.loadSimulator();
-                            parent.reset();
+                            parentReset();
                         }
                         catch(Exception ex)
                         {
@@ -222,9 +221,10 @@ public class ImportTransitPane extends JPanel
         setEnabled(false);
     }
     
+    
     public void importFromProject()
     {
-        parent.setEnabled(false);
+        parentSetEnabled(false);
         
         Thread t = new Thread()
         {
@@ -238,9 +238,9 @@ public class ImportTransitPane extends JPanel
                     project.loadSimulator();
 
                     importFromProject.setFile(null);
-                    parent.reset();
+                    parentReset();
 
-                    parent.setEnabled(true);
+                    parentSetEnabled(true);
                 }
                 catch(IOException ex)
                 {
@@ -288,7 +288,7 @@ public class ImportTransitPane extends JPanel
     
     public void importFromVISTA() throws IOException
     {
-        parent.setEnabled(false);
+        parentSetEnabled(false);
         
         Thread t = new Thread()
         {
@@ -300,15 +300,15 @@ public class ImportTransitPane extends JPanel
                     busroutelink.getFile(), busfrequency.getFile());
 
                     project.loadSimulator();
-                    parent.reset();
+                    parentReset();
 
                     bus.setFile(null);
                     busperiod.setFile(null);
                     busroutelink.setFile(null);
                     busfrequency.setFile(null);
 
-                    parent.setEnabled(true);
-                    parent.reset();
+                    parentSetEnabled(true);
+                    parentReset();
                 }
                 catch(IOException ex)
                 {

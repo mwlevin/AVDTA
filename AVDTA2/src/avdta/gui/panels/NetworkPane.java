@@ -5,6 +5,7 @@
  */
 package avdta.gui.panels;
 
+import avdta.gui.DTAGUI;
 import avdta.gui.panels.NodesPane;
 import javax.swing.JPanel;
 import static avdta.gui.util.GraphicUtils.*;
@@ -16,15 +17,17 @@ import java.awt.GridBagLayout;
  *
  * @author micha
  */
-public class NetworkPane extends JPanel
+public class NetworkPane extends GUIPanel
 {
     
     private LinksPane linksPane;
     private NodesPane nodesPane;
     private ImportNetworkPane importPane;
     
-    public NetworkPane()
+    public NetworkPane(DTAGUI parent)
     {
+        super(parent);
+        
         linksPane = new LinksPane(this);
         nodesPane = new NodesPane(this);
         importPane = new ImportNetworkPane(this);
@@ -58,5 +61,6 @@ public class NetworkPane extends JPanel
         importPane.setEnabled(e);
         super.setEnabled(e);
     }
+
     
 }

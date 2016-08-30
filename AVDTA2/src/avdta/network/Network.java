@@ -46,7 +46,7 @@ public class Network
     
     protected static boolean HVs_use_reservations = false;
     
-    private boolean link_dijkstras=false; // dijkstras
+    private boolean link_dijkstras=true; // dijkstras
     
     public TravelCost costFunc;
     

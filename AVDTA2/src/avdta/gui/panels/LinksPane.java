@@ -43,11 +43,10 @@ import javax.swing.event.ChangeListener;
  *
  * @author micha
  */
-public class LinksPane extends JPanel
+public class LinksPane extends GUIPanel
 {
     private Project project;
-    private NetworkPane parent;
-    
+
     private JTextArea data;
     
     private static final String[] CTM_LINK_OPTIONS = new String[]{"CTM", "DLR", "Shared transit"};
@@ -66,7 +65,7 @@ public class LinksPane extends JPanel
     
     public LinksPane(NetworkPane parent)
     {
-        this.parent = parent;
+        super(parent);
         
         data = new JTextArea(5, 20);
         data.setEditable(false);
@@ -250,10 +249,10 @@ public class LinksPane extends JPanel
         
         reset();
     }
-
+    
     public void save()
     {
-        parent.setEnabled(false);
+        parentSetEnabled(false);
         
         Thread t = new Thread()
         {
@@ -333,7 +332,7 @@ public class LinksPane extends JPanel
                     {
 
                         Scanner filein = new Scanner(project.getLinksFile());
-
+                        filein.nextLine();
 
 
                         while(filein.hasNext())
@@ -382,9 +381,9 @@ public class LinksPane extends JPanel
 
                 }
 
-                parent.reset();
+                parentReset();
 
-                parent.setEnabled(true);
+                parentSetEnabled(true);
                 
             }
         };

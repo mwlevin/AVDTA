@@ -24,19 +24,17 @@ import javax.swing.JScrollPane;
  *
  * @author Michael
  */
-public class TransitViewPane extends JPanel
+public class TransitViewPane extends GUIPanel
 {
-    private TransitPane parent;
-    
     private TransitProject project;
     
     private JTextArea data;
     private JButton createBuses;
     
     
-    public TransitViewPane(TransitPane parent_)
+    public TransitViewPane(TransitPane parent)
     {
-        this.parent = parent_;
+        super(parent);
         
         data = new JTextArea(5, 20);
         createBuses = new JButton("Create buses");
@@ -74,7 +72,7 @@ public class TransitViewPane extends JPanel
                     ReadNetwork read = new ReadNetwork();
                     read.createTransit(project);
                     project.loadSimulator();
-                    parent.reset();
+                    parentReset();
                 }
                 catch(IOException ex)
                 {
@@ -99,8 +97,7 @@ public class TransitViewPane extends JPanel
         
         super.setEnabled(e);
     }
-    
-    
+
     
     public void reset()
     {

@@ -13,6 +13,7 @@ import avdta.gui.panels.DTAPane;
 import avdta.gui.panels.DemandPane;
 import avdta.gui.panels.NetworkPane;
 import avdta.dta.DTASimulator;
+import avdta.gui.panels.GUIPane;
 import avdta.gui.panels.TransitPane;
 import avdta.project.DTAProject;
 import java.awt.GridBagLayout;
@@ -41,7 +42,7 @@ import avdta.vehicle.DriverType;
  *
  * @author micha
  */
-public class DTAGUI extends GUI
+public class DTAGUI extends GUI implements GUIPane
 {
    
     private NetworkPane networkPane;
@@ -63,10 +64,10 @@ public class DTAGUI extends GUI
         
         JTabbedPane tabs = new JTabbedPane();
         
-        networkPane = new NetworkPane();
-        demandPane = new DemandPane();
-        transitPane = new TransitPane();
-        dtaPane = new DTAPane();
+        networkPane = new NetworkPane(this);
+        demandPane = new DemandPane(this);
+        transitPane = new TransitPane(this);
+        dtaPane = new DTAPane(this);
         
         tabs.add("Network", networkPane);
         tabs.add("Demand", demandPane);
@@ -93,6 +94,22 @@ public class DTAGUI extends GUI
         
         
         setVisible(true);
+    }
+    
+    public void parentReset()
+    {
+        dtaPane.reset();
+        demandPane.reset();
+        networkPane.reset();
+        transitPane.reset();
+    }
+    
+    public void parentSetEnabled(boolean e)
+    {
+        dtaPane.setEnabled(e);
+        demandPane.setEnabled(e);
+        networkPane.setEnabled(e);
+        transitPane.setEnabled(e);
     }
     
     public JMenuBar createMenuBar()

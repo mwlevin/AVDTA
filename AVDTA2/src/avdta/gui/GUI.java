@@ -176,18 +176,7 @@ public abstract class GUI extends JFrame
         });
         me.add(mi);
         
-        me.addSeparator();
-        
-        mi = new JMenuItem("Exit");
-        mi.addActionListener(new ActionListener()
-        {
-            public void actionPerformed(ActionEvent e)
-            {
-                System.exit(0);
-            }
-        });
-        me.add(mi);
-        
+
         cloneMI = mi;
         cloneMI.setEnabled(false);
         
@@ -203,6 +192,18 @@ public abstract class GUI extends JFrame
         
         closeMI = mi;
         closeMI.setEnabled(false);
+        
+        me.addSeparator();
+        
+        mi = new JMenuItem("Exit");
+        mi.addActionListener(new ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                System.exit(0);
+            }
+        });
+        me.add(mi);
         
         menu.add(me);
         
