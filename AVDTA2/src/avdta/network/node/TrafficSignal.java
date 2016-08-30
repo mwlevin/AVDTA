@@ -125,6 +125,8 @@ public class TrafficSignal extends IntersectionControl implements Signalized
     {
         Collections.sort(phases);
         
+        
+        /*
         if(phases.size() == 0)
         {
             // no phases:
@@ -147,47 +149,63 @@ public class TrafficSignal extends IntersectionControl implements Signalized
                 }
             }
         }
+        */
         
-        curr_time = offset  % getDuration();
-        curr_idx = 0;
-        
-        double temp = curr_time;
-        for(Phase p : phases)
+        if(phases.size() > 0)
         {
-            if(temp >= p.getDuration())
+            curr_time = offset  % getDuration();
+            curr_idx = 0;
+
+            double temp = curr_time;
+            for(Phase p : phases)
             {
-                temp -= p.getDuration();
-                curr_idx++;
-            }
-            else
-            {
-                break;
-            }
-        }
-        
-        
-        for(Phase p : phases)
-        {
-            for(Turn t : p.getAllowed())
-            {
-                if(!turns.containsKey(t.i))
+                if(temp >= p.getDuration())
                 {
-                    turns.put(t.i, new HashMap<Link, PhaseMovement>());
+                    temp -= p.getDuration();
+                    curr_idx++;
                 }
-                
-                if(!turns.get(t.i).containsKey(t.j))
+                else
                 {
-                    turns.get(t.i).put(t.j, new PhaseMovement());
+                    break;
                 }
             }
+
+
+            for(Phase p : phases)
+            {
+                for(Turn t : p.getAllowed())
+                {
+                    if(!turns.containsKey(t.i))
+                    {
+                        turns.put(t.i, new HashMap<Link, PhaseMovement>());
+                    }
+
+                    if(!turns.get(t.i).containsKey(t.j))
+                    {
+                        turns.get(t.i).put(t.j, new PhaseMovement());
+                    }
+                }
+            }
+
+            double time = 0;
+
+            for(Phase p : phases)
+            {
+                p.setStartTime(time);
+                time += p.getDuration();
+            }
         }
-        
-        double time = 0;
-        
-        for(Phase p : phases)
+        else
         {
-            p.setStartTime(time);
-            time += p.getDuration();
+            Node node = getNode();
+            for(Link i : node.getIncoming())
+            {
+                turns.put(i, new HashMap<Link, PhaseMovement>());
+                for(Link j : node.getOutgoing())
+                {
+                    turns.get(i).put(j, new PhaseMovement());
+                }
+            }
         }
     }
     
@@ -232,7 +250,9 @@ public class TrafficSignal extends IntersectionControl implements Signalized
             {
                 for(Link j : turns.get(i).keySet())
                 {
-                    turns.get(i).get(j).setMaxFlow(0);
+                    PhaseMovement mvt = turns.get(i).get(j);
+                    mvt.setMaxFlow(0);
+                    mvt.blocked = false;
                 }
             }
 
@@ -324,9 +344,7 @@ public class TrafficSignal extends IntersectionControl implements Signalized
                 for(Link j : turns.get(i).keySet())
                 {
                     PhaseMovement movement = turns.get(i).get(j);
-
                     movement.newTimestep();
-
                 }
             }
             while(time_rem > 0)
@@ -346,7 +364,6 @@ public class TrafficSignal extends IntersectionControl implements Signalized
                     }
                     catch(RuntimeException ex)
                     {
-                        System.out.println(turn.i+" "+turn.j);
                         throw ex;
                     }
 
@@ -373,7 +390,16 @@ public class TrafficSignal extends IntersectionControl implements Signalized
         }
         else
         {
-            
+            for(Link i : turns.keySet())
+            {
+                for(Link j : turns.get(i).keySet())
+                {
+                    PhaseMovement movement = turns.get(i).get(j);
+
+                    movement.newTimestep();
+                    movement.addMaxFlow(1000);
+                }
+            }
         }
     }
     
@@ -402,8 +428,6 @@ public class TrafficSignal extends IntersectionControl implements Signalized
         
         
         int moved = 0;
-        double Q = 0;
-
         for(Link i : turns.keySet())
         {
             Map<Link, PhaseMovement> temp = turns.get(i);
@@ -412,8 +436,9 @@ public class TrafficSignal extends IntersectionControl implements Signalized
             {
                 PhaseMovement mvt = temp.get(j);
                 mvt.q = mvt.Q;
+                
                 mvt.addLeftovers();
-                Q += mvt.q;
+                mvt.q = Math.ceil(mvt.q);
             }
             
             i.S = i.getNumSendingFlow();
@@ -467,7 +492,7 @@ public class TrafficSignal extends IntersectionControl implements Signalized
                     moved++;
 
                 }
-                else if(j.R >= receivingFlow && movement != null /*&& movement.hasAvailableCapacity(equiv_flow)*/)
+                else if(j.R >= receivingFlow && movement != null && movement.hasAvailableCapacity(equiv_flow))
                 {
                     i.S -= equiv_flow;
                     i.q += equiv_flow;
@@ -478,12 +503,9 @@ public class TrafficSignal extends IntersectionControl implements Signalized
 
                     i.removeVehicle(v);
                     j.addVehicle(v);
-                    moved++;
-                    
+                    moved++;     
                 }
-                else
-                {
-                }
+               
 
             }
         }

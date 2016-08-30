@@ -656,10 +656,15 @@ public class ReadNetwork
                 Link i = linksmap.get(Integer.parseInt(split_inc[x].trim()));
                 Link j = linksmap.get(Integer.parseInt(split_out[x].trim()));
 
-                if(i == null || j == null)
+                if(i == null)
                 {
-                    System.out.println(split_inc[x]+" "+split_out[x]+" "+i+" "+j);
+                    throw new RuntimeException("Link "+i+" not found in phases for node "+nodeid);
                 }
+                else if(j == null)
+                {
+                    throw new RuntimeException("Link "+j+" not found in phases for node "+nodeid);
+                }
+                
                 turns.add(new Turn(i, j));
                 
                 if(i instanceof SharedTransitCTMLink)
