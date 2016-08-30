@@ -18,7 +18,6 @@ public class Phase implements Comparable<Phase>
 {
     private double start_time;
     
-    private double duration;
     private double green_time, yellow, red;
     
     private int sequence;
@@ -29,7 +28,6 @@ public class Phase implements Comparable<Phase>
      * and duration of that phase.
      * @param list List of {@link Turn}s allowed in that phase.
      * @param green A double value indicating the green time of that phase.
-     * @param duration A double value indicating the duration of that phase.
      */
     public Phase(int sequence, List<Turn> list, double green, double yellow, double red)
     {
@@ -41,7 +39,6 @@ public class Phase implements Comparable<Phase>
             allowed[i] = list.get(i);
         }
         
-        this.duration = green + yellow + red;
         this.yellow = yellow;
         this.red = red;
         this.green_time = green;
@@ -53,8 +50,9 @@ public class Phase implements Comparable<Phase>
     {
         this.sequence = sequence;
         this.allowed = allowed;
-        this.duration = green + yellow + red;
         this.green_time = green;
+        this.yellow = yellow;
+        this.red = red;
     }
     
     public Phase(Phase rhs)
@@ -70,7 +68,6 @@ public class Phase implements Comparable<Phase>
         green_time = rhs.green_time;
         red = rhs.red;
         yellow = rhs.yellow;
-        duration = rhs.duration;
         start_time = rhs.start_time;
     }
     
@@ -116,7 +113,7 @@ public class Phase implements Comparable<Phase>
      */
     public double getRemainingTime(double curr_time)
     {
-        return duration - (curr_time - start_time);
+        return getDuration() - (curr_time - start_time);
     }
     /**
      * Sets the green time of the phase.
@@ -185,7 +182,7 @@ public class Phase implements Comparable<Phase>
      */
     public double getDuration()
     {
-        return duration;
+        return green_time + yellow + red;
     }
     /**
      * Gets the list of {@link Turn}s allowed in that phase.

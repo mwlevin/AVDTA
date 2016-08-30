@@ -54,7 +54,10 @@ public class TransitViewPane extends JPanel
         
         setLayout(new GridBagLayout());
         
-        constrain(this, new JScrollPane(data), 0, 0, 1, 1);
+        JScrollPane scroll = new JScrollPane(data);
+        scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        
+        constrain(this, scroll, 0, 0, 1, 1);
         constrain(this, createBuses, 0, 1, 1, 1);
     }
     

@@ -52,10 +52,10 @@ public class Main
         //GUI.main(args);
         
         
-        Editor test = new Editor(new DTAProject(new File("projects/coacongress2")));
+        //Editor test = new Editor(new DTAProject(new File("projects/coacongress2")));
         
         
-        //new DTAGUI();
+        new DTAGUI();
     }
     
     public static void caccTest2() throws IOException

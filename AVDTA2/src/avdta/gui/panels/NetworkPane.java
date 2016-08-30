@@ -34,6 +34,8 @@ public class NetworkPane extends JPanel
         constrain(this, importPane, 0, 0, 1, 1);
         constrain(this, linksPane, 1, 0, 1, 1);
         constrain(this, nodesPane, 2, 0, 1, 1);
+        
+        setMinimumSize(getPreferredSize());
     }
     
     public void setProject(Project project)

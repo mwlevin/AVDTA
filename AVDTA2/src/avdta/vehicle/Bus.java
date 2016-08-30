@@ -69,12 +69,8 @@ public class Bus extends PersonalVehicle
     {
         super.enteredLink(l);
         
-        if(l.getSource() == transitStops.get(stop_idx).getDest())
+        if(stop_idx < transitStops.size() && l.getSource() == transitStops.get(stop_idx).getDest())
         {
-            if(stop_arr_time > Simulator.time)
-            {
-                System.out.println("check1 "+stop_arr_time+" "+Simulator.time+" "+getDepTime());
-            }
             transitStops.get(stop_idx++).setTT(stop_arr_time, Simulator.time);
 
             stop_arr_time = Simulator.time;
@@ -85,6 +81,9 @@ public class Bus extends PersonalVehicle
     {
         super.exited();
         
-        transitStops.get(stop_idx).setTT(stop_arr_time, Simulator.time);
+        if(stop_idx < transitStops.size())
+        {
+            transitStops.get(stop_idx).setTT(stop_arr_time, Simulator.time);
+        }
     }
 }

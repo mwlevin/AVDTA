@@ -65,7 +65,10 @@ public class VehiclesPane extends JPanel
         prop.setText("100");
         
         setLayout(new GridBagLayout());
-        constrain(this, new JScrollPane(data), 0, 0, 2, 1);
+        JScrollPane scroll = new JScrollPane(data);
+        scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        
+        constrain(this, scroll, 0, 0, 2, 1);
         constrain(this, new JLabel("Percent of dynamic OD: "), 0, 1, 1, 1);
         constrain(this, prop, 1, 1, 1, 1);
         constrain(this, prepareDemand, 0, 2, 2, 1);

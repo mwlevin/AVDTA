@@ -142,19 +142,18 @@ public class TrafficSignal extends IntersectionControl implements Signalized
                             turns.add(new Turn(i, j));
                         }
                     }
-                    
                     addPhase(new Phase(seq, turns, 6, 0, 0));
                 }
             }
         }
         
-        curr_time = offset;
+        curr_time = offset  % getDuration();
         curr_idx = 0;
         
         double temp = curr_time;
         for(Phase p : phases)
         {
-            if(p.getDuration() >= temp)
+            if(temp >= p.getDuration())
             {
                 temp -= p.getDuration();
                 curr_idx++;
@@ -164,6 +163,7 @@ public class TrafficSignal extends IntersectionControl implements Signalized
                 break;
             }
         }
+        
         
         for(Phase p : phases)
         {
@@ -189,6 +189,19 @@ public class TrafficSignal extends IntersectionControl implements Signalized
             time += p.getDuration();
         }
     }
+    
+    public double getDuration()
+    {
+        double output = 0;
+        
+        for(Phase p : phases)
+        {
+            output += p.getDuration();
+        }
+        
+        return output;
+    }
+
     /**
      * Resets the current phase and the current time to 0, and sets the flow 
      * {@code q} of the outgoing link of the turn movement to 0.
@@ -198,10 +211,10 @@ public class TrafficSignal extends IntersectionControl implements Signalized
         curr_time = offset;
         curr_idx = 0;
         
-        double temp = curr_time;
+        double temp = curr_time % getDuration();
         for(Phase p : phases)
         {
-            if(p.getDuration() >= temp)
+            if(temp >= p.getDuration())
             {
                 temp -= p.getDuration();
                 curr_idx++;

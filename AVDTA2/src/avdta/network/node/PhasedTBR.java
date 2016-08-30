@@ -73,7 +73,23 @@ public class PhasedTBR extends PriorityTBR implements Signalized
     public void reset()
     {
         curr_idx = 0;
-        curr_time = 0;
+        
+        curr_time = offset % getDuration();
+        curr_idx = 0;
+        
+        double temp = curr_time;
+        for(Phase p : phases)
+        {
+            if(temp >= p.getDuration())
+            {
+                temp -= p.getDuration();
+                curr_idx++;
+            }
+            else
+            {
+                break;
+            }
+        }
     }
     
     public void addPhase(Phase p)
@@ -83,19 +99,31 @@ public class PhasedTBR extends PriorityTBR implements Signalized
         total_time += p.getDuration();
     }
     
+    public double getDuration()
+    {
+        double output = 0;
+        
+        for(Phase p : phases)
+        {
+            output += p.getDuration();
+        }
+        
+        return output;
+    }
+    
     public void initialize()
     {
         super.initialize();
         
         Collections.sort(phases);
         
-        curr_time = offset;
+        curr_time = offset % getDuration();
         curr_idx = 0;
         
         double temp = curr_time;
         for(Phase p : phases)
         {
-            if(p.getDuration() >= temp)
+            if(temp >= p.getDuration())
             {
                 temp -= p.getDuration();
                 curr_idx++;

@@ -33,6 +33,8 @@ public class DemandPane extends JPanel
         constrain(this, importDemandPane, 0, 0, 1, 1);
         constrain(this, prepareDemandPane, 1, 0, 1, 1);
         constrain(this, vehiclesPane, 2, 0, 1, 1);
+        
+        setMinimumSize(getPreferredSize());
     }
     
     public void reset()

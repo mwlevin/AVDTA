@@ -54,6 +54,8 @@ public class AssignmentPane extends JPanel
         list.setListData(new String[]{});
         list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         list.setFixedCellWidth(200);
+        list.setFixedCellHeight(15);
+        list.setVisibleRowCount(6);
         
         list.addListSelectionListener(new ListSelectionListener()
         {
@@ -179,13 +181,21 @@ public class AssignmentPane extends JPanel
         {
             for(File f : dir.listFiles())
             {
-                Assignment assign = readAssignment(f.getName());
-                assignments.add(assign);
                 
-                if(f.lastModified() < lastModified)
+                try
                 {
-                    lastModified = f.lastModified();
-                    mostRecent = assign;
+                    Assignment assign = readAssignment(f.getName());
+                    assignments.add(assign);
+
+                    if(f.lastModified() < lastModified)
+                    {
+                        lastModified = f.lastModified();
+                        mostRecent = assign;
+                    }
+                }
+                catch(IOException ex)
+                {
+                    delete(f);
                 }
             }
         }
@@ -201,6 +211,15 @@ public class AssignmentPane extends JPanel
         }
         
         list.setListData(names);
+    }
+    
+    public void delete(File folder) throws IOException
+    {
+        for(File f : folder.listFiles())
+        {
+            f.delete();
+        }
+        folder.delete();
     }
     
     public void setProject(DTAProject project)

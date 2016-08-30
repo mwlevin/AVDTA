@@ -102,7 +102,7 @@ public class DTAGUI extends GUI
         JMenuBar menu = super.createMenuBar();
         
         JMenu me = new JMenu("DTA");
-        lastAssignment = new JMenuItem();
+        lastAssignment = new JMenuItem("Last assignment");
         lastAssignment.addActionListener(new ActionListener()
         {
             public void actionPerformed(ActionEvent e)

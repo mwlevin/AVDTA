@@ -143,8 +143,11 @@ public class NodesPane extends JPanel
         
         setLayout(new GridBagLayout());
         
+        JScrollPane scroll = new JScrollPane(data);
+        scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        
         constrain(this, new JLabel("Nodes"), 0, 0, 2, 1);
-        constrain(this, new JScrollPane(data), 0, 1, 2, 1);
+        constrain(this, scroll, 0, 1, 2, 1);
        
         
         JPanel p = new JPanel();
