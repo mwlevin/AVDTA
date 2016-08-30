@@ -294,6 +294,73 @@ public class Network
         
     }
     
+    public void dijkstras(Link starting, int dep_time, double vot, DriverType driver, TravelCost costFunc)
+    {
+        for(Link l : links)
+        {
+            l.label = Integer.MAX_VALUE;
+            l.arr_time = Integer.MAX_VALUE;
+            l.prev = null;
+        }
+        
+        Set<Link> Q = new HashSet<Link>();
+        
+        double tt = starting.getAvgTT(dep_time);
+        starting.arr_time = (int)(dep_time);
+
+
+        starting.label = 0;
+
+        Q.add(starting);
+
+        
+        while(!Q.isEmpty())
+        {
+            double min = Integer.MAX_VALUE-1;
+            Link u = null;
+            
+            for(Link l : Q)
+            {
+                if(l.label < min)
+                {
+                    min = l.label;
+                    u = l;
+                }
+            }
+            
+            Q.remove(u);
+            
+
+            
+            Node d = u.getDest();
+            
+            for(Link v : d.getOutgoing())
+            {
+                if(!d.canMove(u, v, driver))
+                {
+                    continue;
+                }
+                
+                
+                tt = v.getAvgTT(u.arr_time);
+                
+                double new_label = u.label + costFunc.cost(v, vot, u.arr_time);
+
+                
+                if(new_label < v.label)
+                {
+                    v.arr_time = (int)(u.arr_time + tt);
+                   
+                    v.label = new_label;
+                    v.prev = u;
+                    
+                    Q.add(v);
+                }
+            }
+        }
+        
+    }
+    
     
 
     public void node_dijkstras(Node o, int dep_time, double vot, DriverType driver, TravelCost costFunc)
