@@ -23,6 +23,7 @@ public class PhaseMovement implements java.io.Serializable
     protected double Q, R, q;
     protected double leftovers;
     protected int S;
+    
     /**
      * Instantiates a phase movement with zero flow and zero leftovers. 
      */
@@ -67,7 +68,7 @@ public class PhaseMovement implements java.io.Serializable
     public boolean hasAvailableCapacity(double flow)
     {
         //return q > 0;
-        return q>= flow;
+        return q >= flow;
     }
     /**
      * Checks if the flow is restricted by the capacity or the sending flow.
@@ -84,7 +85,8 @@ public class PhaseMovement implements java.io.Serializable
      */    
     public void newTimestep()
     {
-        leftovers = q - (int)q;
+        
+        leftovers += Math.max(0, q - (int)q);
         
         Q = 0;
         S = 0;
@@ -101,6 +103,9 @@ public class PhaseMovement implements java.io.Serializable
     public void addLeftovers()
     {
         q += leftovers;
+        
+        leftovers = 0;
     }
+
 }
 

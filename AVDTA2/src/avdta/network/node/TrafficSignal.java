@@ -8,6 +8,7 @@ import avdta.vehicle.DriverType;
 import avdta.network.link.Link;
 import avdta.network.Network;
 import avdta.network.ReadNetwork;
+import avdta.network.Simulator;
 import avdta.vehicle.Vehicle;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -264,6 +265,7 @@ public class TrafficSignal extends IntersectionControl implements Signalized
             return true;
         }
     }   
+
     
     /**
      * Ignore this function/method.
@@ -327,12 +329,6 @@ public class TrafficSignal extends IntersectionControl implements Signalized
 
                 }
             }
-
-            for(Link j : getNode().getOutgoing())
-            {
-                j.R = j.getReceivingFlow();
-            }
-
             while(time_rem > 0)
             {
                 Phase curr_phase = phases.get(curr_idx);
@@ -344,7 +340,9 @@ public class TrafficSignal extends IntersectionControl implements Signalized
                 {     
                     try
                     {
-                        turns.get(turn.i).get(turn.j).addMaxFlow((green_time / Network.dt) * turn.j.getCapacity());
+                        turns.get(turn.i).get(turn.j).addMaxFlow((green_time / Network.dt) * 
+                                Math.min(turn.j.getCapacityPerTimestep() * turn.j.getNumLanes(),
+                                turn.i.getCapacityPerTimestep() * turn.i.getNumLanes()));
                     }
                     catch(RuntimeException ex)
                     {
@@ -378,6 +376,17 @@ public class TrafficSignal extends IntersectionControl implements Signalized
             
         }
     }
+    
+    public void flowAvailable(Link i, Link j)
+    {
+        try
+        {
+            System.out.print(turns.get(i).get(j).q+" "+turns.get(i).get(j).leftovers);
+        }
+        catch(NullPointerException ex)
+        {
+        }
+    }
     /**
      * Implements a time-step of movement of vehicles at the intersection with 
      * the signal.
@@ -397,16 +406,24 @@ public class TrafficSignal extends IntersectionControl implements Signalized
 
         for(Link i : turns.keySet())
         {
-            for(Link j : turns.get(i).keySet())
+            Map<Link, PhaseMovement> temp = turns.get(i);
+            
+            for(Link j : temp.keySet())
             {
-                turns.get(i).get(j).q = turns.get(i).get(j).Q;
-                turns.get(i).get(j).addLeftovers();
-                Q += turns.get(i).get(j).q;
+                PhaseMovement mvt = temp.get(j);
+                mvt.q = mvt.Q;
+                mvt.addLeftovers();
+                Q += mvt.q;
             }
             
             i.S = i.getNumSendingFlow();
         }
-
+        
+        for(Link j : getNode().getOutgoing())
+        {
+            j.R = j.getReceivingFlow();
+        }
+        
         for(Link i : node.getIncoming())
         {
             // multiple queues
@@ -425,21 +442,32 @@ public class TrafficSignal extends IntersectionControl implements Signalized
                     continue;
                 }
                 double equiv_flow = v.getDriver().getEquivFlow(i.getFFSpeed());
+                
 
                 PhaseMovement movement = (turns.get(i) != null? turns.get(i).get(j) : null);
 
 
-                double receivingFlow = equiv_flow * j.scaleReceivingFlow(v);
+                double receivingFlow = j.scaleReceivingFlow(v);
                 
                 // always move vehicles onto centroid connectors
                 if(j.isCentroidConnector())
                 {
+                    i.S -= equiv_flow;
                     i.removeVehicle(v);
                     j.addVehicle(v);
 
                     
                 }
-                else if(j.R >= receivingFlow && movement != null && movement.hasAvailableCapacity(equiv_flow))
+                else if(i.isCentroidConnector() && j.R >= receivingFlow)
+                {
+                    j.R -= receivingFlow;
+
+                    i.removeVehicle(v);
+                    j.addVehicle(v);
+                    moved++;
+
+                }
+                else if(j.R >= receivingFlow && movement != null /*&& movement.hasAvailableCapacity(equiv_flow)*/)
                 {
                     i.S -= equiv_flow;
                     i.q += equiv_flow;
@@ -452,15 +480,6 @@ public class TrafficSignal extends IntersectionControl implements Signalized
                     j.addVehicle(v);
                     moved++;
                     
-                }
-                else if(i.isCentroidConnector() && j.R >= receivingFlow)
-                {
-                    j.R -= receivingFlow;
-
-                    i.removeVehicle(v);
-                    j.addVehicle(v);
-                    moved++;
-
                 }
                 else
                 {

@@ -122,17 +122,20 @@ public abstract class Cell implements Comparable<Cell>
         }
 
         next.clear();
-        
     }
     
     public void prepare()
     {
         double capacity = scaleCapacity(getCapacity()) * Network.dt / 3600.0;
+
         R = R - Math.floor(R);
         max_S = max_S - Math.floor(max_S);
+
         
-        R += Math.min(capacity, scaleWaveSpeed(link.getWaveSpeed()) / link.getFFSpeed() * 
+        R = Math.min(R+capacity, scaleWaveSpeed(link.getWaveSpeed()) / link.getFFSpeed() * 
                 (getJamD() - curr.size()));
+
+        
         max_S += capacity;
        
     }
