@@ -324,7 +324,7 @@ public class DTASimulator extends Simulator
         
         if(statusUpdate != null)
         {
-            statusUpdate.update(0, "Simulating");
+            statusUpdate.update(0, 0.25, "Simulating");
         }
         
         
@@ -333,7 +333,7 @@ public class DTASimulator extends Simulator
         
         if(statusUpdate != null)
         {
-            statusUpdate.update(1.0/4, "Creating sim.vat");
+            statusUpdate.update(1.0/4, 0.25, "Creating sim.vat");
         }
         
         
@@ -342,7 +342,7 @@ public class DTASimulator extends Simulator
         
         if(statusUpdate != null)
         {
-            statusUpdate.update(2.0/4, "Postprocessing");
+            statusUpdate.update(2.0/4, 0.25, "Postprocessing");
         }
         
         
@@ -416,14 +416,14 @@ public class DTASimulator extends Simulator
         
         if(statusUpdate != null)
         {
-            statusUpdate.update(3.0/4, "Link tdd");
+            statusUpdate.update(3.0/4, 0, "Link tdd");
         }
         
         printLinkTdd();
         
         if(statusUpdate != null)
         {
-            statusUpdate.update(1, "");
+            statusUpdate.update(1, 0, "");
         }
     }
     
@@ -448,7 +448,7 @@ public class DTASimulator extends Simulator
         
         if(statusUpdate != null)
         {
-            statusUpdate.update(0, "Starting MSA");
+            statusUpdate.update(0, 0, "Starting MSA");
         }
         
         
@@ -492,7 +492,7 @@ public class DTASimulator extends Simulator
 
             if(statusUpdate != null)
             {
-                statusUpdate.update((double)(iteration - start_iter)/ (max_iter - start_iter + 1), "Iteration "+iteration);
+                statusUpdate.update((double)(iteration - start_iter+1)/ (max_iter - start_iter + 1), 1.0 / (max_iter - start_iter + 1), "Iteration "+iteration);
             }
         }
         while(iteration++ < max_iter && (iteration == 2 || min_gap < output.getGapPercent()));
@@ -503,7 +503,7 @@ public class DTASimulator extends Simulator
         
         if(statusUpdate != null)
         {
-            statusUpdate.update(1, "");
+            statusUpdate.update(1, 0, "");
         }
 
         out.println(String.format("TSTT\t%.1f", getTSTT()/3600.0)+"\thr\nAvg. TT\t"+String.format("%.2f", getTSTT() / 60 / vehicles.size())+"\tmin/veh"+
@@ -532,7 +532,6 @@ public class DTASimulator extends Simulator
         
         fileout.close();
         
-
         return output;
     }
     

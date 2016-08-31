@@ -285,7 +285,7 @@ public class Simulator extends Network
         int count = 0;
         for(Vehicle v : vehicles)
         {
-            statusUpdate.update((double)count++ / vehicles.size(), "Finding paths");
+            statusUpdate.update((double)count++ / vehicles.size(), 0, "Finding paths");
             
             Path p = findPath((PersonalVehicle)v, TravelCost.ffTime);
             output += p.getFFTime();
@@ -293,7 +293,7 @@ public class Simulator extends Network
             
         }
         
-        statusUpdate.update(0.0, "");
+        statusUpdate.update(0.0, 0, "");
         
         return output;
     }
@@ -533,6 +533,7 @@ public class Simulator extends Network
     public void setVehicles(List<Vehicle> vehicles)
     {
         this.vehicles = vehicles;
+        Collections.sort(vehicles);
     }
     
     protected int exit_count;

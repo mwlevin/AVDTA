@@ -19,7 +19,8 @@ import javax.swing.Timer;
  */
 public class StatusBar extends JComponent implements StatusUpdate
 {
-    private int percent;
+    private double update, interval;
+    
     private long eta;
     
     private long startTime;
@@ -31,7 +32,8 @@ public class StatusBar extends JComponent implements StatusUpdate
     public StatusBar()
     {
         eta = -1;
-        percent = 0;
+        update = 0.0;
+        interval = 0.0;
         setPreferredSize(new Dimension(210, 65));
         text = "";
         
@@ -52,6 +54,11 @@ public class StatusBar extends JComponent implements StatusUpdate
     {
         g.setColor(getBackground());
         g.fillRect(0, 0, getWidth(), getHeight());
+        
+        // calculate percent
+        long time = System.nanoTime();
+        
+        int percent = (int)Math.round(update * 100.0);
         
         g.setColor(Color.green);
         g.fillRect(5, 25, (int)Math.round(percent /100.0 * (getWidth()-10)), 20);
@@ -79,15 +86,16 @@ public class StatusBar extends JComponent implements StatusUpdate
     
     public boolean isFinished()
     {
-        return percent == 100;
+        return update == 1;
     }
     
-    public void update(double p, String text)
+    public void update(double p, double interval, String text)
     {
         this.text = text;
-        update(p);
+        update(p, interval);
     }
-    public void update(double p)
+    
+    public void update(double p, double inter)
     {
         if(p == 0)
         {
@@ -104,7 +112,8 @@ public class StatusBar extends JComponent implements StatusUpdate
             startTime = time;
         }
         
-        percent = (int)Math.round(p*100);
+        update = p;
+        interval = inter;
 
     }
 }

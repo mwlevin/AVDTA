@@ -31,7 +31,7 @@ public class DownloadElevation
         
     public void download(Component parent, Project project) throws IOException
     {
-        update.update(0.0, "Reading nodes");
+        update.update(0.0, 0, "Reading nodes");
 
         Scanner filein = new Scanner(project.getNodesFile());
 
@@ -54,7 +54,7 @@ public class DownloadElevation
 
         filein.close();
 
-        update.update(0.0, "Downloading elevations");
+        update.update(0.0, 0, "Downloading elevations");
 
         int count = 0;
 
@@ -66,7 +66,7 @@ public class DownloadElevation
                 {
                     node.setElevation(download(node.getLongitude(), node.getLatitude()));
                     count++;
-                    update.update((double)count/missingCount, "Downloading elevations");
+                    update.update((double)count/missingCount, 0, "Downloading elevations");
                 }
                 catch(Exception ex)
                 {
@@ -88,7 +88,7 @@ public class DownloadElevation
 
         if(update != null)
         {
-            update.update(1);
+            update.update(1, 0);
         }
     }
 

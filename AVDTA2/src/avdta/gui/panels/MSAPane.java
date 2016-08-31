@@ -185,7 +185,7 @@ public class MSAPane extends GUIPanel
                         "FF Avg. TT: "+String.format("%.2f", fftime/60.0 / sim.getNumVehicles())+" min",
                         "Simulation complete", JOptionPane.PLAIN_MESSAGE);
 
-                status.update(0, "");
+                status.update(0, 0, "");
                 status.resetTime();
 
                 parentReset();
@@ -275,7 +275,7 @@ public class MSAPane extends GUIPanel
 
                     showResults(results);
                     
-                    status.update(0, "");
+                    status.update(0, 0, "");
                     status.resetTime();
 
                     parentReset();

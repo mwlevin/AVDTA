@@ -228,7 +228,7 @@ public class SAVSimulator extends Simulator
             
             if(statusUpdate != null)
             {
-                statusUpdate.update((double) time / Simulator.duration);
+                statusUpdate.update((double) time / Simulator.duration, ((double)ast_duration) / Simulator.duration);
             }
             
             for(Traveler t : waiting)
@@ -820,7 +820,7 @@ public class SAVSimulator extends Simulator
     {
         if(statusUpdate != null)
         {
-            statusUpdate.update(1);
+            statusUpdate.update(1, 0);
         }
     }
     
