@@ -110,7 +110,7 @@ public abstract class GUI extends JFrame
         System.exit(1);
     }
     
-    private JMenuItem cloneMI, closeMI, createDatabase, editor;
+    private JMenuItem cloneMI, closeMI, createDatabase, editor, changeSeed;
     protected Project project;
     
     private Editor openEditor;
@@ -239,7 +239,7 @@ public abstract class GUI extends JFrame
         
         menu.add(me);
         
-        me = new JMenu("System");
+        me = new JMenu("Network");
         
         editor = new JMenuItem("Editor");
         
@@ -252,9 +252,30 @@ public abstract class GUI extends JFrame
         });
         
         me.add(editor);
+        editor.setEnabled(false);
+        
+        me.addSeparator();
+        
+        changeSeed = new JMenuItem("Reset random seed");
+        changeSeed.addActionListener(new ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                try
+                {
+                    project.changeRandSeed();
+                }
+                catch(IOException ex)
+                {
+                    GUI.handleException(ex);
+                }
+            }
+        });
+        me.add(changeSeed);
+        changeSeed.setEnabled(false);
         menu.add(me);
         
-        editor.setEnabled(false);
+        
         
         
         
@@ -317,6 +338,7 @@ public abstract class GUI extends JFrame
         cloneMI.setEnabled(project != null);
         closeMI.setEnabled(project != null);
         editor.setEnabled(project != null);
+        changeSeed.setEnabled(project != null);
     }
     
     public void setupSQL()

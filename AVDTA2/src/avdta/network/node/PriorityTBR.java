@@ -181,8 +181,9 @@ public class PriorityTBR extends TBR
                 }
 
                 double equiv_flow = v.getDriver().getEquivFlow(i.getFFSpeed());
+                
 
-                double receivingFlow = i.scaleReceivingFlow(v);
+                double receivingFlow =  i.scaleReceivingFlow(v);
 
                 if(v.getDriver().isAV())
                 {

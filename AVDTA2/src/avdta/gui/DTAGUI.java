@@ -36,6 +36,7 @@ import javax.swing.JTextField;
 import javax.swing.filechooser.FileView;
 import avdta.network.ReadNetwork;
 import avdta.project.Project;
+import avdta.project.TransitProject;
 import avdta.vehicle.DriverType;
 
 /**
@@ -214,7 +215,27 @@ public class DTAGUI extends GUI implements GUIPane
                 {
                     DTAProject rhs = new DTAProject();
                     rhs.createProject(name, new File(dir.getCanonicalPath()+"/"+name));
-                    rhs.cloneFromProject(project);
+                    
+                    if(project instanceof DTAProject)
+                    {
+                        rhs.cloneFromProject((DTAProject)project);
+                    }
+                    else if(project instanceof TransitProject)
+                    {
+                        rhs.cloneFromProject((TransitProject)project);
+                    }
+                    else
+                    {
+                        rhs.cloneFromProject(project);
+                    }
+                    
+                    try
+                    {
+                        Thread.sleep(1000);
+                    }
+                    catch(InterruptedException ex){}
+                    
+                    openProject(rhs);
                 }
                 catch(IOException ex)
                 {

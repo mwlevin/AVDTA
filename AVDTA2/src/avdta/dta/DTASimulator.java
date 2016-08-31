@@ -522,6 +522,7 @@ public class DTASimulator extends Simulator
         fileout.close();
         
         //simulate(true);
+        System.out.println(getNumExited());
 
         return output;
     }

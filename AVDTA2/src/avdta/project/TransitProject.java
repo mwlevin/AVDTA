@@ -50,6 +50,13 @@ public abstract class TransitProject extends Project
         fileout.close();
     }
     
+    
+    public void cloneFromProject(TransitProject rhs) throws IOException
+    {
+        super.cloneFromProject(rhs);
+        importTransitFromProject(rhs);
+    }
+    
     public void createProjectFolders(File dir) throws IOException
     {
         super.createProjectFolders(dir);

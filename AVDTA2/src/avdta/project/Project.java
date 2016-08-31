@@ -356,9 +356,10 @@ public abstract class Project
         importNetworkFromProject(rhs);
     }
 
-    public void changeRandSeed()
+    public void changeRandSeed() throws IOException
     {
         randSeed = (int)(System.nanoTime()/1.0e10);
+        writeProperties();
     }
     
     public void writeProperties() throws IOException
