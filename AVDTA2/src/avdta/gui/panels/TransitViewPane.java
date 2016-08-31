@@ -17,7 +17,9 @@ import static avdta.gui.util.GraphicUtils.*;
 import avdta.network.ReadNetwork;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.PrintStream;
 import javax.swing.JScrollPane;
 
 /**
@@ -29,7 +31,7 @@ public class TransitViewPane extends GUIPanel
     private TransitProject project;
     
     private JTextArea data;
-    private JButton createBuses;
+    private JButton createBuses, clearBuses;
     
     
     public TransitViewPane(TransitPane parent)
@@ -38,6 +40,7 @@ public class TransitViewPane extends GUIPanel
         
         data = new JTextArea(5, 20);
         createBuses = new JButton("Create buses");
+        clearBuses = new JButton("Clear buses");
         
         data.setEditable(false);
         
@@ -50,6 +53,14 @@ public class TransitViewPane extends GUIPanel
             }
         });
         
+        clearBuses.addActionListener(new ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                clearBuses();
+            }
+        });
+        
         setLayout(new GridBagLayout());
         
         JScrollPane scroll = new JScrollPane(data);
@@ -57,11 +68,39 @@ public class TransitViewPane extends GUIPanel
         
         constrain(this, scroll, 0, 0, 1, 1);
         constrain(this, createBuses, 0, 1, 1, 1);
+        constrain(this, clearBuses, 0, 2, 1, 1);
+    }
+    
+    public void clearBuses()
+    {
+        parentSetEnabled(false);
+        
+        Thread t = new Thread()
+        {
+            public void run()
+            {
+                try
+                {
+                    PrintStream fileout = new PrintStream(new FileOutputStream(project.getBusFile()), true);
+                    fileout.println(ReadNetwork.getBusFileHeader());
+                    fileout.close();
+                    
+                    project.loadSimulator();
+                    parentReset();
+                    parentSetEnabled(true);
+                }
+                catch(IOException ex)
+                {
+                    GUI.handleException(ex);
+                }
+            }
+        };
+        t.start();
     }
     
     public void createBuses()
     {
-        setEnabled(false);
+        parentSetEnabled(false);
         
         Thread t = new Thread()
         {
@@ -73,6 +112,7 @@ public class TransitViewPane extends GUIPanel
                     read.createTransit(project);
                     project.loadSimulator();
                     parentReset();
+                    parentSetEnabled(true);
                 }
                 catch(IOException ex)
                 {
@@ -94,7 +134,7 @@ public class TransitViewPane extends GUIPanel
     public void setEnabled(boolean e)
     {
         createBuses.setEnabled(e);
-        
+        clearBuses.setEnabled(e);
         super.setEnabled(e);
     }
 

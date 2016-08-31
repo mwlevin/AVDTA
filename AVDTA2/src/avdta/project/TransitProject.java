@@ -154,8 +154,6 @@ public abstract class TransitProject extends Project
     
     public void importTransitFromProject(TransitProject rhs) throws IOException
     {
-        // copy demand, static_od, dynamic_od, demand_profile
-        
         FileTransfer.copy(rhs.getBusFile(), getBusFile());
         FileTransfer.copy(rhs.getBusFrequencyFile(), getBusFrequencyFile());
         FileTransfer.copy(rhs.getBusRouteLinkFile(), getBusRouteLinkFile());

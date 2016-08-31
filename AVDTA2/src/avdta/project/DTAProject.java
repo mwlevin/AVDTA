@@ -163,8 +163,6 @@ public class DTAProject extends TransitProject
     
     public void importDemandFromProject(DTAProject rhs) throws IOException
     {
-        // copy demand, static_od, dynamic_od, demand_profile
-        
         FileTransfer.copy(rhs.getDemandFile(), getDemandFile());
         FileTransfer.copy(rhs.getStaticODFile(), getStaticODFile());
         FileTransfer.copy(rhs.getDynamicODFile(), getDynamicODFile());

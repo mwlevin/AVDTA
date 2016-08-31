@@ -12,6 +12,7 @@ import avdta.network.link.CentroidConnector;
 import avdta.network.link.Link;
 import avdta.network.node.Node;
 import avdta.project.DTAProject;
+import avdta.vehicle.Bus;
 import avdta.vehicle.DriverType;
 import avdta.vehicle.PersonalVehicle;
 import avdta.vehicle.Vehicle;
@@ -505,7 +506,17 @@ public class DTASimulator extends Simulator
             statusUpdate.update(1, "");
         }
 
-        out.println(String.format("TSTT\t%.1f", getTSTT()/3600.0)+"\thr\nAvg. TT\t"+String.format("%.2f", getTSTT() / 60 / vehicles.size())+"\tmin/veh");
+        out.println(String.format("TSTT\t%.1f", getTSTT()/3600.0)+"\thr\nAvg. TT\t"+String.format("%.2f", getTSTT() / 60 / vehicles.size())+"\tmin/veh"+
+                "\nExiting: "+getNumExited());
+        out.println("Energy:\t"+getTotalEnergy());
+        out.println("VMT:\t"+getTotalVMT());
+        out.println("MPG:\t"+(getTotalVMT() / (getTotalEnergy() / VehicleClass.E_PER_GALLON)));
+        out.println();
+        out.println("HV TT:\t"+(getAvgTT(DriverType.HV)/60)+"\tmin");
+        out.println("AV TT:\t"+(getAvgTT(DriverType.AV)/60)+"\tmin");
+        out.println();
+        out.println("DA TT:\t"+(getAvgBusTT(false)/60)+"\tmin");
+        out.println("Bus TT:\t"+(getAvgBusTT(true)/60)+"\tmin");
         
         fileout.println(String.format("TSTT\t%.1f", getTSTT()/3600.0)+"\thr\nAvg. TT\t"+String.format("%.2f", getTSTT() / 60 / vehicles.size())+"\tmin/veh");
         fileout.println();
@@ -521,8 +532,6 @@ public class DTASimulator extends Simulator
         
         fileout.close();
         
-        //simulate(true);
-        System.out.println(getNumExited());
 
         return output;
     }

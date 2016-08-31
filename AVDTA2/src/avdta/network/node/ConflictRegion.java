@@ -17,7 +17,6 @@ import java.io.Serializable;
  */
 public class ConflictRegion implements Serializable
 {
-    private static final boolean enableBlocked = false;
     
     private double capacity;
     public double R;
@@ -79,7 +78,7 @@ public class ConflictRegion implements Serializable
         }
         else
         {
-            R -= (int)R;
+            R -= Math.max(0, (int)R);
             R += capacity * Network.dt / 3600.0;
         }
 
@@ -100,7 +99,7 @@ public class ConflictRegion implements Serializable
     public boolean canMove(Link inc, Link out, double flow)
     {
         boolean output = R >= flow*adjustFlow(inc, out);
-        blocked = enableBlocked && (blocked || !output);
+        blocked = blocked || !output;
         return output;
     }
 

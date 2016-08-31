@@ -170,7 +170,7 @@ public class DTAGUI extends GUI implements GUIPane
         DTAProject project = (DTAProject)p;
         this.project = project;
         
-        
+        project.loadSimulator();
         
         
         if(project != null)
@@ -228,12 +228,6 @@ public class DTAGUI extends GUI implements GUIPane
                     {
                         rhs.cloneFromProject(project);
                     }
-                    
-                    try
-                    {
-                        Thread.sleep(1000);
-                    }
-                    catch(InterruptedException ex){}
                     
                     openProject(rhs);
                 }
