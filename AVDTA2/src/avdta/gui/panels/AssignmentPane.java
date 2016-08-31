@@ -154,7 +154,7 @@ public class AssignmentPane extends GUIPanel
         File indicator = new File(folder+"/msa.dat");
         Assignment assign;
         
-        File file = new File(folder+"/vehicles.dat"); 
+        File file = new File(folder); 
         if(indicator.exists())
         {
             assign = new MSAAssignment(file);
@@ -188,9 +188,9 @@ public class AssignmentPane extends GUIPanel
                     Assignment assign = readAssignment(f.getName());
                     assignments.add(assign);
 
-                    if(f.lastModified() < lastModified)
+                    if(assign.getTime() < lastModified)
                     {
-                        lastModified = f.lastModified();
+                        lastModified = assign.getTime();
                         mostRecent = assign;
                     }
                 }

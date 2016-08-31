@@ -33,6 +33,12 @@ public class MSAAssignment extends Assignment
         this.iter = iter;
     }
     
+    public MSAAssignment(DTAProject project, DTAResults results, String name, int iter)
+    {
+        super(project, results, name);
+        this.iter = iter;
+    }
+    
     
     public void writeToFile(List<Vehicle> vehicles, DTAProject project) throws IOException
     {
@@ -62,8 +68,8 @@ public class MSAAssignment extends Assignment
         iter = filein.nextInt();
     }
     
-    public String getHeaderData()
+    public String getResultsData()
     {
-        return super.getHeaderData()+"\t"+iter;
+        return super.getResultsData()+"\t"+iter;
     }
 }

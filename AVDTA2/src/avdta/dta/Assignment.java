@@ -16,6 +16,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,24 +32,35 @@ public class Assignment implements Comparable<Assignment>
     private int time;
     
     private String name;
+    private String directory;
+ 
     
-    public Assignment(File input) throws IOException
+    public Assignment(File dir) throws IOException
     {
-        name = input.getCanonicalPath();
-        name = name.substring(0, name.lastIndexOf("\\".charAt(0)));
-        name = name.substring(name.lastIndexOf("\\".charAt(0))+1, name.length());
+        directory = dir.getCanonicalPath();
         
-        time = (int)(input.lastModified()/1000);
         
-        // read header data
-        
-        Scanner filein = new Scanner(input);
+        Scanner filein = new Scanner(getPropertiesFile());
         
         readAssignment(filein);
         
         filein.close();
-        
-        
+
+    }
+    
+    public long getTime()
+    {
+        return time;
+    }
+    
+    public String getAssignmentDirectory()
+    {
+        return directory;
+    }
+    
+    public File getPropertiesFile()
+    {
+        return new File(getAssignmentDirectory()+"/properties.dat");
     }
     
     public String getName()
@@ -68,6 +80,8 @@ public class Assignment implements Comparable<Assignment>
     
     public void readAssignment(Scanner filein)
     {
+        name = filein.nextLine();
+        
         double mintt = filein.nextDouble();
         double tstt = filein.nextDouble();
         int num_veh = filein.nextInt();
@@ -77,16 +91,25 @@ public class Assignment implements Comparable<Assignment>
     
     public Assignment(DTAProject project, DTAResults results)
     {
-        this(project, results, ""+(int)(System.nanoTime()/1.0e9));
+        this(project, results, Calendar.getInstance().getTime().toString());
     }
     
     public Assignment(DTAProject project, DTAResults results, String name)
     {
+        this(project, results, ""+(int)(System.nanoTime()/1.0e9), name);
+    }
+    
+    public Assignment(DTAProject project, DTAResults results, String folderName, String name)
+    {
         this.results = results;
         this.name = name;
         
-        File file = new File(project.getAssignmentsFolder()+"/"+name);
+        directory = project.getAssignmentsFolder()+"/"+folderName;
+        
+        File file = new File(directory);
         file.mkdirs();
+        
+        time = (int)(System.currentTimeMillis()/1000.0);
     }
     
     public void setResults(DTAResults results)
@@ -98,20 +121,24 @@ public class Assignment implements Comparable<Assignment>
         return results;
     }
     
-    public File getVehiclesFile(DTAProject project)
+    public File getVehiclesFile()
     {
-        return new File(project.getAssignmentsFolder()+"/"+getName()+"/vehicles.dat");
+        return new File(getAssignmentDirectory()+"/vehicles.dat");
     }
     
-    public File getTimesFile(DTAProject project)
+    public File getTimesFile()
     {
-        return new File(project.getAssignmentsFolder()+"/"+getName()+"/linktt.dat");
+        return new File(getAssignmentDirectory()+"/linktt.dat");
     }
     
     public void writeToFile(List<Vehicle> vehicles, DTAProject project) throws IOException
     {
-        PrintStream fileout = new PrintStream(new FileOutputStream(getVehiclesFile(project)), true);
-        fileout.println(getHeaderData());
+        PrintStream fileout = new PrintStream(new FileOutputStream(getPropertiesFile()), true);
+        fileout.println(getName());
+        fileout.println(getResultsData());
+        fileout.close();
+        
+        fileout = new PrintStream(new FileOutputStream(getVehiclesFile()), true);
         
         for(Vehicle v : vehicles)
         {
@@ -120,7 +147,7 @@ public class Assignment implements Comparable<Assignment>
         
         fileout.close();
         
-        fileout = new PrintStream(new FileOutputStream(getTimesFile(project)), true);
+        fileout = new PrintStream(new FileOutputStream(getTimesFile()), true);
         for(Link l : project.getSimulator().getLinks())
         {
             fileout.print(l.getId());
@@ -138,7 +165,7 @@ public class Assignment implements Comparable<Assignment>
         
     }
     
-    public String getHeaderData()
+    public String getResultsData()
     {
         return (results.getMinTT()/3600.0)+"\t"+results.getTSTT()+"\t"+results.getNumVeh()+"\t"+results.getNumExiting();
     }
@@ -148,7 +175,7 @@ public class Assignment implements Comparable<Assignment>
     {
         Map<Integer, Path> paths = pathlist.createPathIdsMap();
         
-        Scanner filein = new Scanner(getVehiclesFile(project));
+        Scanner filein = new Scanner(getVehiclesFile());
         
         filein.nextLine();
         
@@ -180,7 +207,7 @@ public class Assignment implements Comparable<Assignment>
             linksMap.put(l.getId(), l);
         }
         
-        filein = new Scanner(getTimesFile(project));
+        filein = new Scanner(getTimesFile());
         
         while(filein.hasNextInt())
         {
