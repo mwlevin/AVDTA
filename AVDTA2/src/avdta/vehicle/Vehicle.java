@@ -330,7 +330,7 @@ public abstract class Vehicle implements Serializable, Comparable<Vehicle>
         
     }
     
-    
+
     
     public int compareTo(Vehicle rhs)
     {
@@ -403,7 +403,7 @@ public abstract class Vehicle implements Serializable, Comparable<Vehicle>
      * @return Returns the previous {@link Link} in the route of the vehicle, if 
      * there exists one otherwise returns {@code null}.
      */
-    public Link getPrevLink()
+    public Link getCurrLink()
     {
         if(path_idx >= 0 && path_idx < route.size())
         {
@@ -413,6 +413,11 @@ public abstract class Vehicle implements Serializable, Comparable<Vehicle>
         {
             return null;
         }
+    }
+    
+    public Link getPrevLink()
+    {
+        return getCurrLink();
     }
     
     public void enteredLink(Link l)

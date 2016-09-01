@@ -231,9 +231,10 @@ public class Network
             l.label = Integer.MAX_VALUE;
             l.arr_time = Integer.MAX_VALUE;
             l.prev = null;
+            l.added = false;
         }
         
-        Set<Link> Q = new HashSet<Link>();
+        List<Link> Q = new ArrayList<Link>();
         
         for(Link l : o.getOutgoing())
         {
@@ -244,6 +245,7 @@ public class Network
             l.label = costFunc.cost(l, vot, dep_time);
             
             Q.add(l);
+            l.added = true;
         }
         
         
@@ -261,6 +263,7 @@ public class Network
                 }
             }
             
+            u.added = false;
             Q.remove(u);
             
 
@@ -287,7 +290,12 @@ public class Network
                     v.label = new_label;
                     v.prev = u;
                     
-                    Q.add(v);
+                    if(!v.added)
+                    {
+                        v.added = true;
+                        Q.add(v);
+                    }
+                    
                 }
             }
         }
@@ -369,15 +377,17 @@ public class Network
         {
             n.label = Integer.MAX_VALUE;
             n.prev = null;
+            o.added = false;
         }
 
         o.arr_time = dep_time;
         o.label = 0;
 
         
-        Set<Node> Q = new HashSet<Node>();
+        List<Node> Q = new ArrayList<Node>();
 
         Q.add(o);
+        o.added = true;
 
 
         while(!Q.isEmpty())
@@ -394,6 +404,7 @@ public class Network
                 }
             }
 
+            u.added = false;
             Q.remove(u);
 
             for(Link l : u.getOutgoing())
@@ -430,7 +441,11 @@ public class Network
 
                     if(!(v instanceof Zone))
                     {
-                        Q.add(v);
+                        if(!v.added)
+                        {
+                            v.added = true;
+                            Q.add(v);
+                        }
                     }
                 }
             }

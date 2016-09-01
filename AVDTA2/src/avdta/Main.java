@@ -11,6 +11,7 @@ import avdta.dta.ReadDTANetwork;
 import avdta.gui.DTAGUI;
 import avdta.gui.GUI;
 import avdta.gui.editor.Editor;
+import avdta.gui.editor.visual.rules.LinkBusRule;
 import avdta.network.Path;
 import avdta.network.Simulator;
 import avdta.project.DTAProject;
@@ -54,8 +55,23 @@ public class Main
         
         //Editor test = new Editor(new DTAProject(new File("projects/coacongress2")));
         
+        DTAProject project = new DTAProject(new File("projects/coacongress2_transit"));
+        DTAGUI gui = new DTAGUI();
+        gui.openProject(project);
         
-        new DTAGUI();
+        DTASimulator sim = project.getSimulator();
+        sim.openAssignment(new File(project.getAssignmentsFolder()+"/1983981"));
+        sim.simulate();
+        
+        System.out.println("FF time: "+(sim.calcBusFFTime()/60));
+        System.out.println("Bus time: "+(sim.calcBusTime()/60));
+        System.out.println("Bus ratio: "+(sim.calcAvgBusTimeRatio()));
+        
+        /*
+        DTAProject project = new DTAProject(new File("projects/coacongress2_transit"));
+        Editor gui = new Editor(project);
+        gui.addVisualization(new LinkBusRule(project));
+        */
     }
     
     public static void caccTest2() throws IOException

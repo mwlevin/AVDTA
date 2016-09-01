@@ -53,7 +53,7 @@ public class AssignmentPane extends GUIPanel
         list = new JList();
         list.setListData(new String[]{});
         list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        list.setFixedCellWidth(150);
+        list.setFixedCellWidth(300);
         list.setFixedCellHeight(15);
         list.setVisibleRowCount(6);
         

@@ -58,6 +58,11 @@ public class Assignment implements Comparable<Assignment>
         return directory;
     }
     
+    public File getLogFile()
+    {
+        return new File(getAssignmentDirectory()+"/log.txt");
+    }
+    
     public File getPropertiesFile()
     {
         return new File(getAssignmentDirectory()+"/properties.dat");
@@ -173,20 +178,24 @@ public class Assignment implements Comparable<Assignment>
     
     public void readFromFile(DTAProject project, List<Vehicle> vehicles, PathList pathlist) throws IOException
     {
+        Map<Integer, Vehicle> vehMap = new HashMap<Integer, Vehicle>();
+        
+        for(Vehicle v : vehicles)
+        {
+            vehMap.put(v.getId(), v);
+        }
+        
         Map<Integer, Path> paths = pathlist.createPathIdsMap();
         
         Scanner filein = new Scanner(getVehiclesFile());
         
         filein.nextLine();
         
-        for(Vehicle v : vehicles)
+        while(filein.hasNextInt())
         {
             int id = filein.nextInt();
             
-            if(v.getId() != id)
-            {
-                throw new RuntimeException("Id mismatch when reading assignment");
-            }
+            Vehicle v = vehMap.get(id);
             
             int path_id = filein.nextInt();
             Path p = paths.get(path_id);

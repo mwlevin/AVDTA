@@ -23,6 +23,7 @@ import avdta.network.node.Intersection;
 import avdta.network.node.TBR;
 import avdta.network.node.TrafficSignal;
 import avdta.project.Project;
+import avdta.vehicle.Bus;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -810,5 +811,51 @@ public class Simulator extends Network
         return output;
     }
     
-
+    public double calcBusFFTime()
+    {
+        double output = 0;
+        
+        for(Vehicle v : vehicles)
+        {
+            if(v.isTransit())
+            {
+                output += v.getPath().getFFTime();
+            }
+        }
+        
+        return output;
+    }
+    
+    public double calcAvgBusTimeRatio()
+    {
+        double output = 0;
+        int count = 0;
+        
+        for(Vehicle v : vehicles)
+        {
+            if(v.isTransit())
+            {
+                output += v.getTT() / v.getPath().getFFTime();
+                count++;
+            }
+        }
+        
+        return output / count;
+    }
+    
+    public double calcBusTime()
+    {
+        double output = 0;
+        
+        for(Vehicle v : vehicles)
+        {
+            if(v.isTransit())
+            {
+                output += v.getTT();
+                System.out.println(v.getId()+"\t"+((Bus)v).getRouteId()+"\t"+v.getTT()+"\t"+v.getPath().getFFTime());
+            }
+        }
+        
+        return output;
+    }
 }

@@ -10,6 +10,8 @@ import avdta.gui.GUI;
 import static avdta.gui.GUI.getIcon;
 import static avdta.gui.GUI.handleException;
 import avdta.gui.editor.visual.RuleDisplay;
+import avdta.gui.editor.visual.rules.LinkRule;
+import avdta.gui.editor.visual.rules.NodeRule;
 import avdta.gui.editor.visual.rules.editor.LinkRulePanel;
 import avdta.gui.editor.visual.rules.editor.NodeRulePanel;
 import java.awt.GridBagLayout;
@@ -1405,6 +1407,18 @@ public class Editor extends JFrame implements MouseListener
             links.remove(-l.getId());
             project.getSimulator().getLinks().remove(temp);
         }
+    }
+    
+    public void addVisualization(LinkRule rule)
+    {
+        display.getLinkRules().add(rule);
+        map.repaint();
+    }
+    
+    public void addVisualization(NodeRule rule)
+    {
+        display.getNodeRules().add(rule);
+        map.repaint();
     }
 }
 

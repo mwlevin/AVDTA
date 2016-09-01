@@ -44,12 +44,14 @@ public class MSAAssignment extends Assignment
     {
         super.writeToFile(vehicles, project);
         
-        String dir = project.getAssignmentsFolder()+"/"+getName();
         
-        File indicator = new File(dir+"/msa.dat");
-        
-        PrintStream fileout = new PrintStream(new FileOutputStream(indicator), true);
+        PrintStream fileout = new PrintStream(new FileOutputStream(getIndicatorFile()), true);
         fileout.close();
+    }
+    
+    public File getIndicatorFile()
+    {
+        return new File(getAssignmentDirectory()+"/msa.dat");
     }
     
     public int getIter()
