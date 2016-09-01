@@ -40,6 +40,7 @@ import avdta.network.node.obj.BackPressureObj;
 import avdta.network.node.obj.P0Obj;
 import avdta.project.DTAProject;
 import avdta.network.node.PhasedTBR;
+import avdta.network.node.policy.TransitFirst;
 import avdta.project.Project;
 import avdta.project.TransitProject;
 import avdta.vehicle.Bus;
@@ -94,6 +95,7 @@ public class ReadNetwork
     public static final int DE4 = 5;
     public static final int PRESSURE = 2;
     public static final int P0 = 3;
+    public static final int TRANSIT_FIRST = 40;
     
 
  
@@ -430,6 +432,21 @@ public class ReadNetwork
                                 break;
                             case WEIGHTED:
                                 node.setControl(new SignalWeightedTBR());
+                                break;
+                            case TRANSIT_FIRST + FCFS: 
+                                node.setControl(new PriorityTBR(node, new TransitFirst(IntersectionPolicy.FCFS)));
+                                break;
+                            case TRANSIT_FIRST + AUCTION: 
+                                node.setControl(new PriorityTBR(node, new TransitFirst(IntersectionPolicy.auction)));
+                                break;
+                            case TRANSIT_FIRST + RANDOM: 
+                                node.setControl(new PriorityTBR(node, new TransitFirst(IntersectionPolicy.random)));
+                                break;
+                            case TRANSIT_FIRST + PRESSURE: 
+                                node.setControl(new MCKSTBR(node, backpressureobj));
+                                break;
+                            case TRANSIT_FIRST + P0: 
+                                node.setControl(new MCKSTBR(node, p0obj));
                                 break;
                             default:
                                 throw new RuntimeException("Reservation type not recognized: "+type);

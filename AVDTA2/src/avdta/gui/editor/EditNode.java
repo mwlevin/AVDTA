@@ -37,6 +37,7 @@ import avdta.network.node.policy.IntersectionPolicy;
 import avdta.network.node.policy.MCKSPriority;
 import avdta.network.node.policy.MCKSTBR;
 import avdta.network.node.policy.SignalWeightedTBR;
+import avdta.network.node.policy.TransitFirst;
 import javax.swing.BorderFactory;
 import javax.swing.JInternalFrame;
 import javax.swing.JLayeredPane;
@@ -60,7 +61,7 @@ public class EditNode extends JPanel
     public static final int STOP_SIGN = 1;
     public static final int RESERVATIONS = 2;
     
-    public static final String[] POLICIES = new String[]{"FCFS", "Auction", "Backpressure", "P0", "Phased", "Signal-weighted"};
+    public static final String[] POLICIES = new String[]{"FCFS", "Auction", "Backpressure", "P0", "Phased", "Signal-weighted", "Transit-FCFS"};
     
     public static final int FCFS = 0;
     public static final int AUCTION = 1;
@@ -68,6 +69,7 @@ public class EditNode extends JPanel
     public static final int P0 = 3;
     public static final int PHASED = 4;
     public static final int SIGNAL_WEIGHTED = 5;
+    public static final int TRANSIT_FCFS = 6;
     
     private Location loc;
     private Editor editor;
@@ -510,6 +512,9 @@ public class EditNode extends JPanel
                             break;
                         case SIGNAL_WEIGHTED:
                             i.setControl(new SignalWeightedTBR());
+                            break;
+                        case TRANSIT_FCFS:
+                            i.setControl(new PriorityTBR(new TransitFirst(new FCFSPolicy())));
                             break;
                     }
                     break;

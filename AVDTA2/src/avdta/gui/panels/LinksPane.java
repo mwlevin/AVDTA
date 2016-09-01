@@ -7,6 +7,7 @@ package avdta.gui.panels;
 
 import avdta.gui.DTAGUI;
 import avdta.gui.GUI;
+import avdta.gui.editor.visual.rules.LinkBusRule;
 import avdta.gui.panels.NetworkPane;
 import javax.swing.JPanel;
 import static avdta.gui.util.GraphicUtils.*;
@@ -327,6 +328,7 @@ public class LinksPane extends GUIPanel
                     }
 
                     ArrayList<LinkRecord> temp = new ArrayList<LinkRecord>();
+                    
 
                     try
                     {
@@ -346,7 +348,7 @@ public class LinksPane extends GUIPanel
                                 link.setType(newtype);
                             }
 
-                            if(ctm.isSelected() && ctmOptions.getSelectedItem().equals("Shared transit") && link.getNumLanes() > 1)
+                            if(ctm.isSelected() && ctmOptions.getSelectedItem().equals("Shared transit") && link.getNumLanes() > 1 )
                             {
                                 link.setType(link.getType()+ ReadNetwork.SHARED_TRANSIT);
                             }

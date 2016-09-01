@@ -50,6 +50,6 @@ public class TransitFirst extends IntersectionPolicy
     
     public int getType()
     {
-        return defaultPolicy.getType();
+        return ReadNetwork.TRANSIT_FIRST + defaultPolicy.getType();
     }
 }

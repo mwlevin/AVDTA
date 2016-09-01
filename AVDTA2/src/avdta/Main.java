@@ -55,6 +55,11 @@ public class Main
         
         //Editor test = new Editor(new DTAProject(new File("projects/coacongress2")));
         
+        
+        
+        new DTAGUI();
+        
+        /*
         DTAProject project = new DTAProject(new File("projects/coacongress2_transit"));
         DTAGUI gui = new DTAGUI();
         gui.openProject(project);
@@ -66,7 +71,7 @@ public class Main
         System.out.println("FF time: "+(sim.calcBusFFTime()/60));
         System.out.println("Bus time: "+(sim.calcBusTime()/60));
         System.out.println("Bus ratio: "+(sim.calcAvgBusTimeRatio()));
-        
+        */
         /*
         DTAProject project = new DTAProject(new File("projects/coacongress2_transit"));
         Editor gui = new Editor(project);

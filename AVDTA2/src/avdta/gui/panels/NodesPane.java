@@ -34,6 +34,7 @@ import avdta.network.node.policy.SignalWeightedTBR;
 import avdta.network.node.StopSign;
 import avdta.network.node.TrafficSignal;
 import avdta.network.node.Zone;
+import avdta.network.node.policy.TransitFirst;
 import avdta.project.DTAProject;
 import avdta.project.Project;
 import avdta.vehicle.Vehicle;
@@ -75,7 +76,7 @@ public class NodesPane extends GUIPanel
     
     private StatusBar update;
     
-    private static final String[] NODE_OPTIONS = new String[]{"FCFS", "backpressure", "P0", "Phased", "Signal weighted"};
+    private static final String[] NODE_OPTIONS = new String[]{"FCFS", "backpressure", "P0", "Phased", "Signal-weighted", "Transit-FCFS"};
     private JComboBox<String> nodeOptions;
     
     public NodesPane(NetworkPane parent)
@@ -206,6 +207,7 @@ public class NodesPane extends GUIPanel
             int weightedCount = 0;
             int p0Count = 0;
             int auctionCount = 0;
+            int transitFirstCount = 0;
             
             for(Node n : project.getSimulator().getNodes())
             {
@@ -271,7 +273,12 @@ public class NodesPane extends GUIPanel
                         {
                             auctionCount++;
                         }
+                        else if(policy instanceof TransitFirst)
+                        {
+                            transitFirstCount++;
+                        }
                     }
+                    
                     
                 }
                
@@ -328,6 +335,10 @@ public class NodesPane extends GUIPanel
                 if(phasedCount > 0)
                 {
                     data.append(phasedCount+"\tphased\n");
+                }
+                if(transitFirstCount > 0)
+                {
+                    data.append(transitFirstCount+"\ttransit first");
                 }
             }
             
@@ -412,9 +423,13 @@ public class NodesPane extends GUIPanel
                         {
                             newtype += ReadNetwork.PHASED;
                         }
-                        else if(nodeOptions.getSelectedItem().equals("Signal weighted"))
+                        else if(nodeOptions.getSelectedItem().equals("Signal-weighted"))
                         {
                             newtype += ReadNetwork.WEIGHTED;
+                        }
+                        else if(nodeOptions.getSelectedItem().equals("Transit-FCFS"))
+                        {
+                            newtype += ReadNetwork.TRANSIT_FIRST + ReadNetwork.FCFS;
                         }
                     }
 

@@ -18,11 +18,11 @@ import java.util.Set;
  */
 public class LinkBusRule extends LinkRule
 {
-    private Set<Link> links;
+    private Set<Integer> links;
     
     public LinkBusRule(DTAProject project)
     {
-        links = new HashSet<Link>();
+        links = new HashSet<Integer>();
         
         Simulator sim = project.getSimulator();
         
@@ -32,7 +32,7 @@ public class LinkBusRule extends LinkRule
             {
                 for(Link l : v.getPath())
                 {
-                    links.add(l);
+                    links.add(l.getId());
                 }
             }
         }
@@ -54,6 +54,11 @@ public class LinkBusRule extends LinkRule
     }
     public boolean matches(Link l, int t)
     {
-        return links.contains(l);
+        return links.contains(l.getId());
+    }
+    
+    public boolean contains(int id)
+    {
+        return links.contains(id);
     }
 }
