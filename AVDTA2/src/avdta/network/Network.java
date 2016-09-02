@@ -521,15 +521,32 @@ public class Network
             n.initialize();
         }
         
+        boolean sharedTransit = false;
+        
         for(Link l : links)
         {
             l.initialize();
+            
+            sharedTransit = sharedTransit || (l instanceof SharedTransitCTMLink);
+        }
+        
+        if(sharedTransit)
+        {
+            for(Link l : links)
+            {
+                if(l instanceof SharedTransitCTMLink)
+                {
+                    ((SharedTransitCTMLink)l).tieCells();
+                }
+            }
         }
         
         if(dlr)
         {
             tieLinks();
         }
+        
+      
     }
     
     

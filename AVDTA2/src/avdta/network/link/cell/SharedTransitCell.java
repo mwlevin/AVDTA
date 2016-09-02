@@ -28,6 +28,10 @@ public abstract class SharedTransitCell extends Cell
         
     }
     
+    public Cell getTransitLane()
+    {
+        return transitLane;
+    }
     
     public void setTransitLane(Cell cell)
     {

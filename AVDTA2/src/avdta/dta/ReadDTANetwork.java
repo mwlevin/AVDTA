@@ -236,7 +236,6 @@ public class ReadDTANetwork extends ReadNetwork
             
             int dtime_interval = ast.getDuration() / (num_vehicles+1);
             
-            
             for(int i = 0; i < num_vehicles; i++)
             {
                 int dtime = ast.getStart() + (i+1) * dtime_interval;

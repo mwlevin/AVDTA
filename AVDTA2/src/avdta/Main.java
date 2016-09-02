@@ -200,6 +200,7 @@ public class Main
         {
             for(int i = 70; i <= 120; i += 5)
             {
+                System.out.println(x+"\t"+i);
                 transitTest3(new File("projects/"+x), i);
             }
         }
@@ -209,9 +210,12 @@ public class Main
     {
         DTAProject project = new DTAProject(file);
         ReadDTANetwork read = new ReadDTANetwork();
-        read.prepareDemand(project, prop);
+        read.prepareDemand(project, prop/100.0);
         
         DTASimulator sim = project.getSimulator();
+        sim.initialize();
+        
+       
         sim.msa(50, 1);
         
         PrintStream fileout = new PrintStream(new FileOutputStream(project.getResultsFolder()+"/log_"+prop+".txt"), true);
@@ -221,6 +225,10 @@ public class Main
         fileout.close();
         
         sim.printBusTime(new File(project.getResultsFolder()+"/bus_"+prop+".txt"));
+        
+        project = null;
+        sim = null;
+        read = null;
     }
     
     public static void caccTest2() throws IOException

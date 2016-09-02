@@ -40,6 +40,7 @@ public class SharedTransitCTMLink extends CTMLink
     
     public void tieCells()
     {
+        
         Cell[] cells = getCells();
         Cell[] transitCell = transitLane.getCells();
         
@@ -63,6 +64,8 @@ public class SharedTransitCTMLink extends CTMLink
     {
         return new SharedTransitLinkCell((SharedTransitCell)prev, this);
     }
+    
+
     
     public void prepare()
     {
