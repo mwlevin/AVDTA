@@ -28,28 +28,29 @@ public class ImportFromVISTA
         convertPhases(project, phases);
         convertSignals(project, signals);
         convertLinkPoints(project, linkpoints);
+        
     }
     
     public void convertLinkPoints(Project project, File input) throws IOException
     {
         PrintStream fileout = new PrintStream(new FileOutputStream(project.getLinkPointsFile()), true);
         
-        Scanner filein = new Scanner(input);
+        
         
         fileout.println(ReadNetwork.getLinkPointsFileHeader());
         
-        while(filein.hasNextInt())
+        if(input != null)
         {
-            int id = filein.nextInt();
-            String points = filein.nextLine().trim();
-            
-            // remove []
-            points = points.substring(1, points.length()-1);
-            
+            Scanner filein = new Scanner(input);
 
-            fileout.println(id+"\t"+points);
+            while(filein.hasNextInt())
+            {
+                int id = filein.nextInt();
+                String points = filein.nextLine().trim();
+                fileout.println(id+"\t"+points);
+            }
+            filein.close();
         }
-        filein.close();
         fileout.close();
     }
     

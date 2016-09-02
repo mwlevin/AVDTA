@@ -858,4 +858,15 @@ public class Simulator extends Network
         
         return output;
     }
+    
+    public void printBusTime(File file) throws IOException
+    {
+        PrintStream fileout = new PrintStream(new FileOutputStream(file), true);
+        fileout.println("Id\tRoute\tTT\tFFtime");
+        for(Vehicle v : vehicles)
+        {
+            fileout.println(v.getId()+"\t"+((Bus)v).getRouteId()+"\t"+v.getTT()+"\t"+v.getPath().getFFTime());
+        }
+        fileout.close();
+    }
 }

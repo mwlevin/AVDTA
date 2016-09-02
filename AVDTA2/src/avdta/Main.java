@@ -36,6 +36,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
 import org.openstreetmap.gui.jmapviewer.Demo;
 
 
@@ -57,7 +58,10 @@ public class Main
         
         
         
-        new DTAGUI();
+        //new DTAGUI();
+        
+        //signalTimings();
+        transitTest3();
         
         /*
         DTAProject project = new DTAProject(new File("projects/coacongress2_transit"));
@@ -77,6 +81,146 @@ public class Main
         Editor gui = new Editor(project);
         gui.addVisualization(new LinkBusRule(project));
         */
+    }
+    
+    public static void signalTimings() throws IOException
+    {
+        DTAProject project = new DTAProject(new File("projects/SiouxFalls"));
+        
+        Scanner filein = new Scanner(new File(project.getProjectDirectory()+"/vc.txt"));
+        
+        filein.nextLine();
+        
+        Simulator sim = project.getSimulator();
+        
+        while(filein.hasNextInt())
+        {
+            int source = filein.nextInt();
+            int dest = filein.nextInt();
+            double vc = filein.nextDouble();
+            
+            for(Link l : sim.getLinks())
+            {
+                if(l.getSource().getId() == source && l.getDest().getId() == dest)
+                {
+                    l.label = vc;
+                }
+            }
+        }
+        filein.close();
+        
+        PrintStream fileout = new PrintStream(new FileOutputStream(new File(project.getProjectDirectory()+"/phases.txt")), true);
+        
+        int id = 1;
+        for(Node n : sim.getNodes())
+        {
+            if(!n.isZone())
+            {
+                int phaseid = 1;
+                
+                int incCount = 0;
+                double vcSum = 0;
+                
+                for(Link l : n.getIncoming())
+                {
+                    if(!l.isCentroidConnector())
+                    {
+                        incCount++;
+                        vcSum += l.label * l.getCapacity();
+                    }
+                }
+                
+                int outCount = 0;
+                
+                for(Link l : n.getOutgoing())
+                {
+                    if(!l.isCentroidConnector())
+                    {
+                        outCount++;
+                    }
+                }
+                
+                double L = incCount*4;
+                
+                double targetVC = 0.9;
+                double PHF = 1;
+                
+                double C = L/ (1 - Math.min(0.9, (vcSum / (1615 * PHF * targetVC)) ));
+                
+                C = Math.min(120, C);
+                
+                double g_tot = C - L;
+                
+                System.out.println(n.getId()+" "+C+" "+L+" "+vcSum);
+                
+                for(Link i : n.getIncoming())
+                {
+                    if(!i.isCentroidConnector())
+                    {
+                        double g = g_tot * i.label * i.getCapacity() / vcSum;
+                        
+                        //System.out.println(g+" "+g_tot);
+                        
+                        fileout.print((id++) + "\t1\t"+n.getId()+"\t0\t"+(phaseid++)+"\t1\t3\t"+((int)g)+"\t"+(outCount-1));
+                        
+                        String inc = "";
+                        String out = "";
+                        
+                        for(Link j : n.getOutgoing())
+                        {
+                            if(!j.isCentroidConnector() && j.getDest() != i.getSource())
+                            {
+                                inc += i.getId()+",";
+                                out += j.getId()+",";
+                            }
+                        }
+                        
+                        inc = inc.substring(0, inc.length()-1);
+                        out = out.substring(0, out.length()-1);
+                        
+                        fileout.print("\t{"+inc+"}\t{"+out+"}");
+                        fileout.println();
+                    }
+                }
+                
+                
+                
+            }
+            
+        }
+        fileout.close();
+    }
+    
+    public static void transitTest3() throws IOException
+    {
+        String[] projects = new String[]{"coacongress2_transit", "coacongress2_DTL", "coacongress2_CR_transit", "coacongress2_DTL_transit", "coacongress2_TF_transit"};
+        
+        
+        for(String x : projects)
+        {
+            for(int i = 70; i <= 120; i += 5)
+            {
+                transitTest3(new File("projects/"+x), i);
+            }
+        }
+    }
+    
+    public static void transitTest3(File file, int prop) throws IOException
+    {
+        DTAProject project = new DTAProject(file);
+        ReadDTANetwork read = new ReadDTANetwork();
+        read.prepareDemand(project, prop);
+        
+        DTASimulator sim = project.getSimulator();
+        sim.msa(50, 1);
+        
+        PrintStream fileout = new PrintStream(new FileOutputStream(project.getResultsFolder()+"/log_"+prop+".txt"), true);
+        fileout.println("FF time: "+(sim.calcBusFFTime()/60));
+        fileout.println("Bus time: "+(sim.calcBusTime()/60));
+        fileout.println("Bus ratio: "+(sim.calcAvgBusTimeRatio()));
+        fileout.close();
+        
+        sim.printBusTime(new File(project.getResultsFolder()+"/bus_"+prop+".txt"));
     }
     
     public static void caccTest2() throws IOException
