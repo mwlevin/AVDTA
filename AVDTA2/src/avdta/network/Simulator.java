@@ -865,7 +865,10 @@ public class Simulator extends Network
         fileout.println("Id\tRoute\tTT\tFFtime");
         for(Vehicle v : vehicles)
         {
-            fileout.println(v.getId()+"\t"+((Bus)v).getRouteId()+"\t"+v.getTT()+"\t"+v.getPath().getFFTime());
+            if(v instanceof Bus)
+            {
+                fileout.println(v.getId()+"\t"+((Bus)v).getRouteId()+"\t"+v.getTT()+"\t"+v.getPath().getFFTime());
+            }
         }
         fileout.close();
     }
