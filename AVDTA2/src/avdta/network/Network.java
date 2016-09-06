@@ -22,10 +22,12 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.PriorityQueue;
 import java.util.Set;
 
 
@@ -234,7 +236,13 @@ public class Network
             l.added = false;
         }
         
-        List<Link> Q = new ArrayList<Link>();
+        PriorityQueue<Link> Q = new PriorityQueue<Link>(8, new Comparator<Link>()
+        {
+            public int compare(Link lhs, Link rhs)
+            {
+                return (int)((lhs.label - rhs.label) * 1000);
+            }
+        });
         
         for(Link l : o.getOutgoing())
         {
@@ -251,22 +259,8 @@ public class Network
         
         while(!Q.isEmpty())
         {
-            double min = Integer.MAX_VALUE-1;
-            Link u = null;
-            
-            for(Link l : Q)
-            {
-                if(l.label < min)
-                {
-                    min = l.label;
-                    u = l;
-                }
-            }
-            
+            Link u = Q.remove();
             u.added = false;
-            Q.remove(u);
-            
-
             
             Node d = u.getDest();
             
@@ -287,14 +281,16 @@ public class Network
                 {
                     v.arr_time = (int)(u.arr_time + tt);
                    
+                    // if v is already in Q, remove v to reset the order
+                    if(v.added)
+                    {
+                        Q.remove(v);
+                    }
+                    
                     v.label = new_label;
                     v.prev = u;
-                    
-                    if(!v.added)
-                    {
-                        v.added = true;
-                        Q.add(v);
-                    }
+                    v.added = true;
+                    Q.add(v);
                     
                 }
             }
@@ -311,7 +307,13 @@ public class Network
             l.prev = null;
         }
         
-        Set<Link> Q = new HashSet<Link>();
+        PriorityQueue<Link> Q = new PriorityQueue<Link>(8, new Comparator<Link>()
+        {
+            public int compare(Link lhs, Link rhs)
+            {
+                return (int)((lhs.label - rhs.label) * 1000);
+            }
+        });
         
         double tt = starting.getAvgTT(dep_time);
         starting.arr_time = (int)(dep_time);
@@ -324,21 +326,8 @@ public class Network
         
         while(!Q.isEmpty())
         {
-            double min = Integer.MAX_VALUE-1;
-            Link u = null;
-            
-            for(Link l : Q)
-            {
-                if(l.label < min)
-                {
-                    min = l.label;
-                    u = l;
-                }
-            }
-            
-            Q.remove(u);
-            
-
+            Link u = Q.remove();
+            u.added = false;
             
             Node d = u.getDest();
             
@@ -359,10 +348,17 @@ public class Network
                 {
                     v.arr_time = (int)(u.arr_time + tt);
                    
+                    // if v is already in Q, remove v to reset the order
+                    if(v.added)
+                    {
+                        Q.remove(v);
+                    }
+                    
                     v.label = new_label;
                     v.prev = u;
-                    
+                    v.added = true;
                     Q.add(v);
+                    
                 }
             }
         }
@@ -384,7 +380,13 @@ public class Network
         o.label = 0;
 
         
-        List<Node> Q = new ArrayList<Node>();
+        PriorityQueue<Node> Q = new PriorityQueue<Node>(8, new Comparator<Node>()
+        {
+            public int compare(Node lhs, Node rhs)
+            {
+                return (int)((lhs.label - rhs.label) * 1000);
+            }
+        });
 
         Q.add(o);
         o.added = true;
@@ -435,17 +437,20 @@ public class Network
 
                 if(temp < v.label)
                 {
+                    if(v.added)
+                    {
+                        Q.remove(v);
+                    }
+                    
+                    
                     v.label = temp;
                     v.prev = l;
                     v.arr_time = arr_time;
 
                     if(!(v instanceof Zone))
                     {
-                        if(!v.added)
-                        {
-                            v.added = true;
-                            Q.add(v);
-                        }
+                        v.added = true;
+                        Q.add(v);
                     }
                 }
             }
