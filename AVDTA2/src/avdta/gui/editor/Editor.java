@@ -30,8 +30,15 @@ import avdta.network.Simulator;
 import avdta.network.link.Link;
 import avdta.network.link.SharedTransitCTMLink;
 import avdta.network.link.TransitLane;
+import avdta.network.node.Intersection;
 import avdta.network.node.Location;
 import avdta.network.node.Node;
+import avdta.network.node.Phase;
+import avdta.network.node.PhaseRecord;
+import avdta.network.node.SignalRecord;
+import avdta.network.node.Signalized;
+import avdta.network.node.Turn;
+import avdta.network.node.TurnRecord;
 import avdta.project.DTAProject;
 import avdta.project.Project;
 import java.awt.Cursor;
@@ -49,6 +56,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
 import java.util.Set;
 import java.util.TreeSet;
 import javax.imageio.ImageIO;
@@ -108,8 +116,7 @@ public class Editor extends JFrame implements MouseListener
     private LinkRulePanel linkPanel;
     
     
-    
-    
+
     
     
     
@@ -140,6 +147,7 @@ public class Editor extends JFrame implements MouseListener
 
         setTitle(getTitleName());
         setIconImage(getIcon());
+
         
         selectedNodes = new HashSet<Node>();
         selectedLinks = new HashSet<Link>();
@@ -1000,6 +1008,7 @@ public class Editor extends JFrame implements MouseListener
     public void openProject(Project project)
     {
         this.project = project;
+
         
         boolean enable = project != null;
         
@@ -1035,6 +1044,8 @@ public class Editor extends JFrame implements MouseListener
         refresh();
         map.recenter();
     }
+    
+    
     
     public void closeProject()
     {

@@ -221,7 +221,20 @@ public class Simulator extends Network
     }
     
     
-    
+    public int getNumBuses()
+    {
+        int output = 0;
+        
+        for(Vehicle v : vehicles)
+        {
+            if(v.isTransit())
+            {
+                output++;
+            }
+        }
+        
+        return output;
+    }
     
     
     
@@ -852,7 +865,7 @@ public class Simulator extends Network
             if(v.isTransit())
             {
                 output += v.getTT();
-                System.out.println(v.getId()+"\t"+((Bus)v).getRouteId()+"\t"+v.getTT()+"\t"+v.getPath().getFFTime());
+                //System.out.println(v.getId()+"\t"+((Bus)v).getRouteId()+"\t"+v.getTT()+"\t"+v.getPath().getFFTime());
             }
         }
         

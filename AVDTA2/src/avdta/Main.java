@@ -193,24 +193,31 @@ public class Main
     
     public static void transitTest3() throws IOException
     {
-        String[] projects = new String[]{"coacongress2_transit", "coacongress2_DTL", "coacongress2_CR_transit", "coacongress2_DTL_transit", "coacongress2_TF_transit"};
-        
+        //String[] projects = new String[]{"coacongress2_transit", "coacongress2_DTL", "coacongress2_CR_transit", "coacongress2_CR_DTL", "coacongress2_TF_DTL"};
+        String[] projects = new String[]{"coacongress2_transit"};
         
         for(String x : projects)
         {
+            PrintStream fileout = new PrintStream(new FileOutputStream(new File("results_"+x+".txt")), true);
+            
+            fileout.println("Prop\tDemand\tTSTT\tDA time\tBus FF time\t Bus time\t Avg. bus time\tBus time ratio");
+            
             for(int i = 70; i <= 120; i += 5)
             {
                 System.out.println(x+"\t"+i);
-                transitTest3(new File("projects/"+x), i);
+                transitTest3(new File("projects/"+x), i, fileout);
             }
+            
+            fileout.close();
         }
     }
     
-    public static void transitTest3(File file, int prop) throws IOException
+    public static void transitTest3(File file, int prop, PrintStream output) throws IOException
     {
         DTAProject project = new DTAProject(file);
         ReadDTANetwork read = new ReadDTANetwork();
         read.prepareDemand(project, prop/100.0);
+        project.loadSimulator();
         
         DTASimulator sim = project.getSimulator();
         sim.initialize();
@@ -223,6 +230,9 @@ public class Main
         fileout.println("Bus time: "+(sim.calcBusTime()/60));
         fileout.println("Bus ratio: "+(sim.calcAvgBusTimeRatio()));
         fileout.close();
+        
+        output.println(prop+"\t"+(sim.getNumVehicles()-sim.getNumBuses())+"\t"+(sim.getTSTT()/3600)+"\t"+(sim.getAvgBusTT(false)/60)+"\t"+(sim.calcBusFFTime()/60)+"\t"+
+                (sim.calcBusTime()/60)+"\t"+(sim.getAvgBusTT(true)/60)+"\t"+sim.calcAvgBusTimeRatio());
         
         sim.printBusTime(new File(project.getResultsFolder()+"/bus_"+prop+".txt"));
         
