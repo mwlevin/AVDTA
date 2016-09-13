@@ -329,6 +329,8 @@ public class LinksPane extends GUIPanel
 
                     ArrayList<LinkRecord> temp = new ArrayList<LinkRecord>();
                     
+                    LinkBusRule busRule = new LinkBusRule((DTAProject)project);
+                    
 
                     try
                     {
@@ -348,7 +350,7 @@ public class LinksPane extends GUIPanel
                                 link.setType(newtype);
                             }
 
-                            if(ctm.isSelected() && ctmOptions.getSelectedItem().equals("Shared transit") && link.getNumLanes() > 1 )
+                            if(ctm.isSelected() && ctmOptions.getSelectedItem().equals("Shared transit") && link.getNumLanes() > 1 && busRule.contains(link.getId()))
                             {
                                 link.setType(link.getType()+ ReadNetwork.SHARED_TRANSIT);
                             }

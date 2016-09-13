@@ -191,10 +191,39 @@ public class Main
         fileout.close();
     }
     
+    public static void transitCount() throws IOException
+    {
+        DTAProject project = new DTAProject(new File("projects/coacongress2_transit"));
+        
+        DTASimulator sim = project.getSimulator();
+        sim.initialize();
+        
+        LinkBusRule rule = new LinkBusRule(project);
+        
+        int count1 = 0;
+        int count2 = 0;
+        
+        for(Link l : sim.getLinks())
+        {
+            if(rule.matches(l, 0))
+            {
+                if(l.getNumLanes() == 1)
+                {
+                    count1++;
+                }
+                else
+                {
+                    count2++;
+                }
+            }
+        }
+        
+        System.out.println(count1+" "+count2);
+    }
+    
     public static void transitTest3() throws IOException
     {
-        //String[] projects = new String[]{"coacongress2_transit", "coacongress2_DTL", "coacongress2_CR_transit", "coacongress2_CR_DTL", "coacongress2_TF_DTL"};
-        String[] projects = new String[]{"coacongress2_transit"};
+        String[] projects = new String[]{"coacongress2_transit", "coacongress2_DTL", "coacongress2_CR_transit", "coacongress2_CR_DTL", "coacongress2_TF_DTL"};
         
         for(String x : projects)
         {
@@ -222,7 +251,6 @@ public class Main
         DTASimulator sim = project.getSimulator();
         sim.initialize();
         
-       
         sim.msa(50, 1);
         
         PrintStream fileout = new PrintStream(new FileOutputStream(project.getResultsFolder()+"/log_"+prop+".txt"), true);

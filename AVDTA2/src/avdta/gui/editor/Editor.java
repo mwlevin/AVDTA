@@ -41,8 +41,10 @@ import avdta.network.node.Turn;
 import avdta.network.node.TurnRecord;
 import avdta.project.DTAProject;
 import avdta.project.Project;
+import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
+import java.awt.Graphics;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Point;
@@ -938,7 +940,10 @@ public class Editor extends JFrame implements MouseListener
 
                 BufferedImage image = new BufferedImage(map.getWidth(), map.getHeight(), BufferedImage.TYPE_INT_ARGB);
                 map.setZoomControlsVisible(false);
-                map.paint(image.getGraphics());
+                Graphics g = image.getGraphics();
+                map.paint(g);
+                g.setColor(Color.black);
+                g.drawRect(0, 0, image.getWidth(), image.getHeight());
                 map.setZoomControlsVisible(true);
                 
                 ImageIO.write(image, "png", file);

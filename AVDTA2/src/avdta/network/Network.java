@@ -246,6 +246,10 @@ public class Network
         
         for(Link l : o.getOutgoing())
         {
+            if(!l.canUseLink(driver))
+            {
+                continue;
+            }
             double tt = l.getAvgTT(dep_time);
             l.arr_time = (int)(dep_time);
             
@@ -266,7 +270,7 @@ public class Network
             
             for(Link v : d.getOutgoing())
             {
-                if(!d.canMove(u, v, driver))
+                if(!d.canMove(u, v, driver) || !v.canUseLink(driver))
                 {
                     continue;
                 }
@@ -412,7 +416,7 @@ public class Network
             for(Link l : u.getOutgoing())
             {
                 
-                if(u.prev != null && !u.canMove(u.prev, l, driver))
+                if(!l.canUseLink(driver) || (u.prev != null && !u.canMove(u.prev, l, driver)) )
                 {
                     continue;
                 }

@@ -279,8 +279,16 @@ public class ReadNetwork
                     throw new RuntimeException("Route "+routeid+" is not connected around links "+route.get(route.size()-1).getId()+" and "+link.getId());
                 }
                 
-                route.add(link);
-                
+                if(link instanceof SharedTransitCTMLink)
+                {
+                    SharedTransitCTMLink mainLink = (SharedTransitCTMLink)link;
+                    TransitLane transitLane = mainLink.getTransitLane();
+                    route.add(transitLane);
+                }
+                else
+                {
+                    route.add(link);
+                }
                 
                 
                 if(stop)
