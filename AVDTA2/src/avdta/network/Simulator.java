@@ -856,6 +856,23 @@ public class Simulator extends Network
         return output / count;
     }
     
+    public double calcAvgBusDelay()
+    {
+        double output = 0;
+        int count = 0;
+        
+        for(Vehicle v : vehicles)
+        {
+            if(v.isTransit())
+            {
+                output += v.getTT() - v.getPath().getFFTime();
+                count++;
+            }
+        }
+        
+        return output / count;
+    }
+    
     public double calcBusTime()
     {
         double output = 0;

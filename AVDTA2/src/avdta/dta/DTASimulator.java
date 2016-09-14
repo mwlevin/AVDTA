@@ -131,6 +131,8 @@ public class DTASimulator extends Simulator
         
         for(Vehicle x : vehicles)
         {
+            
+            
             PersonalVehicle v = (PersonalVehicle)x;
             
             Node o = v.getOrigin();
@@ -143,6 +145,12 @@ public class DTASimulator extends Simulator
                 exiting++;
             }
 
+
+            if(x.isTransit())
+            {
+                continue;
+            }
+            
             Map<Node, Path[][]> temp1;
             Path[][] temp2;
 
@@ -337,7 +345,7 @@ public class DTASimulator extends Simulator
         }
         
         
-        createSimVat(new File(project.getAssignmentsFolder()+"/"+currAssign.getName()+"/sim.vat"));
+        createSimVat(new File(currAssign.getAssignmentDirectory()+"/sim.vat"));
         
         
         if(statusUpdate != null)
@@ -346,7 +354,7 @@ public class DTASimulator extends Simulator
         }
         
         
-        Scanner filein = new Scanner(new File(project.getAssignmentsFolder()+"/"+currAssign.getName()+"/sim.vat"));
+        Scanner filein = new Scanner(new File(currAssign.getAssignmentDirectory()+"/sim.vat"));
         
         PrintStream path_out = new PrintStream(new FileOutputStream(new File(project.getResultsFolder()+"/vehicle_path.txt")), true);
         PrintStream veh_out = new PrintStream(new FileOutputStream(new File(project.getResultsFolder()+"/vehicle_path_time.txt")), true);
@@ -517,6 +525,7 @@ public class DTASimulator extends Simulator
         out.println();
         out.println("DA TT:\t"+(getAvgBusTT(false)/60)+"\tmin");
         out.println("Bus TT:\t"+(getAvgBusTT(true)/60)+"\tmin");
+        out.println("Bus ratio:\t"+(calcAvgBusTimeRatio()));
         
         fileout.println(String.format("TSTT\t%.1f", getTSTT()/3600.0)+"\thr\nAvg. TT\t"+String.format("%.2f", getTSTT() / 60 / vehicles.size())+"\tmin/veh");
         fileout.println();

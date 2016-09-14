@@ -9,6 +9,7 @@ import avdta.network.link.BusLink;
 import avdta.network.link.Link;
 import avdta.network.Path;
 import avdta.network.Simulator;
+import avdta.network.link.SharedTransitCTMLink;
 import avdta.vehicle.fuel.VehicleClass;
 import java.util.ArrayList;
 
@@ -75,6 +76,14 @@ public class Bus extends PersonalVehicle
 
             stop_arr_time = Simulator.time;
         } 
+        
+        
+                
+        if(l instanceof SharedTransitCTMLink)
+        {
+            throw new RuntimeException("Ignoring transit lane "+getPath()+" "+l);
+        }
+                
     }
     
     public void exited()

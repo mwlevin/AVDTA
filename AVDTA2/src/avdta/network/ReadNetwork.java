@@ -574,9 +574,9 @@ public class ReadNetwork
                     }
                     else if(type % 10 == SHARED_TRANSIT && numLanes > 1)
                     {
-                        TransitLane transitLane = new TransitLane(id, nodesmap.get(source_id), nodesmap.get(dest_id), capacity, ffspd, w, jamd, length);
+                        TransitLane transitLane = new TransitLane(-id, nodesmap.get(source_id), nodesmap.get(dest_id), capacity, ffspd, w, jamd, length);
                         links.add(transitLane);
-                        link = new SharedTransitCTMLink(-id, nodesmap.get(source_id), nodesmap.get(dest_id), capacity, 
+                        link = new SharedTransitCTMLink(id, nodesmap.get(source_id), nodesmap.get(dest_id), capacity, 
                                 ffspd, ffspd*mesodelta, jamd, length, numLanes-1, transitLane);
                     }
                     else

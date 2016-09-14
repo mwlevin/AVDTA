@@ -49,33 +49,16 @@ public class Main
 {
     public static void main(String[] args) throws IOException
     {
-        //transitTest2();
         //caccTest2();
         //GUI.main(args);
+
+
         
-        
-        //Editor test = new Editor(new DTAProject(new File("projects/coacongress2")));
-        
-        
-        
-        //new DTAGUI();
-        
-        //signalTimings();
         transitTest3();
+        //transitTest2();
+        //transitTest1();
         
-        /*
-        DTAProject project = new DTAProject(new File("projects/coacongress2_transit"));
-        DTAGUI gui = new DTAGUI();
-        gui.openProject(project);
-        
-        DTASimulator sim = project.getSimulator();
-        sim.openAssignment(new File(project.getAssignmentsFolder()+"/1983981"));
-        sim.simulate();
-        
-        System.out.println("FF time: "+(sim.calcBusFFTime()/60));
-        System.out.println("Bus time: "+(sim.calcBusTime()/60));
-        System.out.println("Bus ratio: "+(sim.calcAvgBusTimeRatio()));
-        */
+
         /*
         DTAProject project = new DTAProject(new File("projects/coacongress2_transit"));
         Editor gui = new Editor(project);
@@ -223,25 +206,30 @@ public class Main
     
     public static void transitTest3() throws IOException
     {
-        String[] projects = new String[]{"coacongress2_transit", "coacongress2_DTL", "coacongress2_CR_transit", "coacongress2_CR_DTL", "coacongress2_TF_DTL"};
+        String[] projects = new String[]{"coacongress2_CR_transit", "coacongress2_transit", "coacongress2_DTL", "coacongress2_CR_DTL", "coacongress2_TF_DTL"};
+        //String[] projects = new String[]{"coacongress2_DTL", "coacongress2_CR_DTL", "coacongress2_TF_DTL"};
+        //String[] projects = new String[]{"coacongress2_CR_DTL"};
+        
+        int max_iter = 50;
+        double min_gap = 0.1;
         
         for(String x : projects)
         {
             PrintStream fileout = new PrintStream(new FileOutputStream(new File("results_"+x+".txt")), true);
             
-            fileout.println("Prop\tDemand\tTSTT\tDA time\tBus FF time\t Bus time\t Avg. bus time\tBus time ratio");
+            fileout.println("Prop\tDemand\tTSTT\tDA time\tBus FF time\t Bus time\t Avg. bus time\tBus time ratio\tAvg. bus delay");
             
             for(int i = 70; i <= 120; i += 5)
             {
                 System.out.println(x+"\t"+i);
-                transitTest3(new File("projects/"+x), i, fileout);
+                transitTest3(new File("projects/"+x), i, fileout, max_iter, min_gap);
             }
             
             fileout.close();
         }
     }
     
-    public static void transitTest3(File file, int prop, PrintStream output) throws IOException
+    public static void transitTest3(File file, int prop, PrintStream output, int max_iter, double min_gap) throws IOException
     {
         DTAProject project = new DTAProject(file);
         ReadDTANetwork read = new ReadDTANetwork();
@@ -251,7 +239,10 @@ public class Main
         DTASimulator sim = project.getSimulator();
         sim.initialize();
         
-        sim.msa(50, 1);
+        sim.msa(max_iter, min_gap);
+        
+        
+        
         
         PrintStream fileout = new PrintStream(new FileOutputStream(project.getResultsFolder()+"/log_"+prop+".txt"), true);
         fileout.println("FF time: "+(sim.calcBusFFTime()/60));
@@ -260,9 +251,11 @@ public class Main
         fileout.close();
         
         output.println(prop+"\t"+(sim.getNumVehicles()-sim.getNumBuses())+"\t"+(sim.getTSTT()/3600)+"\t"+(sim.getAvgBusTT(false)/60)+"\t"+(sim.calcBusFFTime()/60)+"\t"+
-                (sim.calcBusTime()/60)+"\t"+(sim.getAvgBusTT(true)/60)+"\t"+sim.calcAvgBusTimeRatio());
+                (sim.calcBusTime()/60)+"\t"+(sim.getAvgBusTT(true)/60)+"\t"+sim.calcAvgBusTimeRatio()+"\t"+sim.calcAvgBusDelay());
         
         sim.printBusTime(new File(project.getResultsFolder()+"/bus_"+prop+".txt"));
+        
+        project.deleteAssignments();
         
         project = null;
         sim = null;
@@ -348,7 +341,7 @@ public class Main
         
         PrintStream fileout = new PrintStream(new FileOutputStream(new File("shared_transit3.txt")), true);
         fileout.println("DA rate\tDA TT\tBus TT");
-        for(int rate = 100; rate <= 1600; rate += 50)
+        for(int rate = 100; rate <= 1600; rate += 10)
         {
             double[] temp = transitTest2(rate, 20);
             fileout.println(rate+"\t"+temp[0]+"\t"+temp[1]);
@@ -457,7 +450,7 @@ public class Main
         num = (int)(busRate * 60.0/60);
         ArrayList<BusLink> stops = new ArrayList<BusLink>();
         stops.add(new BusLink(n2, n8));
-        Path path = new Path(t24, l45, l56, t68);
+        Path path = new Path(t24, t45, t56, t68);
         
         for(int i = 0; i < num; i++)
         {
@@ -501,7 +494,7 @@ public class Main
 
         PrintStream fileout = new PrintStream(new FileOutputStream(new File("shared_transit1.txt")));
         fileout.println("DA rate\tDA TT\tBus TT");
-        for(int rate = 1000; rate <= 2400; rate+=50)
+        for(int rate = 1000; rate <= 2200; rate+=10)
         {
             double[] temp = transitTest1(rate, 200);
             fileout.println(rate+"\t"+temp[0]+"\t"+temp[1]);
@@ -511,7 +504,7 @@ public class Main
         
         fileout = new PrintStream(new FileOutputStream(new File("shared_transit2.txt")));
         fileout.println("bus rate\tDA TT\tBus TT");
-        for(int rate = 0; rate <= 600; rate+=25)
+        for(int rate = 0; rate <= 600; rate+=10)
         {
             double[] temp = transitTest1(1800, rate);
             fileout.println(rate+"\t"+temp[0]+"\t"+temp[1]);
@@ -573,7 +566,7 @@ public class Main
         num = (int)(busRate * 60.0/60);
         ArrayList<BusLink> stops = new ArrayList<BusLink>();
         stops.add(new BusLink(n1a, n4));
-        Path path = new Path(l12a, l23, l34);
+        Path path = new Path(l12a, t23, l34);
         
         for(int i = 0; i < num; i++)
         {

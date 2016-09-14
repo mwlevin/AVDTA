@@ -7,7 +7,9 @@ package avdta.network.link;
 
 import avdta.network.ReadNetwork;
 import avdta.network.node.Node;
+import avdta.vehicle.Bus;
 import avdta.vehicle.DriverType;
+import avdta.vehicle.Vehicle;
 
 /**
  *
@@ -34,4 +36,17 @@ public class TransitLane extends CTMLink
     {
         return null;
     }
+    
+    
+    public void addVehicle(Vehicle v)
+    {
+        super.addVehicle(v);
+        
+        if(!(v instanceof Bus))
+        {
+            throw new RuntimeException("Adding non-transit vehicle to transit lane");
+        }
+
+    }
+    
 }
