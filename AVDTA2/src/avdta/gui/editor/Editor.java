@@ -163,7 +163,7 @@ public class Editor extends JFrame implements MouseListener
         GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
         int width = gd.getDisplayMode().getWidth();
         int height = gd.getDisplayMode().getHeight();
-        int size = (int)Math.min(width-400, height-200);
+        int size = (int)Math.min(width-300, height-150);
 
         display = new RuleDisplay();
         

@@ -60,7 +60,7 @@ public class Main
         
 
         /*
-        DTAProject project = new DTAProject(new File("projects/coacongress2_transit"));
+        DTAProject project = new DTAProject(new File("projects/coacongress2_DTL"));
         Editor gui = new Editor(project);
         gui.addVisualization(new LinkBusRule(project));
         */
@@ -206,9 +206,9 @@ public class Main
     
     public static void transitTest3() throws IOException
     {
-        String[] projects = new String[]{"coacongress2_CR_transit", "coacongress2_transit", "coacongress2_DTL", "coacongress2_CR_DTL", "coacongress2_TF_DTL"};
+        //String[] projects = new String[]{"coacongress2_CR_transit", "coacongress2_transit", "coacongress2_DTL", "coacongress2_CR_DTL", "coacongress2_TF_DTL"};
         //String[] projects = new String[]{"coacongress2_DTL", "coacongress2_CR_DTL", "coacongress2_TF_DTL"};
-        //String[] projects = new String[]{"coacongress2_CR_DTL"};
+        String[] projects = new String[]{"coacongress2_DTL"};
         
         int max_iter = 50;
         double min_gap = 0.1;
@@ -219,7 +219,7 @@ public class Main
             
             fileout.println("Prop\tDemand\tTSTT\tDA time\tBus FF time\t Bus time\t Avg. bus time\tBus time ratio\tAvg. bus delay");
             
-            for(int i = 70; i <= 120; i += 5)
+            for(int i = 70; i <= 70; i += 5)
             {
                 System.out.println(x+"\t"+i);
                 transitTest3(new File("projects/"+x), i, fileout, max_iter, min_gap);

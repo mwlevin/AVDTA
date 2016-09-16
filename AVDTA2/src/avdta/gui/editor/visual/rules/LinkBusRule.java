@@ -50,6 +50,11 @@ public class LinkBusRule extends LinkRule
     
     public Color getColor(Link l, int t)
     {
+        
+        if(l.getNumLanes() == 1)
+        {
+            return Color.blue;
+        }
         return Color.red;
     }
     public boolean matches(Link l, int t)

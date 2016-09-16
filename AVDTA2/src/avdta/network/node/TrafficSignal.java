@@ -9,6 +9,7 @@ import avdta.network.link.Link;
 import avdta.network.Network;
 import avdta.network.ReadNetwork;
 import avdta.network.Simulator;
+import avdta.network.link.TransitLane;
 import avdta.vehicle.Vehicle;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -449,7 +450,26 @@ public class TrafficSignal extends IntersectionControl implements Signalized
             j.R = j.getReceivingFlow();
         }
         
+        
+        List<Link> inc = new ArrayList<Link>();
+        
         for(Link i : node.getIncoming())
+        {
+            if(i instanceof TransitLane)
+            {
+                inc.add(i);
+            }
+        }
+        
+        for(Link i : node.getIncoming())
+        {
+            if(!(i instanceof TransitLane))
+            {
+                inc.add(i);
+            }
+        }
+        
+        for(Link i : inc)
         {
             // multiple queues
             List<Vehicle> sending = i.getVehiclesCanMove();
