@@ -25,40 +25,62 @@
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiDirsComponent">
     <ROW Directory="APPDIR" Directory_Parent="TARGETDIR" DefaultDir="APPDIR:." IsPseudoRoot="1"/>
-    <ROW Directory="AVDTA_Dir" Directory_Parent="PersonalFolder" DefaultDir="AVDTA"/>
+    <ROW Directory="DesktopFolder" Directory_Parent="TARGETDIR" DefaultDir="DESKTO~1|DesktopFolder" IsPseudoRoot="1"/>
     <ROW Directory="Documentation_Dir" Directory_Parent="APPDIR" DefaultDir="DOCUME~1|Documentation"/>
-    <ROW Directory="PersonalFolder" Directory_Parent="TARGETDIR" DefaultDir="PERSON~1|PersonalFolder" IsPseudoRoot="1"/>
     <ROW Directory="SHORTCUTDIR" Directory_Parent="TARGETDIR" DefaultDir="SHORTC~1|SHORTCUTDIR" IsPseudoRoot="1"/>
     <ROW Directory="TARGETDIR" DefaultDir="SourceDir"/>
+    <ROW Directory="coacongress2_Dir" Directory_Parent="networks_Dir" DefaultDir="COACON~1|coacongress2"/>
+    <ROW Directory="demand_Dir" Directory_Parent="coacongress2_Dir" DefaultDir="demand"/>
     <ROW Directory="lib_Dir" Directory_Parent="APPDIR" DefaultDir="lib"/>
-    <ROW Directory="networks_Dir" Directory_Parent="AVDTA_Dir" DefaultDir="projects"/>
+    <ROW Directory="network_Dir" Directory_Parent="coacongress2_Dir" DefaultDir="network"/>
+    <ROW Directory="networks_Dir" Directory_Parent="APPDIR" DefaultDir="projects"/>
+    <ROW Directory="transit_Dir" Directory_Parent="coacongress2_Dir" DefaultDir="transit"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiCompsComponent">
     <ROW Component="AVDTA2.jar" ComponentId="{E6F3864E-5AEA-4A23-92B6-C8C891E5DB7D}" Directory_="APPDIR" Attributes="0" KeyPath="AVDTA2.jar"/>
-    <ROW Component="DTA.bat" ComponentId="{773801B6-46B4-4576-8F0E-0962D8B1502C}" Directory_="APPDIR" Attributes="0" KeyPath="DTA.bat"/>
+    <ROW Component="DTA.bat" ComponentId="{5CA3A266-9A16-4523-A782-15643E346EF6}" Directory_="APPDIR" Attributes="0" KeyPath="DTA.bat"/>
     <ROW Component="DTA.pdf" ComponentId="{87F193B2-D10E-4ABE-9691-A2B1F0D5DF01}" Directory_="Documentation_Dir" Attributes="0" KeyPath="DTA.pdf" Type="0"/>
-    <ROW Component="Editor.bat" ComponentId="{1FFADF2C-515E-4164-8AE5-CE92FD89336E}" Directory_="APPDIR" Attributes="0" KeyPath="Editor.bat"/>
     <ROW Component="ProductInformation" ComponentId="{8AB734D9-7E70-4691-BA39-D9297BFF454E}" Directory_="APPDIR" Attributes="4" KeyPath="Version"/>
-    <ROW Component="SHORTCUTDIR" ComponentId="{4EED9DE9-B4B5-4F72-BB60-B1BCBC7DBBA5}" Directory_="SHORTCUTDIR" Attributes="0"/>
-    <ROW Component="icon.png" ComponentId="{E7FDD646-41F6-443A-88E2-B02B4081A474}" Directory_="APPDIR" Attributes="0" KeyPath="icon.png" Type="0"/>
+    <ROW Component="SHORTCUTDIR" ComponentId="{0F22A547-4CE7-4D55-9903-C86A6BFA7752}" Directory_="SHORTCUTDIR" Attributes="0"/>
+    <ROW Component="bus.txt" ComponentId="{F792811F-E3CB-454B-AAF0-425B06EF5E2B}" Directory_="transit_Dir" Attributes="0" KeyPath="bus.txt" Type="0"/>
+    <ROW Component="demand.txt" ComponentId="{81AD0EEF-A089-4AFB-AAFE-6D6482BE3F6F}" Directory_="demand_Dir" Attributes="0" KeyPath="demand.txt" Type="0"/>
+    <ROW Component="directory.txt" ComponentId="{AD2BD965-62D4-492D-8D9D-BB3D72E0D8D5}" Directory_="APPDIR" Attributes="0" KeyPath="directory.txt" Type="0"/>
+    <ROW Component="dta.dat" ComponentId="{B65BEAF3-A421-47D5-AD12-98410EF66697}" Directory_="coacongress2_Dir" Attributes="0" KeyPath="dta.dat" Type="0"/>
+    <ROW Component="links.txt" ComponentId="{27977622-6920-424A-A84D-D4B28654619E}" Directory_="network_Dir" Attributes="0" KeyPath="links.txt" Type="0"/>
     <ROW Component="mysqlconnectorjava5.1.39bin.jar" ComponentId="{D432BF9D-8873-45BA-A6D5-A3C200951674}" Directory_="lib_Dir" Attributes="0" KeyPath="mysqlconnectorjava5.1.39bin.jar" Type="0"/>
     <ROW Component="networks" ComponentId="{1268D683-E7BD-41EF-94FA-95D8739B4662}" Directory_="networks_Dir" Attributes="0"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiFeatsComponent">
-    <ROW Feature="MainFeature" Title="MainFeature" Description="Description" Display="1" Level="1" Directory_="APPDIR" Attributes="0" Components="AVDTA2.jar DTA.bat DTA.pdf Editor.bat ProductInformation SHORTCUTDIR icon.png mysqlconnectorjava5.1.39bin.jar networks"/>
+    <ROW Feature="MainFeature" Title="MainFeature" Description="Description" Display="1" Level="1" Directory_="APPDIR" Attributes="0" Components="AVDTA2.jar DTA.bat DTA.pdf ProductInformation SHORTCUTDIR bus.txt demand.txt directory.txt dta.dat links.txt mysqlconnectorjava5.1.39bin.jar networks"/>
     <ATTRIBUTE name="CurrentFeature" value="MainFeature"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiFilesComponent">
     <ROW File="AVDTA2.jar" Component_="AVDTA2.jar" FileName="AVDTA2.jar" Attributes="0" SourcePath="..\dist\AVDTA2.jar" SelfReg="false" NextFile="directory.txt"/>
     <ROW File="DTA.bat" Component_="DTA.bat" FileName="DTA.bat" Attributes="0" SourcePath="..\DTA.bat" SelfReg="false" NextFile="Editor.bat"/>
     <ROW File="DTA.pdf" Component_="DTA.pdf" FileName="DTA.pdf" Attributes="0" SourcePath="..\documentation\DTA.pdf" SelfReg="false" NextFile="JMapViewer.jar"/>
-    <ROW File="Editor.bat" Component_="Editor.bat" FileName="Editor.bat" Attributes="0" SourcePath="..\Editor.bat" SelfReg="false"/>
+    <ROW File="Editor.bat" Component_="directory.txt" FileName="Editor.bat" Attributes="0" SourcePath="..\Editor.bat" SelfReg="false" NextFile="demand.txt"/>
     <ROW File="JMapViewer.jar" Component_="mysqlconnectorjava5.1.39bin.jar" FileName="JMAPVI~1.JAR|JMapViewer.jar" Attributes="0" SourcePath="..\lib\JMapViewer.jar" SelfReg="false" NextFile="DTA.bat"/>
+    <ROW File="bus.txt" Component_="bus.txt" FileName="bus.txt" Attributes="0" SourcePath="..\projects\coacongress2\transit\bus.txt" SelfReg="false" NextFile="bus_frequency.txt"/>
+    <ROW File="bus_frequency.txt" Component_="bus.txt" FileName="BUS_FR~1.TXT|bus_frequency.txt" Attributes="0" SourcePath="..\projects\coacongress2\transit\bus_frequency.txt" SelfReg="false" NextFile="bus_period.txt"/>
+    <ROW File="bus_period.txt" Component_="bus.txt" FileName="BUS_PE~1.TXT|bus_period.txt" Attributes="0" SourcePath="..\projects\coacongress2\transit\bus_period.txt" SelfReg="false" NextFile="bus_route_link.txt"/>
+    <ROW File="bus_route_link.txt" Component_="bus.txt" FileName="BUS_RO~1.TXT|bus_route_link.txt" Attributes="0" SourcePath="..\projects\coacongress2\transit\bus_route_link.txt" SelfReg="false"/>
     <ROW File="cplex.jar" Component_="mysqlconnectorjava5.1.39bin.jar" FileName="cplex.jar" Attributes="0" SourcePath="..\lib\cplex.jar" SelfReg="false" NextFile="DTA.pdf"/>
-    <ROW File="directory.txt" Component_="icon.png" FileName="DIRECT~1.TXT|directory.txt" Attributes="0" SourcePath="..\directory.txt" SelfReg="false" NextFile="icon.ico"/>
-    <ROW File="icon.ico" Component_="icon.png" FileName="icon.ico" Attributes="0" SourcePath="..\icon.ico" SelfReg="false" NextFile="mysqlconnectorjava5.1.39bin.jar"/>
-    <ROW File="icon.png" Component_="icon.png" FileName="icon.png" Attributes="0" SourcePath="..\icon.png" SelfReg="false" NextFile="AVDTA2.jar"/>
+    <ROW File="demand.txt" Component_="demand.txt" FileName="demand.txt" Attributes="0" SourcePath="..\projects\coacongress2\demand\demand.txt" SelfReg="false" NextFile="demand_profile.txt"/>
+    <ROW File="demand_profile.txt" Component_="demand.txt" FileName="DEMAND~1.TXT|demand_profile.txt" Attributes="0" SourcePath="..\projects\coacongress2\demand\demand_profile.txt" SelfReg="false" NextFile="dynamic_od.txt"/>
+    <ROW File="directory.txt" Component_="directory.txt" FileName="DIRECT~1.TXT|directory.txt" Attributes="0" SourcePath="..\directory.txt" SelfReg="false" NextFile="icon.ico"/>
+    <ROW File="dta.dat" Component_="dta.dat" FileName="dta.dat" Attributes="0" SourcePath="..\projects\coacongress2\dta.dat" SelfReg="false" NextFile="links.txt"/>
+    <ROW File="dynamic_od.txt" Component_="demand.txt" FileName="DYNAMI~1.TXT|dynamic_od.txt" Attributes="0" SourcePath="..\projects\coacongress2\demand\dynamic_od.txt" SelfReg="false" NextFile="static_od.txt"/>
+    <ROW File="icon.ico" Component_="directory.txt" FileName="icon.ico" Attributes="0" SourcePath="..\icon.ico" SelfReg="false" NextFile="mysqlconnectorjava5.1.39bin.jar"/>
+    <ROW File="icon.png" Component_="directory.txt" FileName="icon.png" Attributes="0" SourcePath="..\icon.png" SelfReg="false" NextFile="AVDTA2.jar"/>
+    <ROW File="link_coordinates.txt" Component_="links.txt" FileName="LINK_C~1.TXT|link_coordinates.txt" Attributes="0" SourcePath="..\projects\coacongress2\network\link_coordinates.txt" SelfReg="false" NextFile="nodes.txt"/>
+    <ROW File="links.txt" Component_="links.txt" FileName="links.txt" Attributes="0" SourcePath="..\projects\coacongress2\network\links.txt" SelfReg="false" NextFile="link_coordinates.txt"/>
     <ROW File="mysqlconnectorjava5.1.39bin.jar" Component_="mysqlconnectorjava5.1.39bin.jar" FileName="MYSQL-~1.JAR|mysql-connector-java-5.1.39-bin.jar" Attributes="0" SourcePath="..\lib\mysql-connector-java-5.1.39-bin.jar" SelfReg="false" NextFile="cplex.jar"/>
+    <ROW File="nodes.txt" Component_="links.txt" FileName="nodes.txt" Attributes="0" SourcePath="..\projects\coacongress2\network\nodes.txt" SelfReg="false" NextFile="phases.txt"/>
+    <ROW File="options.txt" Component_="dta.dat" FileName="options.txt" Attributes="0" SourcePath="..\projects\coacongress2\options.txt" SelfReg="false" NextFile="project.txt"/>
+    <ROW File="phases.txt" Component_="links.txt" FileName="phases.txt" Attributes="0" SourcePath="..\projects\coacongress2\network\phases.txt" SelfReg="false" NextFile="signals.txt"/>
+    <ROW File="project.txt" Component_="dta.dat" FileName="project.txt" Attributes="0" SourcePath="..\projects\coacongress2\project.txt" SelfReg="false" NextFile="bus.txt"/>
+    <ROW File="signals.txt" Component_="links.txt" FileName="signals.txt" Attributes="0" SourcePath="..\projects\coacongress2\network\signals.txt" SelfReg="false" NextFile="options.txt"/>
+    <ROW File="static_od.txt" Component_="demand.txt" FileName="STATIC~1.TXT|static_od.txt" Attributes="0" SourcePath="..\projects\coacongress2\demand\static_od.txt" SelfReg="false" NextFile="dta.dat"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.BuildComponent">
     <ROW BuildKey="DefaultBuild" BuildName="DefaultBuild" BuildOrder="1" BuildType="0" Languages="en" InstallationType="4" UseLargeSchema="true" MsiPackageType="x64"/>
@@ -122,7 +144,7 @@
     <ROW Action="AI_ResolveKnownFolders" Type="1" Source="aicustact.dll" Target="AI_ResolveKnownFolders"/>
     <ROW Action="AI_SHOW_LOG" Type="65" Source="aicustact.dll" Target="LaunchLogFile" WithoutSeq="true"/>
     <ROW Action="AI_STORE_LOCATION" Type="51" Source="ARPINSTALLLOCATION" Target="[APPDIR]"/>
-    <ROW Action="SET_APPDIR" Type="307" Source="APPDIR" Target="[ProgramFilesFolder][Manufacturer]\[ProductName]" MultiBuildTarget="DefaultBuild:[ProgramFiles64Folder]\[ProductName]"/>
+    <ROW Action="SET_APPDIR" Type="307" Source="APPDIR" Target="[ProgramFilesFolder][Manufacturer]\[ProductName]" MultiBuildTarget="DefaultBuild:[PersonalFolder]\[ProductName]"/>
     <ROW Action="SET_SHORTCUTDIR" Type="307" Source="SHORTCUTDIR" Target="[ProgramMenuFolder][ProductName]"/>
     <ROW Action="SET_TARGETDIR_TO_APPDIR" Type="51" Source="TARGETDIR" Target="[APPDIR]"/>
   </COMPONENT>
@@ -154,8 +176,8 @@
     <ROW Registry="Version" Root="-1" Key="Software\[Manufacturer]\[ProductName]" Name="Version" Value="[ProductVersion]" Component_="ProductInformation"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiShortsComponent">
-    <ROW Shortcut="DTA" Directory_="SHORTCUTDIR" Name="DTA" Component_="DTA.bat" Target="[#DTA.bat]" Hotkey="0" Icon_="icon.exe" IconIndex="0" ShowCmd="1" WkDir="APPDIR"/>
-    <ROW Shortcut="Editor" Directory_="SHORTCUTDIR" Name="Editor" Component_="Editor.bat" Target="[#Editor.bat]" Hotkey="0" Icon_="icon.exe" IconIndex="0" ShowCmd="1" WkDir="APPDIR"/>
+    <ROW Shortcut="AVDTA" Directory_="SHORTCUTDIR" Name="AVDTA" Component_="DTA.bat" Target="[#DTA.bat]" Hotkey="0" Icon_="icon.exe" IconIndex="0" ShowCmd="1" WkDir="APPDIR"/>
+    <ROW Shortcut="AVDTA_1" Directory_="DesktopFolder" Name="AVDTA" Component_="DTA.bat" Target="[#DTA.bat]" Hotkey="0" Icon_="icon.exe" IconIndex="0" ShowCmd="1" WkDir="APPDIR"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiThemeComponent">
     <ATTRIBUTE name="UsedTheme" value="classic"/>
