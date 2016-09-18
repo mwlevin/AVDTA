@@ -2,7 +2,7 @@
 <DOCUMENT Type="Advanced Installer" CreateVersion="12.8" version="13.1" Modules="simple" RootPath="." Language="en" Id="{701A453C-DB9E-4FDF-B2CB-FA7EC54A18D1}">
   <COMPONENT cid="caphyon.advinst.msicomp.MsiPropsComponent">
     <ROW Property="AI_BITMAP_DISPLAY_MODE" Value="0"/>
-    <ROW Property="ALLUSERS" Value="1"/>
+    <ROW Property="ALLUSERS" Value="1" MultiBuildValue="DefaultBuild:"/>
     <ROW Property="ARPCOMMENTS" Value="This installer database contains the logic and data required to install [|ProductName]." ValueLocId="*"/>
     <ROW Property="ARPCONTACT" Value="michaellevin@utexas.edu"/>
     <ROW Property="ARPPRODUCTICON" Value="icon.exe" Type="8"/>
