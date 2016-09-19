@@ -474,6 +474,7 @@ public class EditNode extends JPanel
         }
         
         saveNode(node);
+        cancel();
         return true;
     }
     public void cancel(){}

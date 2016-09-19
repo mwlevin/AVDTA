@@ -164,6 +164,7 @@ public class DTAGUI extends GUI implements GUIPane
     
     public void openProject(Project p) throws IOException
     {
+        parentSetEnabled(false);
         super.openProject(p);
         
         
@@ -190,7 +191,7 @@ public class DTAGUI extends GUI implements GUIPane
         
         
         
-        
+        parentSetEnabled(true);
         
     }
     

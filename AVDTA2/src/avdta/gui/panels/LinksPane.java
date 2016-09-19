@@ -50,7 +50,7 @@ public class LinksPane extends GUIPanel
 
     private JTextArea data;
     
-    private static final String[] CTM_LINK_OPTIONS = new String[]{"CTM", "DLR", "Shared transit"};
+    private static final String[] CTM_LINK_OPTIONS = new String[]{"CTM", "DLR", "Shared transit", "Split transit"};
     private static final String[] LTM_LINK_OPTIONS = new String[]{"LTM", "CACC"};
     
     private JRadioButton ctm, ltm;
@@ -353,6 +353,11 @@ public class LinksPane extends GUIPanel
                             if(ctm.isSelected() && ctmOptions.getSelectedItem().equals("Shared transit") && link.getNumLanes() > 1 && busRule.contains(link.getId()))
                             {
                                 link.setType(link.getType()+ ReadNetwork.SHARED_TRANSIT);
+                            }
+                            
+                            if(ctm.isSelected() && ctmOptions.getSelectedItem().equals("Split transit") && link.getNumLanes() > 1 && busRule.contains(link.getId()))
+                            {
+                                link.setType(link.getType()+ ReadNetwork.SPLIT_TRANSIT);
                             }
                             
                             if(mesodelta > 0)

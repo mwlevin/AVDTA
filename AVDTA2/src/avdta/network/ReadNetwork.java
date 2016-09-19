@@ -35,6 +35,8 @@ import avdta.network.link.BusLink;
 import avdta.network.link.CACCLTMLink;
 import avdta.network.link.DLRCTMLink;
 import avdta.network.link.SharedTransitCTMLink;
+import avdta.network.link.AbstractSplitLink;
+import avdta.network.link.SplitCTMLink;
 import avdta.network.link.TransitLane;
 import avdta.network.node.obj.BackPressureObj;
 import avdta.network.node.obj.P0Obj;
@@ -72,8 +74,11 @@ public class ReadNetwork
     public static final int CTM = 100;
     public static final int DLR = 2;
     public static final int SHARED_TRANSIT = 3;
-    public static final int TRANSIT_LANE = 4;
+    public static final int SPLIT_TRANSIT = 4;
+    
     public static final int CACC = 5;
+    
+    public static final int TRANSIT_LANE = 10;
     public static final int CENTROID = 1000;
     
     
@@ -279,9 +284,9 @@ public class ReadNetwork
                     throw new RuntimeException("Route "+routeid+" is not connected around links "+route.get(route.size()-1).getId()+" and "+link.getId());
                 }
                 
-                if(link instanceof SharedTransitCTMLink)
+                if(link.hasTransitLane())
                 {
-                    SharedTransitCTMLink mainLink = (SharedTransitCTMLink)link;
+                    AbstractSplitLink mainLink = (AbstractSplitLink)link;
                     TransitLane transitLane = mainLink.getTransitLane();
                     route.add(transitLane);
                 }
@@ -579,6 +584,13 @@ public class ReadNetwork
                         link = new SharedTransitCTMLink(id, nodesmap.get(source_id), nodesmap.get(dest_id), capacity, 
                                 ffspd, ffspd*mesodelta, jamd, length, numLanes-1, transitLane);
                     }
+                    else if(type % 10 == SPLIT_TRANSIT && numLanes > 1)
+                    {
+                        TransitLane transitLane = new TransitLane(-id, nodesmap.get(source_id), nodesmap.get(dest_id), capacity, ffspd, w, jamd, length);
+                        links.add(transitLane);
+                        link = new SplitCTMLink(id, nodesmap.get(source_id), nodesmap.get(dest_id), capacity, 
+                                ffspd, ffspd*mesodelta, jamd, length, numLanes-1, transitLane);
+                    }
                     else
                     {
                         link = new CTMLink(id, nodesmap.get(source_id), nodesmap.get(dest_id), capacity, ffspd, w, jamd, length, numLanes);
@@ -693,19 +705,19 @@ public class ReadNetwork
                 
                 turns.add(new Turn(i, j));
                 
-                if(i instanceof SharedTransitCTMLink)
+                if(i instanceof AbstractSplitLink)
                 {
-                    if(j instanceof SharedTransitCTMLink)
+                    if(j instanceof AbstractSplitLink)
                     {
-                        turns.add(new Turn(((SharedTransitCTMLink)i).getTransitLane(),
-                        ((SharedTransitCTMLink)j).getTransitLane()));
+                        turns.add(new Turn(((AbstractSplitLink)i).getTransitLane(),
+                        ((AbstractSplitLink)j).getTransitLane()));
                     }
                     
-                    turns.add(new Turn(((SharedTransitCTMLink)i).getTransitLane(), j));
+                    turns.add(new Turn(((AbstractSplitLink)i).getTransitLane(), j));
                 }
-                else if(j instanceof SharedTransitCTMLink)
+                else if(j instanceof AbstractSplitLink)
                 {
-                    turns.add(new Turn(i, ((SharedTransitCTMLink)j).getTransitLane()));
+                    turns.add(new Turn(i, ((AbstractSplitLink)j).getTransitLane()));
                 }
                 
                 

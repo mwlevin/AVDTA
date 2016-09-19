@@ -16,6 +16,7 @@ import avdta.network.link.CentroidConnector;
 import avdta.network.link.DLRCTMLink;
 import avdta.network.link.LTMLink;
 import avdta.network.link.SharedTransitCTMLink;
+import avdta.network.link.SplitCTMLink;
 import avdta.network.link.TransitLane;
 import avdta.network.node.Location;
 import avdta.network.node.Node;
@@ -46,14 +47,15 @@ import javax.swing.event.ListSelectionListener;
 public class EditLink extends JPanel implements SelectListener
 {
     public static final Integer[] LANE_OPTIONS = new Integer[]{1, 2, 3, 4, 5, 6};
-    public static final String[] FLOW_MODELS = new String[]{"Centroid", "CTM", "LTM", "Shared transit CTM", "DLR CTM", "CACC LTM"};
+    public static final String[] FLOW_MODELS = new String[]{"Centroid", "CTM", "LTM", "Shared transit CTM", "Split transit CTM", "DLR CTM", "CACC LTM"};
     
     public static final int CTM = 1;
     public static final int LTM = 2;
     public static final int CENTROID = 0;
     public static final int SHARED_TRANSIT_CTM = 3;
-    public static final int DLR_CTM = 4;
-    public static final int CACC_LTM = 5;
+    public static final int SPLIT_TRANSIT_CTM = 4;
+    public static final int DLR_CTM = 5;
+    public static final int CACC_LTM = 6;
     
     
     private Editor editor;
@@ -644,6 +646,7 @@ public class EditLink extends JPanel implements SelectListener
         double jamd = 5280.0/Vehicle.vehicle_length;
         
         Link newLink = null;
+        TransitLane lane;
         
         switch(flowModel.getSelectedIndex())
         {
@@ -657,8 +660,12 @@ public class EditLink extends JPanel implements SelectListener
                 newLink = new CentroidConnector(id_, source_, dest_);
                 break;
             case SHARED_TRANSIT_CTM:
-                TransitLane lane = new TransitLane(-id_, source_, dest_, capacity_, ffspd_, wavespd_, jamd, length_);
+                lane = new TransitLane(-id_, source_, dest_, capacity_, ffspd_, wavespd_, jamd, length_);
                 newLink = new SharedTransitCTMLink(id_, source_, dest_, capacity_, ffspd_, wavespd_, jamd, length_, numLanes_-1, lane);
+                break;
+            case SPLIT_TRANSIT_CTM:
+                lane = new TransitLane(-id_, source_, dest_, capacity_, ffspd_, wavespd_, jamd, length_);
+                newLink = new SplitCTMLink(id_, source_, dest_, capacity_, ffspd_, wavespd_, jamd, length_, numLanes_-1, lane);
                 break;
             case DLR_CTM:
                 newLink = new DLRCTMLink(id_, source_, dest_, capacity_, ffspd_, wavespd_, jamd, length_, numLanes_);
@@ -683,6 +690,7 @@ public class EditLink extends JPanel implements SelectListener
         newLink.setCoordinates(newCoords);
         
         saveLink(prev, newLink);
+        cancel();
         return true;
     }
     

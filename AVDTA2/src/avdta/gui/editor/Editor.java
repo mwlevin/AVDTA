@@ -524,14 +524,6 @@ public class Editor extends JFrame implements MouseListener
                                 frame.setVisible(false);
                                 map.repaint();
                             }
-                            public boolean save()
-                            {
-                                if(super.save())
-                                {
-                                    cancel();
-                                }
-                                return true;
-                            }
                         });
                         
 
@@ -696,14 +688,6 @@ public class Editor extends JFrame implements MouseListener
                             {
                                 tabs.add(""+link.getId(), new EditLink(thisEditor, link)
                                 {
-                                    public boolean save()
-                                    {
-                                        if(super.save())
-                                        {
-                                            cancel();
-                                        }
-                                        return false;
-                                    }
                                     public void cancel()
                                     {
                                         super.cancel();

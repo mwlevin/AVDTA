@@ -149,6 +149,11 @@ public abstract class Link implements Serializable, Comparable<Link>
         }
     }
     
+    public boolean hasTransitLane()
+    {
+        return (this instanceof SplitCTMLink);
+    }
+    
     public double getOutgoingAngle()
     {
         if(coords.length >= 2)
@@ -804,7 +809,7 @@ public abstract class Link implements Serializable, Comparable<Link>
         if((dest instanceof Intersection) &&
             (((Intersection)dest).getControl() instanceof TBR))
         {
-            return driver.isAV();
+            return driver.isAV() || Simulator.getHVsUseReservations();
         }
         else
         {
