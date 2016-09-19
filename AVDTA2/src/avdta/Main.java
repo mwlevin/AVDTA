@@ -50,7 +50,7 @@ public class Main
     public static void main(String[] args) throws IOException
     {
         //caccTest2();
-        GUI.main(args);
+        //GUI.main(args);
 
 
         
@@ -59,11 +59,10 @@ public class Main
         //transitTest1();
         
 
-        /*
-        DTAProject project = new DTAProject(new File("projects/coacongress2_DTL"));
+        
+        DTAProject project = new DTAProject(new File("projects/coacongress2_copy"));
         Editor gui = new Editor(project);
-        gui.addVisualization(new LinkBusRule(project));
-        */
+        
     }
     
     public static void signalTimings() throws IOException

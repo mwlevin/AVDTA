@@ -22,8 +22,8 @@ public class NodeRecord
     {
         this.id = id;
         this.type = type;
-        this.longitude = longitude;
-        this.latitude = latitude;
+        this.longitude = lng;
+        this.latitude = lat;
         this.elevation = elevation;
     }
 

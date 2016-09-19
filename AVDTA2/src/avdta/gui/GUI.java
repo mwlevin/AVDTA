@@ -247,7 +247,7 @@ public abstract class GUI extends JFrame
         {
             public void actionPerformed(ActionEvent e)
             {
-                openEditor = new Editor(project);
+                openEditor = new Editor(project, false);
             }
         });
         

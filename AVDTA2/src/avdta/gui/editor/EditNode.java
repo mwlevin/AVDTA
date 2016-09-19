@@ -443,7 +443,7 @@ public class EditNode extends JPanel
             return false;
         }
         
-        Node node = null;
+        Node node = prev;
         
         if(id_ != node.getId())
         {
