@@ -17,18 +17,30 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 /**
- *
+ * This is a project that contains transit vehicles. It adds a transit subfolder with transit data files.
  * @author Michael
  */
 public abstract class TransitProject extends Project
 {
+    /**
+     * Constructs an empty {@link TransitProject}
+     */
     public TransitProject(){}
     
+    /**
+     * Constructs a {@link TransitProject} at the given directory
+     * @param directory the project directory
+     * @throws IOException if a file is not found
+     */
     public TransitProject(File directory) throws IOException
     {
         super(directory);
     }
     
+    /**
+     * Writes empty data files for transit
+     * @throws IOException if a file is not found
+     */
     public void writeEmptyFiles() throws IOException
     {
         super.writeEmptyFiles();
@@ -50,13 +62,24 @@ public abstract class TransitProject extends Project
         fileout.close();
     }
     
-    
+    /**
+     * Clones files from the specified project
+     * @param rhs the project to be cloned
+     * @throws IOException if a file is not found
+     */
     public void cloneFromProject(TransitProject rhs) throws IOException
     {
         super.cloneFromProject(rhs);
         importTransitFromProject(rhs);
     }
     
+    /**
+     * Creates the project folders. 
+     * This method creates the folder {@link Project#getProjectDirectory()}/transit/.
+     * This method also calls {@link Project#createProjectFolders(java.io.File)} 
+     * @param dir the root directory
+     * @throws IOException if a file is not found
+     */
     public void createProjectFolders(File dir) throws IOException
     {
         super.createProjectFolders(dir);
@@ -67,27 +90,49 @@ public abstract class TransitProject extends Project
         file.mkdirs();
     }
     
+    /**
+     * Returns the bus file
+     * @return {@link Project#getProjectDirectory()}/transit/bus.txt
+     */
     public File getBusFile()
     {
         return new File(getProjectDirectory()+"/transit/bus.txt");
     }
     
+    /**
+     * Returns the bus frequency file
+     * @return {@link Project#getProjectDirectory()}/transit/bus_frequency.txt
+     */
     public File getBusFrequencyFile()
     {
         return new File(getProjectDirectory()+"/transit/bus_frequency.txt");
     }
     
+    /**
+     * Returns the bus route link file
+     * @return {@link Project#getProjectDirectory()}/transit/bus_route_link.txt
+     */
     public File getBusRouteLinkFile()
     {
         return new File(getProjectDirectory()+"/transit/bus_route_link.txt");
     }
     
+    /**
+     * Returns the bus period file
+     * @return {@link Project#getProjectDirectory()}/transit/bus_period.txt
+     */
     public File getBusPeriodFile()
     {
         return new File(getProjectDirectory()+"/transit/bus_period.txt");
     }
     
     
+    /**
+     * Exports transit data to the SQL database
+     * @throws SQLException if the database cannot be accessed
+     * @throws IOException if a file is not found
+     * @see SQLLogin
+     */
     public void exportTransitToSQL() throws SQLException, IOException
     {
         SQLLogin login = new SQLLogin(getDatabaseName());
@@ -124,6 +169,12 @@ public abstract class TransitProject extends Project
         
     }
     
+    /**
+     * Imports transit data from the SQL database
+     * @throws SQLException if the database cannot be accessed
+     * @throws IOException if a file is not found
+     * @see SQLLogin
+     */
     public void importTransitFromSQL() throws SQLException, IOException
     {
         SQLLogin login = new SQLLogin(getDatabaseName());
@@ -152,6 +203,11 @@ public abstract class TransitProject extends Project
         folder.delete();
     }
     
+    /**
+     * Copies transit data from the given project
+     * @param rhs the project to be copied from
+     * @throws IOException if a file is not found
+     */
     public void importTransitFromProject(TransitProject rhs) throws IOException
     {
         FileTransfer.copy(rhs.getBusFile(), getBusFile());

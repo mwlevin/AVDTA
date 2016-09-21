@@ -21,10 +21,19 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Scanner;
 import java.util.TreeMap;
+import avdta.network.Network;
 
 /**
- *
- * @author micha
+ * This abstract class represents any project that contains a network (which most do). 
+ * It defines an API for accessing network data files. 
+ * A project is intended to represent a network scenario. 
+ * Changes to the network are best handled by creating a clone of the current project. 
+ * Projects may be cloned by copying the project folder or by invoking the API.
+ * {@link Project} subclasses add APIs for accessing additional files needed by other project types.
+ * 
+ * Working with {@link Project}s usually involves the following: create a {@link Project} subclass with the desired directory.
+ * Then, access the {@link Simulator} via {@link Project#getSimulator()}.
+ * @author Michael
  */
 public abstract class Project 
 {
@@ -38,21 +47,38 @@ public abstract class Project
     
     private String directory;
     
+    private Random rand;
+    
+    /**
+     * Constructs an empty {@link Project}
+     */
     public Project()
     {
         networkOptions = new TreeMap<String, String>();
     }
     
+    /**
+     * Instructs the {@link Network} to save its data.
+     * @throws IOException if the file is not found
+     */
     public void save() throws IOException
     {
         getSimulator().save(this);
     }
     
+    /**
+     * Updates the {@link Simulator} associated with this {@link Project}
+     * @param sim the new {@link Simulator}
+     */
     public void setSimulator(Simulator sim)
     {
         this.simulator = sim;
     }
     
+    /**
+     * Loads the {@link Simulator} associated with this {@link Project} using {@link ReadNetwork}.
+     * @throws IOException if the file is not found
+     */
     public void loadSimulator() throws IOException
     {
         ReadNetwork read = new ReadNetwork();       
@@ -70,6 +96,12 @@ public abstract class Project
 
     }
     
+    /**
+     * Exports the network data to SQL so that the data can be manipulated in SQL.
+     * @throws SQLException if the database cannot be accessed
+     * @throws IOException if the file is not found
+     * @see SQLLogin
+     */
     public void exportNetworkToSQL() throws SQLException, IOException
     {
         SQLLogin login = new SQLLogin(getDatabaseName());
@@ -111,6 +143,12 @@ public abstract class Project
         
     }
     
+    /**
+     * Imports the network data from an external SQL database.
+     * @throws SQLException if the database cannot be accessed
+     * @throws IOException if the file is not found
+     * @see SQLLogin
+     */
     public void importNetworkFromSQL() throws SQLException, IOException
     {
         SQLLogin login = new SQLLogin(getDatabaseName());
@@ -141,7 +179,13 @@ public abstract class Project
         folder.delete();
     }
     
-    public void createTempFile(File input, File output) throws IOException
+    /**
+     * Copies a data file but removes the header data. Used for exporting to SQL.
+     * @param input the real data file
+     * @param output the file without header data
+     * @throws IOException if the file is not found
+     */
+    protected void createTempFile(File input, File output) throws IOException
     {
         Scanner filein = new Scanner(input);
         PrintStream fileout = new PrintStream(new FileOutputStream(output), true);
@@ -156,6 +200,13 @@ public abstract class Project
         fileout.close();
     }
     
+    /**
+     * Copies a data file but removes the header data. Used for exporting to SQL.
+     * @param input the data file without the header
+     * @param header the header to be added
+     * @param output the file with header data
+     * @throws IOException if the file is not found
+     */
     public void createRealFile(File input, String header, File output) throws IOException
     {
         Scanner filein = new Scanner(input);
@@ -173,7 +224,12 @@ public abstract class Project
     
     
     
-    
+    /**
+     * Creates a SQL database for this project.
+     * @throws SQLException if the database cannot be accessed
+     * @throws IOException if the file is not found
+     * @see SQLLogin
+     */
     public void createDatabase() throws SQLException, IOException
     {
         SQLLogin login = new SQLLogin();
@@ -183,16 +239,29 @@ public abstract class Project
         int Result=s.executeUpdate("CREATE DATABASE "+getDatabaseName());
     }
     
+    /**
+     * Returns the database name used for SQL
+     * @return {@link Project#getName()} replacing spaces with "_"
+     */
     public String getDatabaseName()
     {
         return getName().replaceAll(" ", "_");
     }
     
+    /**
+     * Returns the value associated with the specified key
+     * @param k the key
+     * @return the value associated with the specified key
+     */
     public String getOption(String k)
     {
         return networkOptions.get(k.toLowerCase());
     }
     
+    /**
+     * Writes the options file
+     * @throws IOException if the file is not found
+     */
     public void writeOptions() throws IOException
     {
         PrintStream fileout = new PrintStream(new FileOutputStream(getOptionsFile()), true);
@@ -206,18 +275,36 @@ public abstract class Project
         fileout.close();
     }
     
+    /**
+     * Adds/updates the options to contain the specified key and value
+     * @param key the key
+     * @param val the value
+     */
     public void setOption(String key, String val)
     {
         networkOptions.put(key.toLowerCase(), val);
     }
     
+    /**
+     * A {@link String} describing the type of project
+     * @return a {@link String} describing the type of project
+     */
     public abstract String getType();
     
+    /**
+     * Returns the stored {@link Simulator} associated with this {@link Project}. If null, call {@link Project#getSimulator()}
+     * @return the stored {@link Simulator} associated with this {@link Project}. If null, call {@link Project#getSimulator()}
+     */
     public Simulator getSimulator()
     {
         return simulator;
     }
     
+    /**
+     * Loads a project from the specified directory.
+     * @param dir The should be the project directory, not one of the project data files
+     * @throws IOException if the file is not found
+     */
     public Project(File dir) throws IOException
     {
         networkOptions = new TreeMap<String, String>();
@@ -225,6 +312,11 @@ public abstract class Project
         loadProject();
     }
     
+    /**
+     * Updates the project directory 
+     * @param dir the new directory
+     * @throws IOException if the file is not found
+     */
     public void setDirectory(File dir) throws IOException
     {
         this.directory = dir.getCanonicalPath();
@@ -235,12 +327,23 @@ public abstract class Project
         }
     }
     
+    
+    /**
+     * Loads the project properties and associated {@link Simulator}.
+     * Calls {@link Project#readProperties()} and {@link Project#loadSimulator()}
+     * @throws IOException if the file is not found
+     */
     public void loadProject() throws IOException
     {
         readProperties();
         loadSimulator();
     }
     
+    
+    /**
+     * Reads the project properties file, looking for the project name and random seed
+     * @throws IOException if the file is not found
+     */
     public void readProperties() throws IOException
     {
         Scanner filein = new Scanner(getPropertiesFile());
@@ -265,16 +368,29 @@ public abstract class Project
         loadProperties(map);
     }
     
+    /**
+     * This method may be overridden by subclasses to read additional properties
+     * @param properties a map of properties
+     */
     public void loadProperties(Map<String, String> properties)
     {
         
     }
     
+    /**
+     * Returns the project name
+     * @return the project name
+     */
     public String getName()
     {
         return name;
     }
     
+    /**
+     * Creates the project folders
+     * @param dir the new project folder
+     * @throws IOException if the file is not found
+     */
     public void createFolder(File dir) throws IOException
     {
         
@@ -288,6 +404,12 @@ public abstract class Project
         createProjectFolders(new File(dirStr));
     }
     
+    /**
+     * Creates an empty project, including empty placeholder data files
+     * @param name the new project name
+     * @param dir the project directory
+     * @throws IOException if the file is not found
+     */
     public void createProject(String name, File dir) throws IOException
     {
         this.name = name;
@@ -304,6 +426,10 @@ public abstract class Project
         writeEmptyFiles();
     }
     
+    /**
+     * Writes empty files. Subclasses should override this method to create any files they need.
+     * @throws IOException if the file is not found
+     */
     public void writeEmptyFiles() throws IOException
     {
         PrintStream fileout = new PrintStream(new FileOutputStream(getLinksFile()), true);
@@ -327,6 +453,9 @@ public abstract class Project
         fileout.close();
     }
     
+    /**
+     * Fills the project options with default values
+     */
     public void fillOptions()
     {
         setOption("simulation-duration","36000");
@@ -340,28 +469,58 @@ public abstract class Project
         
     }
     
+    /**
+     * Creates an empty {@link Simulator}
+     * @return the empty {@link Simulator}
+     */
     public Simulator createEmptySimulator()
     {
         simulator = new Simulator(this);
         return simulator;
     }
     
+    /**
+     * Returns the random number generator. 
+     * A project-wide random number generator is used to obtain repeatable results.
+     * @return the random number generator.
+     */
     public Random getRandom()
     {
-        return new Random(randSeed);
+        if(rand == null)
+        {
+            rand = new Random(randSeed);
+        }
+        
+        return rand;
     }
     
+    /**
+     * Clone another project. 
+     * This copies network data files from the other project into this one.
+     * Note that this will overwrite existing data.
+     * @param rhs the project to be cloned
+     * @throws IOException if the file is not found
+     */
     public void cloneFromProject(Project rhs) throws IOException
     {
         importNetworkFromProject(rhs);
     }
 
+    /**
+     * Resets the random seed and saves it. 
+     * @throws IOException if the file is not found
+     */
     public void changeRandSeed() throws IOException
     {
         randSeed = (int)(System.nanoTime()/1.0e10);
+        rand = new Random(randSeed);
         writeProperties();
     }
     
+    /**
+     * Saves the project properties
+     * @throws IOException if the file is not found
+     */
     public void writeProperties() throws IOException
     {
         PrintStream fileout = new PrintStream(new FileOutputStream(getPropertiesFile()), true);
@@ -384,11 +543,20 @@ public abstract class Project
         fileout.close();
     }
     
+    /**
+     * Creates an empty {@link TreeMap} for project properties. Subclasses may override this to add properties.
+     * @return an empty map of properties
+     */
     public Map<String, String> createPropertiesMap()
     {
         return new TreeMap<String, String>();
     }
     
+    /**
+     * Creates project subfolders in the specified directory
+     * @param dir the project directory
+     * @throws IOException if the file is not found
+     */
     public void createProjectFolders(File dir) throws IOException
     {
         String dirStr = dir.getCanonicalPath();
@@ -402,57 +570,101 @@ public abstract class Project
     }
 
     
-    
+    /**
+     * Returns the nodes file
+     * @return {@link Project#getProjectDirectory()}/network/nodes.txt
+     */
     public File getNodesFile()
     {
         return new File(getProjectDirectory()+"/network/nodes.txt");
     }
     
+    /**
+     * Returns the link coordinates file
+     * @return {@link Project#getProjectDirectory()}/network/link_coordinates.txt
+     */
     public File getLinkPointsFile()
     {
         return new File(getProjectDirectory()+"/network/link_coordinates.txt");
     }
     
+    /**
+     * Returns the project properties file
+     * @return {@link Project#getProjectDirectory()}/project.txt
+     */
     public File getPropertiesFile()
     {
         return new File(getProjectDirectory()+"/project.txt");
     }
     
+    /**
+     * Returns the links file
+     * @return {@link Project#getProjectDirectory()}/network/links.txt
+     */
     public File getLinksFile()
     {
         return new File(getProjectDirectory()+"/network/links.txt");
     }
     
+    /**
+     * Returns the phases file
+     * @return {@link Project#getProjectDirectory()}/network/phases.txt
+     */
     public File getPhasesFile()
     {
         return new File(getProjectDirectory()+"/network/phases.txt");
     }
     
-    
+    /**
+     * Returns the signals file
+     * @return {@link Project#getProjectDirectory()}/network/signals.txt
+     */
     public File getSignalsFile()
     {
         return new File(getProjectDirectory()+"/network/signals.txt");
     }
     
+    /**
+     * Returns the options file
+     * @return {@link Project#getProjectDirectory()}/options.txt
+     */
     public File getOptionsFile()
     {
         return new File(getProjectDirectory()+"/options.txt");
     }
     
+    /**
+     * Returns the project directory in String form. Used for finding data files and subfolders.
+     * @return the project directory in String form
+     */
     public String getProjectDirectory()
     {
         return directory;
     }
     
+    /**
+     * Returns the paths file
+     * @return {@link Project#getProjectDirectory()}/paths.dat
+     */
     public File getPathsFile()
     {
         return new File(getProjectDirectory()+"/paths.dat");
     }
+    
+    /**
+     * Returns the results folder
+     * @return {@link Project#getProjectDirectory()}/results/
+     */
     public String getResultsFolder()
     {
         return getProjectDirectory()+"/results/";
     }
     
+    /**
+     * Copies the nodes, links, options, phases, and signals file from another project.
+     * @param rhs the project to copy files from
+     * @throws IOException if the file is not found
+     */
     public void importNetworkFromProject(Project rhs) throws IOException
     {
         // clone nodes, links, options, phases
@@ -461,5 +673,14 @@ public abstract class Project
         FileTransfer.copy(rhs.getOptionsFile(), getOptionsFile());
         FileTransfer.copy(rhs.getPhasesFile(), getPhasesFile());
         FileTransfer.copy(rhs.getSignalsFile(), getSignalsFile());
+    }
+    
+    /**
+     * Returns the project name
+     * @return the project name
+     */
+    public String toString()
+    {
+        return getName();
     }
 }

@@ -21,33 +21,56 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 /**
- *
- * @author micha
+ * This project represents a DTA network, which extends {@link TransitProject} and adds demand data.  
+ * @author Michael
  */
 public class DTAProject extends TransitProject
 {
+    /**
+     * Constructs an empty project
+     */
     public DTAProject()
     {
         
     }
     
+    /**
+     * Constructs the project from the specified directory
+     * @param directory the project directory
+     * @throws IOException if a file is not found
+     */
     public DTAProject(File directory) throws IOException
     {
         super(directory);
     }
 
     
+    /**
+     * Clones the project files from another project. 
+     * Note that this will overwrite the files in this project
+     * @param rhs the project to be cloned
+     * @throws IOException if a file is not found
+     */
     public void cloneFromProject(DTAProject rhs) throws IOException
     {
         super.cloneFromProject(rhs);
         importDemandFromProject(rhs);
     }
     
+    /**
+     * Returns the {@link DTASimulator} associated with this project. 
+     * If null, call {@link DTAProject#loadSimulator()}
+     * @return the {@link DTASimulator} associated with this project
+     */
     public DTASimulator getSimulator()
     {
         return (DTASimulator)super.getSimulator();
     }
     
+    /**
+     * Loads the {@link DTASimulator} using {@link ReadDTANetwork}
+     * @throws IOException if a file is not found
+     */
     public void loadSimulator() throws IOException
     {
         try
@@ -66,6 +89,10 @@ public class DTAProject extends TransitProject
 
     }
     
+    /**
+     * Writes empty demand files. Also calls {@link TransitProject#writeEmptyFiles()}
+     * @throws IOException if a file cannot be created
+     */
     public void writeEmptyFiles() throws IOException
     {
         super.writeEmptyFiles();
@@ -87,6 +114,11 @@ public class DTAProject extends TransitProject
         fileout.close();
     }
     
+    /**
+     * Creates project subfolders inside the specified directory
+     * @param dir the project directory
+     * @throws IOException if a file cannot be created
+     */
     public void createProjectFolders(File dir) throws IOException
     {
         super.createProjectFolders(dir);
@@ -103,37 +135,63 @@ public class DTAProject extends TransitProject
         fileout.close();
     }
     
+    /**
+     * Creates an empty {@link DTASimulator}
+     * @return an empty {@link DTASimulator}
+     */
     public DTASimulator createEmptySimulator()
     {
         return new DTASimulator(this);
     }
     
-
+    /**
+     * Returns the static OD table file
+     * @return {@link Project#getProjectDirectory()}/demand/static_od.txt
+     */
     public File getStaticODFile()
     {
         return new File(getProjectDirectory()+"/demand/static_od.txt");
     }
     
+    /**
+     * Returns the dynamic OD table file
+     * @return {@link Project#getProjectDirectory()}/demand/dynamic_od.txt
+     */
     public File getDynamicODFile()
     {
         return new File(getProjectDirectory()+"/demand/dynamic_od.txt");
     }
     
+    /**
+     * Returns the demand profile file
+     * @return {@link Project#getProjectDirectory()}/demand/demand_profile.txt
+     */
     public File getDemandProfileFile()
     {
         return new File(getProjectDirectory()+"/demand/demand_profile.txt");
     }
     
+    /**
+     * Returns the demand file
+     * @return {@link Project#getProjectDirectory()}/demand/demand.txt
+     */
     public File getDemandFile()
     {
         return new File(getProjectDirectory()+"/demand/demand.txt");
     }
     
+    /**
+     * Returns the assignments folder
+     * @return {@link Project#getProjectDirectory()}/assignments/
+     */
     public String getAssignmentsFolder()
     {
         return getProjectDirectory()+"/assignments";
     }
     
+    /**
+     * Clears all saved assignments
+     */
     public void deleteAssignments()
     {
         File root = new File(getAssignmentsFolder());
@@ -150,17 +208,21 @@ public class DTAProject extends TransitProject
     }
     
     
-    
+    /**
+     * Returns the project type
+     * @return DTA
+     */
     public String getType()
     {
         return "DTA";
     }
     
-    public String toString()
-    {
-        return getName();
-    }
     
+    /**
+     * Copies demand files from the specified project
+     * @param rhs the project to copy files from
+     * @throws IOException if a file is not found
+     */
     public void importDemandFromProject(DTAProject rhs) throws IOException
     {
         FileTransfer.copy(rhs.getDemandFile(), getDemandFile());
