@@ -21,6 +21,9 @@ public class Location implements Serializable, ICoordinate
     private double x, y;
     private double elevation;
     
+    /**
+     * Instantiates this Location as (0, 0)
+     */
     public Location()
     {
         
@@ -36,6 +39,11 @@ public class Location implements Serializable, ICoordinate
         this.y = y;
     }
     
+    /**
+     * 
+     * @param rhs the vector to be added
+     * @return a new Location that is the sum of the coordinates of this Location, and rhs
+     */
     public Location add(Location rhs)
     {
         return new Location(x+rhs.x, y+rhs.y);
@@ -50,16 +58,28 @@ public class Location implements Serializable, ICoordinate
         this(rhs.x, rhs.y);
     }
     
+    /**
+     * Constructs this Location from the specified ICoordinate, using its latitude and longitude
+     * @param rhs the ICoordinate to clone
+     */
     public Location(ICoordinate rhs)
     {
         this(rhs.getLon(), rhs.getLat());
     }
     
+    /**
+     * 
+     * @return a String containing the (x, y) coordinates
+     */
     public String toString()
     {
         return "("+x+", "+y+")";
     }
     
+    /**
+     * 
+     * @return the angle to Location rhs
+     */
     public double angleTo(Location rhs)
     {
         double output = Math.atan2(rhs.getY() - getY(), rhs.getX() - getX());
@@ -72,15 +92,25 @@ public class Location implements Serializable, ICoordinate
         return output;
     }
     
+    /**
+     * 
+     * @return the Euclidean distance to Location rhs
+     */
     public double distanceTo(Location rhs)
     {
         return Math.sqrt((rhs.x - x) * (rhs.x - x) + (rhs.y - y) * (rhs.y - y));
     }
     
+    /**
+     * 
+     * @return a Coordinate clone of this Location
+     * @see Coordinate
+     */
     public Coordinate getCoordinate()
     {
         return new Coordinate(y, x);
     }
+    
     /**
      * Gets the elevation of a {@link Node}.
      * @return A double value for the elevation.
@@ -130,20 +160,36 @@ public class Location implements Serializable, ICoordinate
         this.y = y;
     }
     
+    /**
+     * 
+     * @return the latitude, stored as the y coordinate
+     */
     public double getLat()
     {
         return getY();
     }
 
+    /**
+     * Updates the latitude, which is stored as the y coordinate
+     */
     public void setLat(double lat)
     {
         setY(lat);
     }
 
+    /**
+     * 
+     * @return the longitude, which is stored in the x coordinate
+     */
     public double getLon()
     {
         return getX();
     }
+    
+    /**
+     * Updates the longitude, which is stored as the x coordinate
+     * @param lon 
+     */
 
     public void setLon(double lon)
     {

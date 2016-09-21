@@ -16,6 +16,7 @@ import avdta.network.link.Link;
  * @see Merge
  * @see Diverge
  * @see TrafficSignal
+ * @see TBR
  * @author ut
  */
 public abstract class IntersectionControl
@@ -97,8 +98,25 @@ public abstract class IntersectionControl
      * @return (Ask)
      */
     public abstract int step();
+    
+    /**
+     * Resets this intersection to restart he simulation
+     */
     public abstract void reset();
+    
+    /**
+     * Perform any initialization work for this intersection. This is called after all data is read.
+     */
     public abstract void initialize();
+    
+    /**
+     * @return an int specifying the type code for this intersection control
+     */
     public abstract int getType();
+    
+    /**
+     * 
+     * @return a Signalized which signal timing data may be added to, if one exists. Returns null if this intersection is not a signal.
+     */
     public abstract Signalized getSignal();
 }

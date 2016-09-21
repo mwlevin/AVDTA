@@ -45,43 +45,74 @@ public class Intersection extends Node
         }
     }
     
+    /**
+     * 
+     * @return the Signalized from the IntersectionControl
+     */
     public Signalized getSignal()
     {
         return control.getSignal();
     }
     
-    
+    /**
+     * 
+     * @return the IntersectionControl type 
+     */
     public int getType()
     {
         return control.getType();
     }
     
-    
+    /**
+     * 
+     * @param i the incoming link
+     * @param j the outgoing link
+     * @param driver the driver type (specifies conventional/autonomous vehicle and transit)
+     * @return whether a vehicle with the given driver can turn from i to j
+     */
     public boolean canMove(Link i, Link j, DriverType driver)
     {
         return control.canMove(i, j, driver);
     }
     
+    /**
+     * 
+     * @return whether this intersection control uses conflict regions to determine turning movement constraints 
+     */
     public boolean hasConflictRegions()
     {
         return control.hasConflictRegions();
     }
     
+    /**
+     * Resets the IntersectionControl to restart the simulation
+     */
     public void reset()
     {
         control.reset();
     }
     
+    /**
+     * Initializes the IntersectionControl at the start of simulation
+     */
     public void initialize()
     {
         control.initialize();
     }
     
+    /**
+     * Executes one time step of the IntersectionControl
+     * @return the number of exiting vehicles
+     */
     public int step()
     {
         return control.step();
     }
     
+    /**
+     * 
+     * @return the IntersectionControl controlling this Intersection 
+     */
     public IntersectionControl getControl()
     {
         return control;

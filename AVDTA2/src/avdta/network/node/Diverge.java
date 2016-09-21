@@ -35,11 +35,19 @@ public class Diverge extends IntersectionControl
         movements = new HashMap<Link, PhaseMovement>();
     }
     
+    /**
+     * 
+     * @return an int specifying the type code of Signal
+     */
     public int getType()
     {
         return ReadNetwork.SIGNAL;
     }
     
+    /**
+     * 
+     * @return null, because this is never a Signal
+     */
     public Signalized getSignal()
     {
         return null;

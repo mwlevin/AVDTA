@@ -17,12 +17,18 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 /**
- *
+ * This class generates ConflictRegions for a node based on the radial division model. The angles for the radial division use the Link start and ending coordinates.
+ * 
  * @author Michael
  */
 public class ConflictFactory
 {
-    // @return {Map<Link, Map<Link, TurningMovement>>, Set<ConflictPoint>}
+    /**
+    * Creates a map containing the set of ConflictRegions that vehicles turning from an incoming link to an outgoing link at the specified node will pass through.
+    *
+    * @param node the Node for the conflict regions
+    * @return map of ConflictRegions
+    */
     public static Map<Link, Map<Link, TurningMovement>> generate(Node node)
     {
         Map<Link, Map<Link, TurningMovement>> output1 = new HashMap<Link, Map<Link, TurningMovement>>();
@@ -200,7 +206,7 @@ public class ConflictFactory
         return output1;
     }
 
-    public static ConflictRegion findConflict(TreeMap<Double, ConflictRegion> division, double x, double y)
+    private static ConflictRegion findConflict(TreeMap<Double, ConflictRegion> division, double x, double y)
     {
         double dir = Math.atan2(y, x);
         if(dir < 0)
@@ -228,7 +234,7 @@ public class ConflictFactory
         return output;
     }
 
-    public static Link findClosestLink(Set<Link> links, double angle)
+    private static Link findClosestLink(Set<Link> links, double angle)
     {
         double diff = Integer.MAX_VALUE;
         Link output = null;

@@ -31,6 +31,7 @@ public class Merge extends IntersectionControl
 {
     private Map<Link, PhaseMovement> movements;
     private double Q_total;
+    
     /**
      * Instantiates {@code movements} with default values.
      */
