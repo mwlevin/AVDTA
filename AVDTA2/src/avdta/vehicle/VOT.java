@@ -8,18 +8,22 @@ package avdta.vehicle;
 import java.util.Random;
 
 /**
- *
- * @author micha
+ * This class calculates a value of time distribution based on the Dagum income distribution
+ * @author Michael
  */
 public class VOT {
-    public static double a = 22020.6;
-    public static double b = 2.7926;
-    public static double c = 0.2977;
+    public static final double a = 22020.6;
+    public static final double b = 2.7926;
+    public static final double c = 0.2977;
     
     
 
     
-    
+    /**
+     * Calculates a random value of time based on the Dagum income distribution.
+     * @param rand the random number generator
+     * @return a random value of time 
+     */
     public static double dagum_rand(Random rand)
     {
         double y = rand.nextDouble();

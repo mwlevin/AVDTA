@@ -9,7 +9,7 @@ import avdta.cost.TravelCost;
 import avdta.network.Path;
 import avdta.vehicle.DriverType;
 import avdta.vehicle.PersonalVehicle;
-import avdta.vehicle.Wallet;
+import avdta.vehicle.wallet.Wallet;
 import avdta.network.node.Node;
 import avdta.vehicle.fuel.VehicleClass;
 import avdta.network.link.Link;

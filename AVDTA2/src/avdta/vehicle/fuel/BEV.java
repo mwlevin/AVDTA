@@ -7,8 +7,8 @@ package avdta.vehicle.fuel;
 import avdta.dta.ReadDTANetwork;
 
 /**
- *
- * @author ut
+ * This uses the parametric modeling of vehicle energy consumption to calculate power for battery electric vehicles.
+ * @author Michael
  */
 public class BEV extends VehicleClass
 {
@@ -29,6 +29,13 @@ public class BEV extends VehicleClass
     private double eta_trans = 0.87;				// transmission efficiency
     private double k_regen = 0.5;
     
+    /**
+     * Returns the power required for the given speed, acceleration, and grade
+     * @param speed speed (mi/hr)
+     * @param char_accel acceleration (mi/hr/s)
+     * @param grad_angle road grade (radians)
+     * @return power required
+     */
     public double calcPower(double speed, double char_accel, double grad_angle)
     {
         double rmc_speed = speed;
@@ -58,6 +65,10 @@ public class BEV extends VehicleClass
         return P_fuel / 1000;
     }
     
+    /**
+     * Returns a type code for this {@link VehicleClass}
+     * @return depends on subclass
+     */
     public int getType()
     {
         return ReadDTANetwork.BEV;

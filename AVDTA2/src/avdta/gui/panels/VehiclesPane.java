@@ -136,11 +136,11 @@ public class VehiclesPane extends GUIPanel
                     HVs++;
                 }
                 
-                if(v.getVehicleClass() == VehicleClass.icv)
+                if(v.getVehClass() == VehicleClass.icv)
                 {
                     ICV++;
                 }
-                else if(v.getVehicleClass() == VehicleClass.bev)
+                else if(v.getVehClass() == VehicleClass.bev)
                 {
                     BEV++;
                 }

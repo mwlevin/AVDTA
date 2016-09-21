@@ -4,6 +4,7 @@
  */
 package avdta.vehicle;
 
+import avdta.vehicle.wallet.Wallet;
 import ilog.concert.IloIntVar;
 import avdta.network.Network;
 import avdta.vehicle.fuel.VehicleClass;
@@ -11,6 +12,7 @@ import avdta.network.link.CTMLink;
 import avdta.network.link.cell.Cell;
 import avdta.network.link.Link;
 import avdta.network.node.Node;
+import avdta.network.node.Zone;
 import avdta.network.Path;
 import avdta.network.Simulator;
 import java.io.Serializable;
@@ -82,6 +84,13 @@ public abstract class Vehicle implements Serializable, Comparable<Vehicle>
         this(id, Wallet.EMPTY, vehClass, driver);
     }
     
+    /**
+     * Instantiates a vehicle with the given parameters
+     * @param id Uniquely identifies the vehicle in the network.
+     * @param wallet the {@link Wallet} used for bidding
+     * @param vehClass Class of the vehicle {ICV, BEV, etc.).
+     * @param driver AV or HV.
+     */
     public Vehicle(int id, Wallet wallet, VehicleClass vehClass, DriverType driver)
     {
         this.vehClass = vehClass;
@@ -97,27 +106,52 @@ public abstract class Vehicle implements Serializable, Comparable<Vehicle>
         effFactor = .5 + Math.round(Simulator.rand.nextDouble());
     }
     
+    /**
+     * Returns whether this vehicle is transit
+     * @return false
+     */
     public boolean isTransit()
     {
         return false;
     }
     
-    public VehicleClass getVehicleClass()
+    /**
+     * Returns the {@link VehicleClass} used for calculating energy consumption
+     * @return the {@link VehicleClass} 
+     */
+    public VehicleClass getVehClass()
     {
         return vehClass;
     }
 
+    /**
+     * Updates the value of time of this {@link Vehicle}
+     * @param vot the new value of time
+     */
     public void setVOT(double vot)
     {
         this.vot = vot;
     }
     
+    /**
+     * Returns the value of time
+     * @return the value of time
+     */
     public double getVOT()
     {
         return vot;
     }
+    
+    /**
+     * Returns a type code for this vehicle
+     * @return depends on subclass
+     */
     public abstract int getType();
     
+    /**
+     * Sets the energy efficiency. This parameter scales energy consumption.
+     * @param eff the new efficiency
+     */
     public void setEfficiency(double eff)
     {
         effFactor = eff;
@@ -131,16 +165,28 @@ public abstract class Vehicle implements Serializable, Comparable<Vehicle>
         return net_enter_time;
     }
     
+    /**
+     * Returns the energy efficiency parameter
+     * @return the energy efficiency parameter
+     */
     public double getEfficiency()
     {
         return effFactor;
     }
     
+    /**
+     * Returns the total toll paid
+     * @return the total toll paid
+     */
     public double getTotalToll()
     {
         return total_toll;
     }
     
+    /**
+     * Adds to the total toll paid
+     * @param t the additional toll
+     */
     public void addToll(double t)
     {
         total_toll += t;
@@ -187,6 +233,12 @@ public abstract class Vehicle implements Serializable, Comparable<Vehicle>
         
     }
     
+    /**
+     * Prints a cell record for the current {@link Cell} - the enter and exit times
+     * @param curr the current {@link Cell}
+     * @param enter the enter time to the {@link Cell} (s)
+     * @param exit the exit time to the {@link Cell} (s)
+     */
     public void printCellRecord(Cell curr, int enter, int exit)
     {
         Simulator.fileout.println(getId()+"\t"+curr.getLink().getId()+"\t"+enter+"\t"+exit);
@@ -194,6 +246,10 @@ public abstract class Vehicle implements Serializable, Comparable<Vehicle>
     
     double effFactor;
     
+    /**
+     * Calculates energy consumption
+     * @return energy consumed during the last {@link Cell}
+     */
     public double calcEnergy()
     {
         double prev_speed = prev_cell != null? prev_cell.getLength() / (prev_cell_time / 3600.0) : 0;
@@ -205,7 +261,10 @@ public abstract class Vehicle implements Serializable, Comparable<Vehicle>
         return effFactor * vehClass.calcEnergy(curr_cell_time, speed, accel, grade);
     }
     
-     // return difference in energy if vehicle moves this timestep vs. moving next timestep
+    /**
+     * Returns difference in energy if vehicle moves this timestep versus moving next timestep
+     * @return Difference in energy consumption for both scenarios
+     */
     public double calcDeltaEnergy()
     {
         double e1 = 0, e2 = 0;
@@ -249,26 +308,36 @@ public abstract class Vehicle implements Serializable, Comparable<Vehicle>
         return e2-e1;
     }
     
-    public VehicleClass getVehClass()
-    {
-        return vehClass;
-    }
-    
+    /**
+     * Returns the total energy consumption for this {@link Vehicle}'s trip
+     * @return the total energy consumption for this {@link Vehicle}'s trip
+     */
     public double getTotalEnergy()
     {
         return total_energy;
     }
     
+    /**
+     * Calculates the miles per gallon based on distance traveled
+     * @return miles per gallon
+     */
     public double getMPG()
     {
         return route.getLength() / (total_energy / VehicleClass.E_PER_GALLON);
     }
     
+    /**
+     * Called when this {@link Vehicle} enters the network
+     */
     public void entered()
     {
 
     }
     
+    /**
+     * Returns the id
+     * @return the id
+     */
     public String toString()
     {
         return ""+id;
@@ -323,6 +392,10 @@ public abstract class Vehicle implements Serializable, Comparable<Vehicle>
         return route.size() - path_idx;
     }
     
+    /**
+     * Update the path of this {@link Vehicle}
+     * @param p the new {@link Path}
+     */
     public void setPath(Path p)
     {
         route = p;
@@ -331,7 +404,11 @@ public abstract class Vehicle implements Serializable, Comparable<Vehicle>
     }
     
 
-    
+    /**
+     * Compare to another vehicle: order by ids.
+     * @param rhs the vehicle to be compared to
+     * @return order by id
+     */
     public int compareTo(Vehicle rhs)
     {
         return id - rhs.id;
@@ -378,6 +455,10 @@ public abstract class Vehicle implements Serializable, Comparable<Vehicle>
         return id;
     }
     
+    /**
+     * Return the path
+     * @return the path
+     */
     public Path getPath()
     {
         return route;
@@ -415,11 +496,20 @@ public abstract class Vehicle implements Serializable, Comparable<Vehicle>
         }
     }
     
+    /**
+     * Returns the incoming link when this {@link Vehicle} reaches an intersection.
+     * @return {@link Vehicle#getCurrLink()}
+     */
     public Link getPrevLink()
     {
         return getCurrLink();
     }
     
+    /**
+     * Called when this {@link Vehicle} enters a new {@link Link}. 
+     * This method updates the waiting time, reservation time, and prints cell records if necessary.
+     * @param l the {@link Link} entered
+     */
     public void enteredLink(Link l)
     {
         
@@ -454,26 +544,48 @@ public abstract class Vehicle implements Serializable, Comparable<Vehicle>
     }
     
 
+    /**
+     * Returns the total waiting time
+     * @return the total waiting time
+     */
     public int getTimeWaiting()
     {
         return time_waiting;
     }
     
+    /**
+     * Returns the total time spent traveling
+     * @return the total time spent traveling 
+     */
     public int getTimeTraveling()
     {
         return getTT() - getTimeWaiting();
     }
     
+    /**
+     * Returns the {@link Wallet} used for bidding
+     * @return the {@link Wallet} used for bidding
+     */
     public Wallet getWallet()
     {
         return wallet;
     }
     
+    /**
+     * Returns the origin {@link Node} for this {@link Vehicle}. 
+     * Note that this {@link Node} may not be a {@link Zone}, such as for buses.
+     * @return the origin {@link Node} for this {@link Vehicle}
+     */
     public Node getOrigin()
     {
         return route.get(0).getSource();
     }
     
+    /**
+     * Returns the destination {@link Node} for this {@link Vehicle}. 
+     * Note that this {@link Node} may not be a {@link Zone}, such as for buses.
+     * @return the destination {@link Node} for this {@link Vehicle}
+     */
     public Node getDest()
     {
         return route.get(route.size()-1).getDest();

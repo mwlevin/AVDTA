@@ -48,11 +48,20 @@ public class DriverType implements Serializable
         this.isCV = isCV;
     }
     
+    /**
+     * Returns whether this driver is a connected vehicle
+     * @return whether this driver is a connected vehicle
+     */
     public boolean isCV()
     {
         return isCV;
     }
     
+    /**
+     * Checks whether this class matches the given type code
+     * @param type type code
+     * @return whether this class matches the given type code
+     */
     public boolean matches(int type)
     {
         switch(type)
@@ -64,6 +73,10 @@ public class DriverType implements Serializable
         }
     }
     
+    /**
+     * Returns the type code
+     * @return {@link ReadDTANetwork#AV} or {@link ReadDTANetwork#HV}
+     */
     public int getType()
     {
         if(isAV)
@@ -76,6 +89,10 @@ public class DriverType implements Serializable
         }
     }
     
+    /**
+     * Returns whether this driver is driving transit
+     * @return whether this driver is driving transit
+     */
     public boolean isTransit()
     {
         return isTransit;
@@ -118,23 +135,26 @@ public class DriverType implements Serializable
         return name;
     }
     /**
-     * Self-explanatory name.
-     * @return Returns a boolean if the driver type is {@code AV}.
+     * Returns if the driver type is {@code AV}.
+     * @return if the driver type is {@code AV}.
      */
     public boolean isAV()
     {
         return isAV;
     }
     /**
-     * Self-explanatory name.
-     * @return Returns a double value indicating the reaction time of that driver 
-     * type.
+     * Returns the reaction time of this driver type
+     * @return Returns the reaction time of this driver type (s)
      */
     public double getReactionTime()
     {
         return reactionTime;
     }
     
+    /**
+     * Updates the reaction time
+     * @param t the new reaction time (s)
+     */
     public void setReactionTime(double t)
     {
         reactionTime = t;
