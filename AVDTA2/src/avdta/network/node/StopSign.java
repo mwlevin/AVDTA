@@ -314,6 +314,9 @@ public class StopSign extends IntersectionControl
     
     /**
      * Executes one time step of simulation.
+     * {@link Vehicle}s that do not have a next {@link Link} (some buses) are removed from the network.
+     * {@link Vehicle}s that move are removed from their previous {@link Link} ({@link Link#removeVehicle(avdta.vehicle.Vehicle)} and added to their next {@link Link} ({@link Link#addVehicle(avdta.vehicle.Vehicle)}).
+     * This requires that {@link Vehicle#getPrevLink()} is the incoming {@link Link} and {@link Vehicle#getNextLink()} is the outgoing {@link Link}.
      * @return the number of vehicles exiting
      */
     public int step()

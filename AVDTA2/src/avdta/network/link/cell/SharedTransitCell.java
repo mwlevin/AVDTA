@@ -15,8 +15,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- *
- * @author micha
+ * This class represents a cell in the cell transmission model of a dynamic transit lane link ({@link SharedTransitCTMLink}). 
+ * It stores {@link Vehicle}s currently in the cell, and determines sending and receiving flows.
+ * This class is abstract; see {@link SharedTransitLinkCell}.
+ * Cells at the start and ends of links are slightly different; see {@link SharedTransitStartCell} and {@link SharedTransitEndCell}
+ * 
+ * @author Michael
  */
 public abstract class SharedTransitCell extends Cell
 {

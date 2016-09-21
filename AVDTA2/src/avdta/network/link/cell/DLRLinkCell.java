@@ -11,13 +11,18 @@ import avdta.vehicle.Vehicle;
 import java.util.Iterator;
 
 /**
- *
- * @author micha
+ * This is a regular cell for dynamic lane reversal links. (See {@link DLRCTMLink}.)
+ * @author Michael
  */
 public class DLRLinkCell extends DLRCell
 {
     private DLRCell prev;
     
+    /**
+     * Constructs this cell as part of the specified link with the specified previous cell
+     * @param link the link this cell is part of
+     * @param prev the {@link Cell} that directly precedes this {@link EndCell}
+     */
     public DLRLinkCell(DLRCell prev, DLRCTMLink link)
     {
         super(link);
@@ -25,6 +30,10 @@ public class DLRLinkCell extends DLRCell
         this.prev = prev;
     }
     
+    /**
+     * Executes one time step of simulation.
+     * Moves vehicles from the previous cell to this cell and updates their position.
+     */
     public void step()
     {
         double y = Math.min(prev.getNumSendingFlow(), getReceivingFlow());

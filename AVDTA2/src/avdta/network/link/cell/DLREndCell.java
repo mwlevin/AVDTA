@@ -16,11 +16,20 @@ import avdta.vehicle.Vehicle;
  */
 public class DLREndCell extends DLRLinkCell
 {
+    /**
+     * Constructs this cell as part of the specified link with the specified previous cell
+     * @param link the link this cell is part of
+     * @param prev the {@link Cell} that directly precedes this {@link EndCell}
+     */
     public DLREndCell(DLRCell prev, DLRCTMLink link)
     {
         super(prev, link);
     }
     
+    /**
+     * Adds the {@link Vehicle} to the link (calls {@link LinkCell#addVehicle(avdta.vehicle.Vehicle)}) and updates the upstream sending flow for the link ({@link DLRCTMLink#addToUsSendingFlow()}) if it is a {@link DLRCTMLink}.
+     * @param v the {@link Vehicle} to be added
+     */
     public void addVehicle(Vehicle v)
     {
         Link j = v.getNextLink();

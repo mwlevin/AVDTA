@@ -135,6 +135,10 @@ public class PriorityTBR extends TBR
     
     /**
      * Executes one time step of simulation. See the conflict region algorithm.
+     * {@link Vehicle}s that do not have a next {@link Link} (some buses) are removed from the network.
+     * {@link Vehicle}s that move are removed from their previous {@link Link} ({@link Link#removeVehicle(avdta.vehicle.Vehicle)} and added to their next {@link Link} ({@link Link#addVehicle(avdta.vehicle.Vehicle)}).
+     * This requires that {@link Vehicle#getPrevLink()} is the incoming {@link Link} and {@link Vehicle#getNextLink()} is the outgoing {@link Link}.
+     * Human-driven vehicles traveling through a reservation must reserve all possible turning movements.
      * @return the number of exiting vehicles
      */
     public int step()

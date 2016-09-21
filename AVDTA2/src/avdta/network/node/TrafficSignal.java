@@ -421,6 +421,9 @@ public class TrafficSignal extends IntersectionControl implements Signalized
     /**
      * Implements a time-step of movement of vehicles at the intersection with 
      * the signal.
+     * {@link Vehicle}s that do not have a next {@link Link} (some buses) are removed from the network.
+     * {@link Vehicle}s that move are removed from their previous {@link Link} ({@link Link#removeVehicle(avdta.vehicle.Vehicle)} and added to their next {@link Link} ({@link Link#addVehicle(avdta.vehicle.Vehicle)}).
+     * This requires that {@link Vehicle#getPrevLink()} is the incoming {@link Link} and {@link Vehicle#getNextLink()} is the outgoing {@link Link}.
      * @return Returns the number of vehicle which has exited the network.
      */
     public int step()

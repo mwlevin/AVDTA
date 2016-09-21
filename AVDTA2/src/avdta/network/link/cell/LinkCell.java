@@ -10,13 +10,18 @@ import avdta.vehicle.Vehicle;
 import java.util.Iterator;
 
 /**
- *
- * @author micha
+ * This is a regular link cell, and appears between the start and end cells on a {@link CTMLink}.
+ * @author Michael
  */
 public class LinkCell extends Cell
 {
     private Cell prev;
     
+    /**
+     * Constructs this {@link LinkCell} as part of the specified link with the specified previous {@link Cell}
+     * @param link the link this cell is part of
+     * @param prev the {@link Cell} that directly precedes this {@link EndCell}
+     */
     public LinkCell(Cell prev, CTMLink link)
     {
         super(link);
@@ -24,6 +29,10 @@ public class LinkCell extends Cell
         this.prev = prev;
     }
     
+    /**
+     * Executes one time step of simulation.
+     * Moves vehicles from the previous cell to this cell and updates their position.
+     */
     public void step()
     {
         double y = Math.min(prev.getNumSendingFlow(), getReceivingFlow());
