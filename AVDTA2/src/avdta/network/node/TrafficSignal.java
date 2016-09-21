@@ -96,6 +96,7 @@ public class TrafficSignal extends IntersectionControl implements Signalized
     /**
      * Adds a phase {@code p} and also updates the cycle time with addition of 
      * this phase.
+     * Phases do not need to be added in sequence order.
      * @param p A phase which needs to be added to a signal.
      */
     public void addPhase(Phase p)
@@ -105,7 +106,10 @@ public class TrafficSignal extends IntersectionControl implements Signalized
         total_time += p.getDuration();
     }
     
-    
+    /**
+     * Updates the offset for the signal cycle
+     * @param offset the new offset
+     */
     public void setOffset(double offset)
     {
         this.offset = offset;

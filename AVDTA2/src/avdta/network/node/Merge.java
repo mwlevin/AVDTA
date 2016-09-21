@@ -40,11 +40,20 @@ public class Merge extends IntersectionControl
         movements = new HashMap<Link, PhaseMovement>();
     }
     
+    /**
+     * Returns an int specifying the type code of Signal. Intersections with only 1 outgoing link are automatically classified as {@link Merge}
+     * @return {@link ReadNetwork#SIGNAL}
+     */
     public int getType()
     {
         return ReadNetwork.SIGNAL;
     }
     
+    /**
+     * Returns the {@link Signalized} version of this intersection. Always returns null, because this is never a {@link Signalized}
+     * @return null
+     * @see Signalized
+     */
     public Signalized getSignal()
     {
         return null;
@@ -52,7 +61,7 @@ public class Merge extends IntersectionControl
     
     /**
      * Calls each incoming link to the merge and puts their details in 
-     * {@code movements} map; also caluclates {@code Q_total}, which is the sum 
+     * {@code movements} map; also calculates {@code Q_total}, which is the sum 
      * of the capacities of the incoming links.
      */
     public void reset()
@@ -65,7 +74,7 @@ public class Merge extends IntersectionControl
     }
     /**
      * Calls the {@code reset} method, which fills up {@code movements} with 
-     * incoming links and caluclates the sum of the capacities of the links 
+     * incoming links and calculates the sum of the capacities of the links 
      * entering the merge.
      */
     public void initialize()

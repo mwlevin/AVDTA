@@ -21,29 +21,46 @@ import java.util.Set;
 import java.util.TreeSet;
 
 /**
- *
- * @author ut
+ * This class represents a reservation-based intersection control in which {@link Vehicle} movement is determined by their priority. 
+ * The priority is specified by a {@link IntersectionPolicy} instance variable.
+ * 
+ * @author Michael
  */
 public class PriorityTBR extends TBR
 {
     private IntersectionPolicy policy;
 
-    
+    /**
+     * Constructs this {@link PriorityTBR} with {@link IntersectionPolicy#FCFS} and a null intersection. A non-null intersection is required for simulation.
+     */
     public PriorityTBR()
     {
         this(null, IntersectionPolicy.FCFS);
     }
     
+    /**
+     * Constructs this {@link PriorityTBR} with the specified {@link IntersectionPolicy} and a null intersection. A non-null intersection is required for simulation.
+     * @param policy the {@link IntersectionPolicy} that determines vehicle order
+     */
     public PriorityTBR(IntersectionPolicy policy)
     {
         this(null, policy);
     }
     
+    /**
+     * Constructs this {@link PriorityTBR} with {@link IntersectionPolicy#FCFS} and the specified {@link Intersection}.
+     * @param n the {@link Intersection} controlled by this {@link PriorityTBR}
+     */
     public PriorityTBR(Intersection n)
     {
         this(n, IntersectionPolicy.FCFS);
     }
    
+    /**
+     * Constructs this {@link PriorityTBR} with the specified {@link IntersectionPolicy} and the specified {@link Intersection}.
+     * @param n the {@link Intersection} controlled by this {@link PriorityTBR}
+     * @param policy the {@link IntersectionPolicy} that determines vehicle order
+     */
     public PriorityTBR(Intersection n, IntersectionPolicy policy)
     {
         super(n);
@@ -51,28 +68,50 @@ public class PriorityTBR extends TBR
         this.policy = policy;
     }
     
+    /**
+     * Returns the {@link Signalized} form for adding signal data.
+     * @return the {@link IntersectionPolicy} if it is a {@link Signalized}, or null otherwise
+     * @see Signalized
+     */
     public Signalized getSignal()
     {
         return (policy instanceof Signalized)? (Signalized)policy : null;
     }
     
+
+    /**
+     * Returns the type code for {@link PriorityTBR}
+     * @return {@link ReadNetwork#RESERVATION}+ the type of the {@link IntersectionPolicy}
+     */
     public int getType()
     {
         return ReadNetwork.RESERVATION + policy.getType();
     }
     
+    /**
+     * Updates the {@link IntersectionPolicy} used for ordering vehicles
+     * @param policy the new {@link IntersectionPolicy} used for ordering vehicles
+     */
     public void setPolicy(IntersectionPolicy policy)
     {
         this.policy = policy;
     }
     
 
-    
+    /**
+     * Returns the {@link IntersectionPolicy} used for ordering vehicles
+     * @return the {@link IntersectionPolicy} used for ordering vehicles
+     */
     public IntersectionPolicy getPolicy()
     {
         return policy;
     }
     
+    /**
+     * Adds a signal {@link Phase} to the {@link IntersectionPolicy} if the policy is a {@link Signalized}
+     * @param p the {@link Phase} to be added
+     * @see Signalized
+     */
     public void addPhase(Phase p)
     {
         if(policy instanceof Signalized)
@@ -81,6 +120,11 @@ public class PriorityTBR extends TBR
         }
     }
     
+    /**
+     * Updates the cycle offset of the {@link IntersectionPolicy} if the policy is a {@link Signalized}
+     * @param o the new offset
+     * @see Signalized
+     */
     public void setOffset(double o)
     {
         if(policy instanceof Signalized)
@@ -88,6 +132,11 @@ public class PriorityTBR extends TBR
             ((Signalized)policy).setOffset(o);
         }
     }
+    
+    /**
+     * Executes one time step of simulation. See the conflict region algorithm.
+     * @return the number of exiting vehicles
+     */
     public int step()
     {
         Node node = getNode();
@@ -300,6 +349,9 @@ public class PriorityTBR extends TBR
         
     }
     
+    /**
+     * Resets this {@link PriorityTBR} to restart simulation.
+     */
     public void reset()
     {
         policy.reset();

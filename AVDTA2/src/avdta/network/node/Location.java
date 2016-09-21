@@ -22,14 +22,14 @@ public class Location implements Serializable, ICoordinate
     private double elevation;
     
     /**
-     * Instantiates this Location as (0, 0)
+     * Instantiates this {@link Location} as (0, 0)
      */
     public Location()
     {
         
     }
     /**
-     * Instantiates the location of a node with (x, y).
+     * Instantiates this {@link Location} with (x, y).
      * @param x Input for abscissa of the location of a node.
      * @param y Input for ordinate of the location of a node.
      */
@@ -42,7 +42,7 @@ public class Location implements Serializable, ICoordinate
     /**
      * 
      * @param rhs the vector to be added
-     * @return a new Location that is the sum of the coordinates of this Location, and rhs
+     * @return a new {@link Location} that is the sum of the coordinates of this {@link Location}, and rhs
      */
     public Location add(Location rhs)
     {
@@ -59,8 +59,8 @@ public class Location implements Serializable, ICoordinate
     }
     
     /**
-     * Constructs this Location from the specified ICoordinate, using its latitude and longitude
-     * @param rhs the ICoordinate to clone
+     * Constructs this {@link Location} from the specified {@link ICoordinate}, using its latitude and longitude
+     * @param rhs the {@link ICoordinate} to clone
      */
     public Location(ICoordinate rhs)
     {
@@ -68,8 +68,8 @@ public class Location implements Serializable, ICoordinate
     }
     
     /**
-     * 
-     * @return a String containing the (x, y) coordinates
+     * A {@link String} representation of this {@link Location}
+     * @return a {@link String} containing the (x, y) coordinates
      */
     public String toString()
     {
@@ -77,8 +77,8 @@ public class Location implements Serializable, ICoordinate
     }
     
     /**
-     * 
-     * @return the angle to Location rhs
+     * Calculates the angle between this {@link Location} and another
+     * @return the angle to {@link Location} rhs
      */
     public double angleTo(Location rhs)
     {
@@ -93,8 +93,8 @@ public class Location implements Serializable, ICoordinate
     }
     
     /**
-     * 
-     * @return the Euclidean distance to Location rhs
+     * Calculates the Euclidean distance between this {@link Location} and another
+     * @return the Euclidean distance to {@link Location} rhs
      */
     public double distanceTo(Location rhs)
     {
@@ -102,8 +102,8 @@ public class Location implements Serializable, ICoordinate
     }
     
     /**
-     * 
-     * @return a Coordinate clone of this Location
+     * Creates a {@link Coordinate} clone of this {@link Location} for use in visualization
+     * @return a {@link Coordinate} clone of this {@link Location}
      * @see Coordinate
      */
     public Coordinate getCoordinate()
@@ -112,7 +112,7 @@ public class Location implements Serializable, ICoordinate
     }
     
     /**
-     * Gets the elevation of a {@link Node}.
+     * Gets the elevation of this {@link Location}.
      * @return A double value for the elevation.
      */
     public double getElevation()
@@ -120,7 +120,7 @@ public class Location implements Serializable, ICoordinate
         return elevation;
     }
     /**
-     * Sets the elevation of a {@link Node}.
+     * Sets the elevation of this {@link Location}.
      * @param h Input representing elevation.
      */
     public void setElevation(double h)

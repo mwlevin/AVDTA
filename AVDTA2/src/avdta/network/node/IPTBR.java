@@ -24,7 +24,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * This class solves the ConflictRegion integer program by calling CPLEX. This will find an optimal solution to the integer program, but may result in high computation times when used for networks with multiple intersections.
+ * This class solves the conflict region integer program by calling CPLEX. This will find an optimal solution to the integer program, but may result in high computation times when used for networks with multiple intersections.
  * 
  * @author Michael
  */
@@ -40,8 +40,8 @@ public class IPTBR extends TBR
     
     
     /**
-     * Constructs the IPTBR with the given Intersection and ObjFunction
-     * @param n the Intersection this IPTBR controls
+     * Constructs the {@link IPTBR} with the given {@link Intersection} and {@link ObjFunction}
+     * @param n the {@link Intersection} this IPTBR controls
      * @param obj the objective function for optimization
      */
     public IPTBR(Intersection n, ObjFunction obj)
@@ -69,8 +69,8 @@ public class IPTBR extends TBR
     }
     
     /**
-     * 
-     * @return an int specifying the type code of IPTBR
+     * Returns the type code of {@link IPTBR}
+     * @return an int specifying the type code of {@link IPTBR}
      */
     public int getType()
     {
@@ -78,8 +78,8 @@ public class IPTBR extends TBR
     }
     
     /**
-     * 
-     * @return the ObjFunction, if it is a Signalized, otherwise null
+     * Returns the {@link Signalized} associated with this {@link IPTBR}, if one exists, to add signal data
+     * @return the {@link ObjFunction}, if it is a Signalized, otherwise null
      * @see Signalized
      */
     public Signalized getSignal()

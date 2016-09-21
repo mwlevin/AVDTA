@@ -38,6 +38,10 @@ public class Turn implements java.io.Serializable, Comparable<Turn>
         }
     }
     
+    /**
+     * Returns a {@link String} representation of the turn
+     * @return a {@link String} representation of the turn
+     */
     public String toString()
     {
         return ""+i.getId()+"-"+j.getId();
@@ -48,6 +52,11 @@ public class Turn implements java.io.Serializable, Comparable<Turn>
         return i.getId()+j.getId();
     }
     
+    /**
+     * Checks whether the incoming and outgoing {@link Link}s are the same as another {@link Turn}
+     * @param rhs the {@link Turn} to compare to
+     * @return whether the incoming and outgoing {@link Link}s match
+     */
     public boolean equals(Turn rhs)
     {
         return i == rhs.i && j == rhs.j;

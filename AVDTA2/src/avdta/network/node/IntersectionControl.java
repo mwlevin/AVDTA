@@ -6,6 +6,7 @@ package avdta.network.node;
 
 import avdta.vehicle.DriverType;
 import avdta.network.link.Link;
+import avdta.vehicle.Vehicle;
 
 /**
  * This is an abstract class to implement intersection controls (<b>Stops</b>, 
@@ -23,7 +24,7 @@ public abstract class IntersectionControl
 {
     private Intersection node;
     /**
-     * Instantiates the Intersection Control with null.
+     * Instantiates the {@link IntersectionControl} with null {@link Node}.
      */
     public IntersectionControl()
     {
@@ -48,7 +49,7 @@ public abstract class IntersectionControl
     }
 
     /**
-     * Returns the name of the instance of the Intersection Control class.
+     * Returns the name of the instance of the {@link IntersectionControl} class.
      * @return A String which has the name of the instance of the intersection 
      * control class.
      */
@@ -66,7 +67,7 @@ public abstract class IntersectionControl
         return node;
     }
     /**
-     * Sets the node at which this intersection control is present.
+     * Sets the node at which this {@link IntersectionControl} is present.
      * @param n An {@link Intersection} which has the node where the control
      * is present.
      */
@@ -100,7 +101,7 @@ public abstract class IntersectionControl
     public abstract int step();
     
     /**
-     * Resets this intersection to restart he simulation
+     * Resets this intersection to restart the simulation
      */
     public abstract void reset();
     
@@ -110,13 +111,17 @@ public abstract class IntersectionControl
     public abstract void initialize();
     
     /**
-     * @return an int specifying the type code for this intersection control
+     * Returns the type code for this {@link IntersectionControl}
+     * 
+     * @return an int specifying the type code for this {@link IntersectionControl}
      */
     public abstract int getType();
     
     /**
+     * Returns a {@link Signalized} for this intersection, if one exists, to add signal data
      * 
-     * @return a Signalized which signal timing data may be added to, if one exists. Returns null if this intersection is not a signal.
+     * @return a {@link Signalized} which signal timing data may be added to, if one exists. Returns null if this intersection is not a signal.
+     * @see Signalized
      */
     public abstract Signalized getSignal();
 }

@@ -14,13 +14,13 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * This class implements Diverge intersection control at a node. <br>
+ * This class implements the diverge intersection control at a node. <br>
  * A diverge is an intersection with an incoming link to a node and more than 
  * one outgoing links from the node. <br>
  * {@code movements} maps a link to a {@link PhaseMovement} through
  * {@link HashMap}. <br>
  * @see IntersectionControl
- * @author ut
+ * @author Michael
  */
 
 // only works if 1 incoming link
@@ -36,8 +36,8 @@ public class Diverge extends IntersectionControl
     }
     
     /**
-     * 
-     * @return an int specifying the type code of Signal
+     * Returns the type code of {@link TrafficSignal}. Intersections with only 1 incoming link are automatically classified as {@link Diverge}.
+     * @return {@link ReadNetwork#SIGNAL}
      */
     public int getType()
     {
@@ -45,8 +45,9 @@ public class Diverge extends IntersectionControl
     }
     
     /**
-     * 
-     * @return null, because this is never a Signal
+     * Returns the {@link Signalized} for this intersection to add signal data, if one exists.
+     * @return null, because this is never a {@link Signalized}
+     * @see Signalized
      */
     public Signalized getSignal()
     {
@@ -55,7 +56,8 @@ public class Diverge extends IntersectionControl
     
     
     /**
-     * Calls each outgoing link from the diverge and puts their details in
+     * Resets this {@link Diverge} to restart simulation
+     * Calls each outgoing {@link Link} from the diverge and puts their details in
      * {@code movements} map.
      */
     public void reset()
@@ -66,6 +68,7 @@ public class Diverge extends IntersectionControl
         }
     }
     /**
+     * Initialize this {@link Diverge} after reading the entire network
      * Calls the {@code reset} method, which fills up {@code movements} with 
      * outgoing links from the diverge.
      */

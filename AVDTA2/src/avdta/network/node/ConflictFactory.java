@@ -17,17 +17,17 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 /**
- * This class generates ConflictRegions for a node based on the radial division model. The angles for the radial division use the Link start and ending coordinates.
+ * This class generates {@link ConflictRegion}s for a node based on the radial division model. The angles for the radial division use the {@link Link} start and ending {@link Location}s.
  * 
  * @author Michael
  */
 public class ConflictFactory
 {
     /**
-    * Creates a map containing the set of ConflictRegions that vehicles turning from an incoming link to an outgoing link at the specified node will pass through.
+    * Creates a map containing the set of {@link ConflictRegion}s that vehicles turning from an incoming {@link Link} to an outgoing {@link Link} at the specified {@link Node} will pass through.
     *
-    * @param node the Node for the conflict regions
-    * @return map of ConflictRegions
+    * @param node the {@link Node} for the {@link ConflictRegion}s
+    * @return map of {@link ConflictRegion}s
     */
     public static Map<Link, Map<Link, TurningMovement>> generate(Node node)
     {

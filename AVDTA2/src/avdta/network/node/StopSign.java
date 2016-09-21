@@ -20,8 +20,11 @@ import java.util.Set;
 import java.util.TreeSet;
 
 /**
- *
- * @author ut
+ * This class represents a stop sign intersection control. 
+ * Vehicles are delayed before they can enter the intersection, and capacity is adjusted based on straight and turning accelerations.
+ * Stop signs are modeled via a single conflict region that all turning movements pass through.
+ * 
+ * @author Michael
  */
 
 // new class for efficiency ~
@@ -40,11 +43,18 @@ public class StopSign extends IntersectionControl
     
     private ConflictRegion cr; // single conflict region
     
+    /**
+     * Constructs this {@link StopSign} with the {@link Node} as null. A non-null {@link Node} is required for simulation.
+     */
     public StopSign()
     {
         this(null);
     }
     
+    /**
+     * Constructs this {@link StopSign} with the specified {@link Intersection}
+     * @param n the {@link Intersection} this {@link StopSign} controls.
+     */
     public StopSign(Intersection n)
     {
         super(n);
@@ -67,23 +77,40 @@ public class StopSign extends IntersectionControl
         };
     }
     
+    /**
+     * Returns null because this is never a {@link Signalized}
+     * @return null
+     * @see Signalized
+     */
     public Signalized getSignal()
     {
         return null;
     }
     
+    /**
+     * Returns the type code for {@link StopSign}
+     * @return {@link ReadNetwork#STOPSIGN}
+     */
     public int getType()
     {
         return ReadNetwork.STOPSIGN;
     }
     
+    /**
+     * Returns whether a {@link Vehicle} of the specified {@link DriverType} can make the specified turning movement. 
+     * All {@link Vehicle}s should be able to move, regardless of the {@link DriverType}, because this is a stop sign.
+     * @param i the incoming {@link Link}
+     * @param j the outgoing {@link Link}
+     * @param driver the {@link DriverType}
+     * @return whether a {@link Vehicle} of the specified {@link DriverType} can make the specified turning movement
+     */
     public boolean canMove(Link i, Link j, DriverType driver)
     {
         return capacities.get(i).containsKey(j);
     }
     
     
-    public static double findT(boolean straight, double disp)
+    private static double findT(boolean straight, double disp)
     {
         // binary search
         double bot = 0;
@@ -118,7 +145,7 @@ public class StopSign extends IntersectionControl
         
     }
     
-    public static double disp(boolean straight, double t)
+    private static double disp(boolean straight, double t)
     {
         if(straight)
         {
@@ -130,7 +157,9 @@ public class StopSign extends IntersectionControl
         }
     }
     
-    
+    /**
+     * Initializes this {@link StopSign} after all data is read. This method updates the capacities based on expected accelerations from a stop.
+     */
     public void initialize()
     {
         capacities = new HashMap<Link, Map<Link, Double>>();
@@ -251,6 +280,7 @@ public class StopSign extends IntersectionControl
         //sanityCheck();
     }
     
+    /*
     public void sanityCheck()
     {
         Node node = getNode();
@@ -272,12 +302,20 @@ public class StopSign extends IntersectionControl
             }
         }
     }
+    */
     
+    /**
+     * Resets this {@link StopSign} to restart the simulation.
+     */
     public void reset()
     {
         cr.reset();
     }
     
+    /**
+     * Executes one time step of simulation.
+     * @return the number of vehicles exiting
+     */
     public int step()
     {
         Node node = getNode();
@@ -404,21 +442,45 @@ public class StopSign extends IntersectionControl
         return exited;
     }
     
+    /**
+     * Check whether a vehicle making the specified turning movement requires two time steps to complete it
+     * @param i the incoming {@link Link}
+     * @param j the outgoing {@link Link}
+     * @return whether a vehicle making the specified turning movement requires two time steps to complete it
+     */
     public boolean requires2Timesteps(Link i, Link j)
     {
         return cr.adjustFlow(i, j) > cr.getCapacity() * Network.dt / 3600.0;
     }
     
+    /**
+     * Checks whether there is capacity remaining for the specified turning movement and equivalent flow.
+     * @param i the incoming {@link Link}
+     * @param j the outgoing {@link Link}
+     * @param flow equivalent flow of the vehicle. This may be reduced for autonomous vehicles due to lower following headways.
+     * @return whether a vehicle requiring the specified flow can make the specified turning movement
+     */
     public boolean hasAvailableCapacity(Link i, Link j, double flow)
     {
         return cr.canMove(i, j, flow);
     }
-        
+    
+    /**
+     * Returns whether this intersection control uses conflict regions, which it does.
+     * @return true
+     */
     public boolean hasConflictRegions()
     {
         return true;
     }
     
+    /**
+     * Returns the minimum delay for {@link Vehicle}s on the specified incoming {@link Link}. 
+     * This delay is based on the deceleration to a stop from the free flow speed.
+     * {@link Vehicle}s wanting to traverse this {@link StopSign} must wait at least the specified delay before moving.
+     * @param i the incoming link
+     * @return the minimum delay
+     */
     public int getMinimumDelay(Link i)
     {
         // minimum time from entering link to exiting

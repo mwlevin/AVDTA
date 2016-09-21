@@ -24,10 +24,12 @@ public class Phase implements Comparable<Phase>
     
     private Turn[] allowed;
     /**
-     * Instantiates the phase with the list of turns it allows, the green time 
-     * and duration of that phase.
-     * @param list List of {@link Turn}s allowed in that phase.
-     * @param green A double value indicating the green time of that phase.
+     * Instantiates the {@link Phase} with the list of turns it allows, the green time 
+     * and duration of this {@link Phase}.
+     * @param list List of {@link Turn}s allowed in this phase.
+     * @param green A double value indicating the green time of this phase.
+     * @param yellow A double value indicating the yellow time of this phase.
+     * @param red A double value indicating the all red time of this phase.
      */
     public Phase(int sequence, List<Turn> list, double green, double yellow, double red)
     {
@@ -45,7 +47,14 @@ public class Phase implements Comparable<Phase>
     }
     
     
-    
+    /**
+     * Instantiates the {@link Phase} with the list of turns it allows, the green time 
+     * and duration of this {@link Phase}.
+     * @param allowed Array of {@link Turn}s allowed in this phase.
+     * @param green A double value indicating the green time of this phase.
+     * @param yellow A double value indicating the yellow time of this phase.
+     * @param red A double value indicating the all red time of this phase.
+     */
     public Phase(int sequence, Turn[] allowed, double green, double yellow, double red)
     {
         this.sequence = sequence;
@@ -55,6 +64,10 @@ public class Phase implements Comparable<Phase>
         this.red = red;
     }
     
+    /**
+     * Clones the specified {@link Phase}
+     * @param rhs the {@link Phase} to be cloned
+     */
     public Phase(Phase rhs)
     {
         this.sequence = rhs.sequence;
@@ -71,43 +84,81 @@ public class Phase implements Comparable<Phase>
         start_time = rhs.start_time;
     }
     
+    /**
+     * Updates the {@link Turn}s allowed
+     * @param t the new array of {@link Turn}s allowed
+     */
     public void setTurns(Turn[] t)
     {
         allowed = t;
     }
     
+    /**
+     * Updates the sequence in which this {@link Phase} occurs in the signal cycle. {@link Phase}s for the same {@link Node} must have unique sequences.
+     * @param seq the new sequence value
+     */
     public void setSequence(int seq)
     {
         sequence = seq;
     }
     
+    /**
+     * Returns the sequence in which this {@link Phase} occurs in the signal cycle. {@link Phase}s for the same {@link Node} must have unique sequences.
+     * @return the sequence in which this {@link Phase} occurs in the signal cycle
+     */
+    public int getSequence()
+    {
+        return sequence;
+    }
+    
+    /**
+     * Returns a clone of this {@link Phase}
+     * @return a clone of this {@link Phase}
+     */
     public Phase clone()
     {
         return new Phase(this);
     }
     
+    /**
+     * Returns the all red time
+     * @return the all red time
+     */
     public double getRedTime()
     {
         return red;
     }
     
+    /**
+     * Returns the yellow time
+     * @return the yellow time
+     */
     public double getYellowTime()
     {
         return yellow;
     }
     
+    /**
+     * Orders the phases depending on the sequence
+     * @param rhs the {@link Phase} to be compared against
+     * @return which {@link Phase} has a lower sequence
+     */
     public int compareTo(Phase rhs)
     {
         return sequence - rhs.sequence;
     }
     
+    /**
+     * Returns an array of allowed {@link Turn}s
+     * @return an array of allowed {@link Turn}s
+     */
     public Turn[] getTurns()
     {
         return allowed;
     }
     
     /**
-     * Gets the time left for the phase to get over.
+     * Gets the time left for the phase for the current time step
      * @param curr_time Is a double value indicating the current time
      * @return Returns the time left for the phase to get over.
      */
@@ -152,7 +203,10 @@ public class Phase implements Comparable<Phase>
     }
     
 
-    
+    /**
+     * Updates the yellow time
+     * @param y the new yellow time
+     */
     public void setYellowTime(double y)
     {
         yellow = y;
@@ -163,30 +217,35 @@ public class Phase implements Comparable<Phase>
         return ""+hashCode();
     }
     
+    /**
+     * Updates the red time
+     * @param r the new red time
+     */
     public void setRedTime(double r)
     {
         red = r;
     }
     
     /**
-     * Gets start time of the phase.
-     * @return Returns a double value indicating the start time of the phase.
+     * Gets start time of the {@link Phase}.
+     * @return Returns a double value indicating the start time of the {@link Phase}
      */
     public double getStartTime()
     {
         return start_time;
     }
+    
     /**
-     * Gets the duration of the phase.
-     * @return Returns a double value indicating the duration of the phase.
+     * Gets the duration of this {@link Phase}.
+     * @return Returns {@link Phase#getGreenTime()}+{@link Phase#getYellowTime()}+{@link Phase#getRedTime()}
      */
     public double getDuration()
     {
-        return green_time + yellow + red;
+        return getGreenTime() + getYellowTime() + getRedTime();
     }
     /**
-     * Gets the list of {@link Turn}s allowed in that phase.
-     * @return Returns an array list of the turn movements allowed in that phase.
+     * Gets the list of {@link Turn}s allowed in this {@link Phase}.
+     * @return Returns an array list of the turn movements allowed in this {@link Phase}.
      */
     public Turn[] getAllowed()
     {

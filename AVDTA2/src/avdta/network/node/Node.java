@@ -5,6 +5,8 @@
 package avdta.network.node;
 
 import avdta.gui.editor.visual.DisplayManager;
+import avdta.network.node.Intersection;
+import avdta.network.node.Zone;
 import avdta.network.link.TransitLink;
 import avdta.network.link.Link;
 import avdta.vehicle.DriverType;
@@ -67,7 +69,7 @@ public abstract class Node extends Location implements Serializable, Comparable<
     private Set<TransitLink> transitInc, transitOut;
     
     /**
-     * Instantiates a node with location (0, 0)
+     * Instantiates a {@link Node} with {@link Location} (0, 0)
      * @param id A unique id for the node.
      */
     public Node(int id)
@@ -77,7 +79,7 @@ public abstract class Node extends Location implements Serializable, Comparable<
     
     /**
      * 
-     * @param id A unique id for the node
+     * @param id A unique id for this {@link Node}
      * @param loc take {@link Location} as input
      */
     public Node(int id, Location loc)
@@ -94,39 +96,71 @@ public abstract class Node extends Location implements Serializable, Comparable<
         selected = false;
     }
     
+    /**
+     * Checks whether this {@link Node} is selected for visualization
+     * @return whether this {@link Node} is selected
+     */
     public boolean isSelected()
     {
         return selected;
     }
     
+    /**
+     * Updates whether this {@link Node} is selected for visualization
+     * @param s whether this {@link Node} should be selected
+     */
     public void setSelected(boolean s)
     {
         selected = s;
     }
     
+    /**
+     * Returns the marker {@link Style} for visualization
+     * @return STYLE.FIXED
+     */
     public STYLE getMarkerStyle() {
         return STYLE.FIXED;
     }
     
+    /**
+     * Returns the radius for visualization
+     * @return 0 by default 
+     */
     public double getRadius() {
         return 0;
     }
     
+    /**
+     * Returns whether this {@link Node} is drawn during visualization
+     * @return whether this {@link Node} is a {@link Zone}
+     */
     public boolean isVisible()
     {
         return !isZone();
     }
     
+    /**
+     * Returns a {@link String} containing the id
+     * @return a {@link String} containing the id
+     */
     public String getName()
     {
         return ""+getId();
     }
     
+    /**
+     * Updates the set of incoming {@link Link}s
+     * @param inc the new set of incoming {@link Link}s
+     */
     public void setIncoming(Set<Link> inc)
     {
         incoming = inc;
     }
     
+    /**
+     * Updates the set of outgoing {@link Link}s
+     * @param out the new set of outgoing {@link Link}s
+     */
     public void setOutgoing(Set<Link> out)
     {
         outgoing = out;
@@ -148,7 +182,7 @@ public abstract class Node extends Location implements Serializable, Comparable<
     
     /**
      * 
-     * @return if this node uses conflict regions for reservations
+     * @return if this {@link Node} uses conflict regions for reservations
      */
     public abstract boolean hasConflictRegions();
     
@@ -173,6 +207,10 @@ public abstract class Node extends Location implements Serializable, Comparable<
      */
     public void initialize(){}
     
+    /**
+     * Returns the id of this {@link Node}
+     * @return the id of this {@link Node}
+     */
     public int getId()
     {
         return id;
@@ -180,7 +218,7 @@ public abstract class Node extends Location implements Serializable, Comparable<
     
 
     /**
-     * 
+     * Returns a {@link String} containing the id
      * @return id
      */
     public String toString()
@@ -188,6 +226,10 @@ public abstract class Node extends Location implements Serializable, Comparable<
         return ""+id;
     }
     
+    /**
+     * Creates a {@link NodeRecord} representation of this {@link Node}
+     * @return a {@link NodeRecord} representation of this {@link Node}
+     */
     public NodeRecord createNodeRecord()
     {
         return new NodeRecord(getId(), getType(), getX(), getY(), getElevation());
@@ -199,10 +241,14 @@ public abstract class Node extends Location implements Serializable, Comparable<
         return id;
     }
     
+    /**
+     * Execute one time step for this node
+     * @return the number of exiting vehicles
+     */
     public abstract int step();
     
     /**
-     * Updates incoming or outgoing links, appropriately
+     * Updates incoming or outgoing {@link Link}s, appropriately
      * @param l {@link Link} to be updated.
      */
     public void addLink(Link l)
@@ -218,7 +264,7 @@ public abstract class Node extends Location implements Serializable, Comparable<
     }
     
     /**
-     * Updates incoming or outgoing links, appropriately
+     * Updates incoming or outgoing {@link Link}s, appropriately
      * @param l {@link TransitLink} to be updated.
      */
     public void addLink(TransitLink l)
@@ -234,7 +280,7 @@ public abstract class Node extends Location implements Serializable, Comparable<
     }
     
     /**
-     * 
+     * Returns the set of incoming {@link Link}s
      * @return incoming links
      */
     public Set<Link> getIncoming()
@@ -243,7 +289,7 @@ public abstract class Node extends Location implements Serializable, Comparable<
     }
     
     /**
-     * 
+     * Returns the set of outgoing {@link Link}s
      * @return outgoing links
      */
     public Set<Link> getOutgoing()
@@ -252,8 +298,9 @@ public abstract class Node extends Location implements Serializable, Comparable<
     }
     
     /**
-     * 
+     * Returns the set of incoming {@link TransitLink}s. {@link TransitLink}s are used to move travelers virtually via transit or walking from transit stops to their destination.
      * @return incoming transit links
+     * @see TransitLink
      */
     public Set<TransitLink> getTransitInc()
     {
@@ -261,17 +308,30 @@ public abstract class Node extends Location implements Serializable, Comparable<
     }
     
     public abstract int getType();
+    
     /**
-     * 
+     * Returns the set of outgoing {@link TransitLink}s. {@link TransitLink}s are used to move travelers virtually via transit or walking from transit stops to their destination.
      * @return outgoing transit links
+     * @see TransitLink
      */
     public Set<TransitLink> getTransitOut()
     {
         return transitOut;
     }
     
+    /**
+     * Returns the {@link Signalized} associated with this {@link Node}, if one exists.
+     * @return the {@link Signalized} associated with this {@link Node}, if one exists.
+     * @see Signalized
+     */
     public abstract Signalized getSignal();
     
+    /**
+     * Paints this {@link Node} for visualization
+     * @param g the {@link Graphics} to paint on
+     * @param position the location on the {@link Graphics} 
+     * @param radius the radius of the visual
+     */
     public void paint(Graphics g, Point position, int radius) {
         
         int sizeH = radius;
@@ -291,6 +351,11 @@ public abstract class Node extends Location implements Serializable, Comparable<
         if (getLayer() == null || getLayer().isVisibleTexts()) paintText(g, position);
     }
     
+    /**
+     * Paints text describing this node
+     * @param g the {@link Graphics} to paint on
+     * @param position the location on the {@link Graphics} 
+     */
     public void paintText(Graphics g, Point position) {
         String name = getName();
         if (name != null && g != null && position != null) {
@@ -300,38 +365,70 @@ public abstract class Node extends Location implements Serializable, Comparable<
         }
     }
     
+    /**
+     * The {@link Font} to use when drawing text for visualization
+     * @return {@link Node#NODE_FONT}
+     */
     public Font getFont()
     {
         return NODE_FONT;
     }
     
+    /**
+     * The {@link Layer} to use in visualization
+     * @return {@link Node#NODES}
+     */
     public Layer getLayer()
     {
         return NODES;
     }
 
+    /**
+     * Update the {@link Layer} used for visualization
+     * @param layer the new {@link Layer} 
+     */
     public void setLayer(Layer layer){}
 
+    /**
+     * Update the {@link Style} used for visualization
+     * @return {@link Node#NODE_STYLE}
+     */
     public Style getStyle()
     {
         return NODE_STYLE;
     }
 
+    /**
+     * Returns the {@link Style} used for visualization. The {@link Style} used depends on whether this {@link Node} is selected; then whether it is a {@link Zone} or {@link Intersection}
+     * @return the {@link Style} for visualization
+     */
     public Style getStyleAssigned()
     {
         return isSelected()? SELECTED_STYLE : isZone()? CENTROID_STYLE : NODE_STYLE;
     }
 
+    /**
+     * This is the foreground {@link Color} used when drawing this {@link Node} as a filled circle.
+     * @return the foreground {@link Color}
+     */
     public Color getColor()
     {
         return getStyleAssigned().getColor();
     }
 
+    /**
+     * This is the border {@link Color} used when drawing this {@link Node} as a filled circle.
+     * @return the border {@link Color}
+     */
     public Color getBackColor()
     {
         return getStyleAssigned().getBackColor();
     }
 
+    /**
+     * The {@link Stroke} used for visualization
+     * @return the {@link Stroke} associated with {@link Node#getStyleAssigned()}
+     */
     public Stroke getStroke()
     {
         return getStyleAssigned().getStroke();

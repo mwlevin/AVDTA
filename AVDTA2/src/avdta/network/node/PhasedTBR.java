@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * This gives priority to vehicles making turning movements within a phase, for intersection coordination.
+ * This is a version of reservations in which vehicles with a green light get priority.
  * Other vehicles can still move if capacity is available.
  * 
  * @author Michael
@@ -32,6 +32,9 @@ public class PhasedTBR extends PriorityTBR implements Signalized
     
     private Map<Link, Map<Link, PhaseMovement>> turns;
     
+    /**
+     * Constructs this {@link PhasedTBR} with empty {@link Phase}s for a null {@link Intersection}. A non-null {@link Intersection} is required for simulation.
+     */
     public PhasedTBR()
     {
         phases = new ArrayList<Phase>();
@@ -40,6 +43,10 @@ public class PhasedTBR extends PriorityTBR implements Signalized
         setPolicy(new PhasePriority(this));
     }
     
+    /**
+     * Constructs this {@link PhasedTBR} with empty {@link Phase}s for the specified {@link Intersection}
+     * @param n the {@link Intersection} this {@link PhasedTBR} controls
+     */
     public PhasedTBR(Intersection n)
     {
         super(n);
@@ -50,26 +57,45 @@ public class PhasedTBR extends PriorityTBR implements Signalized
         setPolicy(new PhasePriority(this));
     }
     
+    /**
+     * The {@link Signalized} form for adding signal data
+     * @return this {@link PhasedTBR}
+     */
     public Signalized getSignal()
     {
         return this;
     }
     
+    /**
+     * Returns the offset for the signal cycle
+     * @return the offset for the signal cycle
+     */
     public double getOffset()
     {
         return offset;
     }
     
+    /**
+     * Updates the offset for the signal cycle
+     * @param offset the new offset
+     */
     public void setOffset(double offset)
     {
         this.offset = offset;
     }
     
+    /**
+     * Returns the {@link List} of {@link Phase}s in the signal cycle
+     * @return the {@link List} of {@link Phase}s
+     */
     public List<Phase> getPhases()
     {
         return phases;
     }
     
+    /**
+     * Resets this {@link PhasedTBR} to restart simulation. This resets the current phase to start at the offset.
+     */
     public void reset()
     {
         curr_idx = 0;
@@ -92,6 +118,10 @@ public class PhasedTBR extends PriorityTBR implements Signalized
         }
     }
     
+    /**
+     * Adds a {@link Phase} to the cycle. {@link Phase}s do not need to be added in sequence order.
+     * @param p the {@link Phase} to be added
+     */
     public void addPhase(Phase p)
     {
         phases.add(p);
@@ -99,18 +129,19 @@ public class PhasedTBR extends PriorityTBR implements Signalized
         total_time += p.getDuration();
     }
     
+    /**
+     * Returns the duration of the signal cycle
+     * @return the duration of the signal cycle
+     */
     public double getDuration()
     {
-        double output = 0;
-        
-        for(Phase p : phases)
-        {
-            output += p.getDuration();
-        }
-        
-        return output;
+        return total_time;
     }
     
+    /**
+     * Initializes this {@link PhasedTBR} after the network is read. The list of {@link Phase}s is sorted according to sequence, and the current {@link Phase} is set based on the offset.
+     * 
+     */
     public void initialize()
     {
         super.initialize();
@@ -159,6 +190,10 @@ public class PhasedTBR extends PriorityTBR implements Signalized
         }
     }
     
+    /**
+     * Calculates the green time for the current time step, and updates the capacity for each {@link PhaseMovement}
+     * @see PhaseMovement
+     */
     public void calcGreenTime()
     {
         if(phases.size() == 0)
@@ -233,6 +268,12 @@ public class PhasedTBR extends PriorityTBR implements Signalized
 
     }
     
+    /**
+     * Attempts to reserve capacity for the specified {@link Vehicle}. 
+     * This relies on {@link Vehicle#getPrevLink()} being an incoming {@link Link}, and {@link Vehicle#getNextLink()} being an outgoing {@link Link}.
+     * @param v the vehicle reserving capacity
+     * @return whether the reservation was successful
+     */
     public boolean reserveCapacity(Vehicle v)
     {
         if(v.getNextLink() == null)
@@ -277,6 +318,10 @@ public class PhasedTBR extends PriorityTBR implements Signalized
         }
     }
     
+    /**
+     * Executes one time step of simulation
+     * @return the number of exiting vehicles
+     */
     public int step()
     {
         calcGreenTime();

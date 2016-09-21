@@ -12,7 +12,7 @@ import java.io.Serializable;
  */
 
 /**
- *
+ * This class represents a single conflict region in the conflict region model of reservation-based intersection control.
  * @author Michael
  */
 public class ConflictRegion implements Serializable
@@ -26,7 +26,7 @@ public class ConflictRegion implements Serializable
     public boolean blocked;
 
 
-    // hidden ID for hashing
+    // id for hashing
     private int id;
     private static int id_count = 0;
     
@@ -34,7 +34,7 @@ public class ConflictRegion implements Serializable
     public IloLinearNumExpr capacityUseSum;
     
     /**
-     * Constructs this ConflictRegion with the specified capacity
+     * Constructs this {@link ConflictRegion} with the specified capacity
      * @param capacity 
      */
     public ConflictRegion(double capacity)
@@ -58,8 +58,8 @@ public class ConflictRegion implements Serializable
     }
 
     /**
-     * Updates the capacity of this ConflictRegion
-     * @param capacity 
+     * Updates the capacity of this {@link ConflictRegion}
+     * @param capacity the new capacity
      */
     public void setCapacity(double capacity)
     {
@@ -67,8 +67,8 @@ public class ConflictRegion implements Serializable
     }
 
     /**
-     * 
-     * @return a String containing the id 
+     * A {@link String} specifying the id
+     * @return a {@link String} containing the id 
      */
     public String toString()
     {
@@ -80,15 +80,20 @@ public class ConflictRegion implements Serializable
         return id;
     }
     
+    /**
+     * Returns the id of this {@link ConflictRegion}. Ids are uniquely generated upon instantiation.
+     * 
+     * @return an int specifying the id
+     */
     public int getId()
     {
         return id;
     }
 
     /**
-     * Resets this ConflictRegion for the next time step
-     * This updates the capacity, and, if the ConflictRegion was blocked the last time step, saves some of the previous time step's capacity.
-     * This prevents situations in which vehicles are blocked by lack of ConflictRegion capacity and lack of Link receiving flow on alternative time steps.
+     * Resets this {@link ConflictRegion} for the next time step
+     * This updates the capacity, and, if the {@link ConflictRegion} was blocked the last time step, saves some of the previous time step's capacity.
+     * This prevents situations in which vehicles are blocked by lack of {@link ConflictRegion} capacity and lack of Link receiving flow on alternative time steps.
      * The blocked check is reset every time step and activated when a vehicle cannot move through this ConflictRegion.
      */
     public void newTimestep()
@@ -108,7 +113,7 @@ public class ConflictRegion implements Serializable
     }
     
     /**
-     * Resets this ConflictRegion to restart the simulation
+     * Resets this {@link ConflictRegion} to restart the simulation
      */
     public void reset()
     {
@@ -126,10 +131,10 @@ public class ConflictRegion implements Serializable
     }
 
     /**
-     * This checks whether there is sufficient remaining flow to move a vehicle which requires the specified flow. If not, this ConflictRegion is marked as blocked.
+     * This checks whether there is sufficient remaining flow to move a vehicle which requires the specified flow. If not, this {@link ConflictRegion} is marked as blocked.
      * 
-     * @param inc the incoming Link
-     * @param out the outgoing Link
+     * @param inc the incoming {@link Link}
+     * @param out the outgoing {@link Link}
      * @param flow equivalent flow of the vehicle. This may be reduced for autonomous vehicles due to lower following headways.
      * @return whether a vehicle with the specified equivalent flow can move from the incoming link to the outgoing link
      */
@@ -142,8 +147,8 @@ public class ConflictRegion implements Serializable
 
     /**
      * Moves a vehicle requiring the specified flow
-     * @param inc the incoming link. This is used for adjusting the flow required.
-     * @param out the outgoing link
+     * @param inc the incoming {@link Link}. This is used for adjusting the flow required.
+     * @param out the outgoing {@link Link}
      * @param flow equivalent flow of the vehicle. This may be reduced for autonomous vehicles due to lower following headways.
      */
     public void update(Link inc, Link out, double flow)
@@ -152,9 +157,10 @@ public class ConflictRegion implements Serializable
     }
 
     /**
+     * Adjusts the required flow for the specified turning movement
      * 
-     * @param inc the incoming link
-     * @param out the outgoing link
+     * @param inc the incoming {@link Link}
+     * @param out the outgoing {@link Link}
      * @return adjust the required flow for vehicles turning from the specified incoming and outgoing links.
      */
     public double adjustFlow(Link inc, Link out)
@@ -163,8 +169,8 @@ public class ConflictRegion implements Serializable
     }
 
     /**
-     * 
-     * @return the capacity of this ConflictRegion
+     * Returns the capacity of this {@link ConflictRegion}
+     * @return the capacity of this {@link ConflictRegion}
      */
     public double getCapacity()
     {
@@ -172,12 +178,16 @@ public class ConflictRegion implements Serializable
     }
     
     /**
-     * Marked this ConflictRegion as blocked for the current time step
+     * Marked this {@link ConflictRegion} as blocked for the current time step
      */
     public void setBlocked()
     {
         blocked = true;
     }
     
+    /**
+     * Sets the maximum flow scale to the specified {@link Link}
+     * @param i the {@link Link} with the maximum flow scaling
+     */
     public void setMaxScale(Link i){}
 }
