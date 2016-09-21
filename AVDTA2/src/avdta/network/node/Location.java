@@ -78,7 +78,7 @@ public class Location implements Serializable, ICoordinate
     
     /**
      * Calculates the angle between this {@link Location} and another
-     * @return the angle to {@link Location} rhs
+     * @return the angle to {@link Location} {@code rhs} in radians
      */
     public double angleTo(Location rhs)
     {

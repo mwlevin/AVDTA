@@ -95,6 +95,18 @@ public abstract class Link implements Serializable, Comparable<Link>
     
     private boolean selected;
     
+    /**
+     * Constructs the link with the given parameters 
+     * @param id the link id
+     * @param source the source node
+     * @param dest the destination node
+     * @param capacity the capacity per lane (veh/hr)
+     * @param ffspd the free flow speed (mi/hr)
+     * @param wavespd the congested wave speed (mi/hr)
+     * @param jamd the jam density (veh/mi)
+     * @param length the length (mi)
+     * @param numLanes the number of lanes
+     */
     public Link(int id, Node source, Node dest, double capacity, double ffspd, double wavespd, double jamd, double length, int numLanes)
     {
         this.id = id;
@@ -137,6 +149,10 @@ public abstract class Link implements Serializable, Comparable<Link>
         
     }
     
+    /**
+     * Returns the angle this link makes with its downstream node 
+     * @return the angle this link makes with its downstream node in radians
+     */
     public double getIncomingAngle()
     {
         if(coords.length >= 2)
@@ -149,11 +165,20 @@ public abstract class Link implements Serializable, Comparable<Link>
         }
     }
     
+    /**
+     * Returns whether this link has a transit lane for transit
+     * @return 
+     * @see TransitLane
+     */
     public boolean hasTransitLane()
     {
         return (this instanceof SplitCTMLink);
     }
     
+    /**
+     * Returns the angle this link makes with its upstream node
+     * @return the angle this link makes with its upstream node in radians
+     */
     public double getOutgoingAngle()
     {
         if(coords.length >= 2)
@@ -166,6 +191,13 @@ public abstract class Link implements Serializable, Comparable<Link>
         }
     }
     
+    /**
+     * Returns the distance to a separate {@link Location}. 
+     * This is based on approximating the link as a straight line segment.
+     * Used for visualization.
+     * @param loc the specified {@link Location}
+     * @return the distance to the specified {@link Location}
+     */
     public double distanceTo(Location loc)
     {
         return pDistance(loc.getX(), loc.getY(), source.getX(), source.getY(), dest.getX(), dest.getY());
@@ -205,32 +237,57 @@ public abstract class Link implements Serializable, Comparable<Link>
         return Math.sqrt(dx * dx + dy * dy);
       }
     
+    /**
+     * Creates a {@link LinkRecord}, which is used for manipulating and writing the data associated with a {@link Link}
+     * @return a {@link LinkRecord} of this {@link Link}
+     */
     public LinkRecord createLinkRecord()
     {
         return new LinkRecord(getId(), getType(), getSource().getId(), getDest().getId(), getLength(), getFFSpeed(), getWaveSpeed(), 
                 getCapacityPerLane(), getNumLanes());
     }
     
+    /**
+     * Returns whether this {@link Link} is selected for visualization
+     * @return whether this {@link Link} is selected for visualization
+     */
     public boolean isSelected()
     {
         return selected;
     }
     
+    /**
+     * Updates whether this {@link Link} is selected for visualization
+     * @param s whether this {@link Link} is selected for visualization
+     */
     public void setSelected(boolean s)
     {
         selected = s;
     }
     
+    /**
+     * Returns the {@color Color} used to draw this {@link Link} in visualization
+     * @return the {@color Color} used to draw this {@link Link} in visualization
+     */
     public Color getColor()
     {
         return selected? Color.red : Color.black;
     }
     
+    /**
+     * Returns the width used to draw this {@link Link} in visualization
+     * @return the width used to draw this {@link Link} in visualization
+     */
     public int getWidth()
     {
         return selected? 5 : 3;
     }
     
+    /**
+     * Updates the coordinates of this {@link Link}. 
+     * For visualization purposes, links can have multiple coordinates besides the upstream and downstream nodes.
+     * @param array the new coordinates
+     */
     public void setCoordinates(Location[] array)
     {
         coords = array;
@@ -239,6 +296,11 @@ public abstract class Link implements Serializable, Comparable<Link>
         coords[coords.length-1] = dest;
     }
     
+    /**
+     * Updates the coordinates of this {@link Link}. 
+     * For visualization purposes, links can have multiple coordinates besides the upstream and downstream nodes.
+     * @param list the new coordinates
+     */
     public void setCoordinates(List<Location> list)
     {
         coords = new Location[list.size()];
@@ -260,7 +322,10 @@ public abstract class Link implements Serializable, Comparable<Link>
      */
     public abstract int getType();
    
-            
+    /**
+     * Returns the effective queue length on this {@link Link}
+     * @return the effective queue length on this {@link Link}
+     */
     public int getEffQueueLength()
     {
         return 0;
@@ -276,7 +341,7 @@ public abstract class Link implements Serializable, Comparable<Link>
     }
     
     /**
-     * 
+     * Returns the number of lanes available at the downstream end of this {@link Link}, which may change due to dynamic lane reversal.
      * @return the number of lanes available at the downstream end
      */
     public int getDsLanes()
@@ -285,6 +350,7 @@ public abstract class Link implements Serializable, Comparable<Link>
     }
     
     /**
+     * Returns the number of lanes available at the upstream end of this {@link Link}, which may change due to dynamic lane reversal.
      * 
      * @return the number of lanes available at the upstream end 
      */
@@ -308,20 +374,28 @@ public abstract class Link implements Serializable, Comparable<Link>
         }
     }
     
+    /**
+     * Returns the average grade (change in elevation)
+     * @return the average grade (change in elevation) in percent
+     */
     public double getAvgGrade()
     {
         return (dest.getElevation() - source.getElevation()) / (getLength() * 5280);
     }
     
     /**
-     * 
-     * @return the average grade of this link 
+     * Returns the average grade (change in elevation)
+     * @return the average grade of this link in radians
      */
     public double getGrade()
     {
         return grade;
     }
     
+    /**
+     * Returns the queue length on this {@link Link}
+     * @return the queue length on this {@link Link}
+     */
     public int getQueueLength()
     {
         return 0;
@@ -356,16 +430,28 @@ public abstract class Link implements Serializable, Comparable<Link>
         return 1.0;
     }
     
+    /**
+     * Returns the coordinates representing this {@link Link} for visualization
+     * @return the coordinates representing this {@link Link}
+     */
     public Location[] getCoordinates()
     {
         return coords;
     }
     
+    /**
+     * Updates the capacity per lane of this {@link Link} (veh/hr)
+     * @param capacity the new capacity
+     */
     public void setCapacity(double capacity)
     {
         this.capacity = capacity;
     }
     
+    /**
+     * Returns the downstream cumulative count for this {@link Link}
+     * @return the downstream cumulative count for this {@link Link}
+     */
     public int getN()
     {
         int count = 0;
@@ -405,7 +491,8 @@ public abstract class Link implements Serializable, Comparable<Link>
     }
     
     /**
-     * @param t 
+     * Returns the upstream cumulative count to his {@link Link} at the specified time
+     * @param t the time in seconds
      * @return upstream cumulative count
      */
     public int getFlowin(int t)
@@ -413,6 +500,9 @@ public abstract class Link implements Serializable, Comparable<Link>
         return flowin[t / Simulator.ast_duration];
     }
     
+    /**
+     * Calculate the upstream cumulative counts based on input data
+     */
     public void postProcessFlowin()
     {
         for(int i = 1; i < flowin.length; i++)
@@ -422,8 +512,8 @@ public abstract class Link implements Serializable, Comparable<Link>
     }
     
     /**
-     * 
-     * @param t
+     * Returns average flow at specified time
+     * @param t the time (seconds)
      * @return average flow in at t, in vph, based on upstream cumulative counts
      */
     public double getAvgFlow(int t)
@@ -442,7 +532,7 @@ public abstract class Link implements Serializable, Comparable<Link>
     }
     
     /**
-     * 
+     * Returns average direction of the link based on upstream and downstream {@link Node} coordinates
      * @return heading (radians) of the link, based on node coordinates
      */
     public double getDirection()
@@ -451,7 +541,7 @@ public abstract class Link implements Serializable, Comparable<Link>
     }
     
     /**
-     * 
+     * Returns the id
      * @return id
      */
     public String toString()
@@ -459,6 +549,10 @@ public abstract class Link implements Serializable, Comparable<Link>
         return ""+id;
     }
     
+    /**
+     * Returns the id
+     * @return id
+     */
     public int getId()
     {
         return id;
@@ -480,13 +574,13 @@ public abstract class Link implements Serializable, Comparable<Link>
     
     
     /**
-     * 
+     * Returns the number of {@link Vehicle}s that could exit the link this time step
      * @return the size of the sending flow set
      */
     public abstract int getNumSendingFlow();
     
     /**
-     * 
+     * Returns the list of {@link Vehicle}s that could exit the link this time step
      * @return sending flow, sorted by arrival time for FIFO
      */
     public abstract List<Vehicle> getSendingFlow();
@@ -541,11 +635,20 @@ public abstract class Link implements Serializable, Comparable<Link>
         }
     }
     
+    /**
+     * Returns all stored average travel times
+     * @return an array of {@link RunningAvg} containing stored travel times
+     */
     public RunningAvg[] getAvgTTs()
     {
         return avgTT;
     }
     
+    /**
+     * Sets the average travel time at the specified time to the specified value
+     * @param enter the time (seconds)
+     * @param tt experienced travel time (seconds)
+     */
     public void setAvgTT(int enter, double tt)
     {
         int idx = (int)Math.min(Simulator.num_asts-1, enter / Simulator.ast_duration);
@@ -557,7 +660,7 @@ public abstract class Link implements Serializable, Comparable<Link>
     }
     
     /**
-     * 
+     * Returns the average toll at the specified time
      * @param enter An integer indicating the time entered.
      * @return average toll for a vehicle entering at the specified time
      */
@@ -576,7 +679,7 @@ public abstract class Link implements Serializable, Comparable<Link>
     }
     
     /**
-     * 
+     * Returns the toll at the specified time
      * @param time Time at which the toll is to be found.
      * @return the actual toll experienced at the specified time
      */
@@ -585,14 +688,18 @@ public abstract class Link implements Serializable, Comparable<Link>
         return toll;
     }
     
-    
+    /**
+     * Sets the toll. Time-dependent tolls are not supported within the {@link Link} class
+     * @param time the time (seconds)
+     * @param t the new toll ($)
+     */
     public void setToll(int time, double t)
     {
         this.toll = t;
     }
 
     /**
-     * 
+     * Returns the average speed at the specified time
      * @param enter An integer indicating the time entered.
      * @return average speed for vehicles entering at specified time, based on average travel time
      */
@@ -602,7 +709,7 @@ public abstract class Link implements Serializable, Comparable<Link>
     }
     
     /**
-     * 
+     * Returns the average energy consumption at the specified time
      * @param enter An integer indicating the time entered.
      * @return average energy consumption for vehicles entering at specified time
      */
@@ -612,7 +719,7 @@ public abstract class Link implements Serializable, Comparable<Link>
     }
     
     /**
-     * 
+     * Returns the average fuel consumption at the specified time
      * @param enter An integer indicating the time entered.
      * @return average fuel consumption for vehicles entering at specified time
      */
@@ -622,14 +729,14 @@ public abstract class Link implements Serializable, Comparable<Link>
     }
     
     /**
-     * 
+     * Returns the number of vehicles that could enter the link this time step
      * @return receiving flow
      */
     public abstract double getReceivingFlow();
     
     
     /**
-     * 
+     * Returns the upstream node for this link
      * @return upstream node for this link
      */
     public Node getSource()
@@ -638,7 +745,7 @@ public abstract class Link implements Serializable, Comparable<Link>
     }
     
     /**
-     * 
+     * Returns the downstream node for this link
      * @return downstream node for this link
      */
     public Node getDest()
@@ -646,19 +753,31 @@ public abstract class Link implements Serializable, Comparable<Link>
         return dest;
     }
     
+    /**
+     * Updates the downstream node for this link
+     * @param d the new downstream node
+     */
     public void setDest(Node d)
     {
+        dest.getIncoming().remove(this);
         dest = d;
-    }
-    
-    public void setSource(Node o)
-    {
-        source = o;
+        dest.addLink(this);
     }
     
     /**
-     * 
-     * @return total capacity (not per lane)
+     * Updates the upstream node for this link
+     * @param o the new upstream node
+     */
+    public void setSource(Node o)
+    {
+        source.getOutgoing().remove(this);
+        source = o;
+        source.addLink(this);
+    }
+    
+    /**
+     * Returns the total capacity 
+     * @return total capacity (not per lane) (veh/hr)
      */
     public double getCapacity()
     {
@@ -666,8 +785,8 @@ public abstract class Link implements Serializable, Comparable<Link>
     }
     
     /**
-     * 
-     * @return capacity per lane
+     * Returns the capacity per lane 
+     * @return capacity per lane (veh/hr)
      */
     public double getCapacityPerLane()
     {
@@ -675,8 +794,8 @@ public abstract class Link implements Serializable, Comparable<Link>
     }
     
     /**
-     * 
-     * @return capacity per lane, scaled by timestep
+     * Returns capacity per lane per time step
+     * @return capacity per lane, scaled by timestep (veh/s)
      */
     public double getCapacityPerTimestep()
     {
@@ -684,8 +803,8 @@ public abstract class Link implements Serializable, Comparable<Link>
     }
 
     /**
-     * 
-     * @return free flow travel time in seconds
+     * Returns the free flow travel time
+     * @return free flow travel time (seconds)
      */
     public double getFFTime()
     {
@@ -693,8 +812,8 @@ public abstract class Link implements Serializable, Comparable<Link>
     }
     
     /**
-     * 
-     * @return free flow speed, mph
+     * Returns the free flow speed
+     * @return free flow speed (mi/hr)
      */
     public double getFFSpeed()
     {
@@ -702,27 +821,36 @@ public abstract class Link implements Serializable, Comparable<Link>
     }
     
     /**
-     * 
-     * @return wave speed, mph
+     * Returns the congested wave speed
+     * @return the congested wave speed (mi/hr)
      */
     public double getWaveSpeed()
     {
         return wavespd;
     }
     
+    /**
+     * Updates the congested wave speed
+     * @param w the new congested wave speed (mi/hr)
+     */
     public void setWaveSpeed(double w)
     {
         wavespd = w;
     }
     
+    /**
+     * Returns the number of lanes. 
+     * Note that the number of lanes per cell may vary due to dynamic lane reversal.
+     * @return the number of lanes
+     */
     public int getNumLanes()
     {
         return numLanes;
     }
     
     /**
-     * 
-     * @return total jam density (not per lane)
+     * Returns the total jam density
+     * @return total jam density (not per lane) (veh/mi)
      */
     public double getJamDensity()
     {
@@ -730,8 +858,8 @@ public abstract class Link implements Serializable, Comparable<Link>
     }
     
     /**
-     * 
-     * @return jam density per lane
+     * Returns the jam density per lane 
+     * @return jam density per lane (veh/mi)
      */
     public double getJamDensityPerLane()
     {
@@ -739,8 +867,8 @@ public abstract class Link implements Serializable, Comparable<Link>
     }
     
     /**
-     * 
-     * @return length of the link, in miles
+     * Returns the length of the link
+     * @return length of the link (mi)
      */
     public double getLength()
     {
@@ -748,8 +876,8 @@ public abstract class Link implements Serializable, Comparable<Link>
     }
     
     /**
-     * 
-     * @return average density of this link
+     * Returns the average density of the link
+     * @return average density of this link (veh/mi)
      */
     public double getDensity()
     {
@@ -757,7 +885,7 @@ public abstract class Link implements Serializable, Comparable<Link>
     }
     
     /**
-     * 
+     * Returns the number of vehicles on this link
      * @return number of vehicles on this link
      */
     public abstract int getOccupancy();
@@ -778,7 +906,7 @@ public abstract class Link implements Serializable, Comparable<Link>
     public void update(){}
     
     /**
-     * 
+     * Returns the sum of sending flow from upstream node's incoming links. Used for dynamic lane reversal.
      * @return sum of sending flow from upstream node's incoming links
      */
     public int getUsSendingFlow()
@@ -799,11 +927,22 @@ public abstract class Link implements Serializable, Comparable<Link>
         return incoming;
     }
     
+    /**
+     * Orders links based on id
+     * @param rhs the link being compared to
+     * @return order based on link id
+     */
     public int compareTo(Link rhs)
     {
         return id - rhs.id;
     }
     
+    /**
+     * Returns whether the given {@link DriverType} can use this {@link Link}. 
+     * It depends on the downstream intersection control; human vehicles cannot use reservations unless the parameter is set.
+     * @param driver the {@link DriverType} specifying human or autonomous
+     * @return whether the driver can use this {@link Link}
+     */
     public boolean canUseLink(DriverType driver)
     {
         if((dest instanceof Intersection) &&
