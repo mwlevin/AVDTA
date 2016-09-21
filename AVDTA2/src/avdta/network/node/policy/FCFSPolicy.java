@@ -12,11 +12,17 @@ import avdta.network.node.TBR;
 import avdta.network.node.TBR;
 
 /**
- * Prioritizes vehicles based on their reservation time (set on initialization, or when a vehicle reaches the front of its lane)
+ * Prioritizes vehicles based on their reservation time (set on initialization, or when a vehicle reaches the front of its lane).
  * @author Michael
  */
 public class FCFSPolicy extends IntersectionPolicy
 {
+    /**
+     * Compares two {@link Vehicle}s according to their reservation time. {@link Vehicle}s are listed in order of decreasing priority.
+     * @param v1 the first vehicle being compared
+     * @param v2 the second vehicle being compared
+     * @return sorting index for vehicles
+     */
     public int compare(Vehicle v1, Vehicle v2)
     {
         if(v1.reservation_time != v2.reservation_time)
@@ -33,6 +39,10 @@ public class FCFSPolicy extends IntersectionPolicy
         }
     }
 
+    /**
+    * Initializes {@link Vehicle} reservation time the first time a {@link Vehicle} is initialized
+    * @param node 
+    */
     public void initialize(TBR node, Vehicle v)
     {
         if(v.reservation_time < 0)
@@ -41,6 +51,19 @@ public class FCFSPolicy extends IntersectionPolicy
         }
     }
     
+    /**
+     * Clears the reservation time when the {@link Vehicle}'s reservation is accepted.
+     * @param v the {@link Vehicle} with an accepted reservation
+     */
+    public void onAccept(Vehicle v)
+    {
+        v.reservation_time = -1;
+    }
+    
+    /**
+     * Returns the type code associated with this policy
+     * @return {@link ReadNetwork#FCFS}
+     */
     public int getType()
     {
         return ReadNetwork.FCFS;

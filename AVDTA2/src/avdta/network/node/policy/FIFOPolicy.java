@@ -11,12 +11,21 @@ import avdta.vehicle.Vehicle;
 import avdta.network.node.TBR;
 import avdta.network.node.TBR;
 
+@Deprecated
 /**
- * Prioritizes vehicles based on arrival time at intersection (set when the vehicle is part of sending flow)
+ * Prioritizes vehicles based on arrival time at intersection (set when the vehicle is part of sending flow). 
+ * This differs from the {@link FCFSPolicy} in that {@link FCFSPolicy} is based on the reservation time.
+ * 
  * @author Michael
  */
 public class FIFOPolicy extends IntersectionPolicy
 {
+    /**
+     * Compares two {@link Vehicle}s according to their arrival time. {@link Vehicle}s are listed in order of decreasing priority.
+     * @param v1 the first vehicle being compared
+     * @param v2 the second vehicle being compared
+     * @return sorting index for vehicles
+     */
     public int compare(Vehicle v1, Vehicle v2)
     {
         if(v1.arr_time != v2.arr_time)
@@ -33,6 +42,10 @@ public class FIFOPolicy extends IntersectionPolicy
         }
     }
 
+    /**
+    * Initializes {@link Vehicle} priority the first time a {@link Vehicle} is initialized
+    * @param node 
+    */
     public void initialize(TBR node, Vehicle v)
     {
         if(v.reservation_time < 0)
@@ -41,6 +54,19 @@ public class FIFOPolicy extends IntersectionPolicy
         }
     }
     
+    /**
+     * Clears the reservation time when the {@link Vehicle}'s reservation is accepted.
+     * @param v the {@link Vehicle} with an accepted reservation
+     */
+    public void onAccept(Vehicle v)
+    {
+        v.reservation_time = -1;
+    }
+    
+    /**
+     * Returns the type code associated with this policy
+     * @return {@link ReadNetwork#FIFO}
+     */
     public int getType()
     {
         return ReadNetwork.FIFO;

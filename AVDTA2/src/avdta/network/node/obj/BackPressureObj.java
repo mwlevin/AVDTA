@@ -17,16 +17,23 @@ import avdta.network.node.TBR;
 import java.util.List;
 
 /**
- *
+ * This is the objective function used for the backpressure policy. 
  * @author Michael
  */
 public class BackPressureObj implements ObjFunction
 {
+    /**
+     * Returns whether the IP is trying to minimize the objective function.
+     * @return false
+     */
     public boolean isMinimize()
     {
         return false;
     }
     
+    /**
+     * Initialization work before scanning the vehicle list. This calculates the pressure for incoming and outgoing links.
+     */
     public void initialize(Node n)
     {
         for(Link l : n.getIncoming())
@@ -40,7 +47,7 @@ public class BackPressureObj implements ObjFunction
         }
     }
     
-    public int calculatePressure(Link l)
+    private int calculatePressure(Link l)
     {
         if(l instanceof CentroidConnector)
         {
@@ -83,7 +90,7 @@ public class BackPressureObj implements ObjFunction
         }
     }
     
-    public int calculatePressureBack(Link l, Link used)
+    private int calculatePressureBack(Link l, Link used)
     {
         if(l.lastLinkCheck == used.getId())
         {
@@ -146,6 +153,14 @@ public class BackPressureObj implements ObjFunction
         }
     }
     
+    /**
+     * Returns the coefficient for moving vehicle across the intersection
+     * The coefficient is based on the pressure from high link queues.
+     * 
+     * @param vehicle the {@link Vehicle} the weight applies to
+     * @param node the intersection at which the weight applies to
+     * @return coefficient for moving vehicle across the intersection. 
+     */
     public double value(Vehicle vehicle, TBR node)
     {
         Link i = vehicle.getPrevLink();
@@ -202,6 +217,10 @@ public class BackPressureObj implements ObjFunction
     }
     */
     
+    /**
+     * Returns the type code associated with the {@link BackPressureObj}
+     * @return {@link ReadNetwork#PRESSURE}
+     */
     public int getType()
     {
         return ReadNetwork.PRESSURE;

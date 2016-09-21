@@ -11,6 +11,7 @@ import avdta.vehicle.Vehicle;
 import avdta.network.node.TBR;
 import avdta.network.node.TBR;
 
+@Deprecated
 /**
  *
  * @author ut

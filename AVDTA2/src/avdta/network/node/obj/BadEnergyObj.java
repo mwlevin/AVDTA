@@ -5,6 +5,7 @@
  */
 package avdta.network.node.obj;
 
+@Deprecated
 /**
  *
  * @author ml26893

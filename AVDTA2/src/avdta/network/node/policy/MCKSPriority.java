@@ -21,21 +21,40 @@ public class MCKSPriority extends IntersectionPolicy
 {
     private ObjFunction func;
     
+    /**
+     * Constructs this {@link MCKSPriority} with the given objective
+     * @param func the objective function 
+     */
     public MCKSPriority(ObjFunction func)
     {
         this.func = func;
     }
     
+    /**
+     * Returns the objective function
+     * @return the objective function
+     */
     public ObjFunction getObj()
     {
         return func;
     }
     
+    /**
+     * Initializes the objective function for the specified {@link Node}
+     * @param n the {@link Node} that this {@link MCKSPriority} is used on.
+     */
     public void initialize(Node n)
     {
         func.initialize(n);
     }
     
+    /**
+     * Compares two {@link Vehicle}s according to their reservation priority. {@link Vehicle}s are listed in order of decreasing priority.
+     * Vehicles are sorted according to their efficiency.
+     * @param v1 the first vehicle being compared
+     * @param v2 the second vehicle being compared
+     * @return sorting index for vehicles
+     */
     public int compare(Vehicle v1, Vehicle v2)
     {
         if(v1.efficiency != v2.efficiency)
@@ -59,6 +78,11 @@ public class MCKSPriority extends IntersectionPolicy
         }
     }
     
+    /**
+     * Initializes vehicle efficiency based on the conflict region and downstream receiving flow used. 
+     * @param node the {@link Node} this priority applies to
+     * @param v the {@link Vehicle} this priority applies to
+     */
     public void initialize(TBR node, Vehicle v)
     {
         
@@ -90,6 +114,10 @@ public class MCKSPriority extends IntersectionPolicy
         */
     }
     
+    /**
+     * Returns the type code associated with this policy
+     * @return {@link ReadNetwork#MCKS} + the type of the {@link ObjFunction}
+     */
     public int getType()
     {
         return func.getType() + ReadNetwork.MCKS;
