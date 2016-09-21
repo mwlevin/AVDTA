@@ -5,6 +5,7 @@
  */
 package avdta;
 
+import avdta.network.link.transit.BusLink;
 import avdta.dta.DTAResults;
 import avdta.dta.DTASimulator;
 import avdta.dta.ReadDTANetwork;

@@ -78,6 +78,7 @@ public class Location implements Serializable, ICoordinate
     
     /**
      * Calculates the angle between this {@link Location} and another
+     * @param rhs the other {@link Location}
      * @return the angle to {@link Location} {@code rhs} in radians
      */
     public double angleTo(Location rhs)
@@ -94,6 +95,7 @@ public class Location implements Serializable, ICoordinate
     
     /**
      * Calculates the Euclidean distance between this {@link Location} and another
+     * @param rhs the other {@link Location}
      * @return the Euclidean distance to {@link Location} rhs
      */
     public double distanceTo(Location rhs)
@@ -188,9 +190,8 @@ public class Location implements Serializable, ICoordinate
     
     /**
      * Updates the longitude, which is stored as the x coordinate
-     * @param lon 
+     * @param lon the new longitude
      */
-
     public void setLon(double lon)
     {
         setX(lon);

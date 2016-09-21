@@ -11,15 +11,26 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import avdta.network.node.Node;
+import avdta.network.node.Zone;
+import avdta.network.node.Intersection;
 
 /**
- *
+ * This represents a centroid connector, which connects a {@link Intersection} to a {@link Zone} or vice versa.
+ * Centroid connectors do not have capacity or jam density constraints.
+ * Vehicles always travel at free flow on a centroid connector, but may not be able to exit the connector onto the network immediately.
+ * This is implemented as a point queue.
  * @author Michael
  */
 public class CentroidConnector extends Link
 {
     private LinkedList<Vehicle> queue;
     
+    /**
+     * Constructs the centroid connector with the given parameters. Other link parameters are not used.
+     * @param id the id
+     * @param source the upstream {@link Node}
+     * @param dest the downstream {@link Node}
+     */
     public CentroidConnector(int id, Node source, Node dest)
     {
         super(id, source, dest, 0, 0, 0, 0, 0, 1);
@@ -27,37 +38,65 @@ public class CentroidConnector extends Link
         queue = new LinkedList<Vehicle>();
     }
     
+    /**
+     * Returns the average energy consumption --- 0.
+     * @param enter the arrival time
+     * @return 0
+     */
     public double getAvgEnergy(int enter)
     {  
         return 0;
     }
     
+    /**
+     * Returns the capacity per lane
+     * @return 100000
+     */
     public double getCapacityPerLane()
     {
-        return 9000;
+        return 100000;
     }
     
+    /**
+     * Returns the free flow travel time
+     * @return 0
+     */
     public double getFFTime()
     {
         return 0;
     }
     
+    /**
+     * Resets this link for a new simulation.
+     */
     public void reset()
     {
         queue.clear();
         super.reset();
     }
     
+    /**
+     * Returns the receiving flow
+     * @return {@link Integer#MAX_VALUE}
+     */
     public double getReceivingFlow()
     {
         return Integer.MAX_VALUE;
     }
     
+    /**
+     * Returns the sending flow - which is everything on the link.
+     * @return the queue size
+     */
     public int getNumSendingFlow()
     {
         return queue.size();
     }
     
+    /**
+     * Returns the list of sending flow, and updates the arrival time of {@link Vehicle}s in the sending flow.
+     * @return everything in the queue
+     */
     public List<Vehicle> getSendingFlow()
     {
         List<Vehicle> output = new ArrayList<Vehicle>();
@@ -76,16 +115,29 @@ public class CentroidConnector extends Link
         return output;
     }
     
+    /**
+     * Returns the sending flow
+     * @return {@link CentroidConnector#getSendingFlow()}
+     */
     public List<Vehicle> getVehiclesCanMove()
     {
         return getSendingFlow();
     }
     
+    /**
+     * Returns the number of {@link Vehicle}s on this link
+     * @return the size of the queue
+     */
     public int getOccupancy()
     {
         return queue.size();
     }
     
+    /**
+     * Removes a {@link Vehicle} from this link.
+     * @param v the {@link Vehicle} to be removed
+     * @return if the {@link Vehicle} was on this link
+     */
     public boolean removeVehicle(Vehicle v)
     {
         if(queue.remove(v))
@@ -99,6 +151,10 @@ public class CentroidConnector extends Link
         }
     }
     
+    /**
+     * Adds a {@link Vehicle} to this link
+     * @param v the {@link Vehicle} to be added
+     */
     public void addVehicle(Vehicle v)
     {
         queue.add(v);
@@ -113,11 +169,19 @@ public class CentroidConnector extends Link
         }
     }
     
+    /**
+     * Returns the type code of this link
+     * @return {@link ReadNetwork#CENTROID}
+     */
     public int getType()
     {
         return ReadNetwork.CENTROID;
     }
     
+    /**
+     * Returns whether this is a centroid connector
+     * @return true
+     */
     public boolean isCentroidConnector()
     {
         return true;

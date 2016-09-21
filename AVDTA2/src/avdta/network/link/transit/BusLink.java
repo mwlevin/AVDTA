@@ -2,20 +2,26 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package avdta.network.link;
+package avdta.network.link.transit;
 
+import avdta.network.link.transit.TransitLink;
 import avdta.network.node.Node;
 import java.util.Set;
 import java.util.TreeSet;
 
 /**
- *
+ * This represents the virtual connection between two bus stops. Travel times are based on experienced travel times via buses traveling between the two stops.
  * @author Michael
  */
 public class BusLink extends TransitLink
 {
     private Set<TTRecord> tts;
     
+    /**
+     * Constructs the {@link BusLink} with the given upstream and downstream nodes
+     * @param source the upstream node
+     * @param dest the downstream node
+     */
     public BusLink(Node source, Node dest)
     {
         super(source, dest);
@@ -23,17 +29,30 @@ public class BusLink extends TransitLink
         tts = new TreeSet<TTRecord>();
     }
     
+    /**
+     * Resets this {@link BusLink} to restart the simulation
+     */
     public void reset()
     {
         tts.clear();
     }
     
+    /**
+     * Records the travel time between the bus stops by a bus
+     * @param enter the departure time
+     * @param exit the arrival time
+     */
     public void setTT(int enter, int exit)
     {
 
         tts.add(new TTRecord(enter, exit-enter));
     }
     
+    /**
+     * Returns the travel time for a given departure time. The travel time is based on the experienced travel time for the first bus departing after the departure time.
+     * @param dtime the departure time
+     * @return the travel time (s)
+     */
     public double getTT(int dtime)
     {
         for(TTRecord t : tts)
@@ -50,41 +69,5 @@ public class BusLink extends TransitLink
         return Integer.MAX_VALUE;
     }
     
-    static class TTRecord implements Comparable<TTRecord>
-    {
-        private int dtime, tt;
-        
-        public TTRecord(int dtime, int tt)
-        {
-            this.dtime = dtime;
-            this.tt = tt;
-        }
-        
-        public int getDepTime()
-        {
-            return dtime;
-        }
-        
-        public int getTT()
-        {
-            return tt;
-        }
-        
-        public boolean equals(Object o)
-        {
-            TTRecord rhs = (TTRecord)o;
-            return rhs.dtime == dtime;
-        }
-        
-        public int compareTo(TTRecord rhs)
-        {
-            return dtime - rhs.dtime;
-        }
-        
-        public int hashCode()
-        {
-            return dtime;
-        }
-        
-    }
+    
 }

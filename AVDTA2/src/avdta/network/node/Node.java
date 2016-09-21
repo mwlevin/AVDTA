@@ -7,7 +7,7 @@ package avdta.network.node;
 import avdta.gui.editor.visual.DisplayManager;
 import avdta.network.node.Intersection;
 import avdta.network.node.Zone;
-import avdta.network.link.TransitLink;
+import avdta.network.link.transit.TransitLink;
 import avdta.network.link.Link;
 import avdta.vehicle.DriverType;
 import java.awt.AlphaComposite;

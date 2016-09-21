@@ -17,7 +17,7 @@ public class TurnRecord
     
     /**
      * Constructs this {@link TurnRecord} based on the specified {@link Turn}.
-     * @param t 
+     * @param t the {@link Turn} to be cloned
      */
     public TurnRecord(Turn t)
     {

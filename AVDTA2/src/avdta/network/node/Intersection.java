@@ -17,8 +17,8 @@ public class Intersection extends Node
 
     /**
      * Instantiates {@link Intersection} with {@link Location} (0, 0) and specified control. Null control is acceptable for instantiation but not for simulation
-     * @param id
-     * @param control 
+     * @param id the id of the {@link Node}
+     * @param control the intersection control
      */
     public Intersection(int id, IntersectionControl control)
     {
@@ -32,8 +32,9 @@ public class Intersection extends Node
     
     /**
      * Instantiates {@link Intersection} with specified control. Null control is acceptable for instantiation but not for simulation
-     * @param id
-     * @param control 
+     * @param id the id of the {@link Node}
+     * @param loc the {@link Location} of this {@link Node}
+     * @param control the intersection control
      */
     public Intersection(int id, Location loc, IntersectionControl control)
     {

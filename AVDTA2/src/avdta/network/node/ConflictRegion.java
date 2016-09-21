@@ -35,7 +35,7 @@ public class ConflictRegion implements Serializable
     
     /**
      * Constructs this {@link ConflictRegion} with the specified capacity
-     * @param capacity 
+     * @param capacity the capacity (veh/hr)
      */
     public ConflictRegion(double capacity)
     {

@@ -5,7 +5,7 @@
 package avdta.vehicle;
 
 import avdta.dta.ReadDTANetwork;
-import avdta.network.link.BusLink;
+import avdta.network.link.transit.BusLink;
 import avdta.network.link.Link;
 import avdta.network.Path;
 import avdta.network.Simulator;

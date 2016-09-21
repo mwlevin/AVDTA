@@ -26,10 +26,11 @@ public class Phase implements Comparable<Phase>
     /**
      * Instantiates the {@link Phase} with the list of turns it allows, the green time 
      * and duration of this {@link Phase}.
-     * @param list List of {@link Turn}s allowed in this phase.
-     * @param green A double value indicating the green time of this phase.
-     * @param yellow A double value indicating the yellow time of this phase.
-     * @param red A double value indicating the all red time of this phase.
+     * @param sequence the order this {@link Phase} appears in the signal cycle.
+     * @param list List of {@link Turn}s allowed in this {@link Phase}.
+     * @param green A double value indicating the green time of this {@link Phase}.
+     * @param yellow A double value indicating the yellow time of this {@link Phase}.
+     * @param red A double value indicating the all red time of this {@link Phase}.
      */
     public Phase(int sequence, List<Turn> list, double green, double yellow, double red)
     {
@@ -50,10 +51,11 @@ public class Phase implements Comparable<Phase>
     /**
      * Instantiates the {@link Phase} with the list of turns it allows, the green time 
      * and duration of this {@link Phase}.
-     * @param allowed Array of {@link Turn}s allowed in this phase.
-     * @param green A double value indicating the green time of this phase.
-     * @param yellow A double value indicating the yellow time of this phase.
-     * @param red A double value indicating the all red time of this phase.
+     * @param sequence the order this {@link Phase} appears in the signal cycle
+     * @param allowed Array of {@link Turn}s allowed in this {@link Phase}
+     * @param green A double value indicating the green time of this {@link Phase}
+     * @param yellow A double value indicating the yellow time of this {@link Phase}
+     * @param red A double value indicating the all red time of this {@link Phase}
      */
     public Phase(int sequence, Turn[] allowed, double green, double yellow, double red)
     {

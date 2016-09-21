@@ -41,7 +41,8 @@ public class FCFSPolicy extends IntersectionPolicy
 
     /**
     * Initializes {@link Vehicle} reservation time the first time a {@link Vehicle} is initialized
-    * @param node 
+    * @param node the node to be initialized at
+    * @param v the vehicle to initialize
     */
     public void initialize(TBR node, Vehicle v)
     {

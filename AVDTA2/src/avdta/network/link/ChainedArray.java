@@ -5,7 +5,11 @@
 package avdta.network.link;
 
 /**
- *
+ * This is used to store and retrieve the cumulative counts for the last T time steps. 
+ * This is used for the link transmission model ({@link LTMLink})
+ * The size is initialized when constructed. 
+ * It is expected that the maximum size needed will remain constant. Any time step within the last T may be referenced.
+ * A single fixed size array is used, and indexing arithmetic is used to determine which value to access.
  * @author Michael
  */
 public class ChainedArray 
@@ -14,6 +18,10 @@ public class ChainedArray
     private int start;
     private int start_idx;
     
+    /**
+     * Constructs this {@link ChainedArray} with the specified size
+     * @param ref_length the size of the {@link ChainedArray}
+     */
     public ChainedArray(int ref_length)
     {
         array = new int[ref_length];
@@ -21,6 +29,11 @@ public class ChainedArray
         start_idx = 0;
     }
     
+    /**
+     * Adds the value at the specified index
+     * @param idx the time step to be added
+     * @param val the value (cumulative count)
+     */
     public void add(int idx, int val)
     {
         index(idx);
@@ -31,17 +44,26 @@ public class ChainedArray
         }
     }
     
+    /**
+     * Gets the cumulative count at the specified index
+     * @param idx the time step
+     * @return the cumulative count
+     */
     public int get(int idx)
     {
         return array[index(idx)];
     }
     
+    /**
+     * Return the number of time steps of data
+     * @return the number of time steps of data
+     */
     public int length()
     {
         return array.length;
     }
     
-    public int index(int idx)
+    private int index(int idx)
     {
 
         int offset = idx - start_idx;
@@ -81,6 +103,9 @@ public class ChainedArray
         }
     }
     
+    /**
+     * Empties the array and resets the indexing system
+     */
     public void clear()
     {
         for(int i = 0; i < array.length; i++)

@@ -7,9 +7,10 @@ package avdta.network.link;
 import avdta.network.Network;
 import avdta.network.Simulator;
 
+@Deprecated
 /**
  *
- * @author ut
+ * @author Michael
  */
 public class FixedSizeLL
 {

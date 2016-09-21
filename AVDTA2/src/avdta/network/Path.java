@@ -166,9 +166,10 @@ public class Path extends ArrayList<Link> implements Serializable
     }
     
     /**
-     * 
+     * Returns the expected cost when using the specified cost function
      * @param dep_time departure time
-     * @param costFunc
+     * @param vot the value of time
+     * @param costFunc the cost function used for calculating the cost
      * @return estimated travel cost given departure time and cost function
      */
     public double getAvgCost(int dep_time, double vot, TravelCost costFunc)

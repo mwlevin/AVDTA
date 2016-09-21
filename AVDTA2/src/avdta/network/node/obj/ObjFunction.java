@@ -34,6 +34,7 @@ public interface ObjFunction
     
     /**
      * Initialization work before scanning the vehicle list
+     * @param n the node to be initialized at
      */
     public void initialize(Node n);
     

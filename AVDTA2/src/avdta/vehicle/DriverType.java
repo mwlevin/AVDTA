@@ -35,7 +35,9 @@ public class DriverType implements Serializable
      * and if it is an autonomous vehicle).
      * @param name Is either {@code AV} or {@code HV}.
      * @param reactionTime Is the reaction time for given name.
-     * @param isAV Boolean indicating if the driver type is {@code AV}.
+     * @param isAV Boolean indicating if the driver type is an autonomous vehicle
+     * @param isCV Boolean indicating if the driver type is a connected vehicle
+     * @param isTransit Boolean indicating if the driver is transit
      */
     public DriverType(String name, double reactionTime, boolean isAV, boolean isCV, boolean isTransit)
     {

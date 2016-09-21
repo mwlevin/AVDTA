@@ -167,12 +167,12 @@ public abstract class Link implements Serializable, Comparable<Link>
     
     /**
      * Returns whether this link has a transit lane for transit
-     * @return 
+     * @return whether this link is an {@link AbstractSplitLink}
      * @see TransitLane
      */
     public boolean hasTransitLane()
     {
-        return (this instanceof SplitCTMLink);
+        return (this instanceof AbstractSplitLink);
     }
     
     /**
@@ -266,8 +266,8 @@ public abstract class Link implements Serializable, Comparable<Link>
     }
     
     /**
-     * Returns the {@color Color} used to draw this {@link Link} in visualization
-     * @return the {@color Color} used to draw this {@link Link} in visualization
+     * Returns the {@link Color} used to draw this {@link Link} in visualization
+     * @return the {@link Color} used to draw this {@link Link} in visualization
      */
     public Color getColor()
     {

@@ -19,7 +19,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- *
+ * This class implements the link transmission model. 
+ * It uses {@link ChainedArray}s to store cumulative counts at the upstream and downstream ends, and stores vehicles in a {@link LinkedList}.
  * @author Michael
  */
 public class LTMLink extends Link
@@ -32,6 +33,18 @@ public class LTMLink extends Link
     
     private double capacityUp, capacityDown;
 
+    /**
+     * Constructs the link with the given parameters 
+     * @param id the link id
+     * @param source the source node
+     * @param dest the destination node
+     * @param capacity the capacity per lane (veh/hr)
+     * @param ffspd the free flow speed (mi/hr)
+     * @param wavespd the congested wave speed (mi/hr)
+     * @param jamd the jam density (veh/mi)
+     * @param length the length (mi)
+     * @param numLanes the number of lanes
+     */
     public LTMLink(int id, Node source, Node dest, double capacity, double ffspd, double wavespd, double jamd, double length, int numLanes)
     {
         super(id, source, dest, capacity, ffspd, wavespd = capacity / (jamd - capacity / ffspd), jamd, length, numLanes);
@@ -40,6 +53,10 @@ public class LTMLink extends Link
         init = false;
     }
     
+    /**
+     * Initializes this {@link LTMLink} after all data is read.
+     * This creates the {@link ChainedArray}s used to store cumulative counts.
+     */
     public void initialize()
     {
         N_up = new ChainedArray(getUSLookbehind()+2);
@@ -51,30 +68,55 @@ public class LTMLink extends Link
         init = true;
     }
     
+    /**
+     * Returns how far to look backwards in timefor the upstream end
+     * @return {@link Link#getLength()}/{@link Link#getFFSpeed()} (s)
+     */
     public int getUSLookbehind()
     {
         return (int)Math.ceil(getLength()/getFFSpeed()*3600 / Network.dt);
     }
+    
+    /**
+     * Returns how far to look backwards in time for the downstream end
+     * @return {@link Link#getLength()}/{@link Link#getWaveSpeed()} (s)
+     */
     public int getDSLookBehind()
     {
         return (int)Math.ceil(getLength()/getWaveSpeed()*3600 / Network.dt);
     }
     // includes fractions lost to discretization
+    
+    /**
+     * Returns the current upstream capacity. This includes fractions lost to discretization.
+     * @return the current upstream capacity
+     */
     public double getCurrentUpstreamCapacity()
     {
         return capacityUp;
     }
     
+    /**
+     * Returns the current downstream capacity. This includes fractions lost to discretization.
+     * @return the current downstream capacity
+     */
     public double getCurrentDownstreamCapacity()
     {
         return capacityDown;
     }    
     
+    /**
+     * Returns the type code of this link
+     * @return {@link ReadNetwork#LTM}
+     */
     public int getType()
     {
         return ReadNetwork.LTM;
     }
     
+    /**
+     * Resets this {@link LTMLink} to restart the simulation. This clears the {@link ChainedArray}s
+     */
     public void reset()
     {
         queue.clear();
@@ -85,6 +127,11 @@ public class LTMLink extends Link
         super.reset();
     }
     
+    /**
+     * Executes one time step of simulation. 
+     * This updates the current upstream and downstream capacities. 
+     * Adding and removing vehicles occurs through {@link Node}s.
+     */
     public void step()
     {
         capacityUp -= (int)capacityUp;
@@ -96,6 +143,10 @@ public class LTMLink extends Link
         capacityDown += getCapacity() * Network.dt / 3600.0;
     }
     
+    /**
+     * Adds the {@link Vehicle} to this link
+     * @param veh the {@link Vehicle} to be added
+     */
     public void addVehicle(Vehicle veh)
     {
         veh.enteredLink(this);
@@ -106,23 +157,39 @@ public class LTMLink extends Link
 
     }
     
+    /**
+     * Returns the number of {@link Vehicle}s on this link
+     * @return the number of {@link Vehicle}s on this link
+     */
     public int getOccupancy()
     {
         return queue.size();
     }
     
-    
+    /**
+     * Returns the queue of {@link Vehicle}s. 
+     * The queue is stored as a {@link LinkedList} of {@link VehTime}s, which contain the {@link Vehicle} arrival times used to determine sending flows.
+     * @return the queue of {@link Vehicle}s
+     */
     public LinkedList<VehTime> getQueue()
     {
         return queue;
     }
     
+    /**
+     * Returns the number of {@link Vehicle}s that could exit this link.
+     * @return the size of the sending flow
+     */
     public int getNumSendingFlow()
     {
         return (int)Math.min(getN_up(Simulator.time - getLength()/getFFSpeed()*3600 + Network.dt) - 
                 getN_down(Simulator.time), getCurrentDownstreamCapacity());
     }
     
+    /**
+     * Returns the set of {@link Vehicle}s that could exit this link
+     * @return the sending flow
+     */
     public List<Vehicle> getSendingFlow()
     {
         List<Vehicle> output = new ArrayList<Vehicle>();
@@ -157,11 +224,20 @@ public class LTMLink extends Link
         return output;
     }
     
+    /**
+     * Returns the sending flow
+     * @return {@link LTMLink#getVehiclesCanMove()}
+     */
     public List<Vehicle> getVehiclesCanMove()
     {
         return getSendingFlow();
     }
     
+    /**
+     * Removes the {@link Vehicle} from this link
+     * @param veh the {@link Vehicle} to be removed
+     * @return if the {@link Vehicle} was removed
+     */
     public boolean removeVehicle(Vehicle veh)
     {
         Iterator<VehTime> iter = queue.iterator();
@@ -183,6 +259,10 @@ public class LTMLink extends Link
         return false;
     }
     
+    /**
+     * Returns the receiving flow for this time step
+     * @return the receiving flow for this time step
+     */
     public double getReceivingFlow()
     {
         return Math.min(getN_down(Simulator.time - getLength()/getWaveSpeed()*3600 + Network.dt) 
@@ -190,22 +270,41 @@ public class LTMLink extends Link
                 getCurrentUpstreamCapacity());
     }
     
+    /**
+     * Returns the number of vehicles waiting to exit, i.e. the component of sending flow unbounded by capacity.
+     * @return the number of vehicles waiting to exit
+     */
     public int getNumWaiting()
     {
         return getN_up(Simulator.time - getLength()/getFFSpeed()*3600 + Network.dt) - getN_down(Simulator.time);
     }
     
+    /**
+     * Adds to the upstream cumulative count.
+     * @param t the time (s)
+     * @param val the number of vehicles to add
+     */
     public void addN_up(double t, int val)
     {
         N_up.add(Simulator.indexTime(t), val);
     }
     
+    /**
+     * Adds to the downstream cumulative count.
+     * @param t the time (s)
+     * @param val the number of vehicles to add
+     */
     public void addN_down(double t, int val)
     {
         N_down.add(Simulator.indexTime(t), val);
     }
     
 
+    /**
+     * Returns the upstream cumulative count at the specified time
+     * @param t the time (s)
+     * @return the upstream cumulative count
+     */
     public int getN_up(double t)
     {
         if(t < 0)
@@ -218,6 +317,11 @@ public class LTMLink extends Link
         }
     }
     
+    /**
+     * Returns the downstream cumulative count at the specified time
+     * @param t the time (s)
+     * @return the downstream cumulative count
+     */
     public int getN_down(double t)
     {
         if(t < 0)

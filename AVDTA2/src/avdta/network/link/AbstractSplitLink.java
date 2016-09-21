@@ -5,10 +5,14 @@
 package avdta.network.link;
 
 /**
- *
- * @author ml26893
+ * This interface should be implemented by any {@link Link} subclass with a {@link TransitLane}
+ * @author Michael
  */
 public interface AbstractSplitLink 
 {
+    /**
+     * Returns the transit lane
+     * @return the transit lane
+     */
     public TransitLane getTransitLane();
 }

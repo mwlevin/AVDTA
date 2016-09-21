@@ -31,7 +31,7 @@ import avdta.network.node.policy.SignalWeightedTBR;
 import avdta.network.node.Signalized;
 import avdta.network.AST;
 import avdta.network.DemandProfile;
-import avdta.network.link.BusLink;
+import avdta.network.link.transit.BusLink;
 import avdta.network.link.CACCLTMLink;
 import avdta.network.link.DLRCTMLink;
 import avdta.network.link.SharedTransitCTMLink;

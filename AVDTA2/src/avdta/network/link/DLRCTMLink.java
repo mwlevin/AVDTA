@@ -33,6 +33,19 @@ public class DLRCTMLink extends CTMLink
     
     private DLRCTMLink opposite;
     
+    
+    /**
+     * Constructs the link with the given parameters 
+     * @param id the link id
+     * @param source the source node
+     * @param dest the destination node
+     * @param capacity the capacity per lane (veh/hr)
+     * @param ffspd the free flow speed (mi/hr)
+     * @param wavespd the congested wave speed (mi/hr)
+     * @param jamd the jam density (veh/mi)
+     * @param length the length (mi)
+     * @param numLanes the number of lanes
+     */
     public DLRCTMLink(int id, Node source, Node dest, double capacity, double ffspd, double wavespd, double jamd, double length, int numLanes)
     {
         super(id, source, dest, capacity, ffspd, wavespd, jamd, length, numLanes);
@@ -40,27 +53,47 @@ public class DLRCTMLink extends CTMLink
         usSendingFlow_fordt = 0;
     }
     
-    
+    /**
+     * Overrides to create a {@link DLREndCell}
+     * @param prev the previous cell
+     * @return the appropriate type of end cell
+     */
     public Cell createEndCell(DLRCell prev)
     {
         return new DLREndCell(prev, this);
     }
     
+    /**
+     * Overrides to create a {@link DLRStartCell}
+     * @return the appropriate type of start cell
+     */
     public Cell createStartCell()
     {
         return new DLRStartCell(this);
     }
     
+    /**
+     * Overrides to create a {@link DLRLinkCell}
+     * @param prev the previous cell
+     * @return the appropriate type of link cell
+     */
     public Cell createCell(DLRCell prev)
     {
         return new DLRLinkCell(prev, this);
     }
     
+    /**
+     * Returns whether this link is tied to an opposite and parallel link
+     * @return whether this link is tied to an opposite and parallel link
+     */
     public boolean isTied()
     {
         return opposite != null;
     }
     
+    /**
+     * Updates the number of lanes in each cell for the next time step
+     */
     public void dlr()
     {
         // link with lower ID handles DLR for both, is link 1.
@@ -100,6 +133,10 @@ public class DLRCTMLink extends CTMLink
         
     }
     
+    /**
+     * Saturation-based heuristic to calculate the number of lanes in each cell/
+     * @return an int array with the number of lanes for each link, as well as the number of lanes for the downstream cells
+     */
     public int[] solveMDP_all()
     {
         
@@ -235,6 +272,11 @@ public class DLRCTMLink extends CTMLink
         //return new int[]{getNumLanes(), opposite.getNumLanes(), getNumLanes(), opposite.getNumLanes()};
     }
     
+    /**
+     * Estimate the expected upstream sending flow at the specified time
+     * @param t the specified time (s)
+     * @return the expected upstream sending flow
+     */
     public double getExpUsSendingFlow(int t)
     {
         int idx = t / Simulator.ast_duration;
@@ -249,6 +291,11 @@ public class DLRCTMLink extends CTMLink
         }
     }
     
+    /**
+     * Estimate the expected downstream sending flow at the specified time
+     * @param t the specified time (s)
+     * @return the expected downstream sending flow
+     */
     public double getExpDsReceivingFlow(int t)
     {
         int idx = t / Simulator.ast_duration;
@@ -263,6 +310,10 @@ public class DLRCTMLink extends CTMLink
         }
     }
     
+    /**
+     * Calculate the maximum number of lanes for this link for the next time step
+     * @return the maximum number of lanes for this link for the next time step
+     */
     public int max_lanes_1()
     {
         // this is the fixed lane assignment
@@ -278,6 +329,10 @@ public class DLRCTMLink extends CTMLink
         return (int)Math.min(output, total_lanes-1);
     }
     
+    /**
+     * Calculate the maximum number of lanes for the opposite link for the next time step
+     * @return the maximum number of lanes for the opposite  link for the next time step
+     */
     public int max_lanes_2()
     {
         // this is the fixed lane assignment
@@ -293,11 +348,20 @@ public class DLRCTMLink extends CTMLink
         return (int)Math.min(output, total_lanes-1);
     }
     
+    /**
+     * Returns the total number of lanes between this link and its opposite
+     * @return the total number of lanes between this link and its opposite
+     */
     public int getTotalLanes()
     {
         return getNumLanes() + opposite.getNumLanes();
     }
     
+    /**
+     * Links cells on this link to the corresponding cell on the opposite and parallel link
+     * @param rhs the opposite and parallel link
+     * @return if cells were tied successfully
+     */
     public boolean tieCells(DLRCTMLink rhs)
     {
         if(rhs == null || opposite != null || !(getSource() == rhs.getDest() && getDest() == rhs.getSource()) || cells.length != rhs.cells.length)
@@ -319,6 +383,10 @@ public class DLRCTMLink extends CTMLink
 
     }
     
+    /**
+     * Resets this link to restart simulation.
+     * This updates the upstream and downstream sending flow counts
+     */
     public void reset()
     {
         usSendingFlow = next_usSendingFlow;
@@ -338,6 +406,9 @@ public class DLRCTMLink extends CTMLink
         super.reset();
     }
     
+    /**
+     * Updates the upstream sending flow counts for the next time step
+     */
     public void updateUsSendingFlowCounts()
     {
         next_usSendingFlow[Simulator.time / Simulator.ast_duration].add(usSendingFlow_fordt);
@@ -345,17 +416,26 @@ public class DLRCTMLink extends CTMLink
     }
     
     
+    /**
+     * Adds to the upstream sending flow at the current time step
+     */
     public void addToUsSendingFlow()
     {
         usSendingFlow_fordt ++;
     }
     
+    /**
+     * Updates the downstream sending flow counts for the next time step
+     */
     public void updateDsReceivingFlowCounts()
     {
         // count how much flow was moved
         next_dsReceivingFlow[Simulator.time / Simulator.ast_duration].add(q);
     }
     
+    /**
+     * Updates the number of lanes per cell, then calls {@link CTMLink#prepare()}.
+     */
     public void prepare()
     {     
         dlr();
@@ -364,6 +444,9 @@ public class DLRCTMLink extends CTMLink
         
     }
     
+    /**
+     * Updates the sending and receiving flow counts, then calls {@link CTMLink#update()}.
+     */
     public void update()
     {
         updateDsReceivingFlowCounts();
@@ -373,6 +456,10 @@ public class DLRCTMLink extends CTMLink
         super.update();
     }
     
+    /**
+     * Returns the type code of this link
+     * @return {@link ReadNetwork#CTM}+{@link ReadNetwork#DLR}
+     */
     public int getType()
     {
         return ReadNetwork.CTM + ReadNetwork.DLR;

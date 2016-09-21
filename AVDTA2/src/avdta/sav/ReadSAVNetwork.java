@@ -78,7 +78,7 @@ public class ReadSAVNetwork extends ReadNetwork
     }
     /**
      * When origins/destinations have separate zones, this attempts to link these separated zones. Origins are expected to have id of 100000+x, with corresponding destination id of 200000+x. Linked zones can be accessed from {@link Zone}.
-     * @param sim 
+     * @param nodes the set of nodes
      */
     public void linkZones(Set<Node> nodes)
     {
@@ -217,7 +217,8 @@ public class ReadSAVNetwork extends ReadNetwork
     
     /**
      * After linking zones, if some origins/destinations lack a counterpart, this creates the missing origins/destinations as well as their centroid connectors.
-     * @param sim 
+     * @param nodes the set of nodes
+     * @param links the set of links 
      */
     public void createMissingZones(Set<Node> nodes, Set<Link> links)
     {

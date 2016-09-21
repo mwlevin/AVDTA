@@ -16,7 +16,7 @@ public interface Signalized
 {
     /**
      * Adds a {@link Phase} to this signal. {@link Phase}s do not need to be added in sequence order.
-     * @param p 
+     * @param p the phase to be added
      */
     public void addPhase(Phase p);
     
