@@ -33,19 +33,30 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 /**
- *
- * @author micha
+ * This adds methods to read the trip table for DTA. 
+ * This also contains the {@link ReadDTANetwork#prepareDemand(avdta.project.DTAProject, double)} method to generate demand.
+ * @author Michael
  */
 public class ReadDTANetwork extends ReadNetwork
 {
    
     
-    
+    /**
+     * Constructs the {@link ReadDTANetwork}
+     */
     public ReadDTANetwork()
     {
         super();
     }
     
+    /**
+     * Constructs a {@link DTASimulator} for the given {@link DTAProject}. 
+     * This calls {@link ReadNetwork#readNodes(avdta.project.Project)} and {@link ReadNetwork#readLinks(avdta.project.Project)} and initializes the simulator ({@link Simulator#initialize()}).
+     * This also reads transit ({@link ReadDTANetwork#readTransit(avdta.project.TransitProject)} and personal vehicles ({@link ReadDTANetwork#readVehicles(avdta.project.DTAProject)}).
+     * @param project the {@link DTAProject}
+     * @return the created {@link DTASimulator}
+     * @throws IOException if a file cannot be accessed
+     */
     public DTASimulator readNetwork(DTAProject project) throws IOException
     {
         readOptions(project);
@@ -69,6 +80,13 @@ public class ReadDTANetwork extends ReadNetwork
         return sim;
     }
     
+    /**
+     * This generates the dynamic_od file from the static_od and demand_profile files.
+     * Note that the dynamic_od file will be overwritten.
+     * The static_od is separated by assignment intervals according to the demand_profile.
+     * @param project the project
+     * @throws IOException if a file cannot be accessed.
+     */
     public void createDynamicOD(DTAProject project) throws IOException
     {
         DemandProfile profile = readDemandProfile(project);
@@ -111,6 +129,14 @@ public class ReadDTANetwork extends ReadNetwork
         fileout.close();
     }
     
+    /**
+     * This changes the type of vehicles in the dynamic_od file to match the specified proportions.
+     * The proportions should sum to 1.
+     * This rewrites the dynamic_od file.
+     * @param project the project 
+     * @param proportionMap a mapping of type codes to proportions
+     * @throws IOException if a file cannot be accessed
+     */
     public void changeType(DTAProject project, Map<Integer, Double> proportionMap) throws IOException
     {
         Map<Integer, Map<Integer, Map<Integer, Double>>> demands = new TreeMap<Integer, Map<Integer, Map<Integer, Double>>>();
@@ -192,6 +218,16 @@ public class ReadDTANetwork extends ReadNetwork
         fileout.close();
     }
     
+    /**
+     * This generates the demand file using the demand_profile and dynamic_od files.
+     * The demand file will be overwritten.
+     * Vehicles are generated somewhat randomly. 
+     * The integer number of vehicles is created, and fractional vehicles are discretized via random number generator.
+     * @param project the project
+     * @param prop the proportion of total demand
+     * @return the number of vehicles generated
+     * @throws IOException if a file cannot be accessed
+     */
     public int prepareDemand(DTAProject project, double prop) throws IOException
     {
         Set<VehicleRecord> vehicles = new TreeSet<VehicleRecord>();
@@ -263,6 +299,12 @@ public class ReadDTANetwork extends ReadNetwork
         
     }
     
+    /**
+     * This reads the demand file into a list of {@link Vehicle}s.
+     * @param project the project
+     * @return the list of {@link Vehicle}s.
+     * @throws IOException if a file cannot be accessed
+     */
     public List<Vehicle> readVehicles(DTAProject project) throws IOException
     {
         
@@ -329,6 +371,13 @@ public class ReadDTANetwork extends ReadNetwork
         return vehicles;
     }
     
+    /**
+     * This reads the demand profile associated with the project.
+     * @param project the project
+     * @return the demand profile
+     * @throws IOException if the file cannot be accessed
+     * @see DemandProfile
+     */
     public DemandProfile readDemandProfile(DTAProject project) throws IOException
     {
         DemandProfile output = new DemandProfile();
@@ -356,21 +405,37 @@ public class ReadDTANetwork extends ReadNetwork
         return output;
     }
     
+    /**
+     * This returns the header for the demand file.
+     * @return the header for the demand file
+     */
     public static String getDemandFileHeader()
     {
         return "id\ttype\torigin\tdest\tdtime\tvot";
     }
     
+    /**
+     * This returns the header for the demand_profile file.
+     * @return the header for the demand_profile file
+     */
     public static String getDemandProfileFileHeader()
     {
         return "id\tweight\tstart\tduration";
     }
     
+    /**
+     * This returns the header for the dynamic_od file.
+     * @return the header for the dynamic_od file
+     */
     public static String getDynamicODFileHeader()
     {
         return "id\ttype\torigin\tdestination\tast\tdemand";
     }
     
+    /**
+     * This returns the header for the static_od file.
+     * @return the header for the static_od file
+     */
     public static String getStaticODFileHeader()
     {
         return "id\ttype\torigin\tdestination\tdemand";

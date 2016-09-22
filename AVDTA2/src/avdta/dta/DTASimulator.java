@@ -12,6 +12,7 @@ import avdta.network.link.CentroidConnector;
 import avdta.network.link.Link;
 import avdta.network.node.Node;
 import avdta.project.DTAProject;
+import avdta.project.Project;
 import avdta.vehicle.Bus;
 import avdta.vehicle.DriverType;
 import avdta.vehicle.PersonalVehicle;
@@ -32,8 +33,8 @@ import java.util.Scanner;
 import java.util.Set;
 
 /**
- *
- * @author micha
+ * The {@link DTASimulator} adds methods to find a DUE assignment. Currently it uses the method of successive averages.
+ * @author Michael
  */
 public class DTASimulator extends Simulator
 {
@@ -41,12 +42,23 @@ public class DTASimulator extends Simulator
     
     private int iteration;
     
+    /**
+     * Constructs this {@link DTASimulator} empty with the given project.
+     * @param project 
+     */
     public DTASimulator(DTAProject project)
     {
         super(project);
         
         iteration = 1;
     }
+    
+    /**
+     * Constructs this {@link DTASimulator} with the given project and with the given sets of {@link Node}s and {@link Link}s.
+     * @param project the project
+     * @param nodes the set of {@link Node}s
+     * @param links the set of {@link Link}s
+     */
     public DTASimulator(DTAProject project, Set<Node> nodes, Set<Link> links)
     {
         super(project, nodes, links);
@@ -55,11 +67,25 @@ public class DTASimulator extends Simulator
     }
     
     
+    /**
+     * Returns the project associated with this simulator
+     * @return the project associated with this simulator
+     */
     public DTAProject getProject()
     {
         return (DTAProject)super.getProject();
     }
     
+    /**
+     * Loads demand over multiple iterations to reduce the congestion at the start.
+     * Each iteration, 1/iter vehicles are loaded onto the shortest path.
+     * Shortest paths are updated based on congestion each iteration.
+     * Vehicles already loaded are not affected.
+     * 
+     * @param iter the number of iterations
+     * @return the simulator results at the end
+     * @throws IOException if a file cannot be accessed
+     */
     public DTAResults partial_demand(int iter) throws IOException
     {
         List<Vehicle> temp = new ArrayList<Vehicle>();
@@ -117,6 +143,13 @@ public class DTASimulator extends Simulator
         return output;
     }
     
+    /**
+     * Generates new paths and loads 1/stepsize vehicles onto the new paths.
+     * This method also compares minimum travel times with experienced travel times to calculate the gap.
+     * @param stepsize the proportion of vehicles to move onto new paths.
+     * @return the results from simulating the previous assignment
+     * @throws IOException if a file cannot be accessed
+     */
     public DTAResults pathgen(double stepsize) throws IOException
     {
         int error_count = 0;
@@ -234,11 +267,21 @@ public class DTASimulator extends Simulator
 
     }
     
+    /**
+     * Returns the current iteration
+     * @return the current iteration
+     */
     public int getIteration()
     {
         return iteration;
     }
     
+    /**
+     * Saves the assignment in the given {@label Assignment} object.
+     * This calls {@link Assignment#writeToFile(java.util.List, avdta.project.DTAProject)}.
+     * @param assign the {@link Assignment} wrapper object
+     * @throws IOException if a file cannot be accessed
+     */
     public void saveAssignment(Assignment assign) throws IOException
     {        
         DTAProject project = (DTAProject)getProject();
@@ -252,6 +295,12 @@ public class DTASimulator extends Simulator
         assign.writeToFile(vehicles, (DTAProject)getProject());
     }
     
+    /**
+     * Opens an {@link Assignment} from the given directory and assigns vehicles as specified.
+     * This calls {@link Assignment#readFromFile(avdta.project.DTAProject, java.util.List, avdta.network.PathList)}.
+     * @param file the assignment directory
+     * @throws IOException if a file cannot be accessed
+     */
     public void openAssignment(File file) throws IOException
     {
         DTAProject project = (DTAProject)getProject();
@@ -263,25 +312,22 @@ public class DTASimulator extends Simulator
         currAssign = assign;
     }
         
+    /**
+     * Returns the current assignment
+     * @return the current assignment
+     */
     public Assignment getAssignment()
     {
         return currAssign;
     }
     
-    public Vehicle findVehicle(int id)
-    {
-        for(Vehicle v : vehicles)
-        {
-            if(v.getId() == id)
-            {
-                return v;
-            }
-        }
-        return null;
-    }
     
     
     
+    /**
+     * Writes a list of vehicle results, including travel times and mpg
+     * @throws IOException if a file cannot be accessed
+     */
     public void writeVehicleResults() throws IOException
     {
         DTAProject project = (DTAProject)getProject();
@@ -297,11 +343,21 @@ public class DTASimulator extends Simulator
         fileout.close();
     }
     
+    /**
+     * Calls {@link DTASimulator#msa(int, double)} with a gap of 0.
+     * @param max_iter the maximum number of iterations
+     * @return results from simulating the assignment
+     * @throws IOException 
+     */
     public DTAResults msa(int max_iter) throws IOException
     {
         return msa(max_iter, -1);
     }
     
+    /**
+     * This creates the sim.vat ({@link Assignment#getAssignmentDirectory()}{@code /sim.vat}) and the VISTA vehicle_path ({@link Project#getResultsFolder()}{@code /vehicle_path.txt}) and vehicle_path_time ({@link Project#getResultsFolder()}{@code /vehicle_path_time.txt}) files.
+     * @throws IOException if a file cannot be accessed
+     */
     public void importResults() throws IOException
     {
         
@@ -412,21 +468,50 @@ public class DTASimulator extends Simulator
         }
     }
     
+    /**
+     * Calls {@link DTASimulator#msa_cont(int, int, double)} with a starting iteration of 1.
+     * @param max_iter the maximum number of iterations
+     * @param min_gap the minimum gap
+     * @return results from simulating the assignment
+     * @throws IOException if a file cannot be accessed
+     */
     public DTAResults msa(int max_iter, double min_gap) throws IOException
     {
         return msa_cont(1, max_iter, min_gap);
     }
     
+    /**
+     * Calls {@link DTASimulator#msa_cont(int, int, double)} starting at the current iteration.
+     * @param max_iter the maximum number of iterations
+     * @param min_gap the minimum gap
+     * @return results from simulating the assignment
+     * @throws IOException if a file cannot be accessed
+     */
     public DTAResults msa_cont(int max_iter, double min_gap) throws IOException
     {
         return msa_cont(iteration, max_iter, min_gap);
     }
     
+    /**
+     * Calls {@link DTASimulator#msa_cont(int, int, double)} with a minimum gap of 0.
+     * @param start_iter the iteration to start at
+     * @param max_iter the maximum iteration to be reached (not the maximum number of iterations)
+     * @return results from simulating the assignment
+     * @throws IOException if a file cannot be accessed
+     */
     public DTAResults msa_cont(int start_iter, int max_iter) throws IOException
     {
         return msa_cont(start_iter, max_iter, -1);
     }
     
+    /**
+     * Runs the method of successive averages starting at the specified iteration.
+     * @param start_iter the starting iteration. Note that this should be the 1 more than the stopping iteration of the previous assignment.
+     * @param max_iter the maximum iteration to be reached (not the maximum number of iterations)
+     * @param min_gap the minimum gap
+     * @return results from simulating the assignment
+     * @throws IOException if a file cannot be accessed 
+     */
     public DTAResults msa_cont(int start_iter, int max_iter, double min_gap) throws IOException
     {
         currAssign = new MSAAssignment(getProject(), null, start_iter);

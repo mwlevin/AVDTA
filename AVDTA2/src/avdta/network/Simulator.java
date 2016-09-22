@@ -208,7 +208,22 @@ public class Simulator extends Network
     }
     
     
-
+    /**
+     * Iterates through all vehicles to find one matching the given id.
+     * @param id the id to search for
+     * @return a vehicle with the specified id, if one exists, or null otherwise.
+     */
+    public Vehicle findVehicle(int id)
+    {
+        for(Vehicle v : vehicles)
+        {
+            if(v.getId() == id)
+            {
+                return v;
+            }
+        }
+        return null;
+    }
     
     
     

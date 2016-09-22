@@ -65,7 +65,8 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 /** 
- * This class contains methods to read network data from the VISTA data format.
+ * This class contains methods to read network and transit data for AVDTA.
+ * To use this class, see {@link ReadNetwork#readNetwork(avdta.project.Project)}.
  * @author Michael
  */
 public class ReadNetwork 
@@ -132,6 +133,10 @@ public class ReadNetwork
     
     private double mesodelta;
     
+    /**
+     * Constructs an empty {@link ReadNetwork} object.
+     * This initializes the nodes and links maps.
+     */
     public ReadNetwork()
     {
         zones = new HashMap<Integer, Zone>();
@@ -145,6 +150,13 @@ public class ReadNetwork
         mesodelta = 0.5;
     }
     
+    /**
+     * Creates a {@link Simulator} corresponding to the data contained with the specified project.
+     * If the project is a {@link TransitProject}, transit vehicles will be added.
+     * @param project the project
+     * @return the {@link Simulator} for the project
+     * @throws IOException if a file cannot be accessed
+     */
     public Simulator readNetwork(Project project) throws IOException
     {
         readOptions(project);
@@ -170,6 +182,13 @@ public class ReadNetwork
         return sim;
     }
     
+    /**
+     * Creates transit vehicles and writes them to the bus file.
+     * The number of vehicles created depends on the routes in the bus_period and bus_frequency files.
+     * This overwrites the bus file.
+     * @param project the project
+     * @throws IOException if a file cannot be accessed
+     */
     public void createTransit(TransitProject project) throws IOException
     {
         int curr_id = -1;
@@ -226,6 +245,13 @@ public class ReadNetwork
         
     }
     
+    /**
+     * Reads created transit vehicles from the bus file and assigns them to the appropriate paths.
+     * This method also initializes {@link BusLink}s for mode choice models using transit.
+     * If there are no transit vehicles, see {@link ReadNetwork#createTransit(avdta.project.TransitProject)}.
+     * @param project the project
+     * @throws IOException if a file cannot be accessed
+     */
     public void readTransit(TransitProject project) throws IOException
     {
         Map<Integer, Map<Integer, Object[]>> temproutes = new HashMap<Integer, Map<Integer, Object[]>>();
@@ -378,6 +404,11 @@ public class ReadNetwork
         
     }
     
+    /**
+     * Reads intersection controls from the nodes file.
+     * @param project the project
+     * @throws IOException if a file cannot be accessed
+     */
     public void readIntersections(Project project) throws IOException
     {
         Scanner filein = new Scanner(project.getNodesFile());
@@ -475,6 +506,12 @@ public class ReadNetwork
         }
     }
     
+    /**
+     * Reads in all nodes from the nodes file.
+     * @param project the project
+     * @return a set of all {@link Node}s read
+     * @throws IOException if a file cannot be accessed
+     */
     public Set<Node> readNodes(Project project) throws IOException
     {
         Set<Node> nodes = new HashSet<Node>();
@@ -512,7 +549,14 @@ public class ReadNetwork
     }
     
     
-    
+    /**
+     * Reads in all links from the links file.
+     * For links with a {@link TransitLane}, two separate links will be created (the {@link TransitLane} and the main link).
+     * {@link TransitLane}s do not appear separately in the links file.
+     * @param project the project
+     * @return a set of all {@link Link}s
+     * @throws IOException if a file cannot be accessed
+     */
     public Set<Link> readLinks(Project project) throws IOException
     {
         Set<Link> links = new HashSet<Link>();
@@ -642,6 +686,12 @@ public class ReadNetwork
         return links;
     }
     
+    /**
+     * Reads signal phases and signal cycle offsets from the phases and signals files.
+     * Signal data will be ignored if the node it is assigned to is does not have a {@link Signalized}.
+     * @param project the project
+     * @throws IOException if a file cannot be accessed
+     */
     public void readPhases(Project project) throws IOException
     {
         Scanner filein;
@@ -815,6 +865,10 @@ public class ReadNetwork
     }
     */
     
+    /**
+     * Reads the project options from the options file.
+     * @param project the project
+     */
     public void readOptions(Project project)
     {
         try
@@ -875,11 +929,22 @@ public class ReadNetwork
     
 
     
-    
+    /**
+     * Creates a list of all projects in the default project directory.
+     * Calls {@link ReadNetwork#listProjects(java.lang.String)} with null filter
+     * @return  a list of all projects
+     * @throws IOException if a file cannot be accessed
+     */
     public static Set<String> listProjects() throws IOException
     {
         return listProjects(null);
     }
+    
+    /**
+     * Creates a list of all projects in the default project directory of the specified type.
+     * @return  a list of all projects
+     * @throws IOException if a file cannot be accessed
+     */
     public static Set<String> listProjects(String typefilter) throws IOException
     {
         TreeSet<String> output = new TreeSet<String>();
@@ -934,51 +999,91 @@ public class ReadNetwork
         return output;
     }
 
+    /**
+     * This returns the header for the links file.
+     * @return the header for the links file
+     */
     public static String getLinksFileHeader()
     {
         return "id\ttype\tsource\tdest\tlength (ft)\tffspd (mph)\tw (mph)\tcapacity\tnum_lanes";
     }
     
+    /**
+     * This returns the header for the nodes file.
+     * @return the header for the nodes file
+     */
     public static String getNodesFileHeader()
     {
         return "id\ttype\tlongitude\tlatitude\televation";
     }
     
+    /**
+     * This returns the header for the link_points file.
+     * @return the header for the link_points file
+     */
     public static String getLinkPointsFileHeader()
     {
         return "id\tcoordinates";
     }
     
+    /**
+     * This returns the header for the phases file.
+     * @return the header for the phases file
+     */
     public static String getPhasesFileHeader()
     {
         return "node\ttype\tsequence\ttime_red\ttime_yellow\ttime_green\tnum_moves\tlink_from\tlink_to";
     }
     
+    /**
+     * This returns the header for the signals file.
+     * @return the header for the signals file
+     */
     public static String getSignalsFileHeader()
     {
         return "node id\ttime_offset";
     }
     
+    /**
+     * This returns the header for the options file.
+     * @return the header for the options file
+     */
     public static String getOptionsFileHeader()
     {
         return "name\tvalue";
     }
     
+    /**
+     * This returns the header for the bus file.
+     * @return the header for the bus file
+     */
     public static String getBusFileHeader()
     {
         return "id\ttype\troute\tdtime";
     }
     
+    /**
+     * This returns the header for the bus_frequency file.
+     * @return the header for the bus_frequency file
+     */
     public static String getBusFrequencyFileHeader()
     {
         return "route\tperiod\tfrequency\toffset";
     }
     
+    /**
+     * This returns the header for the bus_route_link file.
+     * @return the header for the bus_route_link file
+     */
     public static String getBusRouteLinkFileHeader()
     {
         return "route\tsequence\tlink\tstop\tdwelltime";
     }
     
+    /**
+     * This returns the header for the bus_period file.
+     * @return the header for the bus_period file
+     */
     public static String getBusPeriodFileHeader()
     {
         return "id\tstarttime\tendtime";
