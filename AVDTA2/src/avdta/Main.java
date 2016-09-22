@@ -244,13 +244,13 @@ public class Main
         
         
         PrintStream fileout = new PrintStream(new FileOutputStream(project.getResultsFolder()+"/log_"+prop+".txt"), true);
-        fileout.println("FF time: "+(sim.calcBusFFTime()/60));
-        fileout.println("Bus time: "+(sim.calcBusTime()/60));
+        fileout.println("FF time: "+(sim.getBusFFTime()/60));
+        fileout.println("Bus time: "+(sim.getBusTT(true)/60));
         fileout.println("Bus ratio: "+(sim.calcAvgBusTimeRatio()));
         fileout.close();
         
-        output.println(prop+"\t"+(sim.getNumVehicles()-sim.getNumBuses())+"\t"+(sim.getTSTT()/3600)+"\t"+(sim.getAvgBusTT(false)/60)+"\t"+(sim.calcBusFFTime()/60)+"\t"+
-                (sim.calcBusTime()/60)+"\t"+(sim.getAvgBusTT(true)/60)+"\t"+sim.calcAvgBusTimeRatio()+"\t"+sim.calcAvgBusDelay());
+        output.println(prop+"\t"+(sim.getNumVehicles()-sim.getNumBuses())+"\t"+(sim.getTSTT()/3600)+"\t"+(sim.getAvgBusTT(false)/60)+"\t"+(sim.getBusFFTime()/60)+"\t"+
+                (sim.getBusTT(true)/60)+"\t"+(sim.getAvgBusTT(true)/60)+"\t"+sim.calcAvgBusTimeRatio()+"\t"+sim.calcAvgBusDelay());
         
         sim.printBusTime(new File(project.getResultsFolder()+"/bus_"+prop+".txt"));
         

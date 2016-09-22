@@ -390,7 +390,7 @@ public abstract class Node extends Location implements Serializable, Comparable<
     public void setLayer(Layer layer){}
 
     /**
-     * Update the {@link Style} used for visualization
+     * Returns the {@link Style} used for visualization
      * @return {@link Node#NODE_STYLE}
      */
     public Style getStyle()

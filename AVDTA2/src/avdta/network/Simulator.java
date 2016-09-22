@@ -47,10 +47,12 @@ import java.util.Random;
 import java.util.Scanner;
 import java.util.Set;
 import java.util.TreeSet;
+import avdta.network.cost.FFTime;
 
 /**
- *
- * @author ut
+ * A {@link Simulator} extends {@link Network} in adding {@link Vehicle}s and dynamic network loading. 
+ * Where the {@link Network} works with {@link Node}s and {@link Link}s, {@link Simulator} methods are focused on {@link Vehicle}s.
+ * @author Michael
  */
 public class Simulator extends Network 
 {
@@ -63,12 +65,20 @@ public class Simulator extends Network
     public static final int num_asts = duration / ast_duration ;
     
     
+    /**
+     * Calculates the assignment interval for the current time, based on the assignment duration.
+     * @return {@link Simulator#time}/{@link Simulator#ast_duration}
+     */
     public static int ast()
     {
         return time / ast_duration;
     }
     
-
+/**
+     * Calculates the assignment interval for the specified time, based on the assignment duration.
+     * @param time the time (s)
+     * @return {@code time}/{@link Simulator#ast_duration}
+     */
     public static int ast(int time)
     {
         return (int)Math.min(time / ast_duration, num_asts-1);
@@ -82,7 +92,11 @@ public class Simulator extends Network
     
     
 
-    
+    /**
+     * Indexes time into a time step
+     * @param t the time to be indexed (s)
+     * @return the time step index
+     */
     public static final int indexTime(double t)
     {
         return (int)Math.ceil(t / Network.dt);
@@ -116,6 +130,11 @@ public class Simulator extends Network
     
     protected StatusUpdate statusUpdate;
     
+    /**
+     * Constructs the Simulator for the given {@link Project}. 
+     * This also constructs an empty {@link Network} (see {@link Network#Network()}).
+     * @param project the {@link Project}
+     */
     public Simulator(Project project)
     {
         this.project = project;
@@ -124,6 +143,11 @@ public class Simulator extends Network
         vehicles = new ArrayList<Vehicle>();
         active = this;
     }
+    
+    /**
+     * Constructs the Simulator for the given {@link Project} with the given {@link Node}s and {@link Link}s.
+     * @param project the {@link Project}
+     */
     public Simulator(Project project, Set<Node> nodes, Set<Link> links)
     {
         super(nodes, links);
@@ -140,12 +164,20 @@ public class Simulator extends Network
         time = 0;
     }
     
-
+    /**
+     * Sets the {@link StatusUpdate}, which is used for visualizing progress
+     * @param s the new {@link StatusUpdate}
+     * @see StatusUpdate
+     */
     public void setStatusUpdate(StatusUpdate s)
     {
         statusUpdate = s;
     }
     
+    /**
+     * Returns the {@link Project} associated with this {@link Simulator}
+     * @return the {@link Project} associated with this {@link Simulator}
+     */
     public Project getProject()
     {
         return project;
@@ -157,31 +189,24 @@ public class Simulator extends Network
     
     
     
-    
+    /**
+     * Sets the output stream to write the log file.
+     * @param out the output stream to write the log file
+     */
     public void setOutStream(PrintStream out)
     {
         this.out = out;
     }
     
+    /**
+     * Returns the output stream for writing the log file
+     * @return the output stream for writing the log file
+     */
     public PrintStream getOutStream()
     {
         return out;
     }
     
-    public void save(File file)
-    {
-        try
-        {
-            ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(file));
-            
-            out.writeObject(this);
-            out.close();
-        }
-        catch(Exception ex)
-        {
-            ex.printStackTrace(System.err);
-        }
-    }
     
 
     
@@ -190,7 +215,10 @@ public class Simulator extends Network
     
     
     
-    
+    /**
+     * Calculates the average link density as the average over all links.
+     * @return the average link density (veh/mi)
+     */
     public double getAvgLinkDensity()
     {
         double output = 0;
@@ -209,18 +237,29 @@ public class Simulator extends Network
     }
     
 
-    
+    /**
+     * Returns a list of all vehicles in the network.
+     * @return a list of all vehicles in the network
+     */
     public List<Vehicle> getVehicles()
     {
         return vehicles;
     }
     
+    /**
+     * Returns the number of vehicles in the network.
+     * @return the number of vehicles in the network
+     */
     public int getNumVehicles()
     {
         return vehicles.size();
     }
     
-    
+    /**
+     * Returns the number of transit vehicles.
+     * This method iterates through all vehicles and counts which vehicles are transit (see {@link Vehicle#isTransit()}).
+     * @return the number of buses
+     */
     public int getNumBuses()
     {
         int output = 0;
@@ -237,7 +276,10 @@ public class Simulator extends Network
     }
     
     
-    
+    /**
+     * This method iterates through all vehicles and counts which ones have exited (see {@link Vehicle#isExited()}).
+     * @return the number of exited vehicles
+     */
     public int getNumExited()
     {
         int count = 0;
@@ -252,6 +294,10 @@ public class Simulator extends Network
         return count;
     }
     
+    /**
+     * Resets the simulator to restart the simulation.
+     * This calls {@link Link#reset()} for all {@link Link}s, {@link Node#reset()} for all {@link Node}s, and {@link Vehicle#reset()} for all {@link Vehicle}s.
+     */
     public void resetSim()
     {
         centroid_time = 0;
@@ -275,7 +321,11 @@ public class Simulator extends Network
     
     
     
-    
+    /**
+     * Returns the total system travel time.
+     * This method iterates over all vehicles, and sums their travel time (see {@link Vehicle#getTT()}).
+     * @return the total system travel time(s)
+     */
     public double getTSTT()
     {
     	double output = 0;
@@ -291,6 +341,11 @@ public class Simulator extends Network
     	return output;
     }
     
+    /**
+     * Returns the total free flow travel time.
+     * This method iterates over all vehicles and finds the free flow path (see {@link FFTime}).
+     * @return the total free flow travel time (s)
+     */
     public double getFFTT()
     {
         double output = 0;
@@ -312,10 +367,25 @@ public class Simulator extends Network
         return output;
     }
     
+    /**
+     * Finds a path for the specified vehicle using the specified cost function.
+     * This runs Dijkstra's and traces the shortest path for the relevant origin-destination pair.
+     * Calls {@link Network#findPath(avdta.network.node.Node, avdta.network.node.Node, int, double, avdta.vehicle.DriverType, avdta.network.cost.TravelCost)} using the vehicle's parameters.
+     * @param v the {@link Vehicle}
+     * @param costFunc the cost function
+     * @return the shortest path
+     * @see TravelCost
+     */
     public Path findPath(PersonalVehicle v, TravelCost costFunc)
     {
         return findPath(v.getOrigin(), v.getDest(), v.getDepTime(), v.getVOT(), v.getDriver(), costFunc);
     }
+    
+    /**
+     * Returns the total energy consumed.
+     * This method iterates over all vehicles and sums their energy consumption (see {@link Vehicle#getTotalEnergy()}).
+     * @return the total energy consumption
+     */
     public double getTotalEnergy()
     {
     	double output = 0;
@@ -329,6 +399,11 @@ public class Simulator extends Network
     	return output;
     }
     
+    /**
+     * Returns the total vehicle miles traveled.
+     * This method iterates over all vehicles and sums their travel distance (see {@link Vehicle#getPath()} and {@link Path#getLength()}).
+     * @return the total vehicle miles traveled
+     */
     public double getTotalVMT()
     {
     	double output = 0;
@@ -342,6 +417,12 @@ public class Simulator extends Network
     	return output;
     }
     
+    /**
+     * This returns the midpoint of the departure time for the specified assignment interval index.
+     * The assignment interval index counts from 0 upwards.
+     * @param ast the assignment interval index
+     * @return ({@code ast})+0.5) * {@link Simulator#ast_duration}
+     */
     public int getAvgDepTime(int ast)
     {
         return (int)Math.round((ast + 0.5) * ast_duration);
@@ -349,7 +430,11 @@ public class Simulator extends Network
     
     
     
-    
+    /**
+     * Returns the average miles per gallon over all vehicles.
+     * This method iterates over all vehicles and averages their miles per gallon (see {@link Vehicle#getMPG()}).
+     * @return the average miles per gallon
+     */
     public double getAvgMPG()
     {
         double total = 0;
@@ -369,7 +454,12 @@ public class Simulator extends Network
 
 
     
-    
+    /**
+     * Returns the number of vehicles using the specified {@link Node}.
+     * This method sums over all vehicles and checks whether their path contains the specified {@link Node} (see {@link Vehicle#getPath()} and {@link Path#containsNode(avdta.network.node.Node)}).
+     * @param n the {@link Node} being checked
+     * @return the number of vehicles using the specified {@link Node}
+     */
     public int getNodeDemand(Node n)
     {
         int output = 0;
@@ -384,9 +474,14 @@ public class Simulator extends Network
         return output;
     }
     
+    /**
+     * This prints the {@link Node} demands for all {@link Node}s to the file {@link Project#getResultsFolder()}{@code /intersection_demand.txt}.
+     * This calls {@link Simulator#getNodeDemand(avdta.network.node.Node)} for all {@link Node}s.
+     * @throws IOException if the file cannot be accessed
+     */
     public void printIntersectionDemands() throws IOException
     {
-        PrintStream fileout = new PrintStream(new FileOutputStream(new File("intersection_demand.txt")), true);
+        PrintStream fileout = new PrintStream(new FileOutputStream(new File(project.getResultsFolder()+"/intersection_demand.txt")), true);
         
         fileout.println("Intersection\tDemand");
         for(Node n : nodes)
@@ -400,6 +495,12 @@ public class Simulator extends Network
         fileout.close();
     }
     
+    /*
+     * This prints the {@link Link} volume/capacity ratios for all {@link Link}s to the file {@link Project#getResultsFolder()}{@code /link_vc.txt}.
+     * This iterates over each {@link Link} and checks which vehicles use the {@link Link} for the volume counts.
+     * It then divides by the {@link Link} capacity (see {@link Link#getCapacity()}).
+     * @throws IOException if the file cannot be accessed
+     */
     public void printLinkVC() throws IOException
     {
         for(Link l : links)
@@ -436,6 +537,12 @@ public class Simulator extends Network
         fileout.close();
     }
     
+    /**
+     * Returns the average travel time for the given driver type. 
+     * Note that all vehicles of the same type (i.e. all autonomous vehicles) should share the same {@link DriverType} instance.
+     * @param driver the driver
+     * @return the average travel time for the given driver type (s)
+     */
     public double getAvgTT(DriverType driver)
     {
         double total = 0.0;
@@ -460,6 +567,11 @@ public class Simulator extends Network
         }
     }
     
+    /**
+     * Returns the average travel time for vehicles matching the specified type code
+     * @param type the type code
+     * @return the average travel time for vehicles matching the specified type code
+     */
     public double getAvgTT(int type)
     {
         double total = 0.0;
@@ -484,6 +596,11 @@ public class Simulator extends Network
         }
     }
     
+    /**
+     * Returns average travel times for transit or non-transit vehicles
+     * @param transit checks transit vehicles if true, checks non-transit vehicles if false
+     * @return average travel times for transit or non-transit vehicles (s)
+     */
     public double getAvgBusTT(boolean transit)
     {
         double total = 0.0;
@@ -508,6 +625,40 @@ public class Simulator extends Network
         }
     }
     
+    /**
+     * Returns total travel times for transit or non-transit vehicles
+     * @param transit checks transit vehicles if true, checks non-transit vehicles if false
+     * @return total travel times for transit or non-transit vehicles (s)
+     */
+    public double getBusTT(boolean transit)
+    {
+        double total = 0.0;
+        int count = 0;
+        
+        for(Vehicle v : vehicles)
+        {
+            if(v.isTransit() == transit)
+            {
+                count++;
+                total += v.getTT();
+            }
+        }
+        
+        if(count > 0)
+        {
+            return total/count;
+        }
+        else
+        {
+            return 0;
+        }
+    }
+    
+    /**
+     * Prints {@link Node} volume/capacity ratios to the file {@link Project#getResultsFolder()}{@code /node_vc.txt}.
+     * This iterates over all vehicles and nodes, checking whether the {@link Vehicle} uses the {@link Node}.
+     * @throws IOException if the file is not found
+     */
     public void printNodeVC() throws IOException
     {
         for(Node n : nodes)
@@ -543,7 +694,10 @@ public class Simulator extends Network
     }
 
     
-    
+    /**
+     * Sets the vehicles to the specified list, and sorts them by departure time.
+     * @param vehicles the new list of vehicles.
+     */
     public void setVehicles(List<Vehicle> vehicles)
     {
         this.vehicles = vehicles;
@@ -553,7 +707,13 @@ public class Simulator extends Network
     protected int exit_count;
     protected int veh_idx;
     
-    
+    /**
+     * Simulates (dynamic network loading) the network. 
+     * The simulation runs until the duration is reached or all vehicles have exited.
+     * This simultaneously writes the VAT (vehicle arrival time) file (see {@link Simulator#getVatFile()}).
+     * For each time step, this calls {@link Simulator#addVehicles()} and {@link Simulator#propagateFlow()}.
+     * @throws IOException if a file cannot be accessed
+     */
     public void simulate() throws IOException
     {   
         resetSim();
@@ -590,6 +750,11 @@ public class Simulator extends Network
         vat.close();
     }
     
+    /**
+     * This file creates the {@code sim.vat} file, which is a VISTA output, from the vehicle arrival times file.
+     * @param outputFile the output file
+     * @throws IOException if a file cannot be accessed.
+     */
     public void createSimVat(File outputFile) throws IOException
     {
         Map<Integer, List<Integer>> arrTimes = new HashMap<Integer, List<Integer>>();
@@ -632,17 +797,27 @@ public class Simulator extends Network
         fileout.close();
     }
     
+    /**
+     * Returns the vehicle arrival times file.
+     * @return {@link Project#getResultsFolder()}{@code /vat.dat}
+     */
     public File getVatFile()
     {
         return new File(project.getResultsFolder()+"/vat.dat");
     }
     
+    /**
+     * This method is called when the simulation has finished.
+     */
     public void simulationFinished()
     {
         
     }
     
-
+    /**
+     * This method prints the flowin.csv and linktt.csv files, which are VISTA outputs used for visualization.
+     * @throws IOException if a file cannot be accessed
+     */
     public void printLinkTdd() throws IOException
     {
         for(Link l : links)
@@ -688,17 +863,48 @@ public class Simulator extends Network
         ttout.close();
     }
     
-    
+    /**
+     * Returns whether all vehicles have exited.
+     * @return whether all vehicles have exited
+     */
     protected boolean isSimulationFinished()
     {
         return exit_count == vehicles.size();
     }
     
+    /**
+     * This iterates through all vehicles. 
+     * If the simulation time ({@link Simulator#time}) has passed the vehicle's departure time, the vehicle is added to its starting link.
+     */
     public void addVehicles()
     {
+        List<Vehicle> vehicles = getVehicles();
         
+        while(veh_idx < vehicles.size())
+        {
+            PersonalVehicle v = (PersonalVehicle)vehicles.get(veh_idx);
+
+            if(v.getPath() == null)
+            {
+                veh_idx++;
+            }
+            else if(v.getDepTime() <= Simulator.time)
+            {
+                v.entered();
+                v.getNextLink().addVehicle(v);
+                veh_idx++;
+            }
+            else
+            {
+                break;
+            }
+        }
     }
     
+    /**
+     * This executes one time step of simulation.
+     * This calls {@link Link#prepare()}, {@link Link#step()}, {@link Node#step}, then {@link Link#update()} for all {@link Link}s and {@link Node}s.
+     */
     protected void propagateFlow()
     {
         for(Link l : links)
@@ -725,12 +931,24 @@ public class Simulator extends Network
     }
     
     
-    
+    /**
+     * This calls {@link Simulator#printLinkFlow(int, int, File)} with the file {@link Project#getResultsFolder()}{@code /linkq.txt}.
+     * @param start the start time (s)
+     * @param end the end time (s)
+     * @throws IOException if a file cannot be accessed
+     */
     public void printLinkFlow(int start, int end) throws IOException
     {
         printLinkFlow(start, end, new File(project.getResultsFolder()+"/linkq.txt"));
     }
     
+    /**
+     * This prints the average link flows for each assignment interval index within the start and end times.
+     * @param start the start time (s)
+     * @param end the end time (s)
+     * @param file the output file
+     * @throws IOException if a file cannot be accessed
+     */
     public void printLinkFlow(int start, int end, File file) throws IOException
     {
         PrintStream fileout = new PrintStream(new FileOutputStream(file), true);
@@ -759,6 +977,10 @@ public class Simulator extends Network
         fileout.close();
     }
     
+    /**
+     * This calculates the number of active vehicles by iterating over all non-centroid connector {@link Link}s.
+     * @return the number of active vehicles
+     */
     public int getActiveVehicles()
     {
         int output = 0;
@@ -777,10 +999,24 @@ public class Simulator extends Network
         return output;
     }
     
+    /**
+     * This calls {@link Simulator#printLinkTT(int, int, java.io.File)} with the file {@link Project#getResultsFolder()}{@code /linkq.txt}.
+     * @param start the start time (s)
+     * @param end the end time (s)
+     * @throws IOException if a file cannot be accessed
+     */
     public void printLinkTT(int start, int end) throws IOException
     {
         printLinkTT(start, end, new File(project.getResultsFolder()+"/linktt.txt"));
     }
+    
+    /**
+     * This prints average link travel times for all assignment interval indexes between the start and end times.
+     * @param start the start time (s)
+     * @param end the end time (s)
+     * @param file the output file
+     * @throws IOException if a file cannot be accessed
+     */
     public void printLinkTT(int start, int end, File file) throws IOException
     {
         PrintStream fileout = new PrintStream(new FileOutputStream(file), true);
@@ -809,6 +1045,10 @@ public class Simulator extends Network
         fileout.close();
     }
     
+    /**
+     * This calculates the number of vehicles waiting on centroid connectors.
+     * @return the number of vehicles waiting on centroid connectors
+     */
     public int getWaitingVehicles()
     {
         int output = 0;
@@ -824,7 +1064,12 @@ public class Simulator extends Network
         return output;
     }
     
-    public double calcBusFFTime()
+    /**
+     * This calculates the total travel time of buses at free flow.
+     * This method iterates all vehicles and sums {@link Vehicle#getPath()} and {@link Path#getFFTime()} for transit vehicles.
+     * @return the total travel time of buses at free flow
+     */
+    public double getBusFFTime()
     {
         double output = 0;
         
@@ -839,6 +1084,12 @@ public class Simulator extends Network
         return output;
     }
     
+    /**
+     * This calculates the average bus travel time ratio.
+     * This iterates over all vehicles and averages the travel time ratio for transit vehicles.
+     * The travel time ratio is {@link Vehicle#getTT()}/the vehicle free flow travel time.
+     * @return the average bus travel time ratio
+     */
     public double calcAvgBusTimeRatio()
     {
         double output = 0;
@@ -856,6 +1107,12 @@ public class Simulator extends Network
         return output / count;
     }
     
+    /**
+     * This calculates the average transit delay.
+     * The delay is the travel time - the free flow travel time.
+     * This iterates over all vehicles and sums the delay for transit vehicles.
+     * @return the average transit delay
+     */
     public double calcAvgBusDelay()
     {
         double output = 0;
@@ -873,22 +1130,13 @@ public class Simulator extends Network
         return output / count;
     }
     
-    public double calcBusTime()
-    {
-        double output = 0;
-        
-        for(Vehicle v : vehicles)
-        {
-            if(v.isTransit())
-            {
-                output += v.getTT();
-                //System.out.println(v.getId()+"\t"+((Bus)v).getRouteId()+"\t"+v.getTT()+"\t"+v.getPath().getFFTime());
-            }
-        }
-        
-        return output;
-    }
     
+    
+    /**
+     * This prints bus travel times and free flow travel times to the specified file.
+     * @param file the output file
+     * @throws IOException if the file cannot be accessed
+     */
     public void printBusTime(File file) throws IOException
     {
         PrintStream fileout = new PrintStream(new FileOutputStream(file), true);

@@ -13,11 +13,23 @@ import java.io.PrintStream;
 import java.util.Scanner;
 
 /**
- *
+ * This class defines methods to convert transit data from the VISTA data format to the AVDTA data format. 
+ * This class uses the following tables from VISTA: bus, bus_period, bus_route_link, bus_frequency
+ * To use it, copy the required tables into files, and construct a new {@link TransitImportFromVISTA} with the files. 
+ * The constructor will call all conversion methods.
  * @author Michael
  */
 public class TransitImportFromVISTA 
 {
+    /**
+     * Converts the transit data from VISTA from the following files.
+     * @param project the {@link TransitProject}
+     * @param bus the file containing the bus table
+     * @param bus_period the file containing the bus_period table
+     * @param bus_route_link the file containing the bus_route_link table
+     * @param bus_frequency the file containing the bus_frequency table
+     * @throws IOException if a file cannot be accessed
+     */
     public TransitImportFromVISTA(TransitProject project, File bus, File bus_period, File bus_route_link, File bus_frequency) throws IOException
     {
         convertBus(project, bus);
@@ -26,6 +38,12 @@ public class TransitImportFromVISTA
         convertBusFrequency(project, bus_frequency);
     }
     
+    /**
+     * Converts the bus table.
+     * @param project the {@link TransitProject}
+     * @param input the file containing the database table
+     * @throws IOException if a file cannot be accessed
+     */
     public void convertBus(TransitProject project, File input) throws IOException
     {
         PrintStream fileout = new PrintStream(new FileOutputStream(project.getBusFile()), true);
@@ -49,6 +67,12 @@ public class TransitImportFromVISTA
         filein.close();
     }
     
+    /**
+     * Converts the bus_period table.
+     * @param project the {@link TransitProject}
+     * @param input the file containing the database table
+     * @throws IOException if a file cannot be accessed
+     */
     public void convertBusPeriod(TransitProject project, File input) throws IOException
     {
         PrintStream fileout = new PrintStream(new FileOutputStream(project.getBusPeriodFile()), true);
@@ -68,6 +92,12 @@ public class TransitImportFromVISTA
         filein.close();
     }
     
+    /**
+     * Converts the bus_frequency table.
+     * @param project the {@link TransitProject}
+     * @param input the file containing the database table
+     * @throws IOException if a file cannot be accessed
+     */
     public void convertBusFrequency(TransitProject project, File input) throws IOException
     {
         PrintStream fileout = new PrintStream(new FileOutputStream(project.getBusFrequencyFile()), true);
@@ -90,6 +120,12 @@ public class TransitImportFromVISTA
         filein.close();
     }
     
+    /**
+     * Converts the bus_route_link table.
+     * @param project the {@link TransitProject}
+     * @param input the file containing the database table
+     * @throws IOException if a file cannot be accessed
+     */
     public void convertBusRouteLink(TransitProject project, File input) throws IOException
     {
         PrintStream fileout = new PrintStream(new FileOutputStream(project.getBusRouteLinkFile()), true);

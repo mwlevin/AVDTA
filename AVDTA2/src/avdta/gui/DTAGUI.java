@@ -8,7 +8,7 @@ package avdta.gui;
 import avdta.dta.Assignment;
 import avdta.dta.DTAResults;
 import avdta.gui.util.ProjectChooser;
-import avdta.gui.util.Version;
+import avdta.Version;
 import avdta.gui.panels.DTAPane;
 import avdta.gui.panels.DemandPane;
 import avdta.gui.panels.NetworkPane;

@@ -23,15 +23,18 @@ public class Path extends ArrayList<Link> implements Serializable
     private double cost;
     
     /**
-     * Constructs an empty {@link Path} with the id set to -1
+     * Constructs an empty {@link Path} with an id of -1.
+     * {@link Path} ids are set by {@link PathList} after the {@link Path} is added.
      */
     public Path()
     {
-        id = -1;
+        setId();
     }
     
     /**
-     * Constructs an empty {@link Path} with the specified id
+     * Constructs an empty {@link Path} with the specified id.
+     * It is not recommended to use this method as the specified id may infringe on the uniquely generated ids.
+     * This method is used by {@link PathList} when reading from a file.
      * @param id the id of the {@link Path}
      */
     public Path(int id)

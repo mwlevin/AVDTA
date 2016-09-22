@@ -3,17 +3,17 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package avdta.gui.util;
+package avdta;
 
 /**
  *
- * @author micha
+ * @author Michael
  */
 public class Version 
 {
     public static final String getVersion()
     {
-        return "2.0";
+        return "2.0 beta";
     }
     
     public static final String getAuthor()

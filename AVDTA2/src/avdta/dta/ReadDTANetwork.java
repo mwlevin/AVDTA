@@ -5,8 +5,6 @@
  */
 package avdta.dta;
 
-import avdta.network.AST;
-import avdta.network.DemandProfile;
 import avdta.network.ReadNetwork;
 import avdta.network.Simulator;
 import avdta.network.link.Link;
@@ -348,7 +346,7 @@ public class ReadDTANetwork extends ReadNetwork
             
             filein.nextLine();
             
-            output.put(id, new AST(id, start, duration, weight));
+            output.add(new AST(id, start, duration, weight));
         }
         
         filein.close();

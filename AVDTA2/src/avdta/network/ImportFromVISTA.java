@@ -16,11 +16,25 @@ import java.util.Map;
 import java.util.Scanner;
 
 /**
- *
- * @author micha
+ * This class defines methods to convert network data from the VISTA data format to the AVDTA data format. 
+ * This class uses the following tables from VISTA: nodes, link_details, phases, signals, and links.
+ * To use it, copy the required tables into files, and construct a new {@link ImportFromVISTA} with the files. 
+ * The constructor will call all conversion methods.
+ * @author Michael
  */
 public class ImportFromVISTA 
 {
+    /**
+     * Converts VISTA network data into the AVDTA data format from the following files.
+     * @param project the {@link Project}
+     * @param nodes the file containing the nodes table
+     * @param linkdetails the file containing the link_details table
+     * @param elevation the file containing elevation data. This is optional.
+     * @param phases the file containing the phases table
+     * @param signals the file containing the signals table
+     * @param linkpoints the file containing the links table
+     * @throws IOException if a file cannot be accessed
+     */
     public ImportFromVISTA(Project project, File nodes, File linkdetails, File elevation, File phases, File signals, File linkpoints) throws IOException
     {
         convertNodes(project, nodes, elevation);
@@ -31,6 +45,12 @@ public class ImportFromVISTA
         
     }
     
+    /**
+     * Converts the links table.
+     * @param project the {@link Project}
+     * @param input the file containing the database table
+     * @throws IOException if a file is not found
+     */
     public void convertLinkPoints(Project project, File input) throws IOException
     {
         PrintStream fileout = new PrintStream(new FileOutputStream(project.getLinkPointsFile()), true);
@@ -54,6 +74,12 @@ public class ImportFromVISTA
         fileout.close();
     }
     
+    /**
+     * Converts the signals table.
+     * @param project the {@link Project}
+     * @param signals the file containing the database table
+     * @throws IOException if a file is not found
+     */
     public void convertSignals(Project project, File signals) throws IOException
     {
         PrintStream fileout = new PrintStream(new FileOutputStream(project.getSignalsFile()), true);
@@ -74,6 +100,12 @@ public class ImportFromVISTA
         fileout.close();
     }
     
+    /**
+     * Converts the phases table.
+     * @param project the {@link Project}
+     * @param phases the file containing the database table
+     * @throws IOException if a file is not found
+     */
     public void convertPhases(Project project, File phases) throws IOException
     {
         PrintStream fileout = new PrintStream(new FileOutputStream(project.getPhasesFile()), true);
@@ -98,6 +130,12 @@ public class ImportFromVISTA
         filein.close();
     }
     
+    /**
+     * Converts the linkdetails table.
+     * @param project the {@link Project}
+     * @param linkdetails the file containing the database table
+     * @throws IOException if a file is not found
+     */
     public void convertLinks(Project project, File linkdetails) throws IOException
     {
         Scanner filein = new Scanner(linkdetails);
@@ -134,6 +172,15 @@ public class ImportFromVISTA
         fileout.close();
     }
     
+    /**
+     * Converts the nodes table. 
+     * Also adds elevation if the elevation file exists. 
+     * If the elevation file is null, it will be ignored.
+     * @param project the {@link Project}
+     * @param nodes the file containing the database table
+     * @param elevation the file containing elevation data. This file is optional.
+     * @throws IOException if a file is not found
+     */
     public void convertNodes(Project project, File nodes, File elevation) throws IOException
     {
         // temporary map

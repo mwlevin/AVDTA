@@ -6,7 +6,7 @@
 package avdta.gui;
 
 import avdta.gui.editor.Editor;
-import avdta.gui.util.Version;
+import avdta.Version;
 import java.awt.Color;
 import java.awt.Image;
 import java.io.File;

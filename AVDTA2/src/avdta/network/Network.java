@@ -4,6 +4,7 @@ import avdta.network.cost.TravelCost;
 import avdta.network.link.CTMLink;
 import avdta.network.link.DLRCTMLink;
 import avdta.network.link.Link;
+import avdta.network.link.TransitLane;
 import avdta.network.link.LinkRecord;
 import avdta.network.node.Intersection;
 import avdta.network.node.Node;
@@ -30,7 +31,12 @@ import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.Set;
 
-
+/**
+ * A {@link Network} contains the {@link Node}s and {@link Link}s that vehicles would pass through during simulation. 
+ * It also contains methods for controlling or accessing the dynamic network loading, such as shortest path.
+ * The {@link Network} does not itself contain or simulate vehicles. See {@link Simulator}.
+ * @author Michael
+ */
 public class Network
 {
     
@@ -52,10 +58,19 @@ public class Network
     
     public TravelCost costFunc;
     
+    /**
+     * Constructs an empty {@link Network}
+     */
     public Network()
     {
         this(new HashSet<Node>(), new HashSet<Link>());
     }
+    
+    /**
+     * Constructs this {@link Network} with the specified {@link Node}s and {@link Link}s
+     * @param nodes the set of {@link Node}s
+     * @param links the set of {@link Link}s
+     */
     public Network(Set<Node> nodes, Set<Link> links)
     {
         setNetwork(nodes, links);
@@ -64,11 +79,23 @@ public class Network
         paths = new PathList();
     }
     
+    /**
+     * Returns whether human-driven vehicles can use reservations. 
+     * If so, they are required to reserve all possible turning movements.
+     * If not, they will attempt to avoid reservations during path finding.
+     * Even if this returns false, human-driven vehicles can still be forced to use reservations due to lack of connectivity.
+     * @return whether human-driven vehicles can use reservations
+     */
     public static boolean getHVsUseReservations()
     {
         return HVs_use_reservations;
     }
     
+    /**
+     * Updates the {@link Node}s of this network.
+     * All {@link Node}s in the set are initialized (see {@link Node#initialize()}).
+     * @param nodes the new set of {@link Node}s
+     */
     public void setNodes(Set<Node> nodes)
     {
         this.nodes = nodes;
@@ -79,16 +106,34 @@ public class Network
         }
     }
     
+    /**
+     * Returns the set of {@link Link}s
+     * @return the set of {@link Link}s
+     */
     public Set<Link> getLinks()
     {
         return links;
     }
     
+    /**
+     * Updates whether human-driven vehicles can use reservations.
+     * If so, they are required to reserve all possible turning movements.
+     * If not, they will attempt to avoid reservations during path finding.
+     * Even if this is false, human-driven vehicles can still be forced to use reservations due to lack of connectivity.
+     * This is initially set to false.
+     * @param h whether human-driven vehicles can use reservations
+     */
     public void setHVsUseReservations(boolean h)
     {
         HVs_use_reservations = h;
     }
     
+    /**
+     * Updates the set of {@link Link}s.
+     * All {@link Link}s in the set are initialized (see {@link Link#initialize()}).
+     * In addition, dynamic transit lanes ({@link SharedTransitCTMLink}) are tied with their {@link TransitLane} counterparts (see {@link SharedTransitCTMLink#tieCells()}).
+     * @param links the new set of {@link Link}s
+     */
     public void setLinks(Set<Link> links)
     {
         this.links = links;
@@ -115,42 +160,87 @@ public class Network
         
     }
     
+    /**
+     * Updates both the set of {@link Node}s and the set of {@link Link}s.
+     * @param nodes the new set of {@link Node}s
+     * @param links the new set of {@link Link}s 
+     * @see Network#setNodes(java.util.Set) 
+     * @see Network#setLinks(java.util.Set) 
+     */
     public void setNetwork(Set<Node> nodes, Set<Link> links)
     {
         setNodes(nodes);
         setLinks(links);
     }
     
+    /**
+     * Sets whether to use Dijkstra's on the dual graph.
+     * This increases computation time, but is the correct method to use in networks containing intersections with limited turning movements.
+     * If all intersections do not limit turning movements (such as with reservations or stop signs), this can be set to false.
+     * This is initially set to true.
+     * @param l whether to use Dijkstra's on the dual graph
+     */
     public void setUseLinkDijkstras(boolean l)
     {
     	link_dijkstras = l;
     }
     
+    /**
+     * Returns the set of {@link Node}s
+     * @return the set of {@link Node}s
+     */
     public Set<Node> getNodes()
     {
         return nodes;
     }
     
+    /**
+     * Returns the cost function being used for shortest path.
+     * @return the cost function being used for shortest path
+     * @see TravelCost
+     */
     public TravelCost getCostFunction()
     {
         return costFunc;
     }
     
+    /**
+     * Returns the list of {@link Path}s.
+     * @return the list of {@link Path}s
+     * @see PathList
+     */
     public PathList getPaths()
     {
         return paths;
     }
     
+    /**
+     * Updates the list of {@link Path}s.
+     * @param p the new list of {@link Path}s
+     * @see PathList
+     */
     public void setPaths(PathList p)
     {
         paths = p;
     }
     
+    /**
+     * Updates the cost function used for shortest paths
+     * @param cost the new cost function
+     * @see TravelCost
+     */
     public void setCostFunction(TravelCost cost)
     {
         costFunc = cost;
     }
     
+    /**
+     * Searches for the {@link Node} with the given id. 
+     * Note that this is O(n). 
+     * If many searches are desired, creating a mapping of ids to {@link Node}s is faster (see {@link Network#createNodesMap()}).
+     * @param id the id to search for
+     * @return the {@link Node} with the given id, or null if not found
+     */
     public Node getNode(int id)
     {
         for(Node n : nodes)
@@ -164,19 +254,15 @@ public class Network
         return null;
     }
     
-    public Node findNode(int id)
-    {
-        for(Node n : nodes)
-        {
-            if(n.getId() == id)
-            {
-                return n;
-            }
-        }
-        return null;
-    }
     
-    public Link findLink(int id)
+    /**
+     * Searches for the {@link Link} with the given id. 
+     * Note that this is O(n). 
+     * If many searches are desired, creating a mapping of ids to {@link Link}s is faster (see {@link Network#createLinkIdsMap()}).
+     * @param id the id to search for
+     * @return the {@link Link} with the given id, or null if not found
+     */
+    public Link getLink(int id)
     {
         for(Link l : links)
         {
@@ -188,11 +274,31 @@ public class Network
         return null;
     }
     
+    /**
+     * Finds the shortest path between the given origin and destination.
+     * This method calls {@link Network#dijkstras(avdta.network.node.Node, int, double, avdta.vehicle.DriverType, avdta.network.cost.TravelCost)} and traces the shortest path.
+     * @param o the origin
+     * @param d the destination
+     * @return the shortest path.
+     */
     public Path findPath(Node o, Node d)
     {
         return findPath(o, d, 0, 0, DriverType.AV, costFunc);
     }
     
+    /**
+     * Finds the shortest path between the given origin and destination with the specified departure time, value of time, driver, and cost function.
+     * This method calls {@link Network#dijkstras(avdta.network.node.Node, int, double, avdta.vehicle.DriverType, avdta.network.cost.TravelCost)} and traces the shortest path.
+     * @param o the origin
+     * @param d the destination
+     * @param dep_time the departure time (s)
+     * @param vot the value of time ($/hr)
+     * @param driver indicates whether the driver is human or autonomous, and whether it is transit
+     * @param costFunc the cost function used for link travel costs
+     * @return the shortest path.
+     * @see DriverType
+     * @see TravelCost
+     */
     public Path findPath(Node o, Node d, int dep_time, double vot, DriverType driver, TravelCost costFunc)
     {
         node_dijkstras(o, dep_time, vot, driver, costFunc);
@@ -207,12 +313,37 @@ public class Network
         return paths.addPath(output);
     }
 
-    
+    /**
+     * Finds the one-to-all shortest paths with the specified parameters. 
+     * This calls {@link Network#dijkstras(avdta.network.node.Node, int, double, avdta.vehicle.DriverType, avdta.network.cost.TravelCost, boolean)}.
+     * Use {@link Network#trace(avdta.network.node.Node, avdta.network.node.Node)} to get the shortest path between two nodes.
+     * @param o the origin
+     * @param dep_time the departure time (s)
+     * @param vot the value of time ($/hr)
+     * @param driver indicates whether the driver is human or autonomous, and whether it is transit
+     * @param costFunc the cost function used for link travel costs
+
+     * @see DriverType
+     * @see TravelCost
+     */
     public void dijkstras(Node o, int dep_time, double vot, DriverType driver, TravelCost costFunc)
     {
         dijkstras(o, dep_time, vot, driver, costFunc, link_dijkstras);
     }
     
+    /**
+     * Finds the one-to-all shortest paths with the specified parameters. 
+     * This calls {@link Network#dijkstras(avdta.network.node.Node, int, double, avdta.vehicle.DriverType, avdta.network.cost.TravelCost, boolean)}.
+     * Use {@link Network#node_trace(avdta.network.node.Node, avdta.network.node.Node)} or {@link Network#link_trace(avdta.network.node.Node, avdta.network.node.Node)} to get the shortest path between two nodes.
+     * @param o the origin
+     * @param dep_time the departure time (s)
+     * @param vot the value of time ($/hr)
+     * @param driver indicates whether the driver is human or autonomous, and whether it is transit
+     * @param costFunc the cost function used for link travel costs
+     * @param link_dijkstras whether to find shortest path on the dual graph
+     * @see DriverType
+     * @see TravelCost
+     */
     public void dijkstras(Node o, int dep_time, double vot, DriverType driver, TravelCost costFunc, boolean link_dijkstras)
     {
         if(link_dijkstras)
@@ -225,7 +356,18 @@ public class Network
         }
     }
     
-
+    /**
+     * Finds one-to-all shortest paths on the dual graph.
+     * Vehicles may start on any outgoing link from the specified origin.
+     * Use {@link Network#link_trace(avdta.network.node.Node, avdta.network.node.Node)} to get the shortest path between two nodes.
+     * @param o the origin
+     * @param dep_time the departure time (s)
+     * @param vot the value of time ($/hr)
+     * @param driver indicates whether the driver is human or autonomous, and whether it is transit
+     * @param costFunc the cost function used for link travel costs
+     * @see DriverType
+     * @see TravelCost
+     */
     public void link_dijkstras(Node o, int dep_time, double vot, DriverType driver, TravelCost costFunc)
     {
         for(Link l : links)
@@ -302,6 +444,19 @@ public class Network
         
     }
     
+    /**
+     * Finds one-to-all shortest paths on the dual graph.
+     * Vehicles must start on the specified link. 
+     * The origin is the upstream node of the specified {@link Link} ({@link Link#getSource()}).
+     * Use {@link Network#link_trace(avdta.network.node.Node, avdta.network.node.Node)} to get the shortest path between two nodes.
+     * @param starting the origin {@link Link}
+     * @param dep_time the departure time (s)
+     * @param vot the value of time ($/hr)
+     * @param driver indicates whether the driver is human or autonomous, and whether it is transit
+     * @param costFunc the cost function used for link travel costs
+     * @see DriverType
+     * @see TravelCost
+     */
     public void dijkstras(Link starting, int dep_time, double vot, DriverType driver, TravelCost costFunc)
     {
         for(Link l : links)
@@ -370,7 +525,17 @@ public class Network
     }
     
     
-
+    /**
+     * Finds one-to-all shortest paths.
+     * Use {@link Network#node_trace(avdta.network.node.Node, avdta.network.node.Node)} to get the shortest path between two nodes.
+     * @param o the origin
+     * @param dep_time the departure time (s)
+     * @param vot the value of time ($/hr)
+     * @param driver indicates whether the driver is human or autonomous, and whether it is transit
+     * @param costFunc the cost function used for link travel costs
+     * @see DriverType
+     * @see TravelCost
+     */
     public void node_dijkstras(Node o, int dep_time, double vot, DriverType driver, TravelCost costFunc)
     {
         for(Node n : nodes)
@@ -462,6 +627,14 @@ public class Network
         }
     }
     
+    /**
+     * Returns the shortest path between the two specified nodes.
+     * Call this after calling {@link Network#dijkstras(avdta.network.node.Node, int, double, avdta.vehicle.DriverType, avdta.network.cost.TravelCost)}.
+     * Calls {@link Network#node_trace(avdta.network.node.Node, avdta.network.node.Node)} or {@link Network#link_trace(avdta.network.node.Node, avdta.network.node.Node)} depending on {@link Network#setUseLinkDijkstras(boolean)}.
+     * @param o the origin
+     * @param d the destination
+     * @return the shortest path between the two nodes, or null if no path was found
+     */
     public Path trace(Node o, Node d)
     {
         if(link_dijkstras)
@@ -474,6 +647,13 @@ public class Network
         }
     }
     
+    /**
+     * Returns the shortest path between the two specified nodes.
+     * Call this after calling {@link Network#node_dijkstras(avdta.network.node.Node, int, double, avdta.vehicle.DriverType, avdta.network.cost.TravelCost)}.
+     * @param o the origin
+     * @param d the destination
+     * @return the shortest path between the two nodes, or null if no path was found
+     */
     public Path node_trace(Node o, Node d)
     {
         Node curr = d;
@@ -492,6 +672,13 @@ public class Network
         return output;
     }
     
+    /**
+     * Returns the shortest path between the two specified nodes.
+     * Call this after calling {@link Network#link_dijkstras(avdta.network.node.Node, int, double, avdta.vehicle.DriverType, avdta.network.cost.TravelCost)}.
+     * @param o the origin
+     * @param d the destination
+     * @return the shortest path between the two nodes, or null if no path was found
+     */
     public Path link_trace(Node o, Node d)
     {
         Path output = new Path();
@@ -522,7 +709,13 @@ public class Network
         return output;
     }
     
-    
+    /**
+     * Initializes the network. 
+     * This should be called before simulating.
+     * This calls {@link Node#initialize()} and {@link Link#initialize()} for all {@link Node}s and {@link Link}s.
+     * In addition, dynamic transit lanes ({@link SharedTransitCTMLink}) are tied with their {@link TransitLane} counterparts (see {@link SharedTransitCTMLink#tieCells()}).
+     * Also, dynamic lane reversal links ({@link DLRCTMLink}) are tied (see {@link Network#tieLinks()}) if dynamic lane reversal is enabled.
+     */
     public void initialize()
     {
         for(Node n : nodes)
@@ -559,32 +752,33 @@ public class Network
     }
     
     
-    
-    public Link getLink(int id)
-    {
-        for(Link l : links)
-        {
-            if(l.getId() == id)
-            {
-                return l;
-            }
-        }
-        
-        return null;
-    }
-    
+    /**
+     * Sets whether dynamic lane reversal is enabled. 
+     * This is false by default.
+     * Dynamic lane reversal only occurs on dynamic lane reversal links ({@link DLRCTMLink}).
+     * @param d 
+     */
     public static void setDLR(boolean d)
     {
         dlr = d;
-        
-        
     }
     
+    /**
+     * Returns whether dynamic lane reversal is enabled. 
+     * This is false by default.
+     * Dynamic lane reversal only occurs on dynamic lane reversal links ({@link DLRCTMLink}).
+     * @return whether dynamic lane reversal is enabled
+     */
     public static boolean isDLR()
     {
         return dlr;
     }
     
+    /**
+     * This ties links for dynamic lane reversal.
+     * @see DLRCTMLink
+     * @see DLRCTMLink#tieCells(avdta.network.link.DLRCTMLink)
+     */
     public void tieLinks()
     {  
         int count = 0;
@@ -615,6 +809,15 @@ public class Network
         System.out.println("Tied "+count+" links");
     }
     
+    /**
+     * This saves the network data to the specified {@link Project}. 
+     * This includes saving nodes, links, link coordinates, and signal data.
+     * Note that data will be overwritten.
+     * Also, signal data is saved only for intersections with a {@link Signalized}.
+     * @param project the {@link Project} to save to.
+     * @throws IOException if a file cannot be accessed
+     * @see Signalized
+     */
     public void save(Project project) throws IOException
     {
         PrintStream fileout = new PrintStream(new FileOutputStream(project.getNodesFile()), true);
@@ -740,6 +943,10 @@ public class Network
         fileout.close();
     }
     
+    /**
+     * Creates a mapping of ids to {@link Link}s.
+     * @return a mapping of ids to {@link Link}s
+     */
     public Map<Integer, Link> createLinkIdsMap()
     {
         Map<Integer, Link> output = new HashMap<Integer, Link>();
@@ -752,6 +959,10 @@ public class Network
         return output;
     }
     
+    /**
+     * Creates a mapping of ids to {@link Node}s.
+     * @return a mapping of ids to {@link Node}s
+     */
     public Map<Integer, Node> createNodesMap()
     {
         Map<Integer, Node> output = new HashMap<Integer, Node>();

@@ -3,35 +3,33 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package avdta.network;
+package avdta.dta;
 
+import avdta.dta.AST;
 import java.util.TreeMap;
 
 /**
- *
+ * A demand profile is a set of assignment intervals.
+ * These assignment intervals should not overlap in time.
  * @author Michael
  */
 public class DemandProfile extends TreeMap<Integer, AST>
 {
-    private int lowest_id;
     
-    public DemandProfile()
+    
+    /**
+     * Adds the assignment interval to this {@link DemandProfile}.
+     * @param a the assignment interval to be added
+     */
+    public void add(AST a)
     {
-        lowest_id = Integer.MAX_VALUE;
+        put(a.getId(), a);
     }
     
-
-    
-    public AST put(int v, AST a)
-    {
-        if(a.getId() < lowest_id)
-        {
-            lowest_id = a.getId();
-        }
-        
-        return super.put(v, a);
-    }
-    
+    /**
+     * This method normalizes the weights so that they sum to 1.
+     * This should only be called after all assignment intervals have been added.
+     */
     public void normalizeWeights()
     {
         double total = 0.0;
@@ -48,6 +46,13 @@ public class DemandProfile extends TreeMap<Integer, AST>
         }
     }
     
+    /**
+     * Returns the assignment interval corresponding to the given time.
+     * This method will only return one {@link AST} if multiple spans the specified time. 
+     * If so, the {@link AST} returned will be the one that has the lower id.
+     * @param time the time (s)
+     * @return the assignment interval corresponding to the given time
+     */
     public int getAST(int time)
     {
         for(int id : keySet())

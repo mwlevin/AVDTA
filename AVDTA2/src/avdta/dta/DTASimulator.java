@@ -280,30 +280,7 @@ public class DTASimulator extends Simulator
         return null;
     }
     
-    public void addVehicles()
-    {
-        List<Vehicle> vehicles = getVehicles();
-        
-        while(veh_idx < vehicles.size())
-        {
-            PersonalVehicle v = (PersonalVehicle)vehicles.get(veh_idx);
-
-            if(v.getPath() == null)
-            {
-                veh_idx++;
-            }
-            else if(v.getDepTime() <= Simulator.time)
-            {
-                v.entered();
-                v.getNextLink().addVehicle(v);
-                veh_idx++;
-            }
-            else
-            {
-                break;
-            }
-        }
-    }
+    
     
     public void writeVehicleResults() throws IOException
     {

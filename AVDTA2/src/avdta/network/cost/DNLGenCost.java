@@ -11,18 +11,18 @@ import avdta.vehicle.Vehicle;
 
 /**
  * This cost function is used during a one shot simulation/assignment, and calculates the generalized cost based on recent travel times.
- * The look back time is defined as {@link DTASimulator#ast_duration}-{@link Network#dt}.
+ * The look back time is defined as 5 minutes.
  * @author Michael
  */
 public class DNLGenCost extends TravelCost
 {
 
     /**
-     * Returns the generalized cost {@link DTASimulator#ast_duration}-{@link Network#dt} ago.
+     * Returns the generalized cost from 5 minutes ago.
      * @param l the {@link Link}
      * @param vot the value of time ($/hr)
      * @param time the time entering the link (s)
-     * @return {@link Link#getAvgTT(int)} * vot/3600 + {@link Link#getToll(int)}, or {@link Link#getFFTime()} * vot/3600 + {@link LInk#getToll(int)} near the start of simulation
+     * @return {@link Link#getAvgTT(int)} * vot/3600 + {@link Link#getToll(int)}, or {@link Link#getFFTime()} * vot/3600 + {@link Link#getToll(int)} near the start of simulation
      */
     public double cost(Link l, double vot, int time)
     {

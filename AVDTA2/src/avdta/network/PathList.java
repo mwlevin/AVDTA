@@ -19,18 +19,32 @@ import java.util.Map;
 import java.util.Scanner;
 
 /**
- *
- * @author micha
+ * This class contains a list of unique {@link Path} objects. 
+ * It is intended to avoid creating duplicate {@link Path}s, which reduces memory as well as storage when saving assignments.
+ * The {@link PathList} contains methods to read and write from file.
+ * 
+ * {@link Path}s are hashed according to origin, destination, and size to reduce the number of {@link Path} to {@link Path} comparisons. 
+ * @author Michael
  */
 public class PathList
 {
     private Map<Node, Map<Node, Map<Integer, List<Path>>>> paths;
     
+    /**
+     * Constructs a new empty {@link PathList}
+     */
     public PathList()
     {
         paths = new HashMap<Node, Map<Node, Map<Integer, List<Path>>>>();
     }
     
+    /**
+     * Constructs a {@link PathList} for the specified {@link Network} from the specified {@link File}.
+     * The {@link Network} is needed because {@link PathList} saves {@link Link} ids, not {@link Link} objects.
+     * @param network the {@link Network}
+     * @param file the {@link File} to read from
+     * @throws IOException if the {@link File} cannot be opened
+     */
     public PathList(Network network, File file) throws IOException
     {
         this();
@@ -38,7 +52,14 @@ public class PathList
         readFromFile(network, file);
     }
     
-    // return new path, or old path if new path is a duplicate
+    /**
+     * This method attempts to add the {@link Path} to the list. 
+     * If the {@link Path} already exists in this {@link PathList}, this method will return the existing {@link Path}.
+     * Otherwise, the new {@link Path} will be added.
+     * Calls to this method should use the return value as the assigned {@link Path}.
+     * @param p the {@link Path} to be added
+     * @return new path, or old path if new path is a duplicate
+     */
     public Path addPath(Path p)
     {
         Map<Node, Map<Integer, List<Path>>> temp;
@@ -95,6 +116,13 @@ public class PathList
         }
     }
     
+    /**
+     * This method writes this {@link PathList} to a file. 
+     * All saved {@link Path}s are written out as a list of {@link Link}s. 
+     * {@link Path} ids are saved, and {@link Path}s should be referenced by their id.
+     * @param file the {@link File} to save to
+     * @throws IOException if the file cannot be written 
+     */
     public void writeToFile(File file) throws IOException
     {
         PrintStream fileout = new PrintStream(new FileOutputStream(file), true);
@@ -127,6 +155,16 @@ public class PathList
         fileout.close();
     }
     
+    /**
+     * This method constructs this {@link PathList} from the specified {@link File}. 
+     * {@link Path}s in the file are converted to a list of {@link Link}s via the specified {@link Network}.
+     * The file should not be modified outside of {@link PathList}. 
+     * Loading a {@link PathList} from an externally modified file may result in corrupted data.
+     * The {@link Network} is needed because {@link PathList} saves {@link Link} ids, not {@link Link} objects.
+     * @param network the {@link Network} this {@link PathList} applies to.
+     * @param file the {@link File} to read from
+     * @throws IOException if the {@link File} cannot be read
+     */
     public void readFromFile(Network network, File file) throws IOException
     {
         paths.clear();
@@ -151,6 +189,11 @@ public class PathList
         }
     }
     
+    /**
+     * This method adds the {@link Path} without checking for duplicates.
+     * It should not be used outside of the {@link PathList}, therefore it is marked private.
+     * @param p the {@link Path} to be added
+     */
     private void addUnrestricted(Path p)
     {
         Map<Node, Map<Integer, List<Path>>> temp;
@@ -194,6 +237,10 @@ public class PathList
         }
     }
     
+    /**
+     * This creates a map of ids to {@link Path}s to help restore assignments saved via {@link Path} ids.
+     * @return a mapping of ids to {@link Path}s
+     */
     public Map<Integer, Path> createPathIdsMap()
     {
         Map<Integer, Path> output = new HashMap<Integer, Path>();
