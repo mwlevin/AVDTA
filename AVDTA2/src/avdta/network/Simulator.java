@@ -6,7 +6,7 @@ package avdta.network;
 
 import avdta.dta.DTAResults;
 import avdta.network.ReadNetwork;
-import avdta.cost.TravelCost;
+import avdta.network.cost.TravelCost;
 import avdta.gui.util.StatusUpdate;
 import avdta.network.link.CentroidConnector;
 import avdta.network.link.Link;

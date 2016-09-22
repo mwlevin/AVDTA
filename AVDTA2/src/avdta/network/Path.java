@@ -6,7 +6,7 @@ package avdta.network;
 
 import avdta.network.link.Link;
 import avdta.network.node.Node;
-import avdta.cost.TravelCost;
+import avdta.network.cost.TravelCost;
 import java.io.Serializable;
 import java.util.ArrayList;
 
@@ -22,22 +22,35 @@ public class Path extends ArrayList<Link> implements Serializable
     
     private double cost;
     
+    /**
+     * Constructs an empty {@link Path} with the id set to -1
+     */
     public Path()
     {
         id = -1;
     }
     
+    /**
+     * Constructs an empty {@link Path} with the specified id
+     * @param id the id of the {@link Path}
+     */
     public Path(int id)
     {
         this.id = id;
     }
     
+    /**
+     * Updates the id to a uniquely generated id.
+     */
     public void setId()
     {
         id = next_id++;
     }
     
-    
+    /**
+     * Constructs the {@link Path} with the given {@link Link}s
+     * @param links the {@link Link}s to be added
+     */
     public Path(Link... links)
     {
         for(Link l : links)
@@ -46,7 +59,11 @@ public class Path extends ArrayList<Link> implements Serializable
         }
     }
     
-    
+    /**
+     * Checks whether this {@link Path} passes through the specified {@link Node}
+     * @param n the {@link Node} to be checked
+     * @return whether this {@link Path} passes through the specified {@link Node}
+     */
     public boolean containsNode(Node n)
     {
         if(size() == 0)
@@ -70,17 +87,30 @@ public class Path extends ArrayList<Link> implements Serializable
         return false;
     }
     
+    /**
+     * Update the cost of this {@link Path}
+     * @param cost the new cost
+     */
     public void setCost(double cost)
     {
         this.cost = cost;
     }
     
+    /**
+     * Returns the cost of this {@link Path}
+     * @return the cost of this {@link Path}
+     */
     public double getCost()
     {
         return cost;
     }
     
     
+    /**
+     * Checks whether this {@link Path} is identical to another in terms of the {@link Link}s contained.
+     * @param o the other {@link Path} to compare with
+     * @return whether this {@link Path} is identical to the other
+     */
     public boolean equals(Object o)
     {
         Path rhs = (Path)o;
@@ -101,6 +131,10 @@ public class Path extends ArrayList<Link> implements Serializable
         return true;
     }
     
+    /**
+     * Returns the {@link Path} id
+     * @return the id
+     */
     public int getId()
     {
         return id;
@@ -111,7 +145,7 @@ public class Path extends ArrayList<Link> implements Serializable
         return size();
     }
     /**
-     * 
+     * Return the first {@link Node} this {@link Path} passes through
      * @return origin node for this path
      */
     public Node getOrigin()
@@ -120,7 +154,7 @@ public class Path extends ArrayList<Link> implements Serializable
     }
     
     /**
-     * 
+     * Return the last {@link Node} this {@link Path} passes through
      * @return destination node for this path
      */
     public Node getDest()
@@ -129,8 +163,9 @@ public class Path extends ArrayList<Link> implements Serializable
     }
     
     /**
-     * 
-     * @return total free flow travel time for all links
+     * Returns the free flow travel time
+     * @return total free flow travel time for all links (s)
+     * @see Link#getFFTime()
      */
     public double getFFTime()
     {
@@ -145,9 +180,10 @@ public class Path extends ArrayList<Link> implements Serializable
     }
     
     /**
-     * 
+     * Returns the estimated travel time
      * @param dep_time departure time
-     * @return estimated travel time given the departure time
+     * @return estimated travel time given the departure time (s)
+     * @see Link#getAvgTT(int)
      */
     public double getAvgTT(int dep_time)
     {
@@ -191,7 +227,7 @@ public class Path extends ArrayList<Link> implements Serializable
     }
     
     /**
-     * 
+     * Returns the estimated fuel consumption
      * @param dep_time departure time
      * @return estimated fuel consumption given departure time
      */
@@ -213,7 +249,7 @@ public class Path extends ArrayList<Link> implements Serializable
     }
     
     /**
-     * 
+     * Returns the estimated energy consumption
      * @param dep_time departure time
      * @return estimated energy consumption given departure time
      */
@@ -235,7 +271,7 @@ public class Path extends ArrayList<Link> implements Serializable
     }
     
     /**
-     * 
+     * Returns the total distance traveled
      * @return total distance 
      */
     public double getLength()

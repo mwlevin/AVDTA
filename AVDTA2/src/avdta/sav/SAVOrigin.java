@@ -6,7 +6,7 @@ package avdta.sav;
 
 import avdta.network.node.Location;
 import avdta.network.Simulator;
-import avdta.cost.TravelCost;
+import avdta.network.cost.TravelCost;
 import avdta.network.node.Zone;
 import java.util.ArrayList;
 import java.util.Comparator;

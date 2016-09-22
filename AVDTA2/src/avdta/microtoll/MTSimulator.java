@@ -9,7 +9,7 @@ import avdta.network.Simulator;
 import static avdta.network.Simulator.dt;
 import static avdta.network.Simulator.duration;
 import static avdta.network.Simulator.time;
-import avdta.cost.TravelCost;
+import avdta.network.cost.TravelCost;
 import avdta.network.link.Link;
 import avdta.network.node.Node;
 import avdta.project.Project;

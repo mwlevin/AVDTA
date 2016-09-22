@@ -5,7 +5,7 @@
 package avdta.microtoll;
 
 import avdta.network.Simulator;
-import avdta.cost.TravelCost;
+import avdta.network.cost.TravelCost;
 import avdta.network.Path;
 import avdta.vehicle.DriverType;
 import avdta.vehicle.PersonalVehicle;

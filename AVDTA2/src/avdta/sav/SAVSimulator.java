@@ -8,7 +8,7 @@ import avdta.network.link.Link;
 import avdta.network.node.Node;
 import avdta.network.Path;
 import avdta.network.Simulator;
-import avdta.cost.TravelCost;
+import avdta.network.cost.TravelCost;
 import avdta.vehicle.Vehicle;
 import avdta.vehicle.DriverType;
 import avdta.project.SAVProject;

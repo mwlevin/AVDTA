@@ -1,6 +1,6 @@
 package avdta.network;
 
-import avdta.cost.TravelCost;
+import avdta.network.cost.TravelCost;
 import avdta.network.link.CTMLink;
 import avdta.network.link.DLRCTMLink;
 import avdta.network.link.Link;
