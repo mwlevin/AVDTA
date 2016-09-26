@@ -7,6 +7,7 @@ package avdta.dta;
 
 import avdta.network.ImportFromVISTA;
 import avdta.project.DTAProject;
+import avdta.project.Project;
 import avdta.vehicle.VOT;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -45,7 +46,7 @@ public class DTAImportFromVISTA
     
     /**
      * Converts the demand table.
-     * @param project the {@link Project}
+     * @param project the project
      * @param demand the file containing the database table
      * @throws IOException if a file is not found
      */
@@ -118,7 +119,7 @@ public class DTAImportFromVISTA
     
     /**
      * Converts the static_od table.
-     * @param project the {@link Project}
+     * @param project the project
      * @param static_od the file containing the database table
      * @throws IOException if a file is not found
      */

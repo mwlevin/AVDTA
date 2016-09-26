@@ -44,7 +44,7 @@ public class DTASimulator extends Simulator
     
     /**
      * Constructs this {@link DTASimulator} empty with the given project.
-     * @param project 
+     * @param project the project
      */
     public DTASimulator(DTAProject project)
     {
@@ -277,7 +277,7 @@ public class DTASimulator extends Simulator
     }
     
     /**
-     * Saves the assignment in the given {@label Assignment} object.
+     * Saves the assignment in the given {@link Assignment} object.
      * This calls {@link Assignment#writeToFile(java.util.List, avdta.project.DTAProject)}.
      * @param assign the {@link Assignment} wrapper object
      * @throws IOException if a file cannot be accessed
@@ -347,7 +347,7 @@ public class DTASimulator extends Simulator
      * Calls {@link DTASimulator#msa(int, double)} with a gap of 0.
      * @param max_iter the maximum number of iterations
      * @return results from simulating the assignment
-     * @throws IOException 
+     * @throws IOException if a file is not found
      */
     public DTAResults msa(int max_iter) throws IOException
     {

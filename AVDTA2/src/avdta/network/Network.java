@@ -756,7 +756,7 @@ public class Network
      * Sets whether dynamic lane reversal is enabled. 
      * This is false by default.
      * Dynamic lane reversal only occurs on dynamic lane reversal links ({@link DLRCTMLink}).
-     * @param d 
+     * @param d whether DLR is enabled
      */
     public static void setDLR(boolean d)
     {

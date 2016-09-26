@@ -943,6 +943,7 @@ public class ReadNetwork
     /**
      * Creates a list of all projects in the default project directory of the specified type.
      * @return  a list of all projects
+     * @param typefilter the project type
      * @throws IOException if a file cannot be accessed
      */
     public static Set<String> listProjects(String typefilter) throws IOException

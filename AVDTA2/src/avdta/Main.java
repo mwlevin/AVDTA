@@ -51,11 +51,11 @@ public class Main
     public static void main(String[] args) throws IOException
     {
         //caccTest2();
-        //GUI.main(args);
+        GUI.main(args);
 
 
         
-        transitTest3();
+        //transitTest3();
         //transitTest2();
         //transitTest1();
         

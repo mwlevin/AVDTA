@@ -147,6 +147,8 @@ public class Simulator extends Network
     /**
      * Constructs the Simulator for the given {@link Project} with the given {@link Node}s and {@link Link}s.
      * @param project the {@link Project}
+     * @param nodes the set of {@link Node}s
+     * @param links the set of {@link Link}s
      */
     public Simulator(Project project, Set<Node> nodes, Set<Link> links)
     {

@@ -6,6 +6,8 @@
 package avdta.dta;
 
 import java.util.Scanner;
+import avdta.network.node.Node;
+import avdta.vehicle.Vehicle;
 
 /**
  * This represents an entry in the demand file, and is used to easily manipulate data associated with individual vehicle trips.
