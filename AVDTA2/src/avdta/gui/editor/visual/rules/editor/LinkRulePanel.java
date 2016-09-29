@@ -76,6 +76,8 @@ public class LinkRulePanel extends JPanel
         list.setVisibleRowCount(6);
         
         
+        
+        
         edit.addActionListener(new ActionListener()
         {
             public void actionPerformed(ActionEvent e)
@@ -88,15 +90,16 @@ public class LinkRulePanel extends JPanel
                 {
                     frame = new JInternalFrame("Edit type rule");
                      
-                    frame.add(new LinkTypeRulePanel((LinkTypeRule)rule)
+                    frame.add(new LinkTypeRulePanel(editor.getProject(), (LinkTypeRule)rule)
                     {
                         public void cancel()
                         {
                             super.cancel();
                             frame.setVisible(false);
                         }
-                        public void addRule(LinkTypeRule rule)
+                        public void addRule(LinkRule rule)
                         {
+                            
                             newRule(rule);
                         }
 
@@ -177,7 +180,7 @@ public class LinkRulePanel extends JPanel
             {
                 final JInternalFrame frame = new JInternalFrame("New type rule");
 
-                frame.add(new LinkTypeRulePanel()
+                frame.add(new LinkTypeRulePanel(editor.getProject())
                 {
                     public void cancel()
                     {
@@ -185,7 +188,7 @@ public class LinkRulePanel extends JPanel
                         frame.setVisible(false);
                     }
                     
-                    public void addRule(LinkTypeRule rule)
+                    public void addRule(LinkRule rule)
                     {
                         newRule(rule);
                     }
@@ -226,7 +229,7 @@ public class LinkRulePanel extends JPanel
                         frame.setVisible(false);
                     }
                     
-                    public void addRule(LinkDataRule rule)
+                    public void addRule(LinkRule rule)
                     {
                         newRule(rule);
                     }
@@ -298,7 +301,17 @@ public class LinkRulePanel extends JPanel
                 
                 up.setEnabled(enable && list.getSelectedIndex() > 0);
                 down.setEnabled(enable && list.getSelectedIndex() < rules.size()-1);
-                edit.setEnabled(enable);
+                
+                if(enable)
+                {
+                     LinkRule rule = rules.get(list.getSelectedIndex());
+                     
+                     edit.setEnabled((rule instanceof LinkTypeRule) || (rule instanceof LinkDataRule));
+                }
+                else
+                {
+                    edit.setEnabled(false);
+                }
                 remove.setEnabled(enable);
             }
         });

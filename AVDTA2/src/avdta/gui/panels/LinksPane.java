@@ -329,7 +329,7 @@ public class LinksPane extends GUIPanel
 
                     ArrayList<LinkRecord> temp = new ArrayList<LinkRecord>();
                     
-                    LinkBusRule busRule = new LinkBusRule((DTAProject)project);
+                    LinkBusRule busRule = new LinkBusRule(project);
                     
 
                     try

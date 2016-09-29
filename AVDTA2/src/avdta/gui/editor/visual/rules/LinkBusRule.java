@@ -6,7 +6,7 @@ package avdta.gui.editor.visual.rules;
 
 import avdta.network.Simulator;
 import avdta.network.link.Link;
-import avdta.project.DTAProject;
+import avdta.project.Project;
 import avdta.vehicle.Vehicle;
 import java.awt.Color;
 import java.util.HashSet;
@@ -18,10 +18,16 @@ import java.util.Set;
  */
 public class LinkBusRule extends LinkRule
 {
+    private boolean singleLane;
     private Set<Integer> links;
     
-    public LinkBusRule(DTAProject project)
+    public LinkBusRule(Project project)
     {
+        this(project, false);
+    }
+    public LinkBusRule(Project project, boolean singleLane)
+    {
+        this.singleLane = singleLane;
         links = new HashSet<Integer>();
         
         Simulator sim = project.getSimulator();
@@ -51,7 +57,7 @@ public class LinkBusRule extends LinkRule
     public Color getColor(Link l, int t)
     {
         
-        if(l.getNumLanes() == 1)
+        if(singleLane && l.getNumLanes() == 1)
         {
             return Color.blue;
         }

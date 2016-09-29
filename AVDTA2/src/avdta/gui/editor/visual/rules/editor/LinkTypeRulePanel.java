@@ -5,6 +5,8 @@
 package avdta.gui.editor.visual.rules.editor;
 
 import avdta.gui.editor.EditLink;
+import avdta.gui.editor.visual.rules.LinkBusRule;
+import avdta.gui.editor.visual.rules.LinkRule;
 import avdta.gui.editor.visual.rules.LinkTypeRule;
 import avdta.gui.util.JColorButton;
 import avdta.network.link.CACCLTMLink;
@@ -25,6 +27,7 @@ import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import static avdta.gui.util.GraphicUtils.*;
+import avdta.project.Project;
 import java.awt.Color;
 import java.awt.GridBagLayout;
 import javax.swing.BorderFactory;
@@ -43,9 +46,19 @@ public class LinkTypeRulePanel extends JPanel
     
     private LinkTypeRule prev;
     
-    public LinkTypeRulePanel()
+    private Project project;
+    public LinkTypeRulePanel(Project project)
     {
+        this.project = project;
         save = new JButton("Save");
+        
+        String[] types = new String[EditLink.FLOW_MODELS.length+2];
+        for(int i = 0; i < EditLink.FLOW_MODELS.length; i++)
+        {
+            types[i] = EditLink.FLOW_MODELS[i];
+        }
+        types[types.length-2] = "Bus";
+        types[types.length-1] = "DTL";
         
         type = new JComboBox(EditLink.FLOW_MODELS);
         
@@ -132,9 +145,9 @@ public class LinkTypeRulePanel extends JPanel
         setMinimumSize(getPreferredSize());
     }
     
-    public LinkTypeRulePanel(LinkTypeRule prev)
+    public LinkTypeRulePanel(Project project, LinkTypeRule prev)
     {
-        this();
+        this(project);
         this.prev = prev;
         
         width.setText(""+prev.getWidth());
@@ -145,6 +158,7 @@ public class LinkTypeRulePanel extends JPanel
     
     public boolean save()
     {
+        
         int width_ = 0;
         
         try
@@ -166,25 +180,41 @@ public class LinkTypeRulePanel extends JPanel
         }
         
         
-        if(prev == null)
+        
+        if(type.getSelectedIndex() < EditLink.FLOW_MODELS.length)
         {
-            prev = new LinkTypeRule(type.getSelectedIndex(), color.getColor(), width_);
-            addRule(prev);
+            if(prev == null)
+            {
+                prev = new LinkTypeRule(type.getSelectedIndex(), color.getColor(), width_);
+                addRule(prev);
+            }
+            else
+            {
+                prev.setWidth(width_);
+                prev.setColor(color.getColor());
+                prev.setType(type.getSelectedIndex());
+                saveRule();
+            }
         }
         else
         {
-            prev.setWidth(width_);
-            prev.setColor(color.getColor());
-            prev.setType(type.getSelectedIndex());
-            saveRule();
+            if(type.getSelectedIndex() == EditLink.FLOW_MODELS.length)
+            {
+                addRule(new LinkBusRule(project, false));  
+            }
+            else if(type.getSelectedIndex() == EditLink.FLOW_MODELS.length+1)
+            {
+                addRule(new LinkBusRule(project, true));   
+            }
         }
+        
         
         return true;
     }
     
-    public void addRule(LinkTypeRule rule)
+    public void addRule(LinkRule rule)
     {
-        
+        System.out.println("check");
     }
     
     public void saveRule(){}

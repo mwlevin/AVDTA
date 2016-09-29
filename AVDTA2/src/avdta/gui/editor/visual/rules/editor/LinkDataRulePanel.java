@@ -5,6 +5,7 @@
 package avdta.gui.editor.visual.rules.editor;
 
 import avdta.gui.editor.visual.rules.LinkDataRule;
+import avdta.gui.editor.visual.rules.LinkRule;
 import avdta.gui.editor.visual.rules.data.LinkDataSource;
 import avdta.gui.util.JColorButton;
 import javax.swing.JButton;
@@ -186,7 +187,7 @@ public class LinkDataRulePanel extends JPanel
     
     public void cancel(){}
     
-    public void addRule(LinkDataRule rule){}
+    public void addRule(LinkRule rule){}
     
     public void saveRule(){}
     

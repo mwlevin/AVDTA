@@ -6,6 +6,7 @@
 package avdta.gui.editor.visual.rules.editor;
 
 import avdta.gui.editor.EditNode;
+import avdta.gui.editor.visual.rules.NodeRule;
 import avdta.gui.editor.visual.rules.NodeTypeRule;
 import static avdta.gui.util.GraphicUtils.constrain;
 import avdta.gui.util.JColorButton;
@@ -104,8 +105,8 @@ public class NodeTypeRulePanel extends JPanel
         constrain(p, width, 1, 1, 1, 1);
         
         constrain(this, p, 0, 1, 2, 1);
-        constrain(this, save, 0, 1, 1, 1);
-        constrain(this, cancel, 1, 1, 1, 1);
+        constrain(this, save, 0, 2, 1, 1);
+        constrain(this, cancel, 1, 2, 1, 1);
         
         cancel.addActionListener(new ActionListener()
         {
@@ -209,7 +210,7 @@ public class NodeTypeRulePanel extends JPanel
         return true;
     }
     
-    public void addRule(NodeTypeRule rule)
+    public void addRule(NodeRule rule)
     {
         
     }

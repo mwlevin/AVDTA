@@ -5,6 +5,7 @@
 package avdta.gui.editor.visual.rules.editor;
 
 import avdta.gui.editor.visual.rules.NodeDataRule;
+import avdta.gui.editor.visual.rules.NodeRule;
 import avdta.gui.editor.visual.rules.data.NodeDataSource;
 import avdta.gui.util.JColorButton;
 import javax.swing.JButton;
@@ -186,7 +187,7 @@ public class NodeDataRulePanel extends JPanel
     
     public void cancel(){}
     
-    public void addRule(NodeDataRule rule){}
+    public void addRule(NodeRule rule){}
     
     public void saveRule(){}
     

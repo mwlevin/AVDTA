@@ -1185,6 +1185,10 @@ public class Editor extends JFrame implements MouseListener
         return thisPanel;
     }
     
+    public Project getProject()
+    {
+        return project;
+    }
     public void deselectLink(Link l)
     {
         l.setSelected(false);

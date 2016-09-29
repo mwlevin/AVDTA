@@ -47,7 +47,7 @@ public abstract class GUI extends JFrame
     
     public static void main(String[] args) throws IOException
     {
-        System.setErr(new PrintStream(new FileOutputStream(new File("error_log.txt")), true));
+        //System.setErr(new PrintStream(new FileOutputStream(new File("error_log.txt")), true));
         
         if(args.length > 0 && args[0].equalsIgnoreCase("editor"))
         {

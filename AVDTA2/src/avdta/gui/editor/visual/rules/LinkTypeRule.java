@@ -32,6 +32,7 @@ public class LinkTypeRule extends LinkRule
     public String getName()
     {
         return EditLink.FLOW_MODELS[type];
+        
     }
     
     

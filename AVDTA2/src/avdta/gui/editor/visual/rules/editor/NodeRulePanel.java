@@ -131,7 +131,7 @@ public class NodeRulePanel extends JPanel
                             super.cancel();
                             frame.setVisible(false);
                         }
-                        public void addRule(NodeTypeRule rule)
+                        public void addRule(NodeRule rule)
                         {
                             newRule(rule);
                         }
@@ -153,7 +153,7 @@ public class NodeRulePanel extends JPanel
                             super.cancel();
                             frame.setVisible(false);
                         }
-                        public void addRule(NodeDataRule rule)
+                        public void addRule(NodeRule rule)
                         {
                             newRule(rule);
                         }

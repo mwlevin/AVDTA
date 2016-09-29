@@ -51,7 +51,7 @@ public class Main
     public static void main(String[] args) throws IOException
     {
         //caccTest2();
-        GUI.main(args);
+        //GUI.main(args);
 
 
         
@@ -60,10 +60,10 @@ public class Main
         //transitTest1();
         
 
-        /*
-        DTAProject project = new DTAProject(new File("projects/coacongress2_copy"));
+        
+        DTAProject project = new DTAProject(new File("projects/coacongress2"));
         Editor gui = new Editor(project);
-        */
+        
     }
     
     public static void signalTimings() throws IOException
@@ -181,7 +181,7 @@ public class Main
         DTASimulator sim = project.getSimulator();
         sim.initialize();
         
-        LinkBusRule rule = new LinkBusRule(project);
+        LinkBusRule rule = new LinkBusRule(project, true);
         
         int count1 = 0;
         int count2 = 0;
