@@ -7,8 +7,9 @@ package avdta.sav;
 import avdta.dta.DTASimulator;
 import static avdta.dta.ReadDTANetwork.getDemandFileHeader;
 import avdta.dta.VehicleRecord;
-import avdta.dta.AST;
-import avdta.dta.DemandProfile;
+import avdta.demand.AST;
+import avdta.demand.DemandProfile;
+import avdta.network.ReadDemandNetwork;
 import avdta.network.ReadNetwork;
 import avdta.network.Simulator;
 import avdta.network.link.CentroidConnector;
@@ -36,10 +37,11 @@ import java.io.PrintStream;
 import java.util.TreeSet;
 
 /**
- *
+ * This contains methods to read a SAV network, fleet, and demand from file.
+ * To access, call {@link ReadSAVNetwork#readNetwork(avdta.project.SAVProject)}.
  * @author Michael
  */
-public class ReadSAVNetwork extends ReadNetwork
+public class ReadSAVNetwork extends ReadDemandNetwork
 {
     public static final int TAXI = 200;
     
@@ -84,33 +86,23 @@ public class ReadSAVNetwork extends ReadNetwork
     {
         for(int id : zones.keySet())
         {
-            Zone zone = zones.get(id);
+            Zone i = zones.get(id);
             
-            
-            if(zone.getOutgoing().size() > 0)
+            for(int id2 : zones.keySet())
             {
-                Node i = zone.getOutgoing().iterator().next().getDest();
-
+                Zone j = zones.get(id2);
                 
-                
-                for(Link l : i.getOutgoing())
+                if(i == j)
                 {
-                    if(l.getDest() instanceof Zone)
-                    {
-                        zone.setLinkedZone((Zone)l.getDest());
-                        ((Zone)l.getDest()).setLinkedZone(zone);
-                        
-                        
-                        break;
-                    }
+                    continue;
+                }
+                else if(i.getCoordinate().equals(j.getCoordinate()))
+                {
+                    i.setLinkedZone(j);
+                    j.setLinkedZone(i);
                 }
             }
-            /*
-            if(id >= 10000 && id < 20000)
-            {
-                zone.setLinkedZone(zones.get(id+10000));
-                zones.get(id+10000).setLinkedZone(zone);
-            }*/
+            
         }
 
     }
@@ -120,7 +112,7 @@ public class ReadSAVNetwork extends ReadNetwork
     {
         List<Traveler> travelers = new ArrayList<Traveler>();
         
-        Scanner filein = new Scanner(project.getTripsFile());
+        Scanner filein = new Scanner(project.getDemandFile());
         
         filein.nextLine();
         
@@ -170,7 +162,11 @@ public class ReadSAVNetwork extends ReadNetwork
     
 
     
-    
+    /**
+     * This method replaces zones with SAVOrigin or SAVDest, as appropriate
+     * @param nodes the current set of nodes
+     * @return the set of nodes with replaced zones
+     */
     public Set<Node> replaceZones(Set<Node> nodes) throws IOException
     {
         Set<Node> nodes2 = new HashSet<Node>();
@@ -281,8 +277,8 @@ public class ReadSAVNetwork extends ReadNetwork
         DemandProfile profile = readDemandProfile(project);
         Scanner filein = new Scanner(project.getDynamicODFile());
         
-        PrintStream fileout = new PrintStream(new FileOutputStream(project.getTripsFile()), true);
-        fileout.println(getTripsFileHeader());
+        PrintStream fileout = new PrintStream(new FileOutputStream(project.getDemandFile()), true);
+        fileout.println(getDemandFileHeader());
         
         filein.nextLine();
         
@@ -338,99 +334,28 @@ public class ReadSAVNetwork extends ReadNetwork
         
     }
     
-    public DemandProfile readDemandProfile(SAVProject project) throws IOException
-    {
-        DemandProfile output = new DemandProfile();
-        
-        Scanner filein = new Scanner(project.getDemandProfileFile());
-        
-        filein.nextLine();
-        
-        while(filein.hasNextInt())
-        {
-            int id = filein.nextInt();
-            double weight = filein.nextDouble();
-            int start = filein.nextInt();
-            int duration = filein.nextInt();
-            
-            filein.nextLine();
-            
-            output.put(id, new AST(id, start, duration, weight));
-        }
-        
-        filein.close();
-
-        output.normalizeWeights();
-        
-        return output;
-    }
     
-    public void createDynamicOD(SAVProject project) throws IOException
-    {
-        DemandProfile profile = readDemandProfile(project);
-        
-        Scanner filein = new Scanner(project.getStaticODFile());
-        
-        if(!filein.hasNextInt())
-        {
-            filein.close();
-            
-            return;
-        }
-        
-        PrintStream fileout = new PrintStream(new FileOutputStream(project.getDynamicODFile()), true);
-        
-        fileout.println("id\ttype\torigin\tdest\tast\tdemand");
-        filein.nextLine();
-        
-        int new_id = 1;
-        while(filein.hasNextInt())
-        {
-            int id = filein.nextInt();
-            int type = filein.nextInt();
-            int origin = filein.nextInt();
-            int dest = filein.nextInt();
-            double demand = filein.nextDouble();
-            
-            filein.nextLine();
-            
-            for(int t : profile.keySet())
-            {
-                AST ast = profile.get(t);
-                
-                fileout.println((new_id++)+"\t"+type+"\t"+origin+"\t"+dest+"\t"+ast.getId() + "\t" + demand * ast.getWeight());
-            }
-        }
-        
-        filein.close();
-        fileout.close();
-    }
     
-    public static String getTripsFileHeader()
-    {
-        return "id\ttype\torigin\tdest\tdtime";
-    }
     
-    public static String getDemandProfileFileHeader()
-    {
-        return "id\tweight\tstart\tduration";
-    }
     
-    public static String getDynamicODFileHeader()
-    {
-        return "id\ttype\torigin\tdestination\tast\tdemand";
-    }
     
-    public static String getStaticODFileHeader()
-    {
-        return "id\ttype\torigin\tdestination\tdemand";
-    }
+    
+    
   
+    /**
+     * @return the header for the fleet file
+     */
     public static String getFleetFileHeader()
     {
         return "id\torigin\tcapacity";
     }
     
+    /**
+     * This creates a fleet of the specified size, distributing them among centroids proportional to productions.
+     * The output is in the project fleet file.
+     * @param project the project
+     * @param total the fleet size
+     */
     public void createFleet(SAVProject project, int total) throws IOException
     {
         PrintStream fileout = new PrintStream(new FileOutputStream(project.getFleetFile()), true);
@@ -456,6 +381,13 @@ public class ReadSAVNetwork extends ReadNetwork
         fileout.close();
         
     }
+    
+    /**
+     * Read the fleet from the fleet file.
+     * @param project the project
+     * @param sim the {@link SAVSimulator} (its construction is in progress)
+     * @throws IOException 
+     */
     public void readFleet(SAVProject project, SAVSimulator sim) throws IOException
     {
         Scanner filein = new Scanner(project.getFleetFile());

@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package avdta.dta;
+package avdta.demand;
 
 /**
  * This represents an assignment interval, which is used when generating demand. 

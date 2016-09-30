@@ -3,9 +3,8 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package avdta.dta;
+package avdta.demand;
 
-import avdta.dta.AST;
 import java.util.TreeMap;
 
 /**

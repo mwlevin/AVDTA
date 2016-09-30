@@ -11,20 +11,32 @@ import java.io.PrintStream;
 
 /**
  *
- * @author micha
+ * @author Michael
  */
-public class SAVProject extends Project
+public class SAVProject extends DemandProject
 {
+    /**
+     * Constructs an empty project
+     */
     public SAVProject()
     {
         
     }
     
+    /**
+     * Constructs the project from the specified directory
+     * @param directory the project directory
+     * @throws IOException if a file is not found
+     */
     public SAVProject(File directory) throws IOException
     {
         super(directory);
     }
     
+    /**
+     * Returns the project type
+     * @return SAV
+     */
     public String getType()
     {
         return "SAV";
@@ -42,37 +54,16 @@ public class SAVProject extends Project
     {
         super.createProjectFolders(dir);
         
-        String dirStr = dir.getCanonicalPath();
-        
-        File file = new File(dirStr+"/demand");
-        file.mkdirs();
-
         PrintStream fileout = new PrintStream(getProjectDirectory()+"/sav.dat");
         fileout.close();
     }
     
-    public File getTripsFile()
-    {
-        return new File(getProjectDirectory()+"/demand/demand.txt");
-    }
+    
     
     public File getFleetFile()
     {
         return new File(getProjectDirectory()+"/demand/fleet.txt");
     }
     
-    public File getStaticODFile()
-    {
-        return new File(getProjectDirectory()+"/demand/static_od.txt");
-    }
     
-    public File getDynamicODFile()
-    {
-        return new File(getProjectDirectory()+"/demand/dynamic_od.txt");
-    }
-    
-    public File getDemandProfileFile()
-    {
-        return new File(getProjectDirectory()+"/demand/demand_profile.txt");
-    }
 }

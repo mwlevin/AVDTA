@@ -24,7 +24,7 @@ import java.sql.Statement;
  * This project represents a DTA network, which extends {@link TransitProject} and adds demand data.  
  * @author Michael
  */
-public class DTAProject extends TransitProject
+public class DTAProject extends DemandProject
 {
     /**
      * Constructs an empty project
@@ -45,17 +45,7 @@ public class DTAProject extends TransitProject
     }
 
     
-    /**
-     * Clones the project files from another project. 
-     * Note that this will overwrite the files in this project
-     * @param rhs the project to be cloned
-     * @throws IOException if a file is not found
-     */
-    public void cloneFromProject(DTAProject rhs) throws IOException
-    {
-        super.cloneFromProject(rhs);
-        importDemandFromProject(rhs);
-    }
+    
     
     /**
      * Returns the {@link DTASimulator} associated with this project. 
@@ -128,9 +118,6 @@ public class DTAProject extends TransitProject
         File file = new File(dirStr+"/assignments");
         file.mkdirs();
         
-        file = new File(dirStr+"/demand");
-        file.mkdirs();
-        
         PrintStream fileout = new PrintStream(getProjectDirectory()+"/dta.dat");
         fileout.close();
     }
@@ -144,41 +131,7 @@ public class DTAProject extends TransitProject
         return new DTASimulator(this);
     }
     
-    /**
-     * Returns the static OD table file
-     * @return {@link Project#getProjectDirectory()}/demand/static_od.txt
-     */
-    public File getStaticODFile()
-    {
-        return new File(getProjectDirectory()+"/demand/static_od.txt");
-    }
     
-    /**
-     * Returns the dynamic OD table file
-     * @return {@link Project#getProjectDirectory()}/demand/dynamic_od.txt
-     */
-    public File getDynamicODFile()
-    {
-        return new File(getProjectDirectory()+"/demand/dynamic_od.txt");
-    }
-    
-    /**
-     * Returns the demand profile file
-     * @return {@link Project#getProjectDirectory()}/demand/demand_profile.txt
-     */
-    public File getDemandProfileFile()
-    {
-        return new File(getProjectDirectory()+"/demand/demand_profile.txt");
-    }
-    
-    /**
-     * Returns the demand file
-     * @return {@link Project#getProjectDirectory()}/demand/demand.txt
-     */
-    public File getDemandFile()
-    {
-        return new File(getProjectDirectory()+"/demand/demand.txt");
-    }
     
     /**
      * Returns the assignments folder
@@ -218,85 +171,6 @@ public class DTAProject extends TransitProject
     }
     
     
-    /**
-     * Copies demand files from the specified project
-     * @param rhs the project to copy files from
-     * @throws IOException if a file is not found
-     */
-    public void importDemandFromProject(DTAProject rhs) throws IOException
-    {
-        FileTransfer.copy(rhs.getDemandFile(), getDemandFile());
-        FileTransfer.copy(rhs.getStaticODFile(), getStaticODFile());
-        FileTransfer.copy(rhs.getDynamicODFile(), getDynamicODFile());
-        FileTransfer.copy(rhs.getDemandProfileFile(), getDemandProfileFile());
-    }
     
-    public void exportDemandToSQL() throws SQLException, IOException
-    {
-        SQLLogin login = new SQLLogin(getDatabaseName());
-        Connection connect = DriverManager.getConnection(login.toString());
-        login = null;
-        
-        // nodes, links, options, phases
-        String dir = getProjectDirectory()+"/temp";
-        File folder = new File(dir);
-        folder.mkdirs();
-        
-        createTempFile(getDemandFile(), new File(dir+"/demand.txt"));
-        createTempFile(getStaticODFile(), new File(dir+"/static_od.txt"));
-        createTempFile(getDynamicODFile(), new File(dir+"/dynamic_od.txt"));
-        createTempFile(getDemandProfileFile(), new File(dir+"/demand_profile.txt"));
-        
-        Statement st = connect.createStatement();
-        st.executeQuery("create table if not exists demand (id int, type int, origin int, dest int, dtime int, vot float);");
-        st.executeQuery("create table if not exists demand_profile (id int, weight float, start int, duration int);");
-        st.executeQuery("create table if not exists dynamic_od (id int, type int, origin int, destination int, ast int, demand float);");
-        st.executeQuery("create table if not exists static_od (id int, type int, origin int, destination int, demand float);");
-        
-        st.executeQuery("\\copy demand from temp/demand.txt");
-        st.executeQuery("\\copy static_od from temp/static_od.txt");
-        st.executeQuery("\\copy dynamic_od from temp/dynamic_od.txt");
-        st.executeQuery("\\copy demand_profile from temp/demand_profile.txt");
-        
-        
-        for(File file : folder.listFiles())
-        {
-            file.delete();
-        }
-        folder.delete();
-        
-    }
     
-    public void importDemandFromSQL() throws SQLException, IOException
-    {
-        SQLLogin login = new SQLLogin(getDatabaseName());
-        Connection connect = DriverManager.getConnection(login.toString());
-        login = null;
-        
-        String dir = getProjectDirectory()+"/temp";
-        File folder = new File(dir);
-        folder.mkdirs();
-        
-        Statement st = connect.createStatement();
-        st.executeQuery("\\copy demand to temp/demand.txt");
-        st.executeQuery("\\copy dynamic_od to temp/dynamic_od.txt");
-        st.executeQuery("\\copy static_od to temp/static_od.txt");
-        st.executeQuery("\\copy demand_profile to temp/demand_profile.txt");
-        
-        createRealFile(new File(dir+"/demand.txt"), ReadDTANetwork.getDemandFileHeader(), getDemandFile());
-        createRealFile(new File(dir+"/dynamic_od.txt"), ReadDTANetwork.getDynamicODFileHeader(), getDynamicODFile());
-        createRealFile(new File(dir+"/static_od.txt"), ReadDTANetwork.getStaticODFileHeader(), getStaticODFile());
-        createRealFile(new File(dir+"/demand_profile.txt"), ReadDTANetwork.getDemandProfileFileHeader(), getDemandProfileFile());
-        
-        for(File file : folder.listFiles())
-        {
-            file.delete();
-        }
-        folder.delete();
-    }
-    
-    public void loadProject() throws IOException
-    {
-        super.loadProject();
-    }
 }
