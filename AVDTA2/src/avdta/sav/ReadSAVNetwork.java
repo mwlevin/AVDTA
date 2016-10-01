@@ -9,7 +9,7 @@ import static avdta.dta.ReadDTANetwork.getDemandFileHeader;
 import avdta.dta.VehicleRecord;
 import avdta.demand.AST;
 import avdta.demand.DemandProfile;
-import avdta.network.ReadDemandNetwork;
+import avdta.demand.ReadDemandNetwork;
 import avdta.network.ReadNetwork;
 import avdta.network.Simulator;
 import avdta.network.link.CentroidConnector;
@@ -45,15 +45,27 @@ public class ReadSAVNetwork extends ReadDemandNetwork
 {
     public static final int TAXI = 200;
     
-    public static final int TRAVELER = 100;
+    public static final int TRAVELER = 600;
     
     private int total_productions;
 
+    /**
+     * Creates a new {@link ReadSAVNetwork}
+     */
     public ReadSAVNetwork()
     {
    
     }
     
+    /**
+     * Reads a {@link SAVSimulator} from the files specified by the project.
+     * This replaces zones with {@link SAVOrigin} and {@link SAVDest} as appropriate.
+     * This also links origin and destination zones.
+     * Finally, it creates travelers and the SAV fleet.
+     * @param project the project
+     * @return the associated simulator
+     * @throws IOException if a file is not found
+     */
     public SAVSimulator readNetwork(SAVProject project) throws IOException
     {
         readOptions(project);
@@ -107,7 +119,12 @@ public class ReadSAVNetwork extends ReadDemandNetwork
 
     }
     
-    
+    /**
+     * This creates a list of travelers from the demand file.
+     * @param project the project
+     * @return a list of travelers
+     * @throws IOException if a file is not found
+     */
     public List<Traveler> readTravelers(SAVProject project) throws IOException
     {
         List<Traveler> travelers = new ArrayList<Traveler>();
@@ -121,12 +138,12 @@ public class ReadSAVNetwork extends ReadDemandNetwork
         while(filein.hasNext())
         {
             int id = filein.nextInt();
+            int type = filein.nextInt();
             int origin_id = filein.nextInt();
             int dest_id = filein.nextInt();
-            
-            filein.next();
             int dtime = filein.nextInt();
-            int type = filein.nextInt();
+            double vot = filein.nextDouble();
+            filein.nextLine();
          
             if(type == TRAVELER)
             {
@@ -271,78 +288,11 @@ public class ReadSAVNetwork extends ReadDemandNetwork
             
         }
     }
-    
-    public int prepareDemand(SAVProject project, double prop) throws IOException
-    {
-        DemandProfile profile = readDemandProfile(project);
-        Scanner filein = new Scanner(project.getDynamicODFile());
-        
-        PrintStream fileout = new PrintStream(new FileOutputStream(project.getDemandFile()), true);
-        fileout.println(getDemandFileHeader());
-        
-        filein.nextLine();
-        
-        Random rand = project.getRandom();
-        
-        int total = 0;
 
-        int new_id = 1;
-        while(filein.hasNextInt())
-        {
-            filein.nextInt();
-            int type = filein.nextInt();
-            int origin = filein.nextInt();
-            int dest = filein.nextInt();
-            int t = filein.nextInt();
-            double demand = filein.nextDouble() * prop;
-            
-            filein.nextLine();
-
-           
-            AST ast = profile.get(t);
-            
-            
-            
-            int num_trips = (int)Math.floor(demand);
-            double rem = demand - Math.floor(demand);
-            
-            
-            if(rand.nextDouble() < rem)
-            {
-                num_trips ++;
-            }
-            
-            int dtime_interval = ast.getDuration() / (num_trips+1);
-            
-            
-            for(int i = 0; i < num_trips; i++)
-            {
-                int dtime = ast.getStart() + (i+1) * dtime_interval;
-                
-                fileout.println((new_id++)+"\t"+type+"\t"+origin+"\t"+dest+"\t"+dtime);
-            }
-            
-            total += num_trips;
-           
-        }
-        
-        filein.close();       
-        fileout.close();
-        
-
-        return total;
-        
-    }
-    
-    
-    
-    
-    
-    
-    
     
   
     /**
+     * Returns the header for the fleet file.
      * @return the header for the fleet file
      */
     public static String getFleetFileHeader()

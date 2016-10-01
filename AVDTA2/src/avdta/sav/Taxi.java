@@ -4,7 +4,10 @@
  */
 package avdta.sav;
 
+import avdta.network.Path;
 import avdta.network.Simulator;
+import avdta.network.cost.TravelCost;
+import avdta.network.node.Zone;
 import avdta.vehicle.fuel.VehicleClass;
 import avdta.vehicle.Vehicle;
 import avdta.vehicle.DriverType;
@@ -105,6 +108,16 @@ public class Taxi extends Vehicle
         {
             passengers.add(person);
         }
+    }
+    
+    public void setPath(Path p)
+    {
+        ((SAVOrigin)((Zone)getPath().getDest()).getLinkedZone()).removeEnrouteTaxi(this);
+        
+        super.setPath(p);
+        
+        eta = (int)(p.getAvgCost(Simulator.time, 1.0, TravelCost.dnlTime)) + delay;
+        ((SAVOrigin)((Zone)p.getDest()).getLinkedZone()).addEnrouteTaxi(this);
     }
     
     public List<Traveler> getPassengers()

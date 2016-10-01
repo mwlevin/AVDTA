@@ -10,7 +10,8 @@ import java.io.IOException;
 import java.io.PrintStream;
 
 /**
- *
+ * This represents an SAV project. 
+ * This adds a fleet file and identifiers associating the project with SAVs.
  * @author Michael
  */
 public class SAVProject extends DemandProject
@@ -42,6 +43,10 @@ public class SAVProject extends DemandProject
         return "SAV";
     }
     
+    /**
+     * This adds options related to SAVs: {@code relocate}, {@code ride-sharing}, and {@code cost-factor}.
+     * Also calls {@link DemandProject#fillOptions()}.
+     */
     public void fillOptions()
     {
         super.fillOptions();
@@ -50,6 +55,12 @@ public class SAVProject extends DemandProject
         setOption("cost-factor", "1.4");
     }
     
+    /**
+     * Create the project folders in the specified directory.
+     * This adds the {@code sav.dat} indicator file.
+     * @param dir the directory
+     * @throws IOException if a file cannot be accessed 
+     */
     public void createProjectFolders(File dir) throws IOException
     {
         super.createProjectFolders(dir);
@@ -59,7 +70,10 @@ public class SAVProject extends DemandProject
     }
     
     
-    
+    /**
+     * Returns the SAV fleet file
+     * @return the SAV fleet file
+     */
     public File getFleetFile()
     {
         return new File(getProjectDirectory()+"/demand/fleet.txt");

@@ -5,7 +5,7 @@
  */
 package avdta.dta;
 
-import avdta.network.ReadDemandNetwork;
+import avdta.demand.ReadDemandNetwork;
 import avdta.network.ReadNetwork;
 import avdta.network.Simulator;
 import avdta.network.link.Link;

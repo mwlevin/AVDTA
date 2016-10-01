@@ -25,6 +25,7 @@ import avdta.network.node.*;
 import avdta.network.link.*;
 import avdta.network.link.cell.Cell;
 import avdta.network.node.policy.TransitFirst;
+import avdta.project.SAVProject;
 import avdta.util.RunningAvg;
 import avdta.vehicle.Bus;
 import avdta.vehicle.DriverType;
@@ -51,7 +52,7 @@ public class Main
     public static void main(String[] args) throws IOException
     {
         //caccTest2();
-        GUI.main(args);
+        //GUI.main(args);
 
 
         
@@ -60,10 +61,12 @@ public class Main
         //transitTest1();
         
 
-        /*
+        
         DTAProject project = new DTAProject(new File("projects/coacongress2"));
-        Editor gui = new Editor(project);
-        */
+        //Editor gui = new Editor(project);
+        SAVProject clone = new SAVProject();
+        clone.createProject("coacongress2_SAV", new File("projects/coacongress2_SAV"));
+        clone.cloneFromProject(project);
     }
     
     public static void signalTimings() throws IOException

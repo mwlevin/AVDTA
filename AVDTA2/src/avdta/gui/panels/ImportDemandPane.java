@@ -5,7 +5,7 @@
  */
 package avdta.gui.panels;
 
-import avdta.dta.DTAImportFromVISTA;
+import avdta.demand.DemandImportFromVISTA;
 import avdta.gui.GUI;
 import avdta.gui.util.JFileField;
 import avdta.gui.util.ProjectChooser;
@@ -230,7 +230,7 @@ public class ImportDemandPane extends GUIPanel
             {
                 try
                 {
-                    DTAImportFromVISTA read = new DTAImportFromVISTA(project, staticOD.getFile(), dynamicOD.getFile(), 
+                    DemandImportFromVISTA read = new DemandImportFromVISTA(project, staticOD.getFile(), dynamicOD.getFile(), 
                     demandProfile.getFile(), demand.getFile());
         
                     project.loadSimulator();

@@ -6,6 +6,7 @@ package avdta.sav;
 
 import avdta.network.link.Link;
 import avdta.network.node.Location;
+import avdta.network.node.Zone;
 import avdta.network.Simulator;
 import avdta.vehicle.Vehicle;
 import java.util.ArrayList;
@@ -13,21 +14,37 @@ import java.util.Iterator;
 import java.util.ListIterator;
 
 /**
- *
+ * The {@link SAVDest} is like a normal centroid except that it creates an event when SAVs arrive at the destination.
+ * Taxis arrive here, and if they unload passengers, must wait for a specified dwell time ({@link Taxi#DELAY_EXIT}).
+ * After the dwell time has elapsed, taxis are parked at the linked {@link SAVOrigin} (see {@link Zone#getLinkedZone()}).
  * @author Michael
  */
 public class SAVDest extends SAVZone
 {
+    /**
+     * Creates this {@link SAVDest} with the specified id.
+     * @param id the id
+    */
     public SAVDest(int id)
     {
         super(id);
     }
     
+    /**
+     * Creates this {@link SAVDest} with the specified id and location.
+     * @param id the id
+     * @param loc the location
+     */
     public SAVDest(int id, Location loc)
     {
         super(id, loc);
     }
     
+    /**
+     * This method removes taxis from incoming centroid connectors and calls {@link SAVDest#addTaxi(avdta.sav.Taxi)}.
+     * In addition, taxis that have elapsed their dwell time will be added to the linked {@link SAVOrigin}.
+     * @return 
+     */
     public int step()
     {
         int output = 0;
@@ -67,6 +84,14 @@ public class SAVDest extends SAVZone
         return output;
     }
     
+    /**
+     * Adds a taxi to the destination.
+     * Any travelers in the taxi that are destined for this destination will exit.
+     * The taxi will park at this destination for {@link Taxi#DELAY_EXIT}, then be added to the linked {@link SAVOrigin}.
+     * 
+     * @param t the taxi to be added
+     * @return the number of exiting travelers
+     */
     public int addTaxi(Taxi t)
     {
         t.total_distance += t.getPath().getLength();

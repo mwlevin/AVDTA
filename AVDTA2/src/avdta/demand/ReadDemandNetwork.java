@@ -3,11 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package avdta.network;
+package avdta.demand;
 
 import avdta.demand.AST;
 import avdta.demand.DemandProfile;
 import avdta.dta.VehicleRecord;
+import avdta.network.ReadNetwork;
 import avdta.project.DemandProject;
 import java.io.FileOutputStream;
 import java.io.IOException;

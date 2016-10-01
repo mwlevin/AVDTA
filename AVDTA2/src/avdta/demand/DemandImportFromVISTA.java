@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package avdta.dta;
+package avdta.demand;
 
+import avdta.dta.ReadDTANetwork;
 import avdta.network.ImportFromVISTA;
 import avdta.project.DTAProject;
 import avdta.project.Project;
@@ -24,7 +25,7 @@ import java.util.Scanner;
  * The constructor will call all conversion methods.
  * @author Michael
  */
-public class DTAImportFromVISTA
+public class DemandImportFromVISTA
 {
     /**
      * Converts VISTA network data into the AVDTA data format from the following files.
@@ -35,7 +36,7 @@ public class DTAImportFromVISTA
      * @param demand the file containing the demand table
      * @throws IOException if a file cannot be accessed
      */
-    public DTAImportFromVISTA(DTAProject project, File static_od, File dynamic_od, File demand_profile, File demand)
+    public DemandImportFromVISTA(DTAProject project, File static_od, File dynamic_od, File demand_profile, File demand)
             throws IOException
     {
         convertStaticOD(project, static_od);

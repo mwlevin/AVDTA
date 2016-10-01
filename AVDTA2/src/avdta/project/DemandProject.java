@@ -5,7 +5,7 @@
  */
 package avdta.project;
 
-import avdta.dta.ReadDTANetwork;
+import avdta.demand.ReadDemandNetwork;
 import avdta.util.FileTransfer;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -46,7 +46,7 @@ public abstract class DemandProject extends TransitProject
      * @param rhs the project to be cloned
      * @throws IOException if a file is not found
      */
-    public void cloneFromProject(DTAProject rhs) throws IOException
+    public void cloneFromProject(DemandProject rhs) throws IOException
     {
         super.cloneFromProject(rhs);
         importDemandFromProject(rhs);
@@ -61,19 +61,19 @@ public abstract class DemandProject extends TransitProject
         super.writeEmptyFiles();
         
         PrintStream fileout = new PrintStream(new FileOutputStream(getDemandFile()), true);
-        fileout.println(ReadDTANetwork.getDemandFileHeader());
+        fileout.println(ReadDemandNetwork.getDemandFileHeader());
         fileout.close();
         
         fileout = new PrintStream(new FileOutputStream(getDynamicODFile()), true);
-        fileout.println(ReadDTANetwork.getDynamicODFileHeader());
+        fileout.println(ReadDemandNetwork.getDynamicODFileHeader());
         fileout.close();
         
         fileout = new PrintStream(new FileOutputStream(getStaticODFile()), true);
-        fileout.println(ReadDTANetwork.getStaticODFileHeader());
+        fileout.println(ReadDemandNetwork.getStaticODFileHeader());
         fileout.close();
         
         fileout = new PrintStream(new FileOutputStream(getDemandProfileFile()), true);
-        fileout.println(ReadDTANetwork.getDemandProfileFileHeader());
+        fileout.println(ReadDemandNetwork.getDemandProfileFileHeader());
         fileout.close();
     }
     
@@ -139,7 +139,7 @@ public abstract class DemandProject extends TransitProject
      * @param rhs the project to copy files from
      * @throws IOException if a file is not found
      */
-    public void importDemandFromProject(DTAProject rhs) throws IOException
+    public void importDemandFromProject(DemandProject rhs) throws IOException
     {
         FileTransfer.copy(rhs.getDemandFile(), getDemandFile());
         FileTransfer.copy(rhs.getStaticODFile(), getStaticODFile());
@@ -199,10 +199,10 @@ public abstract class DemandProject extends TransitProject
         st.executeQuery("\\copy static_od to temp/static_od.txt");
         st.executeQuery("\\copy demand_profile to temp/demand_profile.txt");
         
-        createRealFile(new File(dir+"/demand.txt"), ReadDTANetwork.getDemandFileHeader(), getDemandFile());
-        createRealFile(new File(dir+"/dynamic_od.txt"), ReadDTANetwork.getDynamicODFileHeader(), getDynamicODFile());
-        createRealFile(new File(dir+"/static_od.txt"), ReadDTANetwork.getStaticODFileHeader(), getStaticODFile());
-        createRealFile(new File(dir+"/demand_profile.txt"), ReadDTANetwork.getDemandProfileFileHeader(), getDemandProfileFile());
+        createRealFile(new File(dir+"/demand.txt"), ReadDemandNetwork.getDemandFileHeader(), getDemandFile());
+        createRealFile(new File(dir+"/dynamic_od.txt"), ReadDemandNetwork.getDynamicODFileHeader(), getDynamicODFile());
+        createRealFile(new File(dir+"/static_od.txt"), ReadDemandNetwork.getStaticODFileHeader(), getStaticODFile());
+        createRealFile(new File(dir+"/demand_profile.txt"), ReadDemandNetwork.getDemandProfileFileHeader(), getDemandProfileFile());
         
         for(File file : folder.listFiles())
         {
