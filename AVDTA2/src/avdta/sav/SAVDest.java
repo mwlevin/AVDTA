@@ -43,7 +43,7 @@ public class SAVDest extends SAVZone
     /**
      * This method removes taxis from incoming centroid connectors and calls {@link SAVDest#addTaxi(avdta.sav.Taxi)}.
      * In addition, taxis that have elapsed their dwell time will be added to the linked {@link SAVOrigin}.
-     * @return 
+     * @return the number of exiting vehicles
      */
     public int step()
     {

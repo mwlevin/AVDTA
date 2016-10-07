@@ -10,6 +10,7 @@ import avdta.demand.DynamicODTable;
 import avdta.demand.ReadDemandNetwork;
 import avdta.network.Path;
 import avdta.network.PathList;
+import avdta.network.ReadNetwork;
 import avdta.network.Simulator;
 import avdta.network.link.CentroidConnector;
 import avdta.network.link.Link;
@@ -384,7 +385,7 @@ public class DTASimulator extends Simulator
         }
         
         
-        createSimVat(new File(currAssign.getAssignmentDirectory()+"/sim.vat"));
+        createSimVat(currAssign.getSimVatFile());
         
         
         if(statusUpdate != null)
@@ -623,6 +624,8 @@ public class DTASimulator extends Simulator
      * If necessary, vehicle trips will be split into multiple trips that enter and exit the subnetwork.
      * Additional centroids and centroid connectors will be created where vehicles enter and exit the subnetwork links.
      * 
+     * Note that transit routes are not yet implemented.
+     * 
      * @param newLinks the set of links that to be included
      * @param simvat the sim.vat file
      * @param rhs the new project
@@ -694,6 +697,12 @@ public class DTASimulator extends Simulator
             filein.nextLine();
             
             Scanner chopper = new Scanner(filein.nextLine());
+            
+            // skip transit vehicles
+            if(type / 100 == ReadNetwork.BUS / 100)
+            {
+                continue;
+            }
             
             Path path = new Path();
             ArrayList<Integer> arrTimes = new ArrayList<Integer>();

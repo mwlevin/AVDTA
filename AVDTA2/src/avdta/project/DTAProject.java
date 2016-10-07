@@ -35,7 +35,8 @@ public class DTAProject extends DemandProject
     }
     
     /**
-     * Constructs the project from the specified directory
+     * Constructs the project from the specified directory.
+     * This reads the project and constructs the associated {@link DTASimulator}.
      * @param directory the project directory
      * @throws IOException if a file is not found
      */

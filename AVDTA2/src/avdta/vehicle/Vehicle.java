@@ -116,7 +116,7 @@ public abstract class Vehicle implements Serializable, Comparable<Vehicle>
     }
     
     /**
-     * Returns the {@link VehicleClass} used for calculating energy consumption
+     * Returns the {@link VehicleClass} used for calculating energy consumption.
      * @return the {@link VehicleClass} 
      */
     public VehicleClass getVehClass()
@@ -125,8 +125,8 @@ public abstract class Vehicle implements Serializable, Comparable<Vehicle>
     }
 
     /**
-     * Updates the value of time of this {@link Vehicle}
-     * @param vot the new value of time
+     * Updates the value of time of this {@link Vehicle}.
+     * @param vot the new value of time ($/hr)
      */
     public void setVOT(double vot)
     {
@@ -134,8 +134,17 @@ public abstract class Vehicle implements Serializable, Comparable<Vehicle>
     }
     
     /**
-     * Returns the value of time
-     * @return the value of time
+     * Updates the exit time of this {@link Vehicle}.
+     * @param etime the new exit time (s)
+     */
+    public void setExitTime(int etime)
+    {
+        this.exit_time = etime;
+    }
+    
+    /**
+     * Returns the value of time.
+     * @return the value of time ($/hr)
      */
     public double getVOT()
     {

@@ -76,7 +76,7 @@ public class Zone extends Node
      * Links this {@link Zone} to another. 
      * This is typically used when separate {@link Zone} objects are created for origins and destinations.
      * Equivalent origins and destinations need to be linked to identify repositioning trips.
-     * Note that this does not call {@link Zone#setLinkedZone()} for {@code z}.
+     * Note that this does not call {@link Zone#setLinkedZone(avdta.network.node.Zone)} for {@code z}.
      * @param z the linked zone
      */
     public void setLinkedZone(Zone z)

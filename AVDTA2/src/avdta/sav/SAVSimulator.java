@@ -25,6 +25,7 @@ import java.util.Random;
 import java.util.Set;
 import java.util.TreeSet;
 import avdta.sav.dispatch.Dispatch;
+import avdta.gui.util.StatusUpdate;
 
 /**
  * This class extends {@link Simulator} to handle the simulation of travelers and taxis.

@@ -237,7 +237,7 @@ public class Network
     /**
      * Searches for the {@link Node} with the given id. 
      * Note that this is O(n). 
-     * If many searches are desired, creating a mapping of ids to {@link Node}s is faster (see {@link Network#createNodesMap()}).
+     * If many searches are desired, creating a mapping of ids to {@link Node}s is faster (see {@link Network#createNodeIdsMap()}).
      * @param id the id to search for
      * @return the {@link Node} with the given id, or null if not found
      */
@@ -963,7 +963,7 @@ public class Network
      * Creates a mapping of ids to {@link Node}s.
      * @return a mapping of ids to {@link Node}s
      */
-    public Map<Integer, Node> createNodesMap()
+    public Map<Integer, Node> createNodeIdsMap()
     {
         Map<Integer, Node> output = new HashMap<Integer, Node>();
         

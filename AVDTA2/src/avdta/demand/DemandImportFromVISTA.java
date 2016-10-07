@@ -7,7 +7,7 @@ package avdta.demand;
 
 import avdta.dta.ReadDTANetwork;
 import avdta.network.ImportFromVISTA;
-import avdta.project.DTAProject;
+import avdta.project.DemandProject;
 import avdta.project.Project;
 import avdta.vehicle.VOT;
 import java.io.File;
@@ -21,12 +21,24 @@ import java.util.Scanner;
 /**
  * This class defines methods to convert demand data from the VISTA data format to the AVDTA data format. 
  * This class uses the following tables from VISTA: static_od, dynamic_od, demand_profile, and demand.
- * To use it, copy the required tables into files, and construct a new {@link DTAImportFromVISTA} with the files. 
+ * To use it, copy the required tables into files, and construct a new {@link DemandImportFromVISTA} with the files. 
  * The constructor will call all conversion methods.
  * @author Michael
  */
 public class DemandImportFromVISTA
 {
+    /**
+     * Calls {@link DTAImportFromVISTA#DTAImportFromVISTA(avdta.project.DTAProject, java.io.File, java.io.File)} with a {@code static_od.txt} file, a {@code dynamic_od.txt} file, a {@code demand_profile.txt} file, and a {@code demand.txt} file from the specified directory.
+     * @param project the project
+     * @param directory the directory to look for files
+     * @throws IOException if a file cannot be accessed
+     */
+    public DemandImportFromVISTA(DemandProject project, String directory) throws IOException
+    {
+        this(project, new File(directory+"/static_od.txt"), new File(directory+"/dynamic_od.txt"), new File(directory+"/demand_profile.txt"), 
+                new File(directory+"/demand.txt"));
+    }
+    
     /**
      * Converts VISTA network data into the AVDTA data format from the following files.
      * @param project the project
@@ -36,7 +48,7 @@ public class DemandImportFromVISTA
      * @param demand the file containing the demand table
      * @throws IOException if a file cannot be accessed
      */
-    public DemandImportFromVISTA(DTAProject project, File static_od, File dynamic_od, File demand_profile, File demand)
+    public DemandImportFromVISTA(DemandProject project, File static_od, File dynamic_od, File demand_profile, File demand)
             throws IOException
     {
         convertStaticOD(project, static_od);
@@ -51,7 +63,7 @@ public class DemandImportFromVISTA
      * @param demand the file containing the database table
      * @throws IOException if a file is not found
      */
-    public void convertDemand(DTAProject project, File demand) throws IOException
+    public void convertDemand(DemandProject project, File demand) throws IOException
     {
         PrintStream fileout = new PrintStream(new FileOutputStream(project.getDemandFile()), true);
         Scanner filein = new Scanner(demand);
@@ -71,9 +83,10 @@ public class DemandImportFromVISTA
             
             double vot = VOT.dagum_rand(rand);
             
-            if(type == 500)
+            if(type >= 500)
             {
-                type = ReadDTANetwork.BUS + ReadDTANetwork.HV + ReadDTANetwork.ICV;
+                //type = ReadDTANetwork.BUS + ReadDTANetwork.HV + ReadDTANetwork.ICV;
+                continue;
             }
             else
             {
@@ -93,7 +106,7 @@ public class DemandImportFromVISTA
      * @param dynamic_od the file containing the database table
      * @throws IOException if a file is not found
      */
-    public void convertDynamicOD(DTAProject project, File dynamic_od) throws IOException
+    public void convertDynamicOD(DemandProject project, File dynamic_od) throws IOException
     {
         PrintStream fileout = new PrintStream(new FileOutputStream(project.getDynamicODFile()));
         Scanner filein = new Scanner(dynamic_od);
@@ -124,7 +137,7 @@ public class DemandImportFromVISTA
      * @param static_od the file containing the database table
      * @throws IOException if a file is not found
      */
-    public void convertStaticOD(DTAProject project, File static_od) throws IOException
+    public void convertStaticOD(DemandProject project, File static_od) throws IOException
     {
         PrintStream fileout = new PrintStream(new FileOutputStream(project.getStaticODFile()));
         Scanner filein = new Scanner(static_od);
@@ -154,7 +167,7 @@ public class DemandImportFromVISTA
      * @param demand_profile the file containing the database table
      * @throws IOException if a file is not found
      */
-    public void convertDemandProfile(DTAProject project, File demand_profile) throws IOException
+    public void convertDemandProfile(DemandProject project, File demand_profile) throws IOException
     {
         PrintStream fileout = new PrintStream(new FileOutputStream(project.getDemandProfileFile()), true);
         Scanner filein = new Scanner(demand_profile);

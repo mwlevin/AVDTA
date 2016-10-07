@@ -302,6 +302,7 @@ public abstract class Project
     
     /**
      * Loads a project from the specified directory.
+     * This reads the project and constructs the associated {@link Simulator}.
      * @param dir The should be the project directory, not one of the project data files
      * @throws IOException if the file is not found
      */

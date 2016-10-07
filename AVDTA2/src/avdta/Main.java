@@ -5,6 +5,8 @@
  */
 package avdta;
 
+import avdta.demand.DemandImportFromVISTA;
+import avdta.dta.DTAImportFromVISTA;
 import avdta.network.link.transit.BusLink;
 import avdta.dta.DTAResults;
 import avdta.dta.DTASimulator;
@@ -61,12 +63,17 @@ public class Main
         //transitTest1();
         
 
+        DTAProject project = new DTAProject(new File("projects/scenario_2_pm"));
+        //new DemandImportFromVISTA(project, "data");
+        new DTAImportFromVISTA(project, new File("data/vehicle_path.txt"), new File("data/vehicle_path_time.txt"));
         
+        /*
         DTAProject project = new DTAProject(new File("projects/coacongress2"));
         //Editor gui = new Editor(project);
         SAVProject clone = new SAVProject();
         clone.createProject("coacongress2_SAV", new File("projects/coacongress2_SAV"));
         clone.cloneFromProject(project);
+        */
     }
     
     public static void signalTimings() throws IOException

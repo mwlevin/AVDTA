@@ -1170,5 +1170,19 @@ public class Simulator extends Network
         fileout.close();
     }
     
-    
+    /**
+     * Returns a mapping of ids to vehicles.
+     * @return a mapping of ids to vehicles
+     */
+    public Map<Integer, Vehicle> createVehicleIdsMap()
+    {
+        Map<Integer, Vehicle> output = new HashMap<Integer, Vehicle>();
+        
+        for(Vehicle v : vehicles)
+        {
+            output.put(v.getId(), v);
+        }
+        
+        return output;
+    }
 }

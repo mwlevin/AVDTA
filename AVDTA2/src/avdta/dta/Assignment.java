@@ -135,6 +135,7 @@ public class Assignment implements Comparable<Assignment>
         results = new DTAResults(mintt*3600.0, tstt*3600.0, num_veh, exiting);
     }
     
+    
     /**
      * Constructs a new {@link Assignment} for the given project and results.
      * The name is set to the current date.
@@ -216,6 +217,15 @@ public class Assignment implements Comparable<Assignment>
     }
     
     /**
+     * Returns the sim.vat file
+     * @return the sim.vat file
+     */
+    public File getSimVatFile()
+    {
+        return new File(getAssignmentDirectory()+"/sim.vat");
+    }
+    
+    /**
      * Saves the assignment to the file.
      * @param vehicles the list of vehicles to be saved
      * @param project the project
@@ -232,7 +242,10 @@ public class Assignment implements Comparable<Assignment>
         
         for(Vehicle v : vehicles)
         {
-            fileout.println(v.getId()+"\t"+v.getPath().getId());
+            if(!v.isTransit())
+            {
+                fileout.println(v.getId()+"\t"+v.getPath().getId());
+            }
         }
         
         fileout.close();

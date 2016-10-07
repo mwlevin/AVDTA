@@ -25,6 +25,18 @@ import java.util.Scanner;
 public class ImportFromVISTA 
 {
     /**
+     * Calls {@link DTAImportFromVISTA#DTAImportFromVISTA(avdta.project.DTAProject, java.io.File, java.io.File)} with a {@code nodes.txt} file, a {@code linkdetails.txt} file, a {@code elevation.txt} file, a {@code phases.txt} file, a {@link signals.txt} file, and a {@link links.txt} file from the specified directory.
+     * @param project the project
+     * @param directory the directory to look for files
+     * @throws IOException if a file cannot be accessed
+     */
+    public ImportFromVISTA(Project project, String directory) throws IOException
+    {
+        this(project, new File(directory+"/nodes.txt"), new File(directory+"/linkdetails.txt"), new File(directory+"/elevation.txt"),
+                new File(directory+"/phases.txt"), new File(directory+"/signals.txt"), new File(directory+"/links.txt"));
+    }
+    
+    /**
      * Converts VISTA network data into the AVDTA data format from the following files.
      * @param project the {@link Project}
      * @param nodes the file containing the nodes table

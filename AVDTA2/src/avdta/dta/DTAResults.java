@@ -17,6 +17,14 @@ public class DTAResults
     private int exiting;
     
     /**
+     * Constructs an empty {@link DTAResults} initialized all variables to 1.
+     */
+    public DTAResults()
+    {
+        this(1.0, 1.0, 1, 1);
+    }
+    
+    /**
      * Constructs the {@link DTAResults} with the given parameters.
      * @param mintt the minimum travel time (s)
      * @param tstt the total system travel time (s)
@@ -59,6 +67,35 @@ public class DTAResults
     }
     
     /**
+     * Updates the number of exiting vehicles.
+     * @param exiting the new number of exiting vehicles
+     */
+    public void setExiting(int exiting)
+    {
+        this.exiting = exiting;
+    }
+    
+    /**
+     * Updates the number of non-exiting vehicles.
+     * Calls {@link DTAResults#setExiting(int)} with {@link DTAResults#getTrips()} {@code - nonexiting}.
+     * @param nonexiting the new number of non-exiting vehicles
+     */
+    public void setNonExiting(int nonexiting)
+    {
+        setExiting(num_veh - nonexiting);
+    }
+    
+    /**
+     * Updates the number of trips.
+     * Note that this does not update the number of non-exiting vehicles, if {@link DTAResults#setNonExiting(int)} was called.
+     * @param trips the new number of trips
+     */
+    public void setTrips(int trips)
+    {
+        this.num_veh = trips;
+    }
+    
+    /**
      * Returns the minimum travel time
      * @return the minimum travel time (s)
      */
@@ -71,9 +108,18 @@ public class DTAResults
      * Updates the minimum travel time
      * @param m the new minimum travel time (s)
      */
-    protected void setMinTT(double m)
+    public void setMinTT(double m)
     {
         mintt = m;
+    }
+    
+    /**
+     * Updates the total system travel time
+     * @param tstt the new total system travel time (s)
+     */
+    public void setTSTT(double tstt)
+    {
+        this.tstt = tstt;
     }
     
     /**

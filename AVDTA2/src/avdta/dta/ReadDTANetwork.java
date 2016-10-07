@@ -35,7 +35,7 @@ import java.util.TreeSet;
 
 /**
  * This adds methods to read the trip table for DTA. 
- * This also contains the {@link ReadDTANetwork#prepareDemand(avdta.project.DTAProject, double)} method to generate demand.
+ * This also contains the {@link ReadDemandNetwork#prepareDemand(avdta.project.DemandProject, double)} method to generate demand.
  * @author Michael
  */
 public class ReadDTANetwork extends ReadDemandNetwork
