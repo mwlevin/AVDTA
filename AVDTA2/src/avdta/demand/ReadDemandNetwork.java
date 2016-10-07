@@ -13,9 +13,11 @@ import avdta.project.DemandProject;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.util.Map;
 import java.util.Random;
 import java.util.Scanner;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.TreeSet;
 
 /**
@@ -209,5 +211,168 @@ public class ReadDemandNetwork extends ReadNetwork
     public static String getStaticODFileHeader()
     {
         return "id\ttype\torigin\tdestination\tdemand";
+    }
+    
+    /**
+     * This changes the type of vehicles in the dynamic_od file to match the specified proportions.
+     * The proportions should sum to 1.
+     * This rewrites the dynamic_od file.
+     * @param project the project 
+     * @param proportionMap a mapping of type codes to proportions
+     * @throws IOException if a file cannot be accessed
+     */
+    public void changeDynamicType(DemandProject project, Map<Integer, Double> proportionMap) throws IOException
+    {
+        Map<Integer, Map<Integer, Map<Integer, Double>>> demands = new TreeMap<Integer, Map<Integer, Map<Integer, Double>>>();
+        
+        Scanner filein = new Scanner(project.getDynamicODFile());
+        filein.nextLine();
+        
+        while(filein.hasNextInt())
+        {
+            filein.nextInt();
+            int type = filein.nextInt();
+            int origin = filein.nextInt();
+            int dest = filein.nextInt();
+            int t = filein.nextInt();
+            double demand = filein.nextDouble();
+            filein.nextLine();
+            
+            Map<Integer, Map<Integer, Double>> temp;
+            
+            if(demands.containsKey(origin))
+            {
+                temp = demands.get(origin);
+            }
+            else
+            {
+                demands.put(origin, temp = new TreeMap<Integer, Map<Integer, Double>>());
+            }
+            
+            Map<Integer, Double> temp2;
+            
+            if(temp.containsKey(dest))
+            {
+                temp2 = temp.get(dest);
+            }
+            else
+            {
+                temp.put(dest, temp2 = new TreeMap<Integer, Double>());
+            }
+            
+            if(temp2.containsKey(t))
+            {
+                temp2.put(t, temp2.get(t) + demand);
+            }
+            else
+            {
+                temp2.put(t, demand);
+            }
+        }
+        filein.close();
+        
+        PrintStream fileout = new PrintStream(new FileOutputStream(project.getDynamicODFile()), true);
+        fileout.println(getDynamicODFileHeader());
+        
+        int new_id = 1;
+        for(int o : demands.keySet())
+        {
+            Map<Integer, Map<Integer, Double>> temp = demands.get(o);
+            
+            for(int d : temp.keySet())
+            {
+                Map<Integer, Double> temp2 = temp.get(d);
+                
+                for(int t : temp2.keySet())
+                {
+                    double total = temp2.get(t);
+                    
+                    for(int type : proportionMap.keySet())
+                    {
+                        double dem = total * proportionMap.get(type);
+                        
+                        if(dem > 0)
+                        {
+                            fileout.println((new_id++)+"\t"+type+"\t"+o+"\t"+d+"\t"+t + "\t" + dem);     
+                        }
+                    }
+                }
+            }
+        }
+        fileout.close();
+    }
+    
+    /**
+     * This changes the type of vehicles in the static_od file to match the specified proportions.
+     * The proportions should sum to 1.
+     * This rewrites the static_od file.
+     * @param project the project 
+     * @param proportionMap a mapping of type codes to proportions
+     * @throws IOException if a file cannot be accessed
+     */
+    public void changeStaticType(DemandProject project, Map<Integer, Double> proportionMap) throws IOException
+    {
+        Map<Integer, Map<Integer, Double>> demands = new TreeMap<Integer, Map<Integer, Double>>();
+        
+        Scanner filein = new Scanner(project.getStaticODFile());
+        filein.nextLine();
+        
+        while(filein.hasNextInt())
+        {
+            filein.nextInt();
+            int type = filein.nextInt();
+            int origin = filein.nextInt();
+            int dest = filein.nextInt();
+            double demand = filein.nextDouble();
+            filein.nextLine();
+            
+            Map<Integer, Double> temp;
+            
+            if(demands.containsKey(origin))
+            {
+                temp = demands.get(origin);
+            }
+            else
+            {
+                demands.put(origin, temp = new TreeMap<Integer, Double>());
+            }
+
+            
+            if(temp.containsKey(dest))
+            {
+                temp.put(dest, temp.get(dest) + demand);
+            }
+            else
+            {
+                temp.put(dest, demand);
+            }
+        }
+        filein.close();
+        
+        PrintStream fileout = new PrintStream(new FileOutputStream(project.getStaticODFile()), true);
+        fileout.println(getStaticODFileHeader());
+        
+        int new_id = 1;
+        for(int o : demands.keySet())
+        {
+            Map<Integer, Double> temp = demands.get(o);
+            
+            for(int d : temp.keySet())
+            {
+                double total = temp.get(d);
+
+                for(int type : proportionMap.keySet())
+                {
+                    double dem = total * proportionMap.get(type);
+
+                    if(dem > 0)
+                    {
+                        fileout.println((new_id++)+"\t"+type+"\t"+o+"\t"+d + "\t" + dem);     
+                    }
+
+                }
+            }
+        }
+        fileout.close();
     }
 }

@@ -127,7 +127,7 @@ public class PrepareDemandPane extends GUIPanel
                     proportionMap.put(ReadDTANetwork.HV + ReadDTANetwork.DA_VEHICLE + ReadDTANetwork.ICV, 1-prop);
 
                     ReadDTANetwork read = new ReadDTANetwork();
-                    read.changeType(project, proportionMap);
+                    read.changeDynamicType(project, proportionMap);
 
                     parentReset();
                 }

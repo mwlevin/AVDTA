@@ -759,9 +759,7 @@ public abstract class Link implements Serializable, Comparable<Link>
      */
     public void setDest(Node d)
     {
-        dest.getIncoming().remove(this);
         dest = d;
-        dest.addLink(this);
     }
     
     /**
@@ -770,9 +768,7 @@ public abstract class Link implements Serializable, Comparable<Link>
      */
     public void setSource(Node o)
     {
-        source.getOutgoing().remove(this);
         source = o;
-        source.addLink(this);
     }
     
     /**

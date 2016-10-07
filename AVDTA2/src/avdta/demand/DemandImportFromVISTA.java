@@ -9,6 +9,8 @@ import avdta.dta.ReadDTANetwork;
 import avdta.network.ImportFromVISTA;
 import avdta.project.DemandProject;
 import avdta.project.Project;
+import avdta.project.SAVProject;
+import avdta.sav.ReadSAVNetwork;
 import avdta.vehicle.VOT;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -81,6 +83,8 @@ public class DemandImportFromVISTA
             int dtime = filein.nextInt();
             int type = filein.nextInt();
             
+            
+            
             double vot = VOT.dagum_rand(rand);
             
             if(type >= 500)
@@ -91,6 +95,11 @@ public class DemandImportFromVISTA
             else
             {
                 type = ReadDTANetwork.DA_VEHICLE + ReadDTANetwork.HV + ReadDTANetwork.ICV;
+            }
+            
+            if(project instanceof SAVProject)
+            {
+                type = ReadSAVNetwork.TRAVELER;
             }
             
             fileout.println(id+"\t"+type+"\t"+o+"\t"+d+"\t"+dtime+"\t"+vot);
@@ -124,6 +133,11 @@ public class DemandImportFromVISTA
             
             type = ReadDTANetwork.DA_VEHICLE + ReadDTANetwork.HV + ReadDTANetwork.ICV;
             
+            if(project instanceof SAVProject)
+            {
+                type = ReadSAVNetwork.TRAVELER;
+            }
+            
             fileout.println(id+"\t"+type+"\t"+o+"\t"+d+"\t"+ast+"\t"+dem);
         }
         
@@ -153,6 +167,11 @@ public class DemandImportFromVISTA
             double dem = filein.nextDouble();
             
             type = ReadDTANetwork.DA_VEHICLE + ReadDTANetwork.HV + ReadDTANetwork.ICV;
+            
+            if(project instanceof SAVProject)
+            {
+                type = ReadSAVNetwork.TRAVELER;
+            }
             
             fileout.println(id+"\t"+type+"\t"+o+"\t"+d+"\t"+dem);
         }

@@ -47,7 +47,6 @@ public class ReadSAVNetwork extends ReadDemandNetwork
     
     public static final int TRAVELER = 600;
     
-    private int total_productions;
 
     /**
      * Creates a new {@link ReadSAVNetwork}
@@ -71,6 +70,7 @@ public class ReadSAVNetwork extends ReadDemandNetwork
         readOptions(project);
         Set<Node> nodes = readNodes(project);
         Set<Link> links = readLinks(project);
+
         
         readIntersections(project);
         readPhases(project);
@@ -133,7 +133,6 @@ public class ReadSAVNetwork extends ReadDemandNetwork
         
         filein.nextLine();
         
-        total_productions = 0;
         
         while(filein.hasNext())
         {
@@ -149,7 +148,6 @@ public class ReadSAVNetwork extends ReadDemandNetwork
             {
                 try
                 {
-                    total_productions++;
                     SAVOrigin origin = (SAVOrigin)nodesmap.get(origin_id);
                     SAVDest dest = (SAVDest)nodesmap.get(dest_id);
 
@@ -188,21 +186,25 @@ public class ReadSAVNetwork extends ReadDemandNetwork
     {
         Set<Node> nodes2 = new HashSet<Node>();
         
+        
         for(Node n : nodes)
         {
+            
             if(n instanceof Zone)
             {
+                Zone z = (Zone)n;
+                
                 Zone node;
                 if(n.getOutgoing().size() > 0)
                 {
                     node = new SAVOrigin(n.getId());
-                    
                 }
                 else
                 {
                     node = new SAVDest(n.getId());
                 }
-                
+
+                 
                 for(Link l : n.getOutgoing())
                 {
                     l.setSource(node);
@@ -214,16 +216,26 @@ public class ReadSAVNetwork extends ReadDemandNetwork
                 }
                 
                 
+
                 node.setIncoming(n.getIncoming());
                 node.setOutgoing(n.getOutgoing());
+                
+                n.setIncoming(new HashSet<Link>());
+                n.setOutgoing(new HashSet<Link>());
+                
                 nodes2.add(node);
                 nodesmap.put(n.getId(), node);
+                
+                zones.remove(n.getId());
+                zones.put(node.getId(), node);
             }
             else
             {
                 nodes2.add(n);
             }
+            
         }
+  
         
         return nodes2;
     }
@@ -310,21 +322,33 @@ public class ReadSAVNetwork extends ReadDemandNetwork
     {
         PrintStream fileout = new PrintStream(new FileOutputStream(project.getFleetFile()), true);
         
+        fileout.println(getFleetFileHeader());
+        
+        int total_productions = project.getSimulator().getNumTrips();
+        
         int new_id = 1;
         
-        for(int id : zones.keySet())
+        for(Node n : project.getSimulator().getNodes())
         {
-            Zone z = zones.get(id);
+            if(!(n instanceof Zone))
+            {
+                continue;
+            }
             
+            Zone z = (Zone)n;
+            
+
             if(z instanceof SAVOrigin)
             {
+                
                 SAVOrigin o = (SAVOrigin)z;
                 
                 int num = (int)Math.round((double)total * o.getProductions() / total_productions);
                 
+
                 for(int i = 0; i < num; i++)
                 {
-                    fileout.println((new_id++)+"\t"+id+"\t"+4);
+                    fileout.println((new_id++)+"\t"+z.getId()+"\t"+4);
                 }
             }
         }
@@ -355,5 +379,20 @@ public class ReadSAVNetwork extends ReadDemandNetwork
         }
         
         filein.close();
+    }
+    
+    /**
+     * This goes through the static_od, dynamic_od, and demand files, and changes the type to {@link ReadSAVNetwork#TRAVELER}.
+     * Then, this calls {@link ReadDemandNetwork#prepareDemand(avdta.project.DemandProject, double)} on the modified trip table.
+     */
+    public void setTripsToTravelers(SAVProject project) throws IOException
+    {
+        ReadSAVNetwork read = new ReadSAVNetwork();
+        Map<Integer, Double> proportion = new HashMap<Integer, Double>();
+        
+        proportion.put(TRAVELER, 1.0);
+        read.changeDynamicType(project, proportion);
+        read.changeStaticType(project, proportion);
+        read.prepareDemand(project, 1.0);
     }
 }

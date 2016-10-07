@@ -28,6 +28,7 @@ import avdta.network.link.*;
 import avdta.network.link.cell.Cell;
 import avdta.network.node.policy.TransitFirst;
 import avdta.project.SAVProject;
+import avdta.sav.ReadSAVNetwork;
 import avdta.util.RunningAvg;
 import avdta.vehicle.Bus;
 import avdta.vehicle.DriverType;
@@ -63,17 +64,22 @@ public class Main
         //transitTest1();
         
 
-        DTAProject project = new DTAProject(new File("projects/scenario_2_pm"));
+        //DTAProject project = new DTAProject(new File("projects/scenario_2_pm"));
         //new DemandImportFromVISTA(project, "data");
-        new DTAImportFromVISTA(project, new File("data/vehicle_path.txt"), new File("data/vehicle_path_time.txt"));
+        //new DTAImportFromVISTA(project, new File("data/vehicle_path.txt"), new File("data/vehicle_path_time.txt"));
         
-        /*
+        
         DTAProject project = new DTAProject(new File("projects/coacongress2"));
         //Editor gui = new Editor(project);
         SAVProject clone = new SAVProject();
         clone.createProject("coacongress2_SAV", new File("projects/coacongress2_SAV"));
         clone.cloneFromProject(project);
-        */
+        clone.loadSimulator();
+        ReadSAVNetwork read = new ReadSAVNetwork();
+        read.setTripsToTravelers(clone);
+        clone.loadSimulator();
+        read.createFleet(clone, 20000);
+        
     }
     
     public static void signalTimings() throws IOException
@@ -287,12 +293,12 @@ public class Main
             proportions.put(ReadDTANetwork.HV+ReadDTANetwork.ICV+ReadDTANetwork.DA_VEHICLE, (double)(100-i)/100.0);
             
             ReadDTANetwork read1 = new ReadDTANetwork();
-            read1.changeType(austinI35, proportions);
+            read1.changeDynamicType(austinI35, proportions);
             read1.prepareDemand(austinI35, i/85.0);
             austinI35.loadProject();
             
             ReadDTANetwork read2 = new ReadDTANetwork();
-            read2.changeType(austinI35_CACC, proportions);
+            read2.changeDynamicType(austinI35_CACC, proportions);
             read2.prepareDemand(austinI35_CACC, i/85.0);
             austinI35_CACC.loadProject();
             

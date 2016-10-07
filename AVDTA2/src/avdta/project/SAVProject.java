@@ -5,6 +5,11 @@
  */
 package avdta.project;
 
+
+import avdta.network.ReadNetwork;
+import avdta.network.Simulator;
+import avdta.sav.ReadSAVNetwork;
+import avdta.sav.SAVSimulator;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
@@ -56,6 +61,46 @@ public class SAVProject extends DemandProject
     }
     
     /**
+     * Loads the {@link Simulator} associated with this {@link Project} using {@link ReadNetwork}.
+     * @throws IOException if the file is not found
+     */
+    public void loadSimulator() throws IOException
+    {
+        ReadSAVNetwork read = new ReadSAVNetwork();       
+        
+        try
+        {
+            SAVSimulator output = read.readNetwork(this);
+        
+            setSimulator(output);
+        }
+        catch(Exception ex)
+        {
+            setSimulator(createEmptySimulator());
+        }
+
+    }
+    
+    /**
+     * Returns the {@link SAVSimulator} associated with this project. 
+     * If null, call {@link SAVProject#loadSimulator()}
+     * @return the {@link SAVSimulator} associated with this project
+     */
+    public SAVSimulator getSimulator()
+    {
+        return (SAVSimulator)super.getSimulator();
+    }
+    
+    /**
+     * Creates an empty {@link Simulator}
+     * @return the empty {@link Simulator}
+     */
+    public Simulator createEmptySimulator()
+    {
+        return new SAVSimulator(this);
+    }
+    
+    /**
      * Create the project folders in the specified directory.
      * This adds the {@code sav.dat} indicator file.
      * @param dir the directory
@@ -67,6 +112,11 @@ public class SAVProject extends DemandProject
         
         PrintStream fileout = new PrintStream(getProjectDirectory()+"/sav.dat");
         fileout.close();
+        
+        String dirStr = dir.getCanonicalPath();
+        
+        File file = new File(dirStr+"/fleet");
+        file.mkdirs();
     }
     
     
@@ -76,7 +126,7 @@ public class SAVProject extends DemandProject
      */
     public File getFleetFile()
     {
-        return new File(getProjectDirectory()+"/demand/fleet.txt");
+        return new File(getProjectDirectory()+"/fleet/fleet.txt");
     }
     
     

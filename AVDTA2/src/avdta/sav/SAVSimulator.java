@@ -26,6 +26,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import avdta.sav.dispatch.Dispatch;
 import avdta.gui.util.StatusUpdate;
+import avdta.sav.dispatch.DefaultDispatch;
 
 /**
  * This class extends {@link Simulator} to handle the simulation of travelers and taxis.
@@ -53,7 +54,7 @@ public class SAVSimulator extends Simulator
         taxis = new ArrayList<Taxi>();
         setCostFunction(TravelCost.dnlTime);
         
-
+        setDispatch(new DefaultDispatch());
     }
     
     
