@@ -5,14 +5,20 @@
  */
 package avdta.dta;
 
+import avdta.demand.DemandProfile;
+import avdta.demand.DynamicODTable;
+import avdta.demand.ReadDemandNetwork;
 import avdta.network.Path;
 import avdta.network.PathList;
 import avdta.network.Simulator;
 import avdta.network.link.CentroidConnector;
 import avdta.network.link.Link;
 import avdta.network.node.Node;
+import avdta.network.node.Zone;
 import avdta.project.DTAProject;
+import avdta.project.DemandProject;
 import avdta.project.Project;
+import avdta.util.FileTransfer;
 import avdta.vehicle.Bus;
 import avdta.vehicle.DriverType;
 import avdta.vehicle.PersonalVehicle;
@@ -607,6 +613,193 @@ public class DTASimulator extends Simulator
     }
     
     
+    /**
+     * Creates a subnetwork that includes the specified set of links for the specified project.
+     * The project should be a new project (or an existing project that will be overwritten).
+     * 
+     * This method requires that a sim.vat file has been created (see {@link Simulator#createSimVat(java.io.File)}).
+     * The sim.vat file is used to read vehicle trips.
+     * Vehicle trip origins, destinations, and departure times will be adjusted based on when they enter and exit the subnetwork via the routes in sim.vat.
+     * If necessary, vehicle trips will be split into multiple trips that enter and exit the subnetwork.
+     * Additional centroids and centroid connectors will be created where vehicles enter and exit the subnetwork links.
+     * 
+     * @param newLinks the set of links that to be included
+     * @param simvat the sim.vat file
+     * @param rhs the new project
+     * @throws IOException 
+     */
+    public void createSubnetwork(Set<Link> newLinks, File simvat, DemandProject rhs) throws IOException
+    {
+        DTAProject project = getProject();
+        
+        Simulator newsim = rhs.getSimulator();
+        
+        Set<Node> newNodes = new HashSet<Node>();
+        
+        for(Link l : newLinks)
+        {
+            newNodes.add(l.getSource());
+            newNodes.add(l.getDest());
+        }
+        
+        Map<Integer, Link> linksmap = createLinkIdsMap();
+        
+        // this is a map of created centroids
+        Map<Node, Node[]> centroids = new HashMap<Node, Node[]>();
+        
+        for(Node n : nodes)
+        {
+            if(n.isZone())
+            {
+                centroids.put(n, new Node[]{n, n});
+            }
+        }
+        
+        // add centroid connectors and centroids where necessary
+        // create trips table
+        
+        int new_veh_id = 1;
+        int new_centroid_id = 1;
+        
+        for(Vehicle v : getVehicles())
+        {
+            new_veh_id = (int)Math.max(new_veh_id, v.getId()+1);
+        }
+        
+        for(Node n : getNodes())
+        {
+            if(n.isZone())
+            {
+                new_centroid_id = (int)Math.max(new_centroid_id, n.getId()+1);
+            }
+        }
+        
+        if(new_centroid_id >= 200000)
+        {
+            new_centroid_id -= 200000;
+        }
+        
+        // I need vehicle paths and arrival times - use sim.vat
+        Scanner filein = new Scanner(simvat);
+        PrintStream fileout = new PrintStream(new FileOutputStream(rhs.getDemandFile()), true);
+        fileout.println(ReadDemandNetwork.getDemandFileHeader());
+        
+        while(filein.hasNextInt())
+        {
+            int type = filein.nextInt();
+            int id = filein.nextInt();
+            int dtime = (int)filein.nextDouble();
+            filein.nextDouble();
+            int size = filein.nextInt();
+            filein.nextLine();
+            
+            Scanner chopper = new Scanner(filein.nextLine());
+            
+            Path path = new Path();
+            ArrayList<Integer> arrTimes = new ArrayList<Integer>();
+            
+            while(chopper.hasNextInt())
+            {
+                path.add(linksmap.get(chopper.nextInt()));
+                arrTimes.add((int)chopper.nextDouble());
+            }
+            
+            // go through path, find where it meets subnetwork, create centroids if necessary
+            // might require multiple vehicle trips
+            
+            Node origin = path.getOrigin();
+            Node dest = path.getDest();
+            
+            for(int i = 0; i < path.size(); i++)
+            {
+                Link l = path.get(i);
+                
+                if(!newLinks.contains(l))
+                {
+                    if(newNodes.contains(l.getDest()))
+                    {
+                        origin = l.getDest();
+                        createCentroid(origin, centroids, new_centroid_id++, newNodes, newLinks);
+                        
+                        dtime = arrTimes.get(i+1);
+                    }
+                    else if(newNodes.contains(l.getSource()))
+                    {
+                        dest = l.getSource();
+                        
+                        createCentroid(dest, centroids, new_centroid_id++, newNodes, newLinks);
+                        
+                        // create vehicle trip
+                        fileout.println((new_veh_id++)+"\t"+type+"\t"+centroids.get(origin)[0]+"\t"+centroids.get(dest)[1]);
+                        
+                        origin = null;
+                        dest = null;
+                        
+                    }
+                }
+            }
+            
+            if(origin != null && dest != null)
+            {
+                fileout.println((new_veh_id++)+"\t"+type+"\t"+centroids.get(origin)[0]+"\t"+centroids.get(dest)[1]);
+            }
+            
+        }
+        filein.close();
+        
+        
+        
+        // clear unused data
+        
+        linksmap = null;
+        centroids = null;
+        
+        newsim.setNetwork(newNodes, newLinks);
+        
+        
+        
+        // copy demand profile
+        FileTransfer.copy(project.getDemandProfileFile(), rhs.getDemandProfileFile());
+        
+        
+        
+        
+        DemandProfile profile = new DemandProfile(rhs);
+        
+        DynamicODTable triptable = new DynamicODTable();
+               
+        // create dynamic od table
+        filein = new Scanner(rhs.getDemandFile());
+        
+        filein.nextLine();
+        while(filein.hasNextInt())
+        {
+            VehicleRecord trip = new VehicleRecord(filein.nextLine());
+            
+            triptable.addDemand(trip, profile);
+        }
+        filein.close();
+        
+        triptable.printDynamicOD(rhs);
+        
+        // create static od table
+        triptable.printStaticOD(rhs);
+    }
     
-    
+    private void createCentroid(Node node, Map<Node, Node[]> centroids, int id, Set<Node> newNodes, Set<Link> newLinks)
+    {
+        if(!centroids.containsKey(node))
+        {
+            Zone newO = new Zone(id+100000, node);
+            Zone newD = new Zone(id+200000, node);
+            
+            centroids.put(node, new Node[]{newO, newD});
+            
+            newNodes.add(newO);
+            newNodes.add(newD);
+            
+            newLinks.add(new CentroidConnector((id + 200000)*10 + id, newO, node));
+            newLinks.add(new CentroidConnector(id * 1000000 + id + 200000, node, newD));
+        }
+    }
 }

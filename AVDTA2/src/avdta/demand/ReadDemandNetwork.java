@@ -171,29 +171,8 @@ public class ReadDemandNetwork extends ReadNetwork
      */
     public DemandProfile readDemandProfile(DemandProject project) throws IOException
     {
-        DemandProfile output = new DemandProfile();
+        return new DemandProfile(project);
         
-        Scanner filein = new Scanner(project.getDemandProfileFile());
-        
-        filein.nextLine();
-        
-        while(filein.hasNextInt())
-        {
-            int id = filein.nextInt();
-            double weight = filein.nextDouble();
-            int start = filein.nextInt();
-            int duration = filein.nextInt();
-            
-            filein.nextLine();
-            
-            output.add(new AST(id, start, duration, weight));
-        }
-        
-        filein.close();
-
-        output.normalizeWeights();
-        
-        return output;
     }
     
     /**

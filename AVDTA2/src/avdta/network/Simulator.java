@@ -803,6 +803,8 @@ public class Simulator extends Network
         
             Path route = v.getPath();
             fileout.print(route.size());
+            
+            fileout.println();
 
             for(int i = 0; i < route.size(); i++)
             {
@@ -1167,4 +1169,6 @@ public class Simulator extends Network
         }
         fileout.close();
     }
+    
+    
 }

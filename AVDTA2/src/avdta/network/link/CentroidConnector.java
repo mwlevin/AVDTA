@@ -37,6 +37,8 @@ public class CentroidConnector extends Link
         
         queue = new LinkedList<Vehicle>();
     }
+
+
     
     /**
      * Returns the average energy consumption --- 0.

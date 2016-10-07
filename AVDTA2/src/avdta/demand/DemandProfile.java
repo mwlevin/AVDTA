@@ -5,6 +5,9 @@
  */
 package avdta.demand;
 
+import avdta.project.DemandProject;
+import java.io.IOException;
+import java.util.Scanner;
 import java.util.TreeMap;
 
 /**
@@ -15,6 +18,33 @@ import java.util.TreeMap;
 public class DemandProfile extends TreeMap<Integer, AST>
 {
     
+    public DemandProfile()
+    {
+        
+    }
+    
+    public DemandProfile(DemandProject project) throws IOException
+    {
+        Scanner filein = new Scanner(project.getDemandProfileFile());
+        
+        filein.nextLine();
+        
+        while(filein.hasNextInt())
+        {
+            int id = filein.nextInt();
+            double weight = filein.nextDouble();
+            int start = filein.nextInt();
+            int duration = filein.nextInt();
+            
+            filein.nextLine();
+            
+            add(new AST(id, start, duration, weight));
+        }
+        
+        filein.close();
+
+        normalizeWeights();
+    }
     
     /**
      * Adds the assignment interval to this {@link DemandProfile}.

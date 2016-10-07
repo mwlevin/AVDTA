@@ -74,4 +74,85 @@ public class VehicleRecord implements Comparable<VehicleRecord>
             return id - rhs.id;
         }
     }
+    
+    /**
+     * Returns the origin id
+     * @return the origin id
+     */
+    public int getOrigin()
+    {
+        return origin;
+    }
+    
+    /**
+     * Returns the destination id
+     * @return the destination id
+     */
+    public int getDestination()
+    {
+        return dest;
+    }
+    
+    /**
+     * Returns the departure time
+     * @return the departure time (s)
+     */
+    public int getDepTime()
+    {
+        return dtime;
+    }
+    
+    /**
+     * Returns the type code
+     * @return the type code
+     */
+    public int getType()
+    {
+        return type;
+    }
+    
+    /**
+     * Returns the id
+     * @return the id
+     */
+    public int getId()
+    {
+        return id;
+    }
+    
+    /**
+     * Updates the id
+     * @param id the new id
+     */
+    public void setId(int id)
+    {
+        this.id = id;
+    }
+    
+    /**
+     * Updates the origin node id
+     * @param origin the new origin node id
+     */
+    public void setOrigin(int origin)
+    {
+        this.origin = origin;
+    }
+    
+    /**
+     * Updates the destination node id
+     * @param dest the new destination node id
+     */
+    public void setDestination(int dest)
+    {
+        this.dest = dest;
+    }
+    
+    /**
+     * Updates the departure time
+     * @param dtime the new departure time (s)
+     */
+    public void setDepTime(int dtime)
+    {
+        this.dtime = dtime;
+    }
 }
