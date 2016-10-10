@@ -30,7 +30,7 @@ import java.util.Scanner;
 public class DemandImportFromVISTA
 {
     /**
-     * Calls {@link DTAImportFromVISTA#DTAImportFromVISTA(avdta.project.DTAProject, java.io.File, java.io.File)} with a {@code static_od.txt} file, a {@code dynamic_od.txt} file, a {@code demand_profile.txt} file, and a {@code demand.txt} file from the specified directory.
+     * Calls {@link DemandImportFromVISTA#DemandImportFromVISTA(avdta.project.DemandProject, java.io.File, java.io.File, java.io.File, java.io.File)} with a {@code static_od.txt} file, a {@code dynamic_od.txt} file, a {@code demand_profile.txt} file, and a {@code demand.txt} file from the specified directory.
      * @param project the project
      * @param directory the directory to look for files
      * @throws IOException if a file cannot be accessed
