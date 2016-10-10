@@ -23,6 +23,7 @@ import avdta.util.FileTransfer;
 import avdta.vehicle.Bus;
 import avdta.vehicle.DriverType;
 import avdta.vehicle.PersonalVehicle;
+import avdta.vehicle.VOT;
 import avdta.vehicle.Vehicle;
 import avdta.vehicle.fuel.VehicleClass;
 import java.io.File;
@@ -36,6 +37,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Scanner;
 import java.util.Set;
 
@@ -303,17 +305,28 @@ public class DTASimulator extends Simulator
     }
     
     /**
-     * Opens an {@link Assignment} from the given directory and assigns vehicles as specified.
-     * This calls {@link Assignment#readFromFile(avdta.project.DTAProject, java.util.List, avdta.network.PathList)}.
+     * Opens an {@link Assignment} from the given {@link Assignment} folder and assigns vehicles as specified.
+     * This calls {@link Assignment#readFromFile(avdta.project.DTAProject, java.util.List, avdta.network.PathList)} and {@link DTASimulator#loadAssignment(avdta.dta.Assignment)}.
      * @param file the assignment directory
      * @throws IOException if a file cannot be accessed
      */
     public void openAssignment(File file) throws IOException
     {
-        DTAProject project = (DTAProject)getProject();
+        loadAssignment(new Assignment(file));
+    }
+    
+    /**
+     * This reads the specified {@link Assignment} and assigns the vehicles in this simulator accordingly.
+     * Vehicles and their ids must match the vehicles specified in the assignment. 
+     * 
+     * @param assign the assignment to be loaded
+     * @throws IOException if a file cannot be accessed
+     */
+    public void loadAssignment(Assignment assign) throws IOException
+    {
+        DTAProject project = getProject();
         PathList paths = new PathList(this, project.getPathsFile());
         
-        Assignment assign = new Assignment(file);
         assign.readFromFile(project, getVehicles(), paths);
         
         currAssign = assign;
@@ -682,6 +695,8 @@ public class DTASimulator extends Simulator
             new_centroid_id -= 200000;
         }
         
+        Random rand = rhs.getRandom();
+        
         // I need vehicle paths and arrival times - use sim.vat
         Scanner filein = new Scanner(simvat);
         PrintStream fileout = new PrintStream(new FileOutputStream(rhs.getDemandFile()), true);
@@ -739,7 +754,7 @@ public class DTASimulator extends Simulator
                         createCentroid(dest, centroids, new_centroid_id++, newNodes, newLinks);
                         
                         // create vehicle trip
-                        fileout.println((new_veh_id++)+"\t"+type+"\t"+centroids.get(origin)[0]+"\t"+centroids.get(dest)[1]);
+                        fileout.println((new_veh_id++)+"\t"+type+"\t"+centroids.get(origin)[0]+"\t"+centroids.get(dest)[1]+"\t"+dtime+"\t"+VOT.dagum_rand(rand));
                         
                         origin = null;
                         dest = null;
@@ -750,7 +765,7 @@ public class DTASimulator extends Simulator
             
             if(origin != null && dest != null)
             {
-                fileout.println((new_veh_id++)+"\t"+type+"\t"+centroids.get(origin)[0]+"\t"+centroids.get(dest)[1]);
+                fileout.println((new_veh_id++)+"\t"+type+"\t"+centroids.get(origin)[0]+"\t"+centroids.get(dest)[1]+"\t"+dtime+"\t"+VOT.dagum_rand(rand));
             }
             
         }

@@ -10,6 +10,7 @@ import avdta.demand.DemandProfile;
 import avdta.dta.VehicleRecord;
 import avdta.network.ReadNetwork;
 import avdta.project.DemandProject;
+import avdta.vehicle.VOT;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
@@ -90,7 +91,7 @@ public class ReadDemandNetwork extends ReadNetwork
             {
                 int dtime = ast.getStart() + (i+1) * dtime_interval;
                 
-                vehicles.add(new VehicleRecord(new_id++, type, origin, dest, dtime));
+                vehicles.add(new VehicleRecord(new_id++, type, origin, dest, dtime, avdta.vehicle.VOT.dagum_rand(rand)));
             }
             
             total += num_vehicles;

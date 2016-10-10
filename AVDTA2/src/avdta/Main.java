@@ -6,6 +6,7 @@
 package avdta;
 
 import avdta.demand.DemandImportFromVISTA;
+import avdta.dta.Assignment;
 import avdta.dta.DTAImportFromVISTA;
 import avdta.network.link.transit.BusLink;
 import avdta.dta.DTAResults;
@@ -63,12 +64,10 @@ public class Main
         //transitTest2();
         //transitTest1();
         
-
-        //DTAProject project = new DTAProject(new File("projects/scenario_2_pm"));
-        //new DemandImportFromVISTA(project, "data");
-        //new DTAImportFromVISTA(project, new File("data/vehicle_path.txt"), new File("data/vehicle_path_time.txt"));
         
+        createCACCNetwork();
         
+        /*
         DTAProject project = new DTAProject(new File("projects/coacongress2"));
         //Editor gui = new Editor(project);
         SAVProject clone = new SAVProject();
@@ -79,6 +78,41 @@ public class Main
         read.setTripsToTravelers(clone);
         clone.loadSimulator();
         read.createFleet(clone, 20000);
+        */
+    }
+    
+    public static void createCACCNetwork() throws IOException
+    {
+        DTAProject project = new DTAProject(new File("projects/scenario_2_pm"));
+        //new DemandImportFromVISTA(project, "data");
+        //new DTAImportFromVISTA(project, new File("data/vehicle_path.txt"), new File("data/vehicle_path_time.txt"));
+        
+        
+        DTASimulator sim = project.getSimulator();
+        
+        Assignment assign = new Assignment(new File(project.getAssignmentsFolder()+"/2543"));
+        sim.loadAssignment(assign);
+        
+        Map<Integer, Link> linksmap = sim.createLinkIdsMap();
+        
+        Set<Link> newLinks = new HashSet<Link>();
+        
+        Scanner filein = new Scanner(new File(project.getProjectDirectory()+"/vissim_subnetwork.txt"));
+        filein.nextLine();
+        
+        while(filein.hasNextInt())
+        {
+            int id = filein.nextInt();
+            filein.nextLine();
+            
+            newLinks.add(linksmap.get(id));
+            
+        }
+        filein.close();
+        
+        DTAProject clone = new DTAProject();
+        clone.createProject("scenario_2_pm_sub", new File("projects/scenario_2_pm_sub"));
+        sim.createSubnetwork(newLinks, assign.getSimVatFile(), clone);
         
     }
     

@@ -7,6 +7,7 @@ package avdta.network;
 
 import avdta.network.link.Link;
 import avdta.network.node.Node;
+import avdta.project.Project;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -114,6 +115,17 @@ public class PathList
             p.setId();
             return p;
         }
+    }
+    
+    /**
+     * This method saves this {@link PathList} for the specified project (see {@link Project#getPathsFile()}).
+     * This calls {@link PathList#writeToFile(java.io.File)}.
+     * @param project the project
+     * @throws IOException if the file cannot be written 
+     */
+    public void writeToFile(Project project) throws IOException
+    {
+        writeToFile(project.getPathsFile());
     }
     
     /**

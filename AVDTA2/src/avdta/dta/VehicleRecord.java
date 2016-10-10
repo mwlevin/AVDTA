@@ -16,6 +16,7 @@ import avdta.vehicle.Vehicle;
 public class VehicleRecord implements Comparable<VehicleRecord>
 {
     private int id, dtime, origin, dest, type;
+    private double vot;
     
     /**
      * Constructs this {@link VehicleRecord} from a line of input data
@@ -30,6 +31,7 @@ public class VehicleRecord implements Comparable<VehicleRecord>
         origin = chopper.nextInt();
         dest = chopper.nextInt();
         dtime = chopper.nextInt();
+        vot = chopper.nextDouble();
     }
     
     /**
@@ -39,14 +41,16 @@ public class VehicleRecord implements Comparable<VehicleRecord>
      * @param origin the id of the origin {@link Node}
      * @param dest the id of the  destination {@link Node}
      * @param dtime the departure time (s)
+     * @param vot the value of time ($/hr)
      */
-    public VehicleRecord(int id, int type, int origin, int dest, int dtime)
+    public VehicleRecord(int id, int type, int origin, int dest, int dtime, double vot)
     {
         this.id = id;
         this.dtime = dtime;
         this.origin = origin;
         this.dest = dest;
         this.type = type;
+        this.vot = vot;
     }
     
     /**
@@ -55,7 +59,7 @@ public class VehicleRecord implements Comparable<VehicleRecord>
      */
     public String toString()
     {
-        return id+"\t"+type+"\t"+origin+"\t"+dest+"\t"+dtime;
+        return id+"\t"+type+"\t"+origin+"\t"+dest+"\t"+dtime+"\t"+vot;
     }
     
     /**
@@ -82,6 +86,24 @@ public class VehicleRecord implements Comparable<VehicleRecord>
     public int getOrigin()
     {
         return origin;
+    }
+    
+    /**
+     * Returns the value of time
+     * @return the value of time ($/hr)
+     */
+    public double getVoT()
+    {
+        return vot;
+    }
+    
+    /**
+     * Updates the value of time
+     * @param vot the new value of time ($/hr)
+     */
+    public void setVoT(double vot)
+    {
+        this.vot = vot;
     }
     
     /**

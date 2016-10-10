@@ -93,8 +93,12 @@ public class DTAImportFromVISTA
         }
         filein.close();
         
+        paths.writeToFile(project);
+        
         // free up memory
         linksmap = null;
+        paths = null;
+        
         
         // write sim.vat
         DTAResults results = new DTAResults();
@@ -161,16 +165,16 @@ public class DTAImportFromVISTA
             }
             
             Vehicle v = vehmap.get(id);
+            
+            if(v == null)
+            {
+                continue;
+            }
             v.setExitTime(etime);
             
             Path path = pathmap.get(pathid);
             v.setPath(path);
             
-            if(v.getId() == 255470)
-            {
-                System.out.println(path);
-                System.out.println(arrTimes.length);
-            }
             
             // write sim.vat
             fileout.println(v.getType()+" "+v.getId()+" "+dtime+".00 "+etime+".00");
