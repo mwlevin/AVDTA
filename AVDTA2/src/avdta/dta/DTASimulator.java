@@ -779,7 +779,7 @@ public class DTASimulator extends Simulator
         centroids = null;
         
         newsim.setNetwork(newNodes, newLinks);
-        
+        newsim.save(rhs);
         
         
         // copy demand profile
