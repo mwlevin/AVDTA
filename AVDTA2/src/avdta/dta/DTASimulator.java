@@ -677,6 +677,8 @@ public class DTASimulator extends Simulator
         int new_veh_id = 1;
         int new_centroid_id = 1;
         
+
+        
         for(Vehicle v : getVehicles())
         {
             new_veh_id = (int)Math.max(new_veh_id, v.getId()+1);
@@ -690,10 +692,7 @@ public class DTASimulator extends Simulator
             }
         }
         
-        if(new_centroid_id >= 200000)
-        {
-            new_centroid_id -= 200000;
-        }
+
         
         Random rand = rhs.getRandom();
         
@@ -743,7 +742,8 @@ public class DTASimulator extends Simulator
                     if(newNodes.contains(l.getDest()))
                     {
                         origin = l.getDest();
-                        createCentroid(origin, centroids, new_centroid_id++, newNodes, newLinks);
+                        createCentroid(origin, centroids, new_centroid_id, newNodes, newLinks);
+                        new_centroid_id += 2;
                         
                         dtime = arrTimes.get(i+1);
                     }
@@ -751,7 +751,8 @@ public class DTASimulator extends Simulator
                     {
                         dest = l.getSource();
                         
-                        createCentroid(dest, centroids, new_centroid_id++, newNodes, newLinks);
+                        createCentroid(dest, centroids, new_centroid_id, newNodes, newLinks);
+                        new_centroid_id += 2;
                         
                         // create vehicle trip
                         fileout.println((new_veh_id++)+"\t"+type+"\t"+centroids.get(origin)[0]+"\t"+centroids.get(dest)[1]+"\t"+dtime+"\t"+VOT.dagum_rand(rand));
@@ -814,16 +815,16 @@ public class DTASimulator extends Simulator
     {
         if(!centroids.containsKey(node))
         {
-            Zone newO = new Zone(id+100000, node);
-            Zone newD = new Zone(id+200000, node);
+            Zone newO = new Zone(id, node);
+            Zone newD = new Zone(id+1, node);
             
             centroids.put(node, new Node[]{newO, newD});
             
             newNodes.add(newO);
             newNodes.add(newD);
             
-            newLinks.add(new CentroidConnector((id + 200000)*10 + id, newO, node));
-            newLinks.add(new CentroidConnector(id * 1000000 + id + 200000, node, newD));
+            newLinks.add(new CentroidConnector(id+10000, newO, node));
+            newLinks.add(new CentroidConnector(id+20000, node, newD));
         }
     }
 }

@@ -56,7 +56,9 @@ public class Main
     public static void main(String[] args) throws IOException
     {
         //caccTest2();
-        //GUI.main(args);
+        
+        
+        GUI.main(args);
 
 
         
@@ -65,7 +67,7 @@ public class Main
         //transitTest1();
         
         
-        createCACCNetwork();
+        //createCACCNetwork();
         
         /*
         DTAProject project = new DTAProject(new File("projects/coacongress2"));

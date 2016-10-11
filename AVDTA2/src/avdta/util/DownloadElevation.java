@@ -67,6 +67,8 @@ public class DownloadElevation
                     node.setElevation(download(node.getLongitude(), node.getLatitude()));
                     count++;
                     update.update((double)count/missingCount, 0, "Downloading elevations");
+                    
+                    Thread.sleep(1000);
                 }
                 catch(Exception ex)
                 {
