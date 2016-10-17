@@ -22,7 +22,9 @@ public interface DisplayManager
     public void setDisplayLinks(boolean l);
     public void setDisplayNodes(boolean l);
     public void setDisplayCentroids(boolean c);
+    public void setDisplayNonCentroids(boolean c);
     public boolean isDisplayCentroids();
+    public boolean isDisplayNonCentroids();
     
     public Color getColor(Link l, int t);
     public int getWidth(Link l, int t);

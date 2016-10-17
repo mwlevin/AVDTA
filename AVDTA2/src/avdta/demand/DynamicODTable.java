@@ -169,7 +169,7 @@ public class DynamicODTable
     {
         PrintStream fileout = new PrintStream(new FileOutputStream(project.getStaticODFile()), true);
         
-        fileout.println(ReadDemandNetwork.getDynamicODFileHeader());
+        fileout.println(ReadDemandNetwork.getStaticODFileHeader());
         
         int id = 1;
         

@@ -184,7 +184,8 @@ public class MapViewer extends avdta.gui.editor.JMapViewer
 
         for(Link l : links)
         {
-            if((!l.isCentroidConnector() || display.isDisplayCentroids()) && !(l instanceof TransitLane))
+            if(!(l instanceof TransitLane) && 
+                    (!l.isCentroidConnector() || display.isDisplayCentroids()) )
             {
                 paintLink(g, l);
             }
@@ -193,7 +194,8 @@ public class MapViewer extends avdta.gui.editor.JMapViewer
 
         for(Node n : nodes)
         {
-            if(!n.isZone() || display.isDisplayCentroids())
+            if( (n.isZone() && display.isDisplayCentroids()) || 
+                    (!n.isZone() && display.isDisplayNonCentroids()))
             {
                 paintNode(g, n);
             }

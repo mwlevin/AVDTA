@@ -102,7 +102,7 @@ public class Editor extends JFrame implements MouseListener
     private Set<Link> selectedLinks;
     
     
-    private JCheckBox linksSelect, nodesSelect, osmSelect, centroidSelect;
+    private JCheckBox linksSelect, nodesSelect, osmSelect, centroidSelect, nonCentroidSelect;
     private JMenuItem save, close;
     
     private Project project;
@@ -190,11 +190,13 @@ public class Editor extends JFrame implements MouseListener
         nodesSelect = new JCheckBox("Nodes");
         osmSelect = new JCheckBox("OpenStreetMaps");
         centroidSelect = new JCheckBox("Centroids");
+        nonCentroidSelect = new JCheckBox("Non-centroids");
         
         linksSelect.setSelected(display.isDisplayLinks());
         nodesSelect.setSelected(display.isDisplayNodes());
         osmSelect.setSelected(map.isDisplayOSM());
         centroidSelect.setSelected(display.isDisplayCentroids());
+        nonCentroidSelect.setSelected(display.isDisplayNonCentroids());
         
         linksSelect.addActionListener(new ActionListener()
         {
@@ -223,6 +225,15 @@ public class Editor extends JFrame implements MouseListener
             }
         });
         
+        nonCentroidSelect.addActionListener(new ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                display.setDisplayNonCentroids(nonCentroidSelect.isSelected());
+                map.repaint();
+            }
+        });
+        
         osmSelect.addActionListener(new ActionListener()
         {
             public void actionPerformed(ActionEvent e)
@@ -244,8 +255,9 @@ public class Editor extends JFrame implements MouseListener
         layers.setLayout(new GridBagLayout());
         constrain(layers, nodesSelect, 0, 0, 1, 1);
         constrain(layers, linksSelect, 0, 1, 1, 1);
-        constrain(layers, osmSelect, 0, 3, 1, 1);
+        constrain(layers, osmSelect, 0, 4, 1, 1);
         constrain(layers, centroidSelect, 0, 2, 1, 1);
+        constrain(layers, nonCentroidSelect, 0, 3, 1, 1);
         
         layers.setBorder(BorderFactory.createTitledBorder("Layers"));
         

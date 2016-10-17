@@ -58,7 +58,7 @@ public class Main
         //caccTest2();
         
         
-        GUI.main(args);
+        //GUI.main(args);
 
         
         
@@ -68,7 +68,8 @@ public class Main
         
         
         //createCACCNetwork();
-        //DTAProject project = new DTAProject(new File("projects/scenario_2_pm_sub"));
+        DTAProject project = new DTAProject(new File("projects/scenario_2_pm_sub"));
+        Editor gui = new Editor(project);
         //DTASimulator sim = project.getSimulator();
         
         /*

@@ -18,13 +18,14 @@ import java.io.IOException;
  */
 public class DefaultDisplayManager implements DisplayManager
 {
-    private boolean displayLinks, displayNodes, displayCentroids;
+    private boolean displayLinks, displayNodes, displayCentroids, displayNonCentroids;
     
     public DefaultDisplayManager()
     {
         displayLinks = true;
         displayNodes = false;
         displayCentroids = false;
+        displayNonCentroids = true;
     }
     
     public void setDisplayCentroids(boolean c)
@@ -32,9 +33,19 @@ public class DefaultDisplayManager implements DisplayManager
         displayCentroids = c;
     }
     
+    public void setDisplayNonCentroids(boolean c)
+    {
+        displayNonCentroids = c;
+    }
+    
     public boolean isDisplayCentroids()
     {
         return displayCentroids;
+    }
+    
+    public boolean isDisplayNonCentroids()
+    {
+        return displayNonCentroids;
     }
     
     public void setDisplayNodes(boolean n)
