@@ -60,7 +60,7 @@ public class Main
         
         GUI.main(args);
 
-
+        
         
         //transitTest3();
         //transitTest2();
@@ -68,6 +68,8 @@ public class Main
         
         
         //createCACCNetwork();
+        //DTAProject project = new DTAProject(new File("projects/scenario_2_pm_sub"));
+        //DTASimulator sim = project.getSimulator();
         
         /*
         DTAProject project = new DTAProject(new File("projects/coacongress2"));

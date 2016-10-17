@@ -658,6 +658,21 @@ public class DTASimulator extends Simulator
             newNodes.add(l.getDest());
         }
         
+        /*
+        for(Link l : getLinks())
+        {
+            if(l.isCentroidConnector())
+            {
+                CentroidConnector c = (CentroidConnector)l;
+                
+                if(newNodes.contains(c.getIntersection()))
+                {
+                    newNodes.add(c.getZone());
+                    newLinks.add(c);
+                }
+            }
+        }
+        */
         Map<Integer, Link> linksmap = createLinkIdsMap();
         
         // this is a map of created centroids
@@ -732,6 +747,16 @@ public class DTASimulator extends Simulator
             
             Node origin = path.getOrigin();
             Node dest = path.getDest();
+            
+            if(!newNodes.contains(origin))
+            {
+                origin = null;
+            }
+            
+            if(!newNodes.contains(dest))
+            {
+                dest = null;
+            }
             
             for(int i = 0; i < path.size(); i++)
             {

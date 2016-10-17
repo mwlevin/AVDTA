@@ -120,6 +120,16 @@ public class ReadDTANetwork extends ReadDemandNetwork
                 Zone origin = (Zone)nodesmap.get(origin_id);
                 Zone dest = (Zone)nodesmap.get(dest_id);
                 
+                if(origin == null)
+                {
+                    throw new RuntimeException("Origin is null: "+origin_id);
+                }
+                
+                if(dest == null)
+                {
+                    throw new RuntimeException("Dest is null: "+dest_id);
+                }
+                
                 origin.addProductions(1);
                 dest.addAttractions(1);
                 

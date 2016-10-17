@@ -51,6 +51,40 @@ public class CentroidConnector extends Link
     }
     
     /**
+     * Returns the centroid associated with this centroid connector. 
+     * This may be the source or destination node, depending on which is a centroid.
+     * @return the centroid
+     */
+    public Zone getZone()
+    {
+        if(getSource() instanceof Zone)
+        {
+            return (Zone)getSource();
+        }
+        else
+        {
+            return (Zone)getDest();
+        }
+    }
+    
+    /**
+     * Returns the intersection associated with this centroid connector. 
+     * This may be the source or destination node, depending on which is an intersection.
+     * @return the centroid
+     */
+    public Intersection getIntersection()
+    {
+        if(getSource() instanceof Zone)
+        {
+            return (Intersection)getDest();
+        }
+        else
+        {
+            return (Intersection)getSource();
+        }
+    }
+    
+    /**
      * Returns the capacity per lane
      * @return 100000
      */

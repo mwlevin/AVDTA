@@ -167,7 +167,7 @@ public class DynamicODTable
      */
     public void printStaticOD(DemandProject project) throws IOException
     {
-        PrintStream fileout = new PrintStream(new FileOutputStream(project.getDynamicODFile()), true);
+        PrintStream fileout = new PrintStream(new FileOutputStream(project.getStaticODFile()), true);
         
         fileout.println(ReadDemandNetwork.getDynamicODFileHeader());
         
