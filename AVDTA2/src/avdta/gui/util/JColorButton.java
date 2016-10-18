@@ -16,14 +16,30 @@ import javax.swing.JButton;
 import javax.swing.JColorChooser;
 
 /**
- *
- * @author ml26893
+ * This is a special {@link JButton} that allows the user to choose colors.
+ * It displays a small rectangle indicating the selected color.
+ * When clicked, it opens a color chooser dialog.
+ * To interact with this {@link JColorButton}, see {@link JColorButton#getColor()} and {@link JColorButton#setColor(java.awt.Color)}.
+ * @author Michael
  */
 public class JColorButton extends JButton
 {
     private Color color;
 
+    /**
+     * Constructs this {@link JColorButton} with an initial color of {@link Color#BLACK}.
+     * This calls {@link JColorButton#JColorButton(java.awt.Color)}.
+     */
     public JColorButton()
+    {
+        this(Color.black);
+    }
+    
+    /**
+     * Constructs this {@link JColorButton} with the specified initial color.
+     * @param c the initial color
+     */
+    public JColorButton(Color c)
     {
         setIcon(new ColorIcon());
         
@@ -35,10 +51,10 @@ public class JColorButton extends JButton
             }
         });
         
-        setColor(Color.black);
+        setColor(c);
     }
     
-    public void chooseColor()
+    private void chooseColor()
     {
         Color output = JColorChooser.showDialog(this, "Choose color", color);
         
@@ -48,12 +64,20 @@ public class JColorButton extends JButton
         }
     }
     
+    /**
+     * Updates the chosen color.
+     * @param c the new chosen color
+     */
     public void setColor(Color c)
     {
         this.color = c;
         repaint();
     }
     
+    /**
+     * Returns the chosen color.
+     * @return the chosen color
+     */
     public Color getColor()
     {
         return color;

@@ -67,6 +67,12 @@ public abstract class Project
     }
     
     /**
+     * Returns the type indicator {@link String} used to create the indicator file to determine the type of this project.
+     * @return the type indicator {@link String}
+     */
+    public abstract String getTypeIndicator();
+    
+    /**
      * Updates the {@link Simulator} associated with this {@link Project}
      * @param sim the new {@link Simulator}
      */
@@ -567,6 +573,9 @@ public abstract class Project
         
         file = new File(dirStr+"/results");
         file.mkdirs();
+        
+        PrintStream fileout = new PrintStream(getProjectDirectory()+"/"+getTypeIndicator()+".dat");
+        fileout.close();
         
     }
 

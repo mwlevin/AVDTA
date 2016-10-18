@@ -14,8 +14,11 @@ import javax.swing.JComponent;
 import javax.swing.Timer;
 
 /**
- *
- * @author ml26893
+ * This provides a graphical implementation of {@link StatusUpdate}. 
+ * Updates are displayed in a small component that may be added to GUIs.
+ * A progress bar with estimated percent completed is included.
+ * Also, this class estimates the remaining time to completion based on when {@link StatusUpdate#update(double, double, java.lang.String)} was called.
+ * @author Michael
  */
 public class StatusBar extends JComponent implements StatusUpdate
 {
@@ -29,6 +32,9 @@ public class StatusBar extends JComponent implements StatusUpdate
     
     private static final int delay = 100;
     
+    /**
+     * Constructs this {@link StatusBar}.
+     */
     public StatusBar()
     {
         eta = -1;
@@ -50,6 +56,11 @@ public class StatusBar extends JComponent implements StatusUpdate
         
     }
     
+    /**
+     * Paints this {@link StatusBar} on the specified {@link Graphics}.
+     * {@link StatusBar#repaint()} is automatically called every 100ms.
+     * @param g the {@link Graphics} to be painted on
+     */
     public void paint(Graphics g)
     {
         g.setColor(getBackground());
@@ -78,6 +89,9 @@ public class StatusBar extends JComponent implements StatusUpdate
         g.drawString(text, 5, 20);
     }
     
+    /**
+     * Resets the start time and estimate of remaining time.
+     */
     public void resetTime()
     {
         startTime = 0;
@@ -89,12 +103,25 @@ public class StatusBar extends JComponent implements StatusUpdate
         return update == 1;
     }
     
+    /**
+     * Calls {@link StatusBar#update(double, double)}, and also updates the status text.
+     * @param p the estimate of the proportion completed
+     * @param interval the update interval
+     * @param text the status text
+     */
     public void update(double p, double interval, String text)
     {
         this.text = text;
         update(p, interval);
     }
     
+    /**
+     * Updates the progress. 
+     * If the progress is 0, this method calls {@link StatusBar#resetTime()}.
+     * Otherwise, an estimate of the remaining time will be made based on the estimated progress.
+     * @param p the estimate of the proportion completed
+     * @param inter the update interval
+     */
     public void update(double p, double inter)
     {
         if(p == 0)

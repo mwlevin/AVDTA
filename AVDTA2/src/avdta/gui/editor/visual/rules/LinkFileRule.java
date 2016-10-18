@@ -14,21 +14,29 @@ import java.util.Map;
 import java.util.Scanner;
 
 /**
- *
- * @author micha
+ * This displays {@link Link}s based on information in a file.
+ * This class can be used to create an external visualization source.
+ * @author Michael
  */
 public class LinkFileRule extends LinkRule
 {
     private Map<Integer, Tuple> data;
     private String name;
 
+    /**
+     * Reads in data for the {@link LinkFileRule}.
+     * The file format is node id, width, red, green, blue.
+     * Header data may be included and will be ignored.
+     * @param file the file
+     * @throws IOException if the file cannot be accessed
+     */
     public LinkFileRule(File file) throws IOException
     {
         name = file.getName();
         data = new HashMap<Integer, Tuple>();
         
         Scanner filein = new Scanner(name);
-        if(!filein.hasNextInt())
+        while(!filein.hasNextInt())
         {
             filein.nextLine();
         }
@@ -46,27 +54,49 @@ public class LinkFileRule extends LinkRule
         filein.close();
     }
     
+    /**
+     * Returns the input file name.
+     * @return the input file name
+     */
     public String getName()
     {
         return name;
     }
     
+    /**
+     * Returns whether this {@link LinkRule} applies to the given {@link Link} at the specified time
+     * @param l the {@link Link}
+     * @param t the time (s)
+     * @return if the {@link Link} id was found in the file.
+     */
     public boolean matches(Link l, int t)
     {
         return data.containsKey(l.getId());
     }
     
+    /**
+     * Returns the width for the given {@link Link} at the given time specified by the file.
+     * @param l the {@link Link}
+     * @param t the time (s)
+     * @return the width (px)
+     */
     public int getWidth(Link l, int t)
     {
         return data.get(l.getId()).width;
     }
     
+    /**
+     * Returns the color for the given {@link Link} at the given time specified by the file.
+     * @param l the {@link Link}
+     * @param t the time (s)
+     * @return the border color
+     */
     public Color getColor(Link l, int t)
     {
         return data.get(l.getId()).color;
     }
 
-    static class Tuple
+    private static class Tuple
     {
         public int width;
         public Color color;

@@ -26,22 +26,37 @@ public abstract class SharedTransitCell extends Cell
 {
     private Cell transitLane;
     
+    /**
+     * Constructs this {@link SharedTransitCell} as part of the specified {@link SharedTransitCTMLink}.
+     * @param link 
+     */
     public SharedTransitCell(SharedTransitCTMLink link)
     {
         super(link);
         
     }
     
+    /**
+     * Returns the parallel, associated transit lane cell.
+     * @return the associated transit lane cell
+     */
     public Cell getTransitLane()
     {
         return transitLane;
     }
     
+    /**
+     * Updates the parallel, associated transit lane cell.
+     * @param cell the new associated transit lane cell
+     */
     public void setTransitLane(Cell cell)
     {
         transitLane = cell;
     }
     
+    /**
+     * Updates the number of lanes available to this cell based on transit lane occupancy.
+     */
     public void updateLanes()
     {
         if(transitLane.getOccupancy() == 0)
@@ -54,6 +69,10 @@ public abstract class SharedTransitCell extends Cell
         }
     }
     
+    /**
+     * Returns the jam density, which is based on the minimum number of lanes this cell can have.
+     * @return the jam density (veh/mi)
+     */
     public double getJamD()
     {
         CTMLink link = getLink();

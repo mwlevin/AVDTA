@@ -16,8 +16,11 @@ import javax.swing.JTextField;
 import javax.swing.filechooser.FileFilter;
 
 /**
- *
- * @author micha
+ * This is a customized uneditable {@link JTextField} that allows the user to select files.
+ * It displays the file name, and is used when the user needs to select multiple files.
+ * When the user clicks on this {@link JFileField}, it will open a {@link JFileChooser} to edit the selected file.
+ * To indicate the ability to select files, the hand cursor is used when hovering over this {@link FileFilter} while enabled.
+ * @author Michael
  */
 public class JFileField extends JTextField
 {
@@ -25,6 +28,12 @@ public class JFileField extends JTextField
     private FileFilter filter;
     private String root;
     
+    /**
+     * Constructs this {@link FileFilter} with the specified {@link FileFilter}, root directory, and display length.
+     * @param len the display length (number of characters). This is used in the constructor call {@link JTextField#JTextField(int)}.
+     * @param filter the {@link FileFilter} for choosing files
+     * @param root the root directory for choosing files
+     */
     public JFileField(int len, FileFilter filter, String root)
     {
         super(len);
@@ -54,12 +63,8 @@ public class JFileField extends JTextField
         setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
     }
     
-    public void setEnabled(boolean e)
-    {
-        super.setEnabled(e);
-    }
     
-    public File chooseFile()
+    private File chooseFile()
     {
         JFileChooser chooser;
         if(file == null)
@@ -88,6 +93,10 @@ public class JFileField extends JTextField
         }
     }
     
+    /**
+     * Updates the selected file.
+     * @param f the new selected file.
+     */
     public void setFile(File f)
     {
         file = f;
@@ -102,11 +111,20 @@ public class JFileField extends JTextField
         }
     }
     
+    /**
+     * Returns the selected file.
+     * @return the selected file
+     */
     public File getFile()
     {
         return file;
     }
     
+    /**
+     * This is called whenever the selected file changes.
+     * It may be overwritten by other classes to provide additional behavior.
+     * @param f the new selected file
+     */
     public void valueChanged(File f)
     {
         

@@ -14,21 +14,29 @@ import java.util.Map;
 import java.util.Scanner;
 
 /**
- *
- * @author micha
+ * This displays {@link Node}s based on information in a file.
+ * This class can be used to create an external visualization source.
+ * @author Michael
  */
 public class NodeFileRule extends NodeRule
 {
     private Map<Integer, Tuple> data;
     private String name;
 
+    /**
+     * Reads in data for the {@link NodeFileRule}.
+     * The file format is node id, radius, red, green, blue.
+     * Header data may be included and will be ignored.
+     * @param file the file
+     * @throws IOException if the file cannot be accessed
+     */
     public NodeFileRule(File file) throws IOException
     {
         name = file.getName();
         data = new HashMap<Integer, Tuple>();
         
         Scanner filein = new Scanner(name);
-        if(!filein.hasNextInt())
+        while(!filein.hasNextInt())
         {
             filein.nextLine();
         }
@@ -46,32 +54,49 @@ public class NodeFileRule extends NodeRule
         filein.close();
     }
     
+    /**
+     * Returns the input file name.
+     * @return the input file name
+     */
     public String getName()
     {
         return name;
     }
     
+    /**
+     * Returns whether this {@link NodeRule} applies to the given {@link Node} at the specified time
+     * @param n the {@link Node}
+     * @param t the time (s)
+     * @return if the {@link Node} id was found in the file.
+     */
     public boolean matches(Node n, int t)
     {
         return data.containsKey(n.getId());
     }
     
+    /**
+     * Returns the radius for the given {@link Node} at the given time specified by the file.
+     * @param n the {@link Node}
+     * @param t the time (s)
+     * @return the radius (px)
+     */
     public int getRadius(Node n, int t)
     {
         return data.get(n.getId()).width;
     }
-    
+
+    /**
+     * Returns the color for the given {@link Node} at the given time specified by the file.
+     * @param n the {@link Node}
+     * @param t the time (s)
+     * @return the border color
+     */
     public Color getColor(Node n, int t)
-    {
-        return Color.black;
-    }
-    
-    public Color getBackColor(Node n, int t)
     {
         return data.get(n.getId()).color;
     }
 
-    static class Tuple
+    private static class Tuple
     {
         public int width;
         public Color color;

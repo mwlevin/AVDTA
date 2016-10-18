@@ -45,7 +45,14 @@ public class DTAProject extends DemandProject
         super(directory);
     }
 
-    
+    /**
+     * Returns the type indicator {@link String} used to create the indicator file to determine the type of this project.
+     * @return "dta"
+     */
+    public String getTypeIndicator()
+    {
+        return "dta";
+    }
     
     
     /**
@@ -119,8 +126,7 @@ public class DTAProject extends DemandProject
         File file = new File(dirStr+"/assignments");
         file.mkdirs();
         
-        PrintStream fileout = new PrintStream(getProjectDirectory()+"/dta.dat");
-        fileout.close();
+        
     }
     
     /**

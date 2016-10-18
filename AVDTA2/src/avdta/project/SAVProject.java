@@ -40,6 +40,15 @@ public class SAVProject extends DemandProject
     }
     
     /**
+     * Returns the type indicator {@link String} used to create the indicator file to determine the type of this project.
+     * @return "dta"
+     */
+    public String getTypeIndicator()
+    {
+        return "sav";
+    }
+    
+    /**
      * Returns the project type
      * @return SAV
      */
@@ -110,8 +119,6 @@ public class SAVProject extends DemandProject
     {
         super.createProjectFolders(dir);
         
-        PrintStream fileout = new PrintStream(getProjectDirectory()+"/sav.dat");
-        fileout.close();
         
         String dirStr = dir.getCanonicalPath();
         
