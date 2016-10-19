@@ -8,20 +8,20 @@ package avdta.gui.editor.visual.rules.data;
 import avdta.network.link.Link;
 
 /**
- * This data source returns the ratio of travel time to free flow travel time.
+ * This data source returns the link free flow speed.
  * @author Michael
  */
-public class TTLinkData extends LinkDataSource
+public class FFSpdLinkData extends LinkDataSource
 {
     /**
-     * Returns the ratio of travel time to free flow travel time.
+     * Returns the free flow speed.
      * @param l the {@link Link}
      * @param t the time (s)
-     * @return {@link Link#getAvgTT(int)} / {@link Link#getFFTime()}
+     * @return {@link Link#getFFSpeed()} (mi/hr)
      */
     public double getData(Link l, int t)
     {
-        return l.getAvgTT(t) / l.getFFTime();
+        return l.getFFSpeed();
     }
     
     
@@ -31,7 +31,7 @@ public class TTLinkData extends LinkDataSource
      */
     public String getName()
     {
-        return "Travel time";
+        return "Free flow speed";
     }
     
     /**
@@ -40,6 +40,6 @@ public class TTLinkData extends LinkDataSource
      */
     public String getDescription()
     {
-        return "Ratio of observed travel time to free flow travel time";
+        return "Free flow speed (mi/hr)";
     }
 }

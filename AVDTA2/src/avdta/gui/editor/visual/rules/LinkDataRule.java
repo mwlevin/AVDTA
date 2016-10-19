@@ -18,8 +18,6 @@ import java.awt.Color;
  */
 public class LinkDataRule extends LinkRule
 {
-    private static final String[] RULES = new String[]{"Travel time"};
-    private static final int TT = 0;
     
     private double minValue, maxValue;
     private LinkDataSource data;
@@ -40,7 +38,7 @@ public class LinkDataRule extends LinkRule
      */
     public String getName()
     {
-        return data.getName();
+        return data.getName()+" - "+String.format("%.0f to %.0f", minValue, maxValue);
     }
     
     /**
@@ -186,7 +184,7 @@ public class LinkDataRule extends LinkRule
      * Updates the minimum width.
      * @return the minimum width
      */
-    public double getMinWidth()
+    public int getMinWidth()
     {
         return minWidth;
     }
@@ -195,7 +193,7 @@ public class LinkDataRule extends LinkRule
      * Updates the maximum width.
      * @return the maximum width
      */
-    public double getMaxWidth()
+    public int getMaxWidth()
     {
         return maxWidth;
     }

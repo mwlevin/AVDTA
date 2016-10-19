@@ -35,7 +35,7 @@ import javax.swing.event.DocumentListener;
  */
 public class LinkDataRulePanel extends JPanel
 {
-    private static final LinkDataSource[] SOURCES = new LinkDataSource[]{LinkDataSource.tt};
+    private static final LinkDataSource[] SOURCES = new LinkDataSource[]{LinkDataSource.tt, LinkDataSource.ffspd, LinkDataSource.capacity, LinkDataSource.numLanes};
     
     private LinkDataRule prev;
     
@@ -71,8 +71,8 @@ public class LinkDataRulePanel extends JPanel
            }
         });
         
-        minValue = new JTextField(3);
-        maxValue = new JTextField(3);
+        minValue = new JTextField(4);
+        maxValue = new JTextField(4);
         
         cancel.addActionListener(new ActionListener()
         {
@@ -183,6 +183,22 @@ public class LinkDataRulePanel extends JPanel
     {
         this();
         this.prev = prev;
+        
+        minColor.setColor(prev.getMinColor());
+        maxColor.setColor(prev.getMaxColor());
+        minWidth.setText(""+prev.getMinWidth());
+        maxWidth.setText(""+prev.getMaxWidth());
+        minValue.setText(""+prev.getMinValue());
+        maxValue.setText(""+prev.getMaxValue());
+        
+        for(int i = 0; i < SOURCES.length; i++)
+        {
+            if(SOURCES[i] == prev.getDataSource())
+            {
+                sources.setSelectedIndex(i);
+                break;
+            }
+        }
     }
     
     public void cancel(){}

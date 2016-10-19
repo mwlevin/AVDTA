@@ -38,7 +38,7 @@ public class NodeDataRule extends NodeRule
      */
     public String getName()
     {
-        return data.getName();
+        return data.getName()+" - "+String.format("%.0f to %.0f", minValue, maxValue);
     }
     
     /**
@@ -187,7 +187,7 @@ public class NodeDataRule extends NodeRule
      * Returns the minimum radius.
      * @return the minimum radius (px)
      */
-    public double getMinRadius()
+    public int getMinRadius()
     {
         return minWidth;
     }
@@ -196,7 +196,7 @@ public class NodeDataRule extends NodeRule
      * Returns the maximum radius.
      * @return the maximum radius (px)
      */
-    public double getMaxRadius()
+    public int getMaxRadius()
     {
         return maxWidth;
     }

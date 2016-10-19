@@ -8,20 +8,21 @@ package avdta.gui.editor.visual.rules.data;
 import avdta.network.link.Link;
 
 /**
- * This data source returns the ratio of travel time to free flow travel time.
+ * This data source returns the link capacity.
  * @author Michael
  */
-public class TTLinkData extends LinkDataSource
+public class CapacityLinkData extends LinkDataSource
 {
     /**
-     * Returns the ratio of travel time to free flow travel time.
+     * Returns the total capacity (not per lane).
+     * Note that if links are split (e.g. transit lanes), the capacity returned is NOT the sum of the two connected links' capacities.
      * @param l the {@link Link}
      * @param t the time (s)
-     * @return {@link Link#getAvgTT(int)} / {@link Link#getFFTime()}
+     * @return {@link Link#getCapacity()} (veh/hr)
      */
     public double getData(Link l, int t)
     {
-        return l.getAvgTT(t) / l.getFFTime();
+        return l.getCapacity();
     }
     
     
@@ -31,7 +32,7 @@ public class TTLinkData extends LinkDataSource
      */
     public String getName()
     {
-        return "Travel time";
+        return "Capacity";
     }
     
     /**
@@ -40,6 +41,6 @@ public class TTLinkData extends LinkDataSource
      */
     public String getDescription()
     {
-        return "Ratio of observed travel time to free flow travel time";
+        return "Link capacity (veh/hr)";
     }
 }
