@@ -181,6 +181,7 @@ public class ReadSAVNetwork extends ReadDemandNetwork
      * This method replaces zones with SAVOrigin or SAVDest, as appropriate
      * @param nodes the current set of nodes
      * @return the set of nodes with replaced zones
+     * @throws IOException if a file cannot be accessed
      */
     public Set<Node> replaceZones(Set<Node> nodes) throws IOException
     {
@@ -317,6 +318,7 @@ public class ReadSAVNetwork extends ReadDemandNetwork
      * The output is in the project fleet file.
      * @param project the project
      * @param total the fleet size
+     * @throws IOException if a file cannot be accessed
      */
     public void createFleet(SAVProject project, int total) throws IOException
     {
@@ -360,7 +362,7 @@ public class ReadSAVNetwork extends ReadDemandNetwork
      * Read the fleet from the fleet file.
      * @param project the project
      * @param sim the {@link SAVSimulator} (its construction is in progress)
-     * @throws IOException 
+     * @throws IOException if a file cannot be accessed
      */
     public void readFleet(SAVProject project, SAVSimulator sim) throws IOException
     {
@@ -384,6 +386,8 @@ public class ReadSAVNetwork extends ReadDemandNetwork
     /**
      * This goes through the static_od, dynamic_od, and demand files, and changes the type to {@link ReadSAVNetwork#TRAVELER}.
      * Then, this calls {@link ReadDemandNetwork#prepareDemand(avdta.project.DemandProject, double)} on the modified trip table.
+     * @param project the project
+     * @throws IOException if a file cannot be accessed
      */
     public void setTripsToTravelers(SAVProject project) throws IOException
     {

@@ -29,7 +29,7 @@ public class DTAImportFromVISTA
      * Calls {@link DTAImportFromVISTA#DTAImportFromVISTA(avdta.project.DTAProject, java.io.File, java.io.File)} with a {@code vehicle_path.txt} file and a {@code vehicle_path_time.txt} file from the specified directory.
      * @param project the project
      * @param directory the directory to look for files
-     * * @throws IOException if a file cannot be accessed
+     * @throws IOException if a file cannot be accessed
      */
     public DTAImportFromVISTA(DTAProject project, String directory) throws IOException
     {

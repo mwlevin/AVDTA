@@ -642,7 +642,7 @@ public class DTASimulator extends Simulator
      * @param newLinks the set of links that to be included
      * @param simvat the sim.vat file
      * @param rhs the new project
-     * @throws IOException 
+     * @throws IOException if a file cannot be accessed
      */
     public void createSubnetwork(Set<Link> newLinks, File simvat, DemandProject rhs) throws IOException
     {

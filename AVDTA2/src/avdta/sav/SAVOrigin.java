@@ -64,7 +64,7 @@ public class SAVOrigin extends SAVZone
     
     /**
      * Update the number of taxis that should be stored here.
-     * @param g 
+     * @param g the new stored goal
      */
     public void setStoredGoal(int g)
     {

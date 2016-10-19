@@ -28,7 +28,7 @@ public abstract class SharedTransitCell extends Cell
     
     /**
      * Constructs this {@link SharedTransitCell} as part of the specified {@link SharedTransitCTMLink}.
-     * @param link 
+     * @param link the link this {@link SharedTransitCell} is part of
      */
     public SharedTransitCell(SharedTransitCTMLink link)
     {
