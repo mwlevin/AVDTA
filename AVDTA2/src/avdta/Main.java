@@ -58,8 +58,11 @@ public class Main
         //caccTest2();
         
         
-        GUI.main(args);
+        //GUI.main(args);
 
+        
+        DTAProject project = new DTAProject(new File("projects/coacongress2_CACC"));
+        CACCConvert.convert(project, 1);
         
         
         //transitTest3();

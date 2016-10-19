@@ -33,6 +33,8 @@ public interface DisplayManager
     public Color getColor(Node n, int t);
     public int getRadius(Node n, int t);
     
+    public boolean hasSpecialDisplay(Link l, int t);
+    
     public void save(File file) throws IOException;
     public void open(File file) throws IOException;
 }

@@ -110,6 +110,10 @@ public class RuleDisplay extends DefaultDisplayManager
         return linkRules;
     }
     
+    public boolean hasSpecialDisplay(Link l, int t)
+    {
+        return findLinkRule(l, t) != defaultLinkRule;
+    }
     
     public Color getColor(Link l, int t)
     {

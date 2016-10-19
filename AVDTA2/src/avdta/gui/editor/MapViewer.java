@@ -182,14 +182,31 @@ public class MapViewer extends avdta.gui.editor.JMapViewer
         
         super.paintComponent(g);
 
+        // display non-special links first
         for(Link l : links)
         {
+            if(display.hasSpecialDisplay(l, time))
+            {
+                continue;
+            }
             if(!(l instanceof TransitLane) && 
                     (!l.isCentroidConnector() || display.isDisplayCentroids()) )
             {
                 paintLink(g, l);
+            } 
+        }
+        
+        for(Link l : links)
+        {
+            if(!display.hasSpecialDisplay(l, time))
+            {
+                continue;
             }
-            
+            if(!(l instanceof TransitLane) && 
+                    (!l.isCentroidConnector() || display.isDisplayCentroids()) )
+            {
+                paintLink(g, l);
+            } 
         }
 
         for(Node n : nodes)

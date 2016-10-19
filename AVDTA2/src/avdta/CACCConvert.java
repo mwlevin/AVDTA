@@ -31,14 +31,14 @@ import java.util.Scanner;
  */
 public class CACCConvert {
     
-    public static void main(File file) throws IOException
+    public static void convert(Project project, int max_lanes) throws IOException
     {
 
-        Scanner filein = new Scanner(file);
-        PrintStream fileout = new PrintStream(new FileOutputStream(new File("links_cacc.txt")), true);
-        
+        Scanner filein = new Scanner(project.getLinksFile());
         filein.nextLine();
-        fileout.println(ReadNetwork.getLinksFileHeader());
+        
+        ArrayList<LinkRecord> newLinks = new ArrayList<LinkRecord>();
+        
         
         while(filein.hasNext())
         {
@@ -47,21 +47,26 @@ public class CACCConvert {
             
             
             
-            if(link.getType() != ReadNetwork.CENTROID && CACCLTMLink.checkK2(link.getCapacity(), link.getFFSpd(), link.getLength()) && link.getFFSpd() >= 60
+            if(link.getType() != ReadNetwork.CENTROID && CACCLTMLink.checkK2(link.getCapacity(), link.getFFSpd(), link.getLength()) && link.getFFSpd() >= 55
                     && link.getNumLanes() > 1)
             {
-                LinkRecord l2 = link.clone();
-                l2.setNumLanes(1);
-                link.setNumLanes(link.getNumLanes()-1);
-                l2.setId(l2.getId()+100000);
-                l2.setType(ReadNetwork.LTM+ReadNetwork.CACC);
+                int newLanes = (int)Math.min(link.getNumLanes()-1, max_lanes);
+                if(newLanes > 0)
+                {
+                    LinkRecord l2 = link.clone();
+                    l2.setNumLanes(newLanes);
+                    link.setNumLanes(link.getNumLanes()-newLanes);
+                    l2.setId(l2.getId()+100000);
+                    l2.setType(ReadNetwork.LTM+ReadNetwork.CACC);
+                    newLinks.add(l2);
+                }
                 
-                fileout.println(link);
-                fileout.println(l2);
+                newLinks.add(link);
+                
             }
             else
             {
-                fileout.println(link);
+                newLinks.add(link);
             }
             
            
@@ -69,6 +74,14 @@ public class CACCConvert {
         }
         
         filein.close();
+        
+        PrintStream fileout = new PrintStream(new FileOutputStream(project.getLinksFile()), true);
+        fileout.println(ReadNetwork.getLinksFileHeader());
+        
+        for(LinkRecord l : newLinks)
+        {
+            fileout.println(l);
+        }
         fileout.close();
     }
 }

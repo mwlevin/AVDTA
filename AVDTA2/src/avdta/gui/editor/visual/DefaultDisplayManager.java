@@ -93,6 +93,11 @@ public class DefaultDisplayManager implements DisplayManager
         return 0;
     }
     
+    public boolean hasSpecialDisplay(Link l, int t)
+    {
+        return false;
+    }
+    
     public void save(File file) throws IOException {}
     public void open(File file) throws IOException {}
 }
