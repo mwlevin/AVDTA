@@ -31,7 +31,7 @@ public class TTLinkData extends LinkDataSource
      */
     public String getName()
     {
-        return "Travel time";
+        return "Travel time ratio";
     }
     
     /**

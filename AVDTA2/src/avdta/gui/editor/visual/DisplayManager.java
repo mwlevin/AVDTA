@@ -17,6 +17,9 @@ import java.io.IOException;
  */
 public interface DisplayManager 
 {
+    public void setEnabled(boolean e);
+    public boolean isEnabled();
+    
     public boolean isDisplayNodes();
     public boolean isDisplayLinks();
     public void setDisplayLinks(boolean l);

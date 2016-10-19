@@ -19,6 +19,7 @@ import java.io.IOException;
 public class DefaultDisplayManager implements DisplayManager
 {
     private boolean displayLinks, displayNodes, displayCentroids, displayNonCentroids;
+    private boolean enabled;
     
     public DefaultDisplayManager()
     {
@@ -26,6 +27,17 @@ public class DefaultDisplayManager implements DisplayManager
         displayNodes = false;
         displayCentroids = false;
         displayNonCentroids = true;
+        enabled = true;
+    }
+    
+    public void setEnabled(boolean e)
+    {
+        enabled = e;
+    }
+    
+    public boolean isEnabled()
+    {
+        return enabled;
     }
     
     public void setDisplayCentroids(boolean c)
@@ -70,7 +82,7 @@ public class DefaultDisplayManager implements DisplayManager
     
     public Color getColor(Link l, int t)
     {
-        return Color.black;
+        return l.isSelected()? Color.red : Color.black;
     }
     
     public int getWidth(Link l, int t)

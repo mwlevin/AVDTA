@@ -37,7 +37,14 @@ public class TurnVisual extends JComponent
     
     public void setTurn(Turn t)
     {
-        setLinks(t.i, t.j);
+        if(t != null)
+        {
+            setLinks(t.i, t.j);
+        }
+        else
+        {
+            setLinks(null, null);
+        }
     }
     
     public void paint(Graphics window)

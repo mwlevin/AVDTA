@@ -22,6 +22,7 @@ import avdta.project.Project;
 import avdta.project.SQLLogin;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import javax.swing.Icon;
@@ -29,6 +30,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.KeyStroke;
 
 /**
  *
@@ -124,7 +126,7 @@ public abstract class GUI extends JFrame
         frame = this;
 
         JMenuBar menu = createMenuBar();
-        menu.add(createHelpMenu());
+        menu.add(createHelpMenu(this));
         
         this.setJMenuBar(menu);
         
@@ -153,6 +155,7 @@ public abstract class GUI extends JFrame
                 newProject();
             }
         });
+        mi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, ActionEvent.CTRL_MASK));
         me.add(mi);
         
         mi = new JMenuItem("Open project");
@@ -164,6 +167,7 @@ public abstract class GUI extends JFrame
                 openProject();
             }
         });
+        mi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, ActionEvent.CTRL_MASK));
         me.add(mi);
         
         mi = new JMenuItem("Clone opened project");
@@ -174,6 +178,7 @@ public abstract class GUI extends JFrame
                 cloneProject();
             }
         });
+        mi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, ActionEvent.CTRL_MASK));
         me.add(mi);
         
 
@@ -188,6 +193,7 @@ public abstract class GUI extends JFrame
                 closeProject();
             }
         });
+        mi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, ActionEvent.CTRL_MASK));
         me.add(mi);
         
         closeMI = mi;
@@ -203,6 +209,7 @@ public abstract class GUI extends JFrame
                 System.exit(0);
             }
         });
+        mi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F4, ActionEvent.ALT_MASK));
         me.add(mi);
         
         menu.add(me);
@@ -250,7 +257,7 @@ public abstract class GUI extends JFrame
                 openEditor = new Editor(project, false);
             }
         });
-        
+        editor.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, ActionEvent.CTRL_MASK));
         me.add(editor);
         editor.setEnabled(false);
         
@@ -283,7 +290,7 @@ public abstract class GUI extends JFrame
         return menu;
     }
     
-    public static JMenu createHelpMenu()
+    public static JMenu createHelpMenu(final JFrame frame)
     {
         JMenu me = new JMenu("Help");
 

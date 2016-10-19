@@ -48,6 +48,9 @@ import java.awt.Graphics;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Point;
+import java.awt.Toolkit;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
@@ -73,6 +76,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JSlider;
 import javax.swing.JTabbedPane;
+import javax.swing.KeyStroke;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
@@ -118,12 +122,9 @@ public class Editor extends JFrame implements MouseListener
     private LinkRulePanel linkPanel;
     
     
-
-    
-    
-    
+    private Editor thisEditor;
     private JPanel thisPanel;
-   
+
     
     public static String getTitleName()
     {
@@ -145,10 +146,11 @@ public class Editor extends JFrame implements MouseListener
     }
     public Editor(Project project, final boolean exitOnClose)
     {
-        final Editor thisEditor = this;
+        thisEditor = this;
 
         setTitle(getTitleName());
         setIconImage(getIcon());
+
 
         
         selectedNodes = new HashSet<Node>();
@@ -177,7 +179,7 @@ public class Editor extends JFrame implements MouseListener
         JPanel p = new JPanel();
         p.setLayout(new GridBagLayout());
         
-         thisPanel = p;
+        thisPanel = p;
         
         JPanel mapPanel = new JPanel();
         mapPanel.add(map);
@@ -300,6 +302,7 @@ public class Editor extends JFrame implements MouseListener
                     newProject();
                 }
             });
+            mi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, ActionEvent.CTRL_MASK));
             me.add(mi);
 
             mi = new JMenuItem("Open project");
@@ -310,6 +313,7 @@ public class Editor extends JFrame implements MouseListener
                     openProject();
                 }
             });
+            mi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, ActionEvent.CTRL_MASK));
             me.add(mi);
         }
             
@@ -321,6 +325,7 @@ public class Editor extends JFrame implements MouseListener
                 saveProject();
             }
         });
+        mi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.CTRL_MASK));
         me.add(mi);
         save = mi;
         save.setEnabled(false);
@@ -335,6 +340,7 @@ public class Editor extends JFrame implements MouseListener
                     closeProject();
                 }
             });
+            mi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, ActionEvent.CTRL_MASK));
             me.add(mi);
             close = mi;
             close.setEnabled(false);
@@ -356,6 +362,7 @@ public class Editor extends JFrame implements MouseListener
                 }
             }
         });
+        mi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F4, ActionEvent.ALT_MASK));
         me.add(mi);
         
         
@@ -384,6 +391,7 @@ public class Editor extends JFrame implements MouseListener
                 map.zoomIn();
             }
         });
+        mi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_PLUS, ActionEvent.CTRL_MASK));
         me.add(mi);
         
         mi = new JMenuItem("Zoom out");
@@ -394,6 +402,7 @@ public class Editor extends JFrame implements MouseListener
                 map.zoomOut();
             }
         });
+        mi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_MINUS, ActionEvent.CTRL_MASK));
         me.add(mi);
         
         me.addSeparator();
@@ -406,6 +415,7 @@ public class Editor extends JFrame implements MouseListener
                 saveScreenshot();
             }
         });
+        mi.setAccelerator(KeyStroke.getKeyStroke('V', Toolkit.getDefaultToolkit ().getMenuShortcutKeyMask()));
         me.add(mi);
         
         me.addSeparator();
@@ -418,6 +428,7 @@ public class Editor extends JFrame implements MouseListener
                 openVisualization();
             }
         });
+        mi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, ActionEvent.CTRL_MASK+ActionEvent.SHIFT_MASK));
         me.add(mi);
         
         mi = new JMenuItem("Save visualization");
@@ -428,11 +439,12 @@ public class Editor extends JFrame implements MouseListener
                 saveVisualization();
             }
         });
+        mi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.CTRL_MASK+ActionEvent.SHIFT_MASK));
         me.add(mi);
         
         menu.add(me);
         
-        me = new JMenu("Data");
+        me = new JMenu("Network");
         
         JMenu me2 = new JMenu("Nodes");
         
@@ -449,6 +461,7 @@ public class Editor extends JFrame implements MouseListener
                 }
             }
         });
+        mi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F, ActionEvent.CTRL_MASK));
         me2.add(mi);
         
         me2.addSeparator();
@@ -458,54 +471,10 @@ public class Editor extends JFrame implements MouseListener
         {
             public void actionPerformed(ActionEvent e)
             {
-                addSelectListener(new SelectAdapter()
-                {
-                    public void pointSelected(Location loc)
-                    {
-                        removeSelectListener(this);
-                        setMode(PAN);
-                        
-                        if(links == null)
-                        {
-                            return;
-                        }
-                        
-                        final JInternalFrame frame = new JInternalFrame("Add node");
-                        
-                        EditNode edit = new EditNode(thisEditor)
-                        {
-                            public void cancel()
-                            {
-                                super.cancel();
-                                frame.setVisible(false);
-                                map.repaint();
-                            }
-                        };
-                        edit.setLocation(loc);
-                        
-                        frame.add(edit);
-
-                        frame.pack();
-                        frame.setResizable(false);
-                        frame.setClosable(true);
-                        frame.setLocation(thisEditor.getWidth()/2 - frame.getWidth()/2, thisEditor.getHeight()/2 - frame.getHeight()/2);
-                        frame.setVisible(true);
-                        
-                        JLayeredPane toUse = JLayeredPane.getLayeredPaneAbove(thisPanel);
-                        toUse.add(frame);
-                        try
-                        {
-                            frame.setSelected(true);
-                        }
-                        catch(Exception ex){}
-                        
-                        
-                    }
-                });
-                setMode(POINT);
-                setInstructions("Choose the location of the node.");
+                addNode();
             }
         });
+        mi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, ActionEvent.CTRL_MASK));
         me2.add(mi);
         
         mi = new JMenuItem("Edit node");
@@ -514,51 +483,10 @@ public class Editor extends JFrame implements MouseListener
             public void actionPerformed(ActionEvent e)
             {
                 
-                addSelectListener(new SelectAdapter()
-                {
-                    public void nodeSelected(Node node)
-                    {
-                        removeSelectListener(this);
-                        setMode(PAN);
-                        
-                        if(nodes == null)
-                        {
-                            return;
-                        }
-                        
-                        final JInternalFrame frame = new JInternalFrame("Edit node");
-                        
-                        frame.add(new EditNode(thisEditor, node)
-                        {
-                            public void cancel()
-                            {
-                                super.cancel();
-                                frame.setVisible(false);
-                                map.repaint();
-                            }
-                        });
-                        
-
-                        frame.pack();
-                        frame.setResizable(false);
-                        frame.setClosable(true);
-                        frame.setLocation(thisEditor.getWidth()/2 - frame.getWidth()/2, thisEditor.getHeight()/2 - frame.getHeight()/2);
-                        frame.setVisible(true);
-                        
-                        JLayeredPane toUse = JLayeredPane.getLayeredPaneAbove(thisPanel);
-                        toUse.add(frame);
-                        try
-                        {
-                            frame.setSelected(true);
-                        }
-                        catch(Exception ex){}
-                        
-                        
-                    }
-                });
-                setMode(NODE);
+                editNode();
             }
         });
+        mi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, ActionEvent.CTRL_MASK));
         me2.add(mi);
         
         mi = new JMenuItem("Remove node");
@@ -566,19 +494,10 @@ public class Editor extends JFrame implements MouseListener
         {
             public void actionPerformed(ActionEvent e)
             {
-                addSelectListener(new SelectAdapter()
-                {
-                    public void nodeSelected(Node n)
-                    {
-                        removeSelectListener(this);
-                        setMode(PAN);
-                        removeNode(n);
-                        map.repaint();
-                    }
-                });
-                setMode(NODE);
+                removeNode();
             }
         });
+        mi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_D, ActionEvent.CTRL_MASK));
         me2.add(mi);
         
         me.add(me2);
@@ -598,6 +517,7 @@ public class Editor extends JFrame implements MouseListener
                 }
             }
         });
+        mi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F, ActionEvent.CTRL_MASK+ActionEvent.SHIFT_MASK));
         me2.add(mi);
         
         me2.addSeparator();
@@ -607,58 +527,10 @@ public class Editor extends JFrame implements MouseListener
         {
             public void actionPerformed(ActionEvent e)
             {
-                addSelectListener(new TwoNodeSelectAdapter(thisEditor)
-                {
-                    public void firstNodeSelected(Node n)
-                    {
-                        setInstructions("Select the destination node.");
-                    }
-                    
-                    public void nodesSelected(Node n1, Node n2)
-                    {
-                        removeSelectListener(this);
-                        setMode(PAN);
-                        
-                        if(links == null)
-                        {
-                            return;
-                        }
-                        
-                        final JInternalFrame frame = new JInternalFrame("Add link");
-                        
-                        
-                        frame.add(new EditLink(thisEditor, n1, n2)
-                        {
-                            public void cancel()
-                            {
-                                super.cancel();
-                                frame.setVisible(false);
-                                map.repaint();
-                            }
-                        });
-
-                        
-                        frame.pack();
-                        frame.setResizable(false);
-                        frame.setClosable(true);
-                        frame.setLocation(thisEditor.getWidth()/2 - frame.getWidth()/2, thisEditor.getHeight()/2 - frame.getHeight()/2);
-                        frame.setVisible(true);
-                        
-                        JLayeredPane toUse = JLayeredPane.getLayeredPaneAbove(thisPanel);
-                        toUse.add(frame);
-                        try
-                        {
-                            frame.setSelected(true);
-                        }
-                        catch(Exception ex){}
-                        
-                        
-                    }
-                });
-                setMode(NODE);
-                setInstructions("Select the source node.");
+                addLink();
             }
         });
+        mi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, ActionEvent.CTRL_MASK+ActionEvent.SHIFT_MASK));
         me2.add(mi);
         
         mi = new JMenuItem("Edit link");
@@ -666,70 +538,10 @@ public class Editor extends JFrame implements MouseListener
         {
             public void actionPerformed(ActionEvent e)
             {
-                addSelectListener(new SelectAdapter()
-                {
-                    public void linkSelected(Link[] links)
-                    {
-                        removeSelectListener(this);
-                        setMode(PAN);
-                        
-                        if(links == null)
-                        {
-                            return;
-                        }
-                        
-                        final JInternalFrame frame = new JInternalFrame("Edit link");
-                        
-                        if(links.length == 1)
-                        {
-                            frame.add(new EditLink(thisEditor, links[0])
-                            {
-                                public void cancel()
-                                {
-                                    super.cancel();
-                                    frame.setVisible(false);
-                                    map.repaint();
-                                }
-                            });
-                        }
-                        else
-                        {
-                            JTabbedPane tabs = new JTabbedPane();
-
-                            for(Link link : links)
-                            {
-                                tabs.add(""+link.getId(), new EditLink(thisEditor, link)
-                                {
-                                    public void cancel()
-                                    {
-                                        super.cancel();
-                                        frame.setVisible(false);
-                                    }
-                                });
-                            }
-
-                            frame.add(tabs);
-                        }
-                        frame.pack();
-                        frame.setResizable(false);
-                        frame.setClosable(true);
-                        frame.setLocation(thisEditor.getWidth()/2 - frame.getWidth()/2, thisEditor.getHeight()/2 - frame.getHeight()/2);
-                        frame.setVisible(true);
-                        
-                        JLayeredPane toUse = JLayeredPane.getLayeredPaneAbove(thisPanel);
-                        toUse.add(frame);
-                        try
-                        {
-                            frame.setSelected(true);
-                        }
-                        catch(Exception ex){}
-                        
-                        
-                    }
-                });
-                setMode(LINK);
+                editLink();
             }
         });
+        mi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, ActionEvent.CTRL_MASK+ActionEvent.SHIFT_MASK));
         me2.add(mi);
         
         mi = new JMenuItem("Remove link");
@@ -737,44 +549,33 @@ public class Editor extends JFrame implements MouseListener
         {
             public void actionPerformed(ActionEvent e)
             {
-                addSelectListener(new SelectAdapter()
-                {
-                    public void linkSelected(Link[] links)
-                    {
-                        removeSelectListener(this);
-                        setMode(PAN);
-                        
-                        if(links == null)
-                        {
-                            return;
-                        }
-                        
-                        if(links.length == 1)
-                        {
-                            removeLink(links[0]);
-                        }
-                        else
-                        {
-                            Link input = (Link)JOptionPane.showInputDialog(thisEditor, "Choose link to remove.", "Multiple links", JOptionPane.QUESTION_MESSAGE, null, links, links[0]);
-                            
-                            if(input != null)
-                            {
-                                removeLink(input);
-                            }
-                        }
-                        map.repaint();
-                    }
-                });
-                setMode(LINK);
+                removeLink();
             }
         });
+        mi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_D, ActionEvent.CTRL_MASK+ActionEvent.SHIFT_MASK));
         me2.add(mi);
         
         me.add(me2);
         
+        
+        /*
+        me.addSeparator();
+        
+        
+        mi = new JMenuItem("Create subnetwork");
+        mi.addActionListener(new ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                createSubnetwork();
+            }
+        };
+        me.add(mi));
+        */
+        
         menu.add(me);
         
-        menu.add(GUI.createHelpMenu());
+        menu.add(GUI.createHelpMenu(this));
         
         this.setJMenuBar(menu);
 
@@ -808,6 +609,271 @@ public class Editor extends JFrame implements MouseListener
         }
         
         setMode(PAN);
+    }
+    
+    public void addLink()
+    {
+        addSelectListener(new TwoNodeSelectAdapter(thisEditor)
+        {
+            public void firstNodeSelected(Node n)
+            {
+                setInstructions("Select the destination node.");
+            }
+
+            public void nodesSelected(Node n1, Node n2)
+            {
+                removeSelectListener(this);
+                setMode(PAN);
+
+                if(links == null)
+                {
+                    return;
+                }
+
+                final JInternalFrame frame = new JInternalFrame("Add link");
+
+
+                frame.add(new EditLink(thisEditor, n1, n2)
+                {
+                    public void cancel()
+                    {
+                        super.cancel();
+                        frame.setVisible(false);
+                        map.repaint();
+                    }
+                });
+
+
+                frame.pack();
+                frame.setResizable(false);
+                frame.setClosable(true);
+                frame.setLocation(thisEditor.getWidth()/2 - frame.getWidth()/2, thisEditor.getHeight()/2 - frame.getHeight()/2);
+                frame.setVisible(true);
+
+                JLayeredPane toUse = JLayeredPane.getLayeredPaneAbove(thisPanel);
+                toUse.add(frame);
+                try
+                {
+                    frame.setSelected(true);
+                }
+                catch(Exception ex){}
+
+
+            }
+        });
+        setMode(NODE);
+        setInstructions("Select the source node.");
+    }
+    
+    public void editLink()
+    {
+        addSelectListener(new SelectAdapter()
+        {
+            public void linkSelected(Link[] links)
+            {
+                removeSelectListener(this);
+                setMode(PAN);
+
+                if(links == null)
+                {
+                    return;
+                }
+
+                final JInternalFrame frame = new JInternalFrame("Edit link");
+
+                if(links.length == 1)
+                {
+                    frame.add(new EditLink(thisEditor, links[0])
+                    {
+                        public void cancel()
+                        {
+                            super.cancel();
+                            frame.setVisible(false);
+                            map.repaint();
+                        }
+                    });
+                }
+                else
+                {
+                    JTabbedPane tabs = new JTabbedPane();
+
+                    for(Link link : links)
+                    {
+                        tabs.add(""+link.getId(), new EditLink(thisEditor, link)
+                        {
+                            public void cancel()
+                            {
+                                super.cancel();
+                                frame.setVisible(false);
+                            }
+                        });
+                    }
+
+                    frame.add(tabs);
+                }
+                frame.pack();
+                frame.setResizable(false);
+                frame.setClosable(true);
+                frame.setLocation(thisEditor.getWidth()/2 - frame.getWidth()/2, thisEditor.getHeight()/2 - frame.getHeight()/2);
+                frame.setVisible(true);
+
+                JLayeredPane toUse = JLayeredPane.getLayeredPaneAbove(thisPanel);
+                toUse.add(frame);
+                try
+                {
+                    frame.setSelected(true);
+                }
+                catch(Exception ex){}
+
+
+            }
+        });
+        setMode(LINK);
+    }
+    
+    public void removeLink()
+    {
+        addSelectListener(new SelectAdapter()
+        {
+            public void linkSelected(Link[] links)
+            {
+                removeSelectListener(this);
+                setMode(PAN);
+
+                if(links == null)
+                {
+                    return;
+                }
+
+                if(links.length == 1)
+                {
+                    removeLink(links[0]);
+                }
+                else
+                {
+                    Link input = (Link)JOptionPane.showInputDialog(thisEditor, "Choose link to remove.", "Multiple links", JOptionPane.QUESTION_MESSAGE, null, links, links[0]);
+
+                    if(input != null)
+                    {
+                        removeLink(input);
+                    }
+                }
+                map.repaint();
+            }
+        });
+        setMode(LINK);
+    }
+    
+    public void addNode()
+    {
+        addSelectListener(new SelectAdapter()
+        {
+            public void pointSelected(Location loc)
+            {
+                removeSelectListener(this);
+                setMode(PAN);
+
+                if(links == null)
+                {
+                    return;
+                }
+
+                final JInternalFrame frame = new JInternalFrame("Add node");
+
+                EditNode edit = new EditNode(thisEditor)
+                {
+                    public void cancel()
+                    {
+                        super.cancel();
+                        frame.setVisible(false);
+                        map.repaint();
+                    }
+                };
+                edit.setLocation(loc);
+
+                frame.add(edit);
+
+                frame.pack();
+                frame.setResizable(false);
+                frame.setClosable(true);
+                frame.setLocation(thisEditor.getWidth()/2 - frame.getWidth()/2, thisEditor.getHeight()/2 - frame.getHeight()/2);
+                frame.setVisible(true);
+
+                JLayeredPane toUse = JLayeredPane.getLayeredPaneAbove(thisPanel);
+                toUse.add(frame);
+                try
+                {
+                    frame.setSelected(true);
+                }
+                catch(Exception ex){}
+
+
+            }
+        });
+        setMode(POINT);
+        setInstructions("Choose the location of the node.");
+    }
+    
+    public void removeNode()
+    {
+        addSelectListener(new SelectAdapter()
+        {
+            public void nodeSelected(Node n)
+            {
+                removeSelectListener(this);
+                setMode(PAN);
+                removeNode(n);
+                map.repaint();
+            }
+        });
+        setMode(NODE);
+    }
+    
+    public void editNode()
+    {
+        addSelectListener(new SelectAdapter()
+        {
+            public void nodeSelected(Node node)
+            {
+                removeSelectListener(this);
+                setMode(PAN);
+
+                if(nodes == null)
+                {
+                    return;
+                }
+
+                final JInternalFrame frame = new JInternalFrame("Edit node");
+
+                frame.add(new EditNode(thisEditor, node)
+                {
+                    public void cancel()
+                    {
+                        super.cancel();
+                        frame.setVisible(false);
+                        map.repaint();
+                    }
+                });
+
+
+                frame.pack();
+                frame.setResizable(false);
+                frame.setClosable(true);
+                frame.setLocation(thisEditor.getWidth()/2 - frame.getWidth()/2, thisEditor.getHeight()/2 - frame.getHeight()/2);
+                frame.setVisible(true);
+
+                JLayeredPane toUse = JLayeredPane.getLayeredPaneAbove(thisPanel);
+                toUse.add(frame);
+                try
+                {
+                    frame.setSelected(true);
+                }
+                catch(Exception ex){}
+
+
+            }
+        });
+        setMode(NODE);
     }
     
     public void exit()
@@ -1272,6 +1338,8 @@ public class Editor extends JFrame implements MouseListener
         }
         
     }
+    
+    
     
     private static final double epsilon = 0.5;
     

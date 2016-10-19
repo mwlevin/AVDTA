@@ -145,6 +145,8 @@ public class DTAGUI extends GUI implements GUIPane
         });
         me.add(lastAssignment);
         
+        lastAssignment.setEnabled(false);
+        
         menu.add(me);
         
         return menu;
@@ -188,7 +190,7 @@ public class DTAGUI extends GUI implements GUIPane
         demandPane.setProject(project);
         dtaPane.setProject(project);
         transitPane.setProject(project);
-        
+        lastAssignment.setEnabled(project != null);
         
         
         parentSetEnabled(true);

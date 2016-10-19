@@ -454,5 +454,7 @@ public class EditSignal extends JPanel
         
         inc.setSelectedIndex(0);
         out.setSelectedIndex(0);
+        
+        visual.setTurn(null);
     }
 }

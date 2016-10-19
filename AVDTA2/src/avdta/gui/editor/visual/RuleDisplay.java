@@ -112,32 +112,67 @@ public class RuleDisplay extends DefaultDisplayManager
     
     public boolean hasSpecialDisplay(Link l, int t)
     {
-        return findLinkRule(l, t) != defaultLinkRule;
+        return isEnabled() && findLinkRule(l, t) != defaultLinkRule;
     }
     
     public Color getColor(Link l, int t)
     {
-        return findLinkRule(l, t).getColor(l, t);
+        if(isEnabled())
+        {
+            return findLinkRule(l, t).getColor(l, t);
+        }
+        else
+        {
+            return defaultLinkRule.getColor(l, t);
+        }
     }
     
     public int getWidth(Link l, int t)
     {
-        return findLinkRule(l, t).getWidth(l, t);
+        if(isEnabled())
+        {
+            return findLinkRule(l, t).getWidth(l, t);
+        }
+        else
+        {
+            return defaultLinkRule.getWidth(l, t);
+        }
     }
     
     public Color getColor(Node n, int t)
     {
-        return findNodeRule(n, t).getColor(n, t);
+        if(isEnabled())
+        {
+            return findNodeRule(n, t).getColor(n, t);
+        }
+        else
+        {
+            return defaultNodeRule.getColor(n, t);
+        }
     }
     
     public Color getBackColor(Node n, int t)
     {
-        return findNodeRule(n, t).getBackColor(n, t);
+        if(isEnabled())
+        {
+            return findNodeRule(n, t).getBackColor(n, t);
+        }
+        else
+        {
+            return defaultNodeRule.getBackColor(n, t);
+        }
     }
     
     public int getRadius(Node n, int t)
     {
-        return findNodeRule(n, t).getRadius(n, t);
+        if(isEnabled())
+        {
+            return findNodeRule(n, t).getRadius(n, t);
+        }
+        else
+        {
+            return defaultNodeRule.getRadius(n, t);
+        }
     }
     
     protected NodeRule findNodeRule(Node n, int t)

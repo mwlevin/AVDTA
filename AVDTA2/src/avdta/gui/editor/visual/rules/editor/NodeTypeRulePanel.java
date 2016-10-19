@@ -47,6 +47,8 @@ public class NodeTypeRulePanel extends JPanel
         control = new JComboBox(EditNode.CONTROLS);
         policy = new JComboBox(EditNode.POLICIES);
         
+        
+        
         width = new JTextField(3);
         width.setText("5");
         
@@ -69,6 +71,8 @@ public class NodeTypeRulePanel extends JPanel
                 save.setEnabled(true);
             }
         });
+        
+        type.setSelectedIndex(1);
         
         color = new JColorButton()
         {
