@@ -16,6 +16,8 @@ import avdta.gui.DTAGUI;
 import avdta.gui.GUI;
 import avdta.gui.editor.Editor;
 import avdta.gui.editor.visual.rules.LinkBusRule;
+import avdta.gui.editor.visual.rules.LinkDataRule;
+import avdta.gui.editor.visual.rules.data.LinkFileSource;
 import avdta.gui.editor.visual.rules.data.VolumeLinkData;
 import avdta.network.Path;
 import avdta.network.Simulator;
@@ -36,6 +38,7 @@ import avdta.vehicle.Bus;
 import avdta.vehicle.DriverType;
 import avdta.vehicle.PersonalVehicle;
 import avdta.vehicle.Vehicle;
+import java.awt.Color;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
@@ -56,11 +59,12 @@ public class Main
 {
     public static void main(String[] args) throws IOException
     {
-        caccTest1("coacongress2_LTM", "coacongress2_CACC");
-        caccTest1("scenario_2_pm_sub", "scenario_2_pm_sub_CACC");
+        //caccTest1("coacongress2_LTM", "coacongress2_CACC");
+        //caccTest1("scenario_2_pm_sub", "scenario_2_pm_sub_CACC");
         
         caccAnalyze1("coacongress2_LTM", "coacongress2_CACC");
         caccAnalyze1("scenario_2_pm_sub", "scenario_2_pm_sub_CACC");
+        caccVisualize("coacongress2_LTM");
         //caccTest2();
         
         //new DTAGUI();
@@ -500,8 +504,24 @@ public class Main
             }
         }
         out.close();
+    }
+    
+    public static void caccVisualize(String net1) throws IOException
+    {
+        DTAProject austin = new DTAProject(new File("projects/"+net1));
         
+        Editor editor =  new Editor(austin);
+        LinkDataRule rule = new LinkDataRule();
+        rule.setDataSource(new LinkFileSource(new File("VolDiff.txt")));
+        rule.setMinColor(Color.black);
+        rule.setMaxColor(Color.red);
+        rule.setMinWidth(3);
+        rule.setMaxWidth(3);
+        rule.setMinValue(0);
+        rule.setMaxValue(4);
+        editor.addVisualization(rule);
         
+        editor.saveScreenshot();
         
         
     }
