@@ -30,7 +30,7 @@ public class VolumeLinkData extends LinkDataSource
     /**
      * Initialize this {@link VolumeLinkData} with the given {@link Project}.
      * This calculates the link volumes for all links using {@link Project#getSimulator()} and {@link Vehicle#getPath()}.
-     * @param project 
+     * @param project the {@link Project}
      */
     public void initialize(Project project)
     {

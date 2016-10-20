@@ -75,6 +75,7 @@ public abstract class NodeRule implements Serializable
     
     /**
      * Initialize this rule with the given {@link Project}.
+     * @param project the {@link Project}
      */
     public void initialize(Project project){}
 }

@@ -55,6 +55,7 @@ public abstract class LinkDataSource
     
     /**
      * Initialize this rule with the given {@link Project}.
+     * @param project the {@link Project}
      */
     public void initialize(Project project){}
 }
