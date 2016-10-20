@@ -119,6 +119,8 @@ public class MSAPane extends GUIPanel
     {
         this.project = project;
         
+        data.setText("");
+        
         if(project != null)
         {
             start_iter.setText("1");

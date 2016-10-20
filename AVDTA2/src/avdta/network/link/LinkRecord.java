@@ -78,7 +78,7 @@ public class LinkRecord
      */
     public String toString()
     {
-        return id+"\t"+type+"\t"+source+"\t"+dest+"\t"+length+"\t"+ffspd+"\t"+wavespd+"\t"+capacity+"\t"+numLanes;
+        return id+"\t"+type+"\t"+source+"\t"+dest+"\t"+(length*5280)+"\t"+ffspd+"\t"+wavespd+"\t"+capacity+"\t"+numLanes;
     }
     
     /**

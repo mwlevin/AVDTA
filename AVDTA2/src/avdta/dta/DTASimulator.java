@@ -780,8 +780,10 @@ public class DTASimulator extends Simulator
                         new_centroid_id += 2;
                         
                         // create vehicle trip
-                        fileout.println((new_veh_id++)+"\t"+type+"\t"+centroids.get(origin)[0]+"\t"+centroids.get(dest)[1]+"\t"+dtime+"\t"+VOT.dagum_rand(rand));
-                        
+                        if(dtime >= 0)
+                        {
+                            fileout.println((new_veh_id++)+"\t"+type+"\t"+centroids.get(origin)[0]+"\t"+centroids.get(dest)[1]+"\t"+dtime+"\t"+VOT.dagum_rand(rand));
+                        }
                         origin = null;
                         dest = null;
                         
@@ -789,7 +791,7 @@ public class DTASimulator extends Simulator
                 }
             }
             
-            if(origin != null && dest != null)
+            if(origin != null && dest != null && dtime >= 0)
             {
                 fileout.println((new_veh_id++)+"\t"+type+"\t"+centroids.get(origin)[0]+"\t"+centroids.get(dest)[1]+"\t"+dtime+"\t"+VOT.dagum_rand(rand));
             }

@@ -8,6 +8,8 @@ import avdta.network.Network;
 import avdta.network.Simulator;
 import avdta.network.node.Node;
 import avdta.vehicle.DriverType;
+import avdta.vehicle.VehTime;
+import avdta.vehicle.Vehicle;
 
 /**
  * This models the cooperative adaptive cruise control, which has several effects on vehicle behavior. 
@@ -38,6 +40,14 @@ public class CACCLTMLink extends LTMLink
         double N20 = C20 * J20;
         
         return N20 * 3600;
+    }
+    public void addVehicle(Vehicle veh)
+    {
+        super.addVehicle(veh);
+        if(!veh.getDriver().isCV())
+        {
+            throw new RuntimeException("Non-CV on CACC link");
+        }
     }
     
     /**

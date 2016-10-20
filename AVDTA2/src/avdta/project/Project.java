@@ -370,6 +370,8 @@ public abstract class Project
         
         randSeed = Integer.parseInt(map.get("seed"));
         
+        rand = new Random(randSeed);
+        
         name = map.get("name");
         
         loadProperties(map);

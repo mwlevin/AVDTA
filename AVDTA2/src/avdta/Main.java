@@ -55,13 +55,14 @@ public class Main
 {
     public static void main(String[] args) throws IOException
     {
+        caccTest1();
+        caccTest1a();
         //caccTest2();
         
-        
-        GUI.main(args);
+        //new DTAGUI();
+        //GUI.main(args);
 
-        
-        //DTAProject project = new DTAProject(new File("projects/coacongress2_CACC"));
+
         //CACCConvert.convert(project, 1);
         
         
@@ -321,39 +322,38 @@ public class Main
     
     public static void caccTest2() throws IOException
     {
-        DTAProject austinI35 = new DTAProject(new File("projects/austinI35"));
-        DTAProject austinI35_CACC = new DTAProject(new File("projects/austinI35_CACC2"));
+        DTAProject austin = new DTAProject(new File("projects/coacongress2_LTM"));
+        DTAProject austin_CACC = new DTAProject(new File("projects/coacongress2_CACC"));
         
-        PrintStream out = new PrintStream(new FileOutputStream(new File("CACC_results.txt")), true);
+        PrintStream out = new PrintStream(new FileOutputStream(new File("CACC_results2.txt")), true);
         
         out.println("% demand\tTSTT\tTSTT w CACC\tHV avg TT w CACC\tCV avg TT w CACC\tDemand");
         
-        for(int i = 0; i <= 100; i+= 5)
+        for(int i = 0; i <= 50; i+= 5)
         {
             Map<Integer, Double> proportions = new HashMap<Integer, Double>();
             proportions.put(ReadDTANetwork.AV+ReadDTANetwork.ICV+ReadDTANetwork.DA_VEHICLE, (double)i/100.0);
             proportions.put(ReadDTANetwork.HV+ReadDTANetwork.ICV+ReadDTANetwork.DA_VEHICLE, (double)(100-i)/100.0);
             
             ReadDTANetwork read1 = new ReadDTANetwork();
-            read1.changeDynamicType(austinI35, proportions);
-            read1.prepareDemand(austinI35, i/85.0);
-            austinI35.loadProject();
+            read1.changeDynamicType(austin, proportions);
+            read1.prepareDemand(austin, 1);
+            austin.loadProject();
             
-            ReadDTANetwork read2 = new ReadDTANetwork();
-            read2.changeDynamicType(austinI35_CACC, proportions);
-            read2.prepareDemand(austinI35_CACC, i/85.0);
-            austinI35_CACC.loadProject();
+            austin_CACC.importDemandFromProject(austin);
+            austin_CACC.loadProject();
             
-            DTASimulator sim1 = austinI35.getSimulator();
-            DTAResults results1 = sim1.msa(2);
+            DTASimulator sim1 = austin.getSimulator();
+            DTAResults results1 = sim1.msa(50);
             
-            DTASimulator sim2 = austinI35_CACC.getSimulator();
-            DTAResults results2 = sim2.msa(2);
+            DTASimulator sim2 = austin_CACC.getSimulator();
+            DTAResults results2 = sim2.msa(50);
             
             if(sim1.getNumVehicles() != sim2.getNumVehicles())
             {
                 throw new RuntimeException("Demand does not match");
             }
+
             out.println(i+"\t"+sim1.getTSTT()+"\t"+sim2.getTSTT()+"\t"+sim2.getAvgTT(DriverType.HV_T)+"\t"+sim2.getAvgTT(DriverType.CV_T)+"\t"+sim1.getNumVehicles());
         }
         out.close();
@@ -361,32 +361,81 @@ public class Main
     
     public static void caccTest1() throws IOException
     {
-        DTAProject austinI35 = new DTAProject(new File("projects/austinI35"));
-        DTAProject austinI35_CACC = new DTAProject(new File("projects/austinI35_CACC"));
+        DTAProject austin = new DTAProject(new File("projects/coacongress2_LTM"));
+        DTAProject austin_CACC = new DTAProject(new File("projects/coacongress2_CACC"));
         
-        PrintStream out = new PrintStream(new FileOutputStream(new File("CACC_results.txt")), true);
+        PrintStream out = new PrintStream(new FileOutputStream(new File("CACC_results1.txt")), true);
         out.println("% demand\tTSTT\tTSTT w CACC\tDemand");
         
-        for(int i = 70; i <= 150; i+= 5)
+        Map<Integer, Double> proportions = new HashMap<Integer, Double>();
+        proportions.put(ReadDTANetwork.AV+ReadDTANetwork.ICV+ReadDTANetwork.DA_VEHICLE, 0.5);
+        proportions.put(ReadDTANetwork.HV+ReadDTANetwork.ICV+ReadDTANetwork.DA_VEHICLE, 0.5);
+            
+        for(int i = 70; i <= 100; i+= 5)
         {
+            
+            
             ReadDTANetwork read1 = new ReadDTANetwork();
-            read1.prepareDemand(austinI35, i/100.0);
-            austinI35.loadProject();
+            read1.changeDynamicType(austin, proportions);
+            read1.prepareDemand(austin, i/100.0);
+            austin.loadProject();
             
-            ReadDTANetwork read2 = new ReadDTANetwork();
-            read2.prepareDemand(austinI35_CACC, i/100.0);
-            austinI35_CACC.loadProject();
+            austin_CACC.importDemandFromProject(austin);
+            austin_CACC.loadProject();
             
-            DTASimulator sim1 = austinI35.getSimulator();
-            DTAResults results1 = sim1.msa(2);
+            DTASimulator sim1 = austin.getSimulator();
+            DTAResults results1 = sim1.msa(50);
             
-            DTASimulator sim2 = austinI35_CACC.getSimulator();
-            DTAResults results2 = sim2.msa(2);
+            DTASimulator sim2 = austin_CACC.getSimulator();
+            DTAResults results2 = sim2.msa(50);
+            
             
             if(sim1.getNumVehicles() != sim2.getNumVehicles())
             {
                 throw new RuntimeException("Demand does not match");
             }
+            
+            out.println(i+"\t"+sim1.getTSTT()+"\t"+sim2.getTSTT()+"\t"+sim1.getNumVehicles());
+        }
+        out.close();
+    }
+    
+    public static void caccTest1a() throws IOException
+    {
+        DTAProject austin = new DTAProject(new File("projects/scenario_2_pm_sub"));
+        DTAProject austin_CACC = new DTAProject(new File("projects/scenario_2_pm_sub_CACC"));
+        
+        PrintStream out = new PrintStream(new FileOutputStream(new File("CACC_results1.txt")), true);
+        out.println("% demand\tTSTT\tTSTT w CACC\tDemand");
+        
+        Map<Integer, Double> proportions = new HashMap<Integer, Double>();
+        proportions.put(ReadDTANetwork.AV+ReadDTANetwork.ICV+ReadDTANetwork.DA_VEHICLE, 0.5);
+        proportions.put(ReadDTANetwork.HV+ReadDTANetwork.ICV+ReadDTANetwork.DA_VEHICLE, 0.5);
+            
+        for(int i = 50; i <= 80; i+= 5)
+        {
+            
+            
+            ReadDTANetwork read1 = new ReadDTANetwork();
+            read1.changeDynamicType(austin, proportions);
+            read1.prepareDemand(austin, i/100.0);
+            austin.loadProject();
+            
+            austin_CACC.importDemandFromProject(austin);
+            austin_CACC.loadProject();
+            
+            DTASimulator sim1 = austin.getSimulator();
+            DTAResults results1 = sim1.msa(30, 1);
+            
+            DTASimulator sim2 = austin_CACC.getSimulator();
+            DTAResults results2 = sim2.msa(30, 1);
+            
+            
+            if(sim1.getNumVehicles() != sim2.getNumVehicles())
+            {
+                throw new RuntimeException("Demand does not match");
+            }
+            
             out.println(i+"\t"+sim1.getTSTT()+"\t"+sim2.getTSTT()+"\t"+sim1.getNumVehicles());
         }
         out.close();

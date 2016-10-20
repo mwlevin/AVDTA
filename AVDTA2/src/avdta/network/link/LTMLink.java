@@ -141,6 +141,7 @@ public class LTMLink extends Link
         capacityDown -= (int)capacityDown;
         
         capacityDown += getCapacity() * Network.dt / 3600.0;
+
     }
     
     /**
@@ -265,6 +266,7 @@ public class LTMLink extends Link
      */
     public double getReceivingFlow()
     {
+
         return Math.min(getN_down(Simulator.time - getLength()/getWaveSpeed()*3600 + Network.dt) 
                 + getJamDensity() * getLength() - getN_up(Simulator.time),
                 getCurrentUpstreamCapacity());

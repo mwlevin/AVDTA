@@ -93,6 +93,7 @@ public class DemandProfile extends TreeMap<Integer, AST>
             }
         }
         
-        return -1;
+        throw new RuntimeException("AST not found for "+time);
+        //return -1;
     }
 }
