@@ -223,11 +223,13 @@ public class NodeRulePanel extends JPanel
                     
                     public void addRule(NodeTypeRule rule)
                     {
+                        rule.initialize(editor.getProject());
                         newRule(rule);
                     }
                     
-                    public void saveRule()
+                    public void saveRule(NodeTypeRule rule)
                     {
+                        rule.initialize(editor.getProject());
                         editor.getMap().repaint();
                     }
                 });
@@ -264,11 +266,13 @@ public class NodeRulePanel extends JPanel
                     
                     public void addRule(NodeDataRule rule)
                     {
+                        rule.initialize(editor.getProject());
                         newRule(rule);
                     }
                     
-                    public void saveRule()
+                    public void saveRule(NodeDataRule rule)
                     {
+                        rule.initialize(editor.getProject());
                         editor.getMap().repaint();
                     }
                 });

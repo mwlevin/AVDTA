@@ -9,6 +9,7 @@ import avdta.network.link.Link;
 import java.awt.Color;
 import java.io.Serializable;
 import avdta.gui.editor.MapViewer;
+import avdta.project.Project;
 
 /**
  * This is an abstract rule used for visualization purposes.
@@ -60,4 +61,9 @@ public abstract class LinkRule implements Serializable
     {
         return getName();
     }
+    
+    /**
+     * Initialize this rule with the given {@link Project}.
+     */
+    public void initialize(Project project){}
 }

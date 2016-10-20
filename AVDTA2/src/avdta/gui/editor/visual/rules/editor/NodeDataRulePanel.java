@@ -205,7 +205,7 @@ public class NodeDataRulePanel extends JPanel
     
     public void addRule(NodeRule rule){}
     
-    public void saveRule(){}
+    public void saveRule(NodeDataRule rule){}
     
     public boolean save()
     {
@@ -299,7 +299,7 @@ public class NodeDataRulePanel extends JPanel
         }
         else
         {
-            saveRule();
+            saveRule(prev);
         }
         
         return true;

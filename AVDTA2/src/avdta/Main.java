@@ -16,6 +16,7 @@ import avdta.gui.DTAGUI;
 import avdta.gui.GUI;
 import avdta.gui.editor.Editor;
 import avdta.gui.editor.visual.rules.LinkBusRule;
+import avdta.gui.editor.visual.rules.data.VolumeLinkData;
 import avdta.network.Path;
 import avdta.network.Simulator;
 import avdta.project.DTAProject;
@@ -55,8 +56,11 @@ public class Main
 {
     public static void main(String[] args) throws IOException
     {
-        caccTest1();
-        caccTest1a();
+        caccTest1("coacongress2_LTM", "coacongress2_CACC");
+        caccTest1("scenario_2_pm_sub", "scenario_2_pm_sub_CACC");
+        
+        caccAnalyze1("coacongress2_LTM", "coacongress2_CACC");
+        caccAnalyze1("scenario_2_pm_sub", "scenario_2_pm_sub_CACC");
         //caccTest2();
         
         //new DTAGUI();
@@ -359,10 +363,11 @@ public class Main
         out.close();
     }
     
-    public static void caccTest1() throws IOException
+    
+    public static void caccTest1(String net1, String net2) throws IOException
     {
-        DTAProject austin = new DTAProject(new File("projects/coacongress2_LTM"));
-        DTAProject austin_CACC = new DTAProject(new File("projects/coacongress2_CACC"));
+        DTAProject austin = new DTAProject(new File("projects/"+net1));
+        DTAProject austin_CACC = new DTAProject(new File("projects/"+net2));
         
         PrintStream out = new PrintStream(new FileOutputStream(new File("CACC_results1.txt")), true);
         out.println("% demand\tTSTT\tTSTT w CACC\tDemand");
@@ -384,10 +389,10 @@ public class Main
             austin_CACC.loadProject();
             
             DTASimulator sim1 = austin.getSimulator();
-            DTAResults results1 = sim1.msa(50);
+            DTAResults results1 = sim1.msa(50, 1);
             
             DTASimulator sim2 = austin_CACC.getSimulator();
-            DTAResults results2 = sim2.msa(50);
+            DTAResults results2 = sim2.msa(50, 1);
             
             
             if(sim1.getNumVehicles() != sim2.getNumVehicles())
@@ -400,19 +405,19 @@ public class Main
         out.close();
     }
     
-    public static void caccTest1a() throws IOException
+    public static void caccAnalyze1(String net1, String net2) throws IOException
     {
-        DTAProject austin = new DTAProject(new File("projects/scenario_2_pm_sub"));
-        DTAProject austin_CACC = new DTAProject(new File("projects/scenario_2_pm_sub_CACC"));
+        DTAProject austin = new DTAProject(new File("projects/"+net1));
+        DTAProject austin_CACC = new DTAProject(new File("projects/"+net2));
         
-        PrintStream out = new PrintStream(new FileOutputStream(new File("CACC_results1.txt")), true);
-        out.println("% demand\tTSTT\tTSTT w CACC\tDemand");
+        PrintStream out = new PrintStream(new FileOutputStream(new File("CACC_results1_analyze.txt")), true);
+        out.println("% demand\tCorridor TT\tCorridor TT w CACC\tDemand");
         
         Map<Integer, Double> proportions = new HashMap<Integer, Double>();
         proportions.put(ReadDTANetwork.AV+ReadDTANetwork.ICV+ReadDTANetwork.DA_VEHICLE, 0.5);
         proportions.put(ReadDTANetwork.HV+ReadDTANetwork.ICV+ReadDTANetwork.DA_VEHICLE, 0.5);
-            
-        for(int i = 50; i <= 80; i+= 5)
+        
+        for(int i = 70; i <= 100; i+= 5)
         {
             
             
@@ -425,21 +430,82 @@ public class Main
             austin_CACC.loadProject();
             
             DTASimulator sim1 = austin.getSimulator();
-            DTAResults results1 = sim1.msa(30, 1);
+            sim1.loadAssignment(new Assignment(new File(austin.getAssignmentsFolder()+"/"+i)));
+            sim1.simulate();
             
             DTASimulator sim2 = austin_CACC.getSimulator();
-            DTAResults results2 = sim2.msa(30, 1);
+            sim2.loadAssignment(new Assignment(new File(austin_CACC.getAssignmentsFolder()+"/"+i)));
+            sim2.simulate();
             
+            Set<Link> corridor1 = new HashSet<Link>();
+            Set<Link> corridor2 = new HashSet<Link>();
             
-            if(sim1.getNumVehicles() != sim2.getNumVehicles())
+            for(Link l : sim1.getLinks())
             {
-                throw new RuntimeException("Demand does not match");
+                if(l.getFFSpeed() >= 60)
+                {
+                    if(l.getDirection() > 0 && l.getDirection() < Math.PI)
+                    {
+                        corridor1.add(l);
+                    }
+                    else
+                    {
+                        corridor2.add(l);
+                    }
+                }
             }
             
-            out.println(i+"\t"+sim1.getTSTT()+"\t"+sim2.getTSTT()+"\t"+sim1.getNumVehicles());
+            double avg1 = (sim1.getTT(corridor1, 3600) + sim1.getTT(corridor2, 3600))/2;
+            
+            corridor1.clear();
+            corridor2.clear();
+            
+            for(Link l : sim2.getLinks())
+            {
+                if(l.getFFSpeed() >= 60)
+                {
+                    if(l.getDirection() > 0 && l.getDirection() < Math.PI)
+                    {
+                        corridor1.add(l);
+                    }
+                    else
+                    {
+                        corridor2.add(l);
+                    }
+                }
+            }
+            
+            double avg2 = (sim2.getTT(corridor1, 3600) + sim2.getTT(corridor2, 3600))/2;
+            
+            out.println(i+"\t"+avg1+"\t"+avg2+"\t"+sim1.getNumVehicles());
+            
+            // create data source
+            if(i == 100)
+            {
+                VolumeLinkData data1 = new VolumeLinkData();
+                data1.initialize(austin);
+                
+                VolumeLinkData data2 = new VolumeLinkData();
+                data2.initialize(austin_CACC);
+                
+                PrintStream fileout = new PrintStream(new FileOutputStream(new File("VolDiff.txt")), true);
+                
+                for(Link l1 : sim1.getLinks())
+                {
+                    Link l2 = sim2.getLink(l1.getId());
+                    
+                    fileout.println(l1.getId()+"\t"+(data2.getData(l2, 0) - data1.getData(l1, 0)));
+                }
+                fileout.close();
+            }
         }
         out.close();
+        
+        
+        
+        
     }
+    
     
     public static void transitTest2() throws IOException
     {

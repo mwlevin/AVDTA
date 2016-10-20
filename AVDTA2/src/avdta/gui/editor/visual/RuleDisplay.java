@@ -11,6 +11,7 @@ import avdta.gui.editor.visual.rules.NodeRule;
 import avdta.network.link.CentroidConnector;
 import avdta.network.link.Link;
 import avdta.network.node.Node;
+import avdta.project.Project;
 import java.awt.Color;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -242,7 +243,7 @@ public class RuleDisplay extends DefaultDisplayManager
         out.close();
     }
     
-    public void open(File file) throws IOException
+    public void open(File file, Project project) throws IOException
     {
         try
         {
@@ -254,7 +255,9 @@ public class RuleDisplay extends DefaultDisplayManager
             
             for(int i = 0; i < size; i++)
             {
-                nodeRules.add((NodeRule)in.readObject());
+                NodeRule rule = (NodeRule)in.readObject();
+                rule.initialize(project);
+                nodeRules.add(rule);
             }
             
             size = (Integer)in.readObject();
@@ -263,12 +266,27 @@ public class RuleDisplay extends DefaultDisplayManager
             
             for(int i = 0; i < size; i++)
             {
-                linkRules.add((LinkRule)in.readObject());
+                LinkRule rule = (LinkRule)in.readObject();
+                rule.initialize(project);
+                linkRules.add(rule);
             }
         }
         catch(ClassNotFoundException ex)
         {
             GUI.handleException(ex);
+        }
+    }
+    
+    public void initialize(Project project)
+    {
+        for(LinkRule rule : linkRules)
+        {
+            rule.initialize(project);
+        }
+        
+        for(NodeRule rule : nodeRules)
+        {
+            rule.initialize(project);
         }
     }
 }

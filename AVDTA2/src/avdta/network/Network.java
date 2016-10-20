@@ -23,6 +23,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -105,6 +106,25 @@ public class Network
             n.initialize();
         }
     }
+    
+    /**
+     * Returns the total travel time for all links in the specified set.
+     * @param links the set of links to analyze
+     * @param time the analysis time (s)
+     * @return the total travel time (s)
+     */
+    public double getTT(Collection<Link> links, int time)
+    {
+        double output = 0.0;
+        
+        for(Link l : links)
+        {
+            output += l.getAvgTT(time);
+        }
+        
+        return output;
+    }
+    
     
     /**
      * Returns the set of {@link Link}s

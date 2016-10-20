@@ -188,9 +188,6 @@ public class Simulator extends Network
 
     
     
-    
-    
-    
     /**
      * Sets the output stream to write the log file.
      * @param out the output stream to write the log file

@@ -35,7 +35,8 @@ import javax.swing.event.DocumentListener;
  */
 public class LinkDataRulePanel extends JPanel
 {
-    private static final LinkDataSource[] SOURCES = new LinkDataSource[]{LinkDataSource.tt, LinkDataSource.ffspd, LinkDataSource.capacity, LinkDataSource.numLanes};
+    private static final LinkDataSource[] SOURCES = new LinkDataSource[]{LinkDataSource.tt, LinkDataSource.ffspd, LinkDataSource.capacity, 
+        LinkDataSource.numLanes, LinkDataSource.volume};
     
     private LinkDataRule prev;
     
@@ -205,7 +206,7 @@ public class LinkDataRulePanel extends JPanel
     
     public void addRule(LinkRule rule){}
     
-    public void saveRule(){}
+    public void saveRule(LinkDataRule rule){}
     
     public boolean save()
     {
@@ -275,6 +276,7 @@ public class LinkDataRulePanel extends JPanel
         
         LinkDataSource source = (LinkDataSource)sources.getSelectedItem();
         
+        
         boolean addRule = false;
         
         if(prev == null)
@@ -299,7 +301,7 @@ public class LinkDataRulePanel extends JPanel
         }
         else
         {
-            saveRule();
+            saveRule(prev);
         }
         
         return true;

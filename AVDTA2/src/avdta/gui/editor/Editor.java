@@ -948,7 +948,7 @@ public class Editor extends JFrame implements MouseListener
             {
                 File file = chooser.getSelectedFile();
                 
-                display.open(chooser.getSelectedFile());
+                display.open(chooser.getSelectedFile(), project);
             }
             catch(IOException ex)
             {
@@ -1118,6 +1118,7 @@ public class Editor extends JFrame implements MouseListener
         
         clearSelected();
         
+        display.initialize(project);
         
         refresh();
         map.recenter();

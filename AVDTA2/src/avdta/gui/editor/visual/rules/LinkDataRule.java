@@ -6,6 +6,7 @@ package avdta.gui.editor.visual.rules;
 
 import avdta.gui.editor.visual.rules.data.LinkDataSource;
 import avdta.network.link.Link;
+import avdta.project.Project;
 import java.awt.Color;
 
 /**
@@ -232,5 +233,14 @@ public class LinkDataRule extends LinkRule
     public double getMaxValue()
     {
         return maxValue;
+    }
+    
+    /**
+     * Initialize this rule with the given {@link Project}.
+     * Calls {@link LinkDataSource#initialize(avdta.project.Project)}.
+     */
+    public void initialize(Project project)
+    {
+        data.initialize(project);
     }
 }

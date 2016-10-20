@@ -8,6 +8,7 @@ package avdta.gui.editor.visual;
 import avdta.gui.editor.visual.DisplayManager;
 import avdta.network.link.Link;
 import avdta.network.node.Node;
+import avdta.project.Project;
 import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
@@ -111,5 +112,7 @@ public class DefaultDisplayManager implements DisplayManager
     }
     
     public void save(File file) throws IOException {}
-    public void open(File file) throws IOException {}
+    public void open(File file, Project project) throws IOException {}
+    
+    public void initialize(Project project){}
 }

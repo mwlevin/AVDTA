@@ -6,6 +6,7 @@ package avdta.gui.editor.visual.rules.data;
 
 import avdta.network.link.Link;
 import avdta.gui.editor.visual.rules.LinkDataRule;
+import avdta.project.Project;
 
 /**
  * The {@link LinkDataSource} class provides an input source for the {@link LinkDataRule}. 
@@ -21,6 +22,7 @@ public abstract class LinkDataSource
     public static final LinkDataSource numLanes = new NumLanesLinkData();
     public static final LinkDataSource capacity = new CapacityLinkData();
     public static final LinkDataSource ffspd = new FFSpdLinkData();
+    public static final LinkDataSource volume = new VolumeLinkData();
     
     /**
      * Returns the data used for visualization for the specified {@link Link} at the specified time. 
@@ -50,4 +52,9 @@ public abstract class LinkDataSource
     {
         return getName();
     }
+    
+    /**
+     * Initialize this rule with the given {@link Project}.
+     */
+    public void initialize(Project project){}
 }

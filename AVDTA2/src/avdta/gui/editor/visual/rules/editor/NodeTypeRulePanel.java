@@ -208,7 +208,7 @@ public class NodeTypeRulePanel extends JPanel
             prev.setType(type.getSelectedIndex());
             prev.setControl(control.getSelectedIndex());
             prev.setPolicy(policy.getSelectedIndex());
-            saveRule();
+            saveRule(prev);
         }
         
         return true;
@@ -219,7 +219,7 @@ public class NodeTypeRulePanel extends JPanel
         
     }
     
-    public void saveRule(){}
+    public void saveRule(NodeRule rule){}
     public void cancel(){}
 }
 

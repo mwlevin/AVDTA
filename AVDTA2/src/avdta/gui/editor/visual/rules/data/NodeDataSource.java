@@ -5,6 +5,7 @@
 package avdta.gui.editor.visual.rules.data;
 
 import avdta.network.node.Node;
+import avdta.project.Project;
 
 /**
  *
@@ -22,4 +23,9 @@ public abstract class NodeDataSource
     {
         return getName();
     }
+    
+    /**
+     * Initialize this rule with the given {@link Project}.
+     */
+    public void initialize(Project project){}
 }

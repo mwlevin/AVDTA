@@ -7,6 +7,7 @@ package avdta.gui.editor.visual.rules;
 import avdta.gui.editor.visual.rules.data.NodeDataSource;
 import avdta.network.link.Link;
 import avdta.network.node.Node;
+import avdta.project.Project;
 import java.awt.Color;
 
 /**
@@ -235,5 +236,14 @@ public class NodeDataRule extends NodeRule
     public double getMaxValue()
     {
         return maxValue;
+    }
+    
+    /**
+     * Initialize this rule with the given {@link Project}.
+     * Calls {@link NodeDataSource#initialize(avdta.project.Project)}.
+     */
+    public void initialize(Project project)
+    {
+        data.initialize(project);
     }
 }

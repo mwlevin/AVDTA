@@ -193,7 +193,7 @@ public class LinkTypeRulePanel extends JPanel
                 prev.setWidth(width_);
                 prev.setColor(color.getColor());
                 prev.setType(type.getSelectedIndex());
-                saveRule();
+                saveRule(prev);
             }
         }
         else
@@ -217,6 +217,6 @@ public class LinkTypeRulePanel extends JPanel
         System.out.println("check");
     }
     
-    public void saveRule(){}
+    public void saveRule(LinkTypeRule rule){}
     public void cancel(){}
 }

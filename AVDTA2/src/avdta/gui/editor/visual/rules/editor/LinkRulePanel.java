@@ -99,12 +99,13 @@ public class LinkRulePanel extends JPanel
                         }
                         public void addRule(LinkRule rule)
                         {
-                            
+                            rule.initialize(editor.getProject());
                             newRule(rule);
                         }
 
-                        public void saveRule()
+                        public void saveRule(LinkTypeRule rule)
                         {
+                            rule.initialize(editor.getProject());
                             editor.getMap().repaint();
                         }
                     });
@@ -122,11 +123,13 @@ public class LinkRulePanel extends JPanel
                         }
                         public void addRule(LinkDataRule rule)
                         {
+                            rule.initialize(editor.getProject());
                             newRule(rule);
                         }
 
-                        public void saveRule()
+                        public void saveRule(LinkDataRule rule)
                         {
+                            rule.initialize(editor.getProject());
                             editor.getMap().repaint();
                         }
                     });
