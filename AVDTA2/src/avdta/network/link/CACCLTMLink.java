@@ -44,10 +44,7 @@ public class CACCLTMLink extends LTMLink
     public void addVehicle(Vehicle veh)
     {
         super.addVehicle(veh);
-        if(!veh.getDriver().isCV())
-        {
-            throw new RuntimeException("Non-CV on CACC link");
-        }
+
     }
     
     /**
