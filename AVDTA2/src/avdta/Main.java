@@ -59,12 +59,13 @@ public class Main
 {
     public static void main(String[] args) throws IOException
     {
-        //caccTest1("coacongress2_LTM", "coacongress2_CACC");
+        caccTest1("coacongress2_LTM", "coacongress2_CACC");
+        caccTest2("coacongress2_LTM", "coacongress2_CACC");
         //caccTest1("scenario_2_pm_sub", "scenario_2_pm_sub_CACC");
         
-        caccAnalyze1("coacongress2_LTM", "coacongress2_CACC");
-        caccAnalyze1("scenario_2_pm_sub", "scenario_2_pm_sub_CACC");
-        caccVisualize("coacongress2_LTM");
+        //caccAnalyze1("coacongress2_LTM", "coacongress2_CACC");
+        //caccAnalyze1("scenario_2_pm_sub", "scenario_2_pm_sub_CACC");
+        //caccVisualize("coacongress2_LTM");
         //caccTest2();
         
         //new DTAGUI();
@@ -328,20 +329,24 @@ public class Main
         read = null;
     }
     
-    public static void caccTest2() throws IOException
+    public static void caccTest2(String net1, String net2) throws IOException
     {
-        DTAProject austin = new DTAProject(new File("projects/coacongress2_LTM"));
-        DTAProject austin_CACC = new DTAProject(new File("projects/coacongress2_CACC"));
+        DTAProject austin = new DTAProject(new File("projects/"+net1));
+        DTAProject austin_CACC = new DTAProject(new File("projects/"+net2));
         
         PrintStream out = new PrintStream(new FileOutputStream(new File("CACC_results2.txt")), true);
+        out.println("% demand\tTSTT\tTSTT w CACC\tDemand");
         
-        out.println("% demand\tTSTT\tTSTT w CACC\tHV avg TT w CACC\tCV avg TT w CACC\tDemand");
+        PrintStream out2 = new PrintStream(new FileOutputStream(new File("CACC_results2_corridor.txt")), true);
+        out2.println("% demand\tCorridor TT\tCorridor TT w/ CACC\tDemand");
         
-        for(int i = 0; i <= 50; i+= 5)
+        
+            
+        for(int i = 0; i <= 30; i+= 5)
         {
             Map<Integer, Double> proportions = new HashMap<Integer, Double>();
-            proportions.put(ReadDTANetwork.AV+ReadDTANetwork.ICV+ReadDTANetwork.DA_VEHICLE, (double)i/100.0);
-            proportions.put(ReadDTANetwork.HV+ReadDTANetwork.ICV+ReadDTANetwork.DA_VEHICLE, (double)(100-i)/100.0);
+            proportions.put(ReadDTANetwork.AV+ReadDTANetwork.ICV+ReadDTANetwork.DA_VEHICLE, i/100.0);
+            proportions.put(ReadDTANetwork.HV+ReadDTANetwork.ICV+ReadDTANetwork.DA_VEHICLE, (100-i)/100.0);
             
             ReadDTANetwork read1 = new ReadDTANetwork();
             read1.changeDynamicType(austin, proportions);
@@ -352,19 +357,67 @@ public class Main
             austin_CACC.loadProject();
             
             DTASimulator sim1 = austin.getSimulator();
-            DTAResults results1 = sim1.msa(50);
+            DTAResults results1 = sim1.msa(50, 0.5);
+            
+            sim1.getAssignment().getAssignmentFolder().renameTo(new File(austin.getAssignmentsFolder()+"/100_"+i));
             
             DTASimulator sim2 = austin_CACC.getSimulator();
-            DTAResults results2 = sim2.msa(50);
+            DTAResults results2 = sim2.msa(50, 0.5);
+            
+            sim2.getAssignment().getAssignmentFolder().renameTo(new File(austin_CACC.getAssignmentsFolder()+"/100_"+i));
             
             if(sim1.getNumVehicles() != sim2.getNumVehicles())
             {
                 throw new RuntimeException("Demand does not match");
             }
-
-            out.println(i+"\t"+sim1.getTSTT()+"\t"+sim2.getTSTT()+"\t"+sim2.getAvgTT(DriverType.HV_T)+"\t"+sim2.getAvgTT(DriverType.CV_T)+"\t"+sim1.getNumVehicles());
+            
+            out.println(i+"\t"+sim1.getTSTT()+"\t"+sim2.getTSTT()+"\t"+sim1.getNumVehicles());
+            
+            Set<Link> corridor1 = new HashSet<Link>();
+            Set<Link> corridor2 = new HashSet<Link>();
+            
+            for(Link l : sim1.getLinks())
+            {
+                if(l.getFFSpeed() >= 60)
+                {
+                    if(l.getDirection() > 0 && l.getDirection() < Math.PI)
+                    {
+                        corridor1.add(l);
+                    }
+                    else
+                    {
+                        corridor2.add(l);
+                    }
+                }
+            }
+            
+            double avg1 = (sim1.getTT(corridor1, 3600) + sim1.getTT(corridor2, 3600))/2;
+            
+            corridor1.clear();
+            corridor2.clear();
+            
+            for(Link l : sim2.getLinks())
+            {
+                if(l.getFFSpeed() >= 60)
+                {
+                    if(l.getDirection() > 0 && l.getDirection() < Math.PI)
+                    {
+                        corridor1.add(l);
+                    }
+                    else
+                    {
+                        corridor2.add(l);
+                    }
+                }
+            }
+            
+            double avg2 = (sim2.getTT(corridor1, 3600) + sim2.getTT(corridor2, 3600))/2;
+            
+            out2.println(i+"\t"+avg1+"\t"+avg2+"\t"+sim1.getNumVehicles());
+            
         }
         out.close();
+        out2.close();
     }
     
     
@@ -376,11 +429,14 @@ public class Main
         PrintStream out = new PrintStream(new FileOutputStream(new File("CACC_results1.txt")), true);
         out.println("% demand\tTSTT\tTSTT w CACC\tDemand");
         
+        PrintStream out2 = new PrintStream(new FileOutputStream(new File("CACC_results1_corridor.txt")), true);
+        out2.println("% demand\tCorridor TT\tCorridor TT w/ CACC\tDemand");
+        
         Map<Integer, Double> proportions = new HashMap<Integer, Double>();
         proportions.put(ReadDTANetwork.AV+ReadDTANetwork.ICV+ReadDTANetwork.DA_VEHICLE, 0.5);
         proportions.put(ReadDTANetwork.HV+ReadDTANetwork.ICV+ReadDTANetwork.DA_VEHICLE, 0.5);
             
-        for(int i = 70; i <= 100; i+= 5)
+        for(int i = 120; i >= 70; i-= 5)
         {
             
             
@@ -393,11 +449,14 @@ public class Main
             austin_CACC.loadProject();
             
             DTASimulator sim1 = austin.getSimulator();
-            DTAResults results1 = sim1.msa(50, 1);
+            DTAResults results1 = sim1.msa(50, 0.5);
+            
+            sim1.getAssignment().getAssignmentFolder().renameTo(new File(austin.getAssignmentsFolder()+"/"+i+"_50"));
             
             DTASimulator sim2 = austin_CACC.getSimulator();
-            DTAResults results2 = sim2.msa(50, 1);
+            DTAResults results2 = sim2.msa(50, 0.5);
             
+            sim2.getAssignment().getAssignmentFolder().renameTo(new File(austin_CACC.getAssignmentsFolder()+"/"+i+"_50"));
             
             if(sim1.getNumVehicles() != sim2.getNumVehicles())
             {
@@ -405,8 +464,82 @@ public class Main
             }
             
             out.println(i+"\t"+sim1.getTSTT()+"\t"+sim2.getTSTT()+"\t"+sim1.getNumVehicles());
+            
+            Set<Link> corridor1 = new HashSet<Link>();
+            Set<Link> corridor2 = new HashSet<Link>();
+            
+            for(Link l : sim1.getLinks())
+            {
+                if(l.getFFSpeed() >= 60)
+                {
+                    if(l.getDirection() > 0 && l.getDirection() < Math.PI)
+                    {
+                        corridor1.add(l);
+                    }
+                    else
+                    {
+                        corridor2.add(l);
+                    }
+                }
+            }
+            
+            double avg1 = (sim1.getTT(corridor1, 3600) + sim1.getTT(corridor2, 3600))/2;
+            
+            corridor1.clear();
+            corridor2.clear();
+            
+            for(Link l : sim2.getLinks())
+            {
+                if(l.getFFSpeed() >= 60)
+                {
+                    if(l.getDirection() > 0 && l.getDirection() < Math.PI)
+                    {
+                        corridor1.add(l);
+                    }
+                    else
+                    {
+                        corridor2.add(l);
+                    }
+                }
+            }
+            
+            double avg2 = (sim2.getTT(corridor1, 3600) + sim2.getTT(corridor2, 3600))/2;
+            
+            out2.println(i+"\t"+avg1+"\t"+avg2+"\t"+sim1.getNumVehicles());
+            
+            // create data source
+            if(i == 100)
+            {
+                VolumeLinkData data1 = new VolumeLinkData();
+                data1.initialize(austin);
+                
+                VolumeLinkData data2 = new VolumeLinkData();
+                data2.initialize(austin_CACC);
+                
+                PrintStream fileout = new PrintStream(new FileOutputStream(new File("VolDiff.txt")), true);
+                
+                fileout.println("Link\t%Difference\tDifference");
+                for(Link l1 : sim1.getLinks())
+                {
+                    Link l2 = sim2.getLink(l1.getId());
+                    
+                    double d1 = data1.getData(l1, 0);
+                    double d2 = data2.getData(l2, 0);
+                    
+                    if(l2.getFFSpeed() >= 60)
+                    {
+                        Link l2a = sim2.getLink(l1.getId()+100000);
+                        
+                        d2 += data2.getData(l2a, 0);
+                    }
+                    
+                    fileout.println(l1.getId()+"\t"+((d2 - d1)/d1)+"\t"+(d2-d1));
+                }
+                fileout.close();
+            }
         }
         out.close();
+        out2.close();
     }
     
     public static void caccAnalyze1(String net1, String net2) throws IOException
@@ -415,13 +548,16 @@ public class Main
         DTAProject austin_CACC = new DTAProject(new File("projects/"+net2));
         
         PrintStream out = new PrintStream(new FileOutputStream(new File("CACC_results1_analyze.txt")), true);
-        out.println("% demand\tCorridor TT\tCorridor TT w CACC\tDemand");
+        out.println("% demand\tCorridor TT\tCorridor TT w/ CACC\tDemand");
+        
+        PrintStream fileout2 = new PrintStream(new FileOutputStream(new File("CACC_results1.txt")), true);
+        fileout2.println("% demand\tCorridor TT\tCorridor TT w/ CACC\tDemand");
         
         Map<Integer, Double> proportions = new HashMap<Integer, Double>();
         proportions.put(ReadDTANetwork.AV+ReadDTANetwork.ICV+ReadDTANetwork.DA_VEHICLE, 0.5);
         proportions.put(ReadDTANetwork.HV+ReadDTANetwork.ICV+ReadDTANetwork.DA_VEHICLE, 0.5);
         
-        for(int i = 70; i <= 100; i+= 5)
+        for(int i = 100; i <= 100; i+= 5)
         {
             
             
@@ -434,12 +570,19 @@ public class Main
             austin_CACC.loadProject();
             
             DTASimulator sim1 = austin.getSimulator();
-            sim1.loadAssignment(new Assignment(new File(austin.getAssignmentsFolder()+"/"+i)));
+            Assignment assign1 = new Assignment(new File(austin.getAssignmentsFolder()+"/"+i));
+            sim1.loadAssignment(assign1);
             sim1.simulate();
             
+            
+            
             DTASimulator sim2 = austin_CACC.getSimulator();
-            sim2.loadAssignment(new Assignment(new File(austin_CACC.getAssignmentsFolder()+"/"+i)));
+            Assignment assign2 = new Assignment(new File(austin_CACC.getAssignmentsFolder()+"/"+i));
+            
+            sim2.loadAssignment(assign2);
             sim2.simulate();
+            
+            out.println(i+"\t"+assign1.getResults().getAvgTT()+"\t"+assign2.getResults().getAvgTT()+"\t"+sim1.getNumVehicles());
             
             Set<Link> corridor1 = new HashSet<Link>();
             Set<Link> corridor2 = new HashSet<Link>();
@@ -498,7 +641,7 @@ public class Main
                 {
                     Link l2 = sim2.getLink(l1.getId());
                     
-                    fileout.println(l1.getId()+"\t"+(data2.getData(l2, 0) - data1.getData(l1, 0)));
+                    fileout.println(l1.getId()+"\t"+((data2.getData(l2, 0) - data1.getData(l1, 0)) / l1.getCapacity()));
                 }
                 fileout.close();
             }

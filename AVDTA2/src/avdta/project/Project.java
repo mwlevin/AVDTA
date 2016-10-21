@@ -654,14 +654,7 @@ public abstract class Project
         return directory;
     }
     
-    /**
-     * Returns the paths file
-     * @return {@link Project#getProjectDirectory()}/paths.dat
-     */
-    public File getPathsFile()
-    {
-        return new File(getProjectDirectory()+"/paths.dat");
-    }
+    
     
     /**
      * Returns the results folder

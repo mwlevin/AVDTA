@@ -299,9 +299,11 @@ public class DTASimulator extends Simulator
         folder.mkdirs();
         
         PathList paths = getPaths();
-        paths.writeToFile(project.getPathsFile());
+        paths.writeToFile(assign.getPathsFile());
         
         assign.writeToFile(vehicles, (DTAProject)getProject());
+        
+        FileTransfer.copy(project.getDemandFile(), assign.getDemandFile());
     }
     
     /**
@@ -325,7 +327,7 @@ public class DTASimulator extends Simulator
     public void loadAssignment(Assignment assign) throws IOException
     {
         DTAProject project = getProject();
-        PathList paths = new PathList(this, project.getPathsFile());
+        PathList paths = new PathList(this, assign.getPathsFile());
         
         assign.readFromFile(project, getVehicles(), paths);
         

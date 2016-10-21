@@ -9,6 +9,7 @@ import avdta.network.Simulator;
 import avdta.network.link.Link;
 import avdta.project.Project;
 import avdta.vehicle.Vehicle;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -24,7 +25,7 @@ public class VolumeLinkData extends LinkDataSource
      */
     public VolumeLinkData()
     {
-        
+        counts = new HashMap<Link, Integer>();
     }
     
     /**
@@ -62,7 +63,9 @@ public class VolumeLinkData extends LinkDataSource
      */
     public double getData(Link l, int t)
     {
-        return counts.get(l) / l.getCapacity();
+        double count = counts.containsKey(l)? counts.get(l) : 0;
+        
+        return count/ l.getCapacity();
     }
     
     

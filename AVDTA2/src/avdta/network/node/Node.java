@@ -166,9 +166,26 @@ public abstract class Node extends Location implements Serializable, Comparable<
         outgoing = out;
     }
     
+    /**
+     * Orders nodes based on id
+     * @param rhs the node being compared to
+     * @return order based on node id
+     */
     public int compareTo(Node rhs)
     {
         return id - rhs.id;
+    }
+    
+    /**
+     * Returns whether two nodes are equal
+     * @param o the node being compared to
+     * @return if the ids match
+     */
+    public boolean equals(Object o)
+    {
+        Node rhs = (Node)o;
+        
+        return rhs.id == id;
     }
     
     /**

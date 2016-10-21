@@ -58,7 +58,14 @@ public class NodeFileSource extends NodeDataSource
      */
     public double getData(Node n, int t)
     {
-        return data.get(n.getId());
+        if(data.containsKey(n))
+        {
+            return data.get(n.getId());
+        }
+        else
+        {
+            return 0;
+        }
     }
     
     

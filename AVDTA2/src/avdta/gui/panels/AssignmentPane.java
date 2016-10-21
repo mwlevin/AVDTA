@@ -137,7 +137,7 @@ public class AssignmentPane extends GUIPanel
         
         DTASimulator sim = project.getSimulator();
         
-        PathList paths = new PathList(sim, project.getPathsFile());
+        PathList paths = new PathList(sim, assign.getPathsFile());
         assign.readFromFile(project, sim.getVehicles(), paths);
         parent.loadAssignment(assign);
         

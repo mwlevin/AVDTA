@@ -93,16 +93,21 @@ public class DTAImportFromVISTA
         }
         filein.close();
         
-        paths.writeToFile(project);
+        
         
         // free up memory
         linksmap = null;
-        paths = null;
+        
         
         
         // write sim.vat
         DTAResults results = new DTAResults();
         Assignment assign = new Assignment(project, results);
+        
+        paths.writeToFile(assign);
+        paths = null;
+        
+        
         PrintStream fileout = new PrintStream(new FileOutputStream(assign.getSimVatFile()), true);
         
         Map<Integer, Vehicle> vehmap = sim.createVehicleIdsMap();

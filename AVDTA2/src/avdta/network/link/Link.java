@@ -934,6 +934,18 @@ public abstract class Link implements Serializable, Comparable<Link>
     }
     
     /**
+     * Returns whether two links are equal
+     * @param o the link being compared to
+     * @return if the ids match
+     */
+    public boolean equals(Object o)
+    {
+        Link rhs = (Link)o;
+        
+        return rhs.id == id;
+    }
+    
+    /**
      * Returns whether the given {@link DriverType} can use this {@link Link}. 
      * It depends on the downstream intersection control; human vehicles cannot use reservations unless the parameter is set.
      * @param driver the {@link DriverType} specifying human or autonomous

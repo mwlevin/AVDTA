@@ -5,6 +5,7 @@
  */
 package avdta.network;
 
+import avdta.dta.Assignment;
 import avdta.network.link.Link;
 import avdta.network.node.Node;
 import avdta.project.Project;
@@ -46,11 +47,18 @@ public class PathList
      * @param file the {@link File} to read from
      * @throws IOException if the {@link File} cannot be opened
      */
-    public PathList(Network network, File file) throws IOException
+    public PathList(Network network, File file)
     {
         this();
         
-        readFromFile(network, file);
+        try
+        {
+            readFromFile(network, file);
+        }
+        catch(IOException ex)
+        {
+            
+        }
     }
     
     /**
@@ -120,12 +128,12 @@ public class PathList
     /**
      * This method saves this {@link PathList} for the specified project (see {@link Project#getPathsFile()}).
      * This calls {@link PathList#writeToFile(java.io.File)}.
-     * @param project the project
+     * @param assign the {@link Assignment}
      * @throws IOException if the file cannot be written 
      */
-    public void writeToFile(Project project) throws IOException
+    public void writeToFile(Assignment assign) throws IOException
     {
-        writeToFile(project.getPathsFile());
+        writeToFile(assign.getPathsFile());
     }
     
     /**

@@ -66,12 +66,39 @@ public class Assignment implements Comparable<Assignment>
     }
     
     /**
-     * Returns the assignment directory
+     * Returns the paths file
+     * @return {@link Project#getProjectDirectory()}/paths.dat
+     */
+    public File getPathsFile()
+    {
+        return new File(getAssignmentDirectory()+"/paths.dat");
+    }
+    
+    /**
+     * Returns the assignment directory.
      * @return the assignment directory as a {@link String}
      */
     public String getAssignmentDirectory()
     {
         return directory;
+    }
+    
+    /**
+     * Returns the assignment folder.
+     * @return a {@link File} object that refers to the assignment folder.
+     */
+    public File getAssignmentFolder()
+    {
+        return new File(getAssignmentDirectory());
+    }
+    
+    /**
+     * Returns the file containing the demand used in this {@link Assignment}
+     * @return the demand file
+     */
+    public File getDemandFile()
+    {
+        return new File(getAssignmentDirectory()+"/demand.txt");
     }
     
     /**

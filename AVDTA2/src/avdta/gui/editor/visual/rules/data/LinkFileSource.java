@@ -45,6 +45,8 @@ public class LinkFileSource extends LinkDataSource
             int id = filein.nextInt();
             double val = filein.nextDouble();
             
+            filein.nextLine();
+            
             data.put(id, val);
         }
         filein.close();
@@ -58,7 +60,14 @@ public class LinkFileSource extends LinkDataSource
      */
     public double getData(Link l, int t)
     {
-        return data.get(l.getId());
+        if(data.containsKey(l))
+        {
+            return data.get(l.getId());
+        }
+        else
+        {
+            return 0;
+        }
     }
     
     

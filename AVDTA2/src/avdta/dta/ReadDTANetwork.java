@@ -6,6 +6,7 @@
 package avdta.dta;
 
 import avdta.demand.ReadDemandNetwork;
+import avdta.network.PathList;
 import avdta.network.ReadNetwork;
 import avdta.network.Simulator;
 import avdta.network.link.Link;
@@ -69,14 +70,16 @@ public class ReadDTANetwork extends ReadDemandNetwork
         
         
         DTASimulator sim = new DTASimulator(project, nodes, links);
-        
-        sim.initialize();
-        
+
         vehicles = new ArrayList<Vehicle>();
         readTransit(project);
         readVehicles(project);
         
         sim.setVehicles(vehicles);
+        
+        sim.initialize();
+        
+        
         
         return sim;
     }

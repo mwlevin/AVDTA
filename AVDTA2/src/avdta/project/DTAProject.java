@@ -54,6 +54,19 @@ public class DTAProject extends DemandProject
         return "dta";
     }
     
+    /**
+     * Loads the specified {@link Assignment} into the associated {@link DTASimulator}
+     * @param assign
+     * @throws IOException 
+     */
+    public void loadAssignment(Assignment assign) throws IOException
+    {
+        FileTransfer.copy(assign.getDemandFile(), getDemandFile());
+        
+        loadSimulator();
+        
+        getSimulator().loadAssignment(assign);
+    }
     
     /**
      * Returns the {@link DTASimulator} associated with this project. 

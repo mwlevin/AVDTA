@@ -169,10 +169,12 @@ public class ReadNetwork
         
         Simulator sim = new Simulator(project, nodes, links);
         
+
+        sim.setVehicles(vehicles);
+        
         sim.initialize();
         
         
-        sim.setVehicles(vehicles);
         
         if(project instanceof TransitProject)
         {
