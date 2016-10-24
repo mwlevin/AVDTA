@@ -65,6 +65,8 @@ public class MapViewer extends avdta.gui.editor.JMapViewer
     
     private int time;
     
+    private int scale;
+    
 
     public MapViewer(DisplayManager display, int viewWidth, int viewHeight)
     {
@@ -74,7 +76,7 @@ public class MapViewer extends avdta.gui.editor.JMapViewer
         nodes = new HashSet<Node>();
         links = new HashSet<Link>();
         
-        
+        scale = 1;
     }
     
     public MapViewer(DisplayManager display, int viewWidth, int viewHeight, Network network)
@@ -83,10 +85,20 @@ public class MapViewer extends avdta.gui.editor.JMapViewer
         setNetwork(network);
     }
     
+    public void setScale(int scale)
+    {
+        this.scale = scale;
+    }
+    
     public void setTime(int t)
     {
         this.time = t;
         repaint();
+    }
+    
+    public int getTime()
+    {
+        return time;
     }
     
     public void center(Node n)
@@ -118,8 +130,11 @@ public class MapViewer extends avdta.gui.editor.JMapViewer
         }
     }
     
-    
     public void recenter()
+    {
+        recenter(getZoom());
+    }
+    public void recenter(int zoom)
     {
         double minX = Integer.MAX_VALUE;
         double maxX = Integer.MIN_VALUE;
@@ -167,9 +182,8 @@ public class MapViewer extends avdta.gui.editor.JMapViewer
         double center_x = (maxX + minX)/2;
         double center_y = (maxY + minY)/2;
         
-        setDisplayPosition(new Point(getWidth()/2, getHeight()/2), new Coordinate(center_y, center_x), 15);
-
-
+        setDisplayPosition(new Point(getWidth()/2, getHeight()/2), new Coordinate(center_y, center_x), zoom);
+        repaint();
     }
     
     public void setZoomControlsVisible(boolean visible) {
@@ -237,7 +251,7 @@ public class MapViewer extends avdta.gui.editor.JMapViewer
 
         g.setColor(display.getColor(l, time));
         
-        g.setStroke(new BasicStroke(display.getWidth(l, time)));
+        g.setStroke(new BasicStroke(display.getWidth(l, time) * scale));
 
         double angle = l.getDirection() - Math.PI/2;
         
@@ -264,7 +278,7 @@ public class MapViewer extends avdta.gui.editor.JMapViewer
             return;
         }
         
-        int sizeH = (int)display.getRadius(n, time);
+        int sizeH = (int)display.getRadius(n, time) * scale;
         Point position = getMapPosition(n, false);
         int size = sizeH * 2;
 

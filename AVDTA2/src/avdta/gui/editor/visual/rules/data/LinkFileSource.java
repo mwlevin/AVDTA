@@ -60,7 +60,7 @@ public class LinkFileSource extends LinkDataSource
      */
     public double getData(Link l, int t)
     {
-        if(data.containsKey(l))
+        if(data.containsKey(l.getId()))
         {
             return data.get(l.getId());
         }

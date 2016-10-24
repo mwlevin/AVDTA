@@ -65,7 +65,7 @@ public class LinkRecord
         type = chopper.nextInt();
         source = chopper.nextInt();
         dest = chopper.nextInt();
-        length = chopper.nextDouble();
+        length = chopper.nextDouble()/5280;
         ffspd = chopper.nextDouble();
         wavespd = chopper.nextDouble();
         capacity = chopper.nextDouble();

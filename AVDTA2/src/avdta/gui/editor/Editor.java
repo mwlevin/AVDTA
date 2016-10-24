@@ -47,6 +47,7 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
+import java.awt.Image;
 import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
@@ -54,6 +55,7 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
+import java.awt.image.VolatileImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -403,10 +405,24 @@ public class Editor extends JFrame implements MouseListener
             }
         });
         mi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_MINUS, ActionEvent.CTRL_MASK));
+        
+        me.add(mi);
+        
+        me.addSeparator();
+        mi = new JMenuItem("Center");
+        mi.addActionListener(new ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                map.recenter();
+            }
+        });
+        mi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_T, ActionEvent.CTRL_MASK));
         me.add(mi);
         
         me.addSeparator();
         
+        JMenu me2 = new JMenu("Screenshot");
         mi = new JMenuItem("Take screenshot");
         mi.addActionListener(new ActionListener()
         {
@@ -415,8 +431,20 @@ public class Editor extends JFrame implements MouseListener
                 saveScreenshot();
             }
         });
-        mi.setAccelerator(KeyStroke.getKeyStroke('V', Toolkit.getDefaultToolkit ().getMenuShortcutKeyMask()));
-        me.add(mi);
+        mi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, ActionEvent.CTRL_MASK));
+        me2.add(mi);
+        
+        mi = new JMenuItem("Take high-resolution screenshot");
+        mi.addActionListener(new ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                saveHighResScreenshot();
+            }
+        });
+        mi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, ActionEvent.CTRL_MASK+ActionEvent.SHIFT_MASK));
+        me2.add(mi);
+        me.add(me2);
         
         me.addSeparator();
         
@@ -446,7 +474,7 @@ public class Editor extends JFrame implements MouseListener
         
         me = new JMenu("Network");
         
-        JMenu me2 = new JMenu("Nodes");
+        me2 = new JMenu("Nodes");
         
         mi = new JMenuItem("Find node");
         mi.addActionListener(new ActionListener()
@@ -1009,17 +1037,8 @@ public class Editor extends JFrame implements MouseListener
                 {
                     file = new File(file.getCanonicalPath()+".png");
                 }
-
-
-                BufferedImage image = new BufferedImage(map.getWidth(), map.getHeight(), BufferedImage.TYPE_INT_ARGB);
-                map.setZoomControlsVisible(false);
-                Graphics g = image.getGraphics();
-                map.paint(g);
-                g.setColor(Color.black);
-                g.drawRect(0, 0, image.getWidth(), image.getHeight());
-                map.setZoomControlsVisible(true);
                 
-                ImageIO.write(image, "png", file);
+                saveScreenshot(file);
 
             }
             catch(Exception ex)
@@ -1027,8 +1046,81 @@ public class Editor extends JFrame implements MouseListener
                 GUI.handleException(ex);
             }
         }
+    }
+    
+    public void saveHighResScreenshot()
+    {
 
         
+        JFileChooser chooser = new JFileChooser(GUI.getDefaultDirectory());
+        chooser.addChoosableFileFilter(new FileNameExtensionFilter("PNG images", "png"));
+        chooser.setAcceptAllFileFilterUsed(false);
+        chooser.setMultiSelectionEnabled(false);
+
+        int returnVal = chooser.showSaveDialog(this);
+
+        if(returnVal == JFileChooser.APPROVE_OPTION)
+        {
+            try
+            {
+                File file = chooser.getSelectedFile();
+
+                if(file.getName().indexOf('.') < 0)
+                {
+                    file = new File(file.getCanonicalPath()+".png");
+                }
+                
+                saveHighResScreenshot(file);
+                
+                JOptionPane.showMessageDialog(this, "Screenshot saved in "+file.getName(), "Screenshot saved", JOptionPane.INFORMATION_MESSAGE);
+            }
+            catch(Exception ex)
+            {
+                GUI.handleException(ex);
+            }
+        }
+    }
+    
+    public void saveScreenshot(File file) throws Exception
+    {
+        BufferedImage image = new BufferedImage(map.getWidth(), map.getHeight(), BufferedImage.TYPE_INT_ARGB);
+        map.setZoomControlsVisible(false);
+        Graphics g = image.getGraphics();
+        map.paint(g);
+        g.setColor(Color.black);
+        g.drawRect(0, 0, image.getWidth()-1, image.getHeight()-1);
+        map.setZoomControlsVisible(true);
+
+        ImageIO.write(image, "png", file);
+    }
+    
+    public void saveHighResScreenshot(File file) throws Exception
+    {
+        int width = map.getWidth()*2;
+        int height = map.getHeight()*2;
+        MapViewer map2 = new MapViewer(display.clone(), width, height, project.getSimulator());
+        map2.setSize(new Dimension(width, height));
+
+        map2.setTime(map.getTime());
+        map2.setZoom(map.getZoom());
+        map2.setCenter(map.getCenter());
+        map2.setZoom(map.getZoom()+1);
+        map2.setScale(2);
+        BufferedImage image = new BufferedImage(map2.getWidth(), map2.getHeight(), BufferedImage.TYPE_INT_ARGB);
+        map2.setZoomControlsVisible(false);
+        Graphics g = image.getGraphics();
+
+        for(int i = 0; i < 60; i++)
+        {
+            map2.print(g);
+            Thread.sleep(1000);
+        }
+
+        map2.print(g);
+        g.setColor(Color.black);
+        g.drawRect(0, 0, image.getWidth()-1, image.getHeight()-1);
+
+        ImageIO.write(image, "png", file);
     }
     
     public void newProject()
@@ -1121,7 +1213,7 @@ public class Editor extends JFrame implements MouseListener
         display.initialize(project);
         
         refresh();
-        map.recenter();
+        map.recenter(15);
     }
     
     

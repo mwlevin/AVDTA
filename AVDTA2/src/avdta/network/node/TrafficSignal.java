@@ -407,17 +407,7 @@ public class TrafficSignal extends IntersectionControl implements Signalized
             }
         }
     }
-    
-    public void flowAvailable(Link i, Link j)
-    {
-        try
-        {
-            System.out.print(turns.get(i).get(j).q+" "+turns.get(i).get(j).leftovers);
-        }
-        catch(NullPointerException ex)
-        {
-        }
-    }
+
     /**
      * Implements a time-step of movement of vehicles at the intersection with 
      * the signal.

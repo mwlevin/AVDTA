@@ -18,6 +18,7 @@ import java.io.IOException;
  */
 public interface DisplayManager 
 {
+    public DisplayManager clone();
     public void setEnabled(boolean e);
     public boolean isEnabled();
     

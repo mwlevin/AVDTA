@@ -47,7 +47,7 @@ public class CACCConvert {
             
             
             
-            if(link.getType() != ReadNetwork.CENTROID && CACCLTMLink.checkK2(link.getCapacity(), link.getFFSpd(), link.getLength()) && link.getFFSpd() >= 55
+            if(link.getType() != ReadNetwork.CENTROID && CACCLTMLink.checkK2(link.getCapacity(), link.getFFSpd(), link.getLength()) && link.getFFSpd() >= 60
                     && link.getNumLanes() > 1)
             {
                 int newLanes = (int)Math.min(link.getNumLanes()-1, max_lanes);

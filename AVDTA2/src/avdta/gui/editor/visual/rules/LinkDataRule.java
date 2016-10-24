@@ -75,6 +75,9 @@ public class LinkDataRule extends LinkRule
     {
         double val = data.getData(l, t);
         
+        Color minColor = getMinColor();
+        Color maxColor = getMaxColor();
+        
         if(val < minValue)
         {
             return minColor;

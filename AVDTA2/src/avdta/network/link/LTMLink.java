@@ -59,7 +59,7 @@ public class LTMLink extends Link
      */
     public void initialize()
     {
-        N_up = new ChainedArray(getUSLookbehind()+2);
+        N_up = new ChainedArray(getUSLookBehind()+2);
         N_down = new ChainedArray(getDSLookBehind()+2);
 
         this.capacityUp = getCapacity() * Network.dt / 3600.0;
@@ -72,7 +72,7 @@ public class LTMLink extends Link
      * Returns how far to look backwards in timefor the upstream end
      * @return {@link Link#getLength()}/{@link Link#getFFSpeed()} (s)
      */
-    public int getUSLookbehind()
+    public int getUSLookBehind()
     {
         return (int)Math.ceil(getLength()/getFFSpeed()*3600 / Network.dt);
     }
@@ -120,7 +120,7 @@ public class LTMLink extends Link
     public void reset()
     {
         queue.clear();
-        N_up = new ChainedArray(getUSLookbehind()+2);
+        N_up = new ChainedArray(getUSLookBehind()+2);
         N_down = new ChainedArray(getDSLookBehind()+2);
 
         

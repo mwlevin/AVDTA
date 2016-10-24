@@ -100,6 +100,30 @@ public class RuleDisplay extends DefaultDisplayManager
         };
     }
     
+    public RuleDisplay clone()
+    {
+        RuleDisplay output = new RuleDisplay();
+        
+        clone_setOptions(output);
+        
+        return output;
+    }
+    
+    protected void clone_setOptions(RuleDisplay disp)
+    {
+        super.clone_setOptions(disp);
+        
+        for(NodeRule r : nodeRules)
+        {
+            disp.nodeRules.add(r);
+        }
+        
+        for(LinkRule r : linkRules)
+        {
+            disp.linkRules.add(r);
+        }
+    }
+    
 
     public List<NodeRule> getNodeRules()
     {

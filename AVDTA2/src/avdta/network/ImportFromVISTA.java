@@ -12,8 +12,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.Set;
 
 /**
  * This class defines methods to convert network data from the VISTA data format to the AVDTA data format. 
@@ -24,6 +26,8 @@ import java.util.Scanner;
  */
 public class ImportFromVISTA 
 {
+    private Set<Integer> vista_centroids;
+    
     /**
      * Calls {@link ImportFromVISTA#ImportFromVISTA(avdta.project.Project, java.io.File, java.io.File, java.io.File, java.io.File, java.io.File, java.io.File)} with a {@code nodes.txt} file, a {@code linkdetails.txt} file, a {@code elevation.txt} file, a {@code phases.txt} file, a {@code signals.txt} file, and a {@code links.txt} file from the specified directory.
      * @param project the project
@@ -49,6 +53,7 @@ public class ImportFromVISTA
      */
     public ImportFromVISTA(Project project, File nodes, File linkdetails, File elevation, File phases, File signals, File linkpoints) throws IOException
     {
+        vista_centroids = new HashSet<Integer>();
         convertNodes(project, nodes, elevation);
         convertLinks(project, linkdetails);
         convertPhases(project, phases);
@@ -170,7 +175,18 @@ public class ImportFromVISTA
             
             if(type == 100)
             {
-                type = ReadNetwork.CENTROID;
+                if(vista_centroids.contains(source_id))
+                {
+                    type = ReadNetwork.CENTROID+1;
+                }
+                else if(vista_centroids.contains(dest_id))
+                {
+                    type = ReadNetwork.CENTROID+2;
+                }
+                else
+                {
+                     type = ReadNetwork.CENTROID;
+                }
             }
             else
             {
@@ -233,6 +249,7 @@ public class ImportFromVISTA
             if(type == 100)
             {
                 fileout.println(id+"\t"+ReadNetwork.CENTROID+"\t"+lng+"\t"+lat+"\t"+elev);
+                vista_centroids.add(id);
             }
             else
             {

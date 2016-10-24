@@ -57,31 +57,33 @@ import org.openstreetmap.gui.jmapviewer.Demo;
  */
 public class Main 
 {
-    public static void main(String[] args) throws IOException
+    public static void main(String[] args) throws Exception
     {
-        caccTest1("coacongress2_LTM", "coacongress2_CACC");
-        caccTest2("coacongress2_LTM", "coacongress2_CACC");
+        //caccTest2("coacongress2_LTM", "coacongress2_CACC");
+        //caccTest1("coacongress2_LTM", "coacongress2_CACC");
         //caccTest1("scenario_2_pm_sub", "scenario_2_pm_sub_CACC");
         
         //caccAnalyze1("coacongress2_LTM", "coacongress2_CACC");
         //caccAnalyze1("scenario_2_pm_sub", "scenario_2_pm_sub_CACC");
-        //caccVisualize("coacongress2_LTM");
+
         //caccTest2();
         
         //new DTAGUI();
         //GUI.main(args);
 
-
+        //DTAProject project = new DTAProject(new File("projects/coacongress2_CACC"));
         //CACCConvert.convert(project, 1);
-        
+        //caccVisualize("coacongress2");
         
         //transitTest3();
         //transitTest2();
         //transitTest1();
         
         
-        //createCACCNetwork();
-        //DTAProject project = new DTAProject(new File("projects/scenario_2_pm_sub"));
+        createCACCNetwork();
+        
+        DTAProject project = new DTAProject(new File("projects/scenario_2_pm_sub_CACC"));
+        CACCConvert.convert(project, 1);
         //Editor gui = new Editor(project);
         //DTASimulator sim = project.getSimulator();
         
@@ -335,14 +337,14 @@ public class Main
         DTAProject austin_CACC = new DTAProject(new File("projects/"+net2));
         
         PrintStream out = new PrintStream(new FileOutputStream(new File("CACC_results2.txt")), true);
-        out.println("% demand\tTSTT\tTSTT w CACC\tDemand");
+        out.println("Proportion\tTSTT\tTSTT w CACC\tDemand");
         
         PrintStream out2 = new PrintStream(new FileOutputStream(new File("CACC_results2_corridor.txt")), true);
-        out2.println("% demand\tCorridor TT\tCorridor TT w/ CACC\tDemand");
+        out2.println("Proportion\tCorridor TT\tCorridor TT w/ CACC\tDemand");
         
         
             
-        for(int i = 0; i <= 30; i+= 5)
+        for(int i = 0; i <= 50; i+= 5)
         {
             Map<Integer, Double> proportions = new HashMap<Integer, Double>();
             proportions.put(ReadDTANetwork.AV+ReadDTANetwork.ICV+ReadDTANetwork.DA_VEHICLE, i/100.0);
@@ -436,7 +438,7 @@ public class Main
         proportions.put(ReadDTANetwork.AV+ReadDTANetwork.ICV+ReadDTANetwork.DA_VEHICLE, 0.5);
         proportions.put(ReadDTANetwork.HV+ReadDTANetwork.ICV+ReadDTANetwork.DA_VEHICLE, 0.5);
             
-        for(int i = 120; i >= 70; i-= 5)
+        for(int i = 115; i >= 115; i-= 5)
         {
             
             
@@ -449,12 +451,12 @@ public class Main
             austin_CACC.loadProject();
             
             DTASimulator sim1 = austin.getSimulator();
-            DTAResults results1 = sim1.msa(50, 0.5);
+            DTAResults results1 = sim1.msa(1, 0.5);
             
             sim1.getAssignment().getAssignmentFolder().renameTo(new File(austin.getAssignmentsFolder()+"/"+i+"_50"));
             
             DTASimulator sim2 = austin_CACC.getSimulator();
-            DTAResults results2 = sim2.msa(50, 0.5);
+            DTAResults results2 = sim2.msa(49, 0.5);
             
             sim2.getAssignment().getAssignmentFolder().renameTo(new File(austin_CACC.getAssignmentsFolder()+"/"+i+"_50"));
             
@@ -649,24 +651,68 @@ public class Main
         out.close();
     }
     
-    public static void caccVisualize(String net1) throws IOException
+    public static void caccVisualize(String net1) throws Exception
     {
         DTAProject austin = new DTAProject(new File("projects/"+net1));
         
         Editor editor =  new Editor(austin);
-        LinkDataRule rule = new LinkDataRule();
+
+        
+        LinkDataRule rule = new LinkDataRule()
+        {
+            public Color getColor(Link l, int t)
+            {
+                double val = getDataSource().getData(l, t);
+                
+                
+
+                Color minColor = getMinColor();
+                Color maxColor = getMaxColor();
+                
+                if(val < 0)
+                {
+                    maxColor = Color.blue;
+                    val = Math.abs(val);
+                }
+                
+                double minValue = getMinValue();
+                double maxValue = getMaxValue();
+
+                if(val < minValue)
+                {
+                    return minColor;
+                }
+                else if(val >= maxValue)
+                {
+                    return maxColor;
+                }
+
+                int r1 = minColor.getRed();
+                int r2 = maxColor.getRed();
+                int g1 = minColor.getGreen();
+                int g2 = maxColor.getGreen();
+                int b1 = minColor.getBlue();
+                int b2 = maxColor.getBlue();
+
+                double scale = (val - minValue) / (maxValue - minValue);
+
+                return new Color((int)Math.round(r1 + scale * (r2 - r1)), 
+                        (int)Math.round(g1 + scale * (g2 - g1)),
+                        (int)Math.round(b1 + scale * (b2 - b1)));
+            }
+        };
         rule.setDataSource(new LinkFileSource(new File("VolDiff.txt")));
         rule.setMinColor(Color.black);
         rule.setMaxColor(Color.red);
         rule.setMinWidth(3);
         rule.setMaxWidth(3);
         rule.setMinValue(0);
-        rule.setMaxValue(4);
+        rule.setMaxValue(1);
         editor.addVisualization(rule);
         
-        editor.saveScreenshot();
+        //editor.saveHighResScreenshot(new File("test.png"));
         
-        
+        //System.exit(0);
     }
     
     

@@ -31,6 +31,24 @@ public class DefaultDisplayManager implements DisplayManager
         enabled = true;
     }
     
+    public DefaultDisplayManager clone()
+    {
+        DefaultDisplayManager output = new DefaultDisplayManager();
+        
+        clone_setOptions(output);
+        
+        return output;
+    }
+    
+    protected void clone_setOptions(DefaultDisplayManager disp)
+    {
+        disp.displayLinks = displayLinks;
+        disp.displayNodes = displayNodes;
+        disp.displayCentroids = displayCentroids;
+        disp.displayNonCentroids = displayNonCentroids;
+        disp.enabled = enabled;
+    }
+    
     public void setEnabled(boolean e)
     {
         enabled = e;

@@ -5,6 +5,7 @@
 package avdta.network.node;
 
 import avdta.network.ReadNetwork;
+import avdta.network.link.CentroidConnector;
 import avdta.network.link.Link;
 import avdta.vehicle.Vehicle;
 import avdta.vehicle.PersonalVehicle;
@@ -206,7 +207,39 @@ public class Zone extends Node
      */
     public int getType()
     {
-        return ReadNetwork.CENTROID;
+        // check if this is an input or output zone
+        
+        boolean input = true;
+        boolean output = true;
+        
+        for(Link l : getIncoming())
+        {
+            if(l instanceof CentroidConnector)
+            {
+                input = false;
+            }
+        }
+        
+        for(Link l : getOutgoing())
+        {
+            if(l instanceof CentroidConnector)
+            {
+                output = false;
+            }
+        }
+        
+        if(input)
+        {
+            return ReadNetwork.CENTROID+1;
+        }
+        else if(output)
+        {
+            return ReadNetwork.CENTROID+2;
+        }
+        else
+        {
+            return ReadNetwork.CENTROID;
+        }
     }
     
     /**
