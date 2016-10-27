@@ -437,7 +437,7 @@ public class NodesPane extends GUIPanel
                     {
                         NodeRecord node = new NodeRecord(filein.nextLine());
 
-                        if(node.getType() != ReadNetwork.CENTROID)
+                        if(node.getType()/100 != ReadNetwork.CENTROID/100)
                         {
                             node.setType(newtype);
                         }

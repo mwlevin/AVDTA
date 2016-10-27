@@ -130,6 +130,8 @@ public class StatusBar extends JComponent implements StatusUpdate
         }
         long time = System.nanoTime();
         
+        p = Math.min(1, p);
+        
         if(startTime > 0)
         {
             eta = (long)Math.round( (time - startTime) / p * (1-p));

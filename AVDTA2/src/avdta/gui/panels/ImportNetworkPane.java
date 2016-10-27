@@ -335,6 +335,7 @@ public class ImportNetworkPane extends GUIPanel
                     phases.setFile(null);
                     linkdetails.setFile(null);
                     signals.setFile(null);
+                    linkpoints.setFile(null);
 
                     parentSetEnabled(true);
                     parentReset();

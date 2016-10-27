@@ -345,7 +345,7 @@ public class LinksPane extends GUIPanel
 
 
 
-                            if(link.getType() != ReadNetwork.CENTROID)
+                            if(link.getType()/100 != ReadNetwork.CENTROID/100)
                             {
                                 link.setType(newtype);
                             }

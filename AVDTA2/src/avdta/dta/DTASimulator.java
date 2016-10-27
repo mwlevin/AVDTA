@@ -51,6 +51,8 @@ public class DTASimulator extends Simulator
     
     private int iteration;
     
+    private boolean continueUntilExit = true;
+    
     /**
      * Constructs this {@link DTASimulator} empty with the given project.
      * @param project the project
@@ -556,7 +558,9 @@ public class DTASimulator extends Simulator
         }
         
         fileout.println("Iter\tStep\tGap %\tAEC\tTTT\tTrips\tNon-exit\ttime");
-
+        
+        int max_iter_contingency = max_iter + 3;
+        
         do
         {
             long time = System.nanoTime();
@@ -587,7 +591,8 @@ public class DTASimulator extends Simulator
                 statusUpdate.update((double)(iteration - start_iter+1)/ (max_iter - start_iter + 1), 1.0 / (max_iter - start_iter + 1), "Iteration "+iteration);
             }
         }
-        while(iteration++ < max_iter && (iteration == 2 || min_gap < output.getGapPercent()));
+        while( (iteration++ < max_iter && (iteration <= 2 || min_gap < output.getGapPercent())) || 
+                (continueUntilExit && output.getNonExiting() > 0 && iteration < max_iter_contingency) );
         
         currAssign.setResults(output);
         ((MSAAssignment)currAssign).setIter(iteration);
