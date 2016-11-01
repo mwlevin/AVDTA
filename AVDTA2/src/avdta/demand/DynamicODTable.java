@@ -71,6 +71,11 @@ public class DynamicODTable
      */
     public void addDemand(int origin, int dest, int ast, int type, double dem)
     {
+        if(ast < 0)
+        {
+            throw new RuntimeException("AST is "+ast);
+        }
+        
         Map<Integer, Map<Integer, Map<Integer, Double>>> temp1;
         
         if(table.containsKey(origin))

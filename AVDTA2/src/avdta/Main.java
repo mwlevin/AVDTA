@@ -6,12 +6,15 @@
 package avdta;
 
 import avdta.demand.DemandImportFromVISTA;
+import avdta.demand.DemandProfile;
+import avdta.demand.DynamicODTable;
 import avdta.dta.Assignment;
 import avdta.dta.DTAImportFromVISTA;
 import avdta.network.link.transit.BusLink;
 import avdta.dta.DTAResults;
 import avdta.dta.DTASimulator;
 import avdta.dta.ReadDTANetwork;
+import avdta.dta.VehicleRecord;
 import avdta.gui.DTAGUI;
 import avdta.gui.GUI;
 import avdta.gui.editor.Editor;
@@ -60,7 +63,7 @@ public class Main
     public static void main(String[] args) throws Exception
     {
         //caccTest2("coacongress2_LTM", "coacongress2_CACC");
-        caccTest1("coacongress2_LTM", "coacongress2_CACC");
+        //caccTest1("coacongress2_LTM", "coacongress2_CACC");
         //caccTest1("scenario_2_pm_sub", "scenario_2_pm_sub_CACC");
         
         //caccTest3("austinI35", "austinI35_CACC");
@@ -70,7 +73,7 @@ public class Main
 
         //caccTest2();
         
-        //new DTAGUI();
+        new DTAGUI();
         //GUI.main(args);
 
         
@@ -78,29 +81,9 @@ public class Main
         //CACCConvert.convert(project, 1);
         //caccVisualize("coacongress2");
         
-        //transitTest3();
-        //transitTest2();
-        //transitTest1();
-        
-        
         //createCACCNetwork();
         
-        //DTAProject project = new DTAProject(new File("projects/scenario_2_pm_sub_CACC"));
-        //CACCConvert.convert(project, 1);
-        //Editor gui = new Editor(project);
         
-        /*
-        DTAProject project = new DTAProject(new File("projects/coacongress2"));
-        //Editor gui = new Editor(project);
-        SAVProject clone = new SAVProject();
-        clone.createProject("coacongress2_SAV", new File("projects/coacongress2_SAV"));
-        clone.cloneFromProject(project);
-        clone.loadSimulator();
-        ReadSAVNetwork read = new ReadSAVNetwork();
-        read.setTripsToTravelers(clone);
-        clone.loadSimulator();
-        read.createFleet(clone, 20000);
-        */
     }
     
     public static void createCACCNetwork() throws IOException

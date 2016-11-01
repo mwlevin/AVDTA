@@ -56,8 +56,8 @@ public class DTAProject extends DemandProject
     
     /**
      * Loads the specified {@link Assignment} into the associated {@link DTASimulator}
-     * @param assign
-     * @throws IOException 
+     * @param assign the {@link Assignment} to be loaded
+     * @throws IOException if a file cannot be accessed
      */
     public void loadAssignment(Assignment assign) throws IOException
     {

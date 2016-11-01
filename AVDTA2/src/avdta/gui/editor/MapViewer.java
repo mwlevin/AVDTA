@@ -15,6 +15,7 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Composite;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -77,6 +78,8 @@ public class MapViewer extends avdta.gui.editor.JMapViewer
         links = new HashSet<Link>();
         
         scale = 1;
+        
+        setFont(new Font("Arial", Font.BOLD, 14));
     }
     
     public MapViewer(DisplayManager display, int viewWidth, int viewHeight, Network network)

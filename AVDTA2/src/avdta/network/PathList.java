@@ -45,7 +45,6 @@ public class PathList
      * The {@link Network} is needed because {@link PathList} saves {@link Link} ids, not {@link Link} objects.
      * @param network the {@link Network}
      * @param file the {@link File} to read from
-     * @throws IOException if the {@link File} cannot be opened
      */
     public PathList(Network network, File file)
     {
@@ -126,7 +125,7 @@ public class PathList
     }
     
     /**
-     * This method saves this {@link PathList} for the specified project (see {@link Project#getPathsFile()}).
+     * This method saves this {@link PathList} for the specified assignment (see {@link Assignment#getPathsFile()}).
      * This calls {@link PathList#writeToFile(java.io.File)}.
      * @param assign the {@link Assignment}
      * @throws IOException if the file cannot be written 

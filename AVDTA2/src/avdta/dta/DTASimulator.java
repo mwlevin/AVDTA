@@ -777,7 +777,7 @@ public class DTASimulator extends Simulator
                         createCentroid(origin, centroids, new_centroid_id, newNodes, newLinks);
                         new_centroid_id += 2;
                         
-                        dtime = arrTimes.get(i+1);
+                        dtime = (int)Math.max(dtime, arrTimes.get(i+1));
                     }
                     else if(newNodes.contains(l.getSource()))
                     {

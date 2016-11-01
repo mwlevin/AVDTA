@@ -67,7 +67,7 @@ public class Assignment implements Comparable<Assignment>
     
     /**
      * Returns the paths file
-     * @return {@link Project#getProjectDirectory()}/paths.dat
+     * @return {@link Assignment#getAssignmentDirectory()}/paths.dat
      */
     public File getPathsFile()
     {

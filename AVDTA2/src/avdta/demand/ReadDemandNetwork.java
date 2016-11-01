@@ -74,6 +74,11 @@ public class ReadDemandNetwork extends ReadNetwork
            
             AST ast = profile.get(t);
             
+            if(ast == null)
+            {
+                throw new RuntimeException("Cannot find AST for id "+t);
+            }
+            
             int num_vehicles = (int)Math.floor(demand);
             double rem = demand - Math.floor(demand);
             
@@ -82,6 +87,8 @@ public class ReadDemandNetwork extends ReadNetwork
             {
                 num_vehicles ++;
             }
+            
+            
             
             int dtime_interval = ast.getDuration() / (num_vehicles+1);
             
