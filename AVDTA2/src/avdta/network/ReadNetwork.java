@@ -1131,7 +1131,7 @@ public class ReadNetwork
         
         fileout.println("<h2>Network</h3>");
         
-        fileout.println("<h3>nodes.txt</h3>");
+        fileout.println("<h3>"+project.getNodesFile()+"</h3>");
         
         // create map of node ids to NodeRecords
         Scanner filein = null;
@@ -1143,7 +1143,7 @@ public class ReadNetwork
         {
             output++;
             loadNetwork = false;
-            print(fileout, 1, "nodes.txt file not found.");
+            print(fileout, 1, project.getNodesFile()+" file not found.");
             return output;
         }
         
@@ -1151,7 +1151,7 @@ public class ReadNetwork
         {
             output++;
             loadNetwork = false;
-            print(fileout, 1, "nodes.txt files is empty.");
+            print(fileout, 1, project.getNodesFile()+" file is empty.");
             return output;
         }
         filein.nextLine();
@@ -1243,7 +1243,7 @@ public class ReadNetwork
             {
                 output++;
                 loadNetwork = false;
-                print(fileout, 1, "Malformed node data at line "+lineno +" of nodes.txt");
+                print(fileout, 1, "Malformed node data at line "+lineno+".");
             }
         }
         filein.close();
@@ -1257,7 +1257,7 @@ public class ReadNetwork
         
         Set<Integer> linkids = new HashSet<Integer>();
         
-        fileout.println("<h2>links.txt</h2>");
+        fileout.println("<h3>"+project.getLinksFile()+"</h3>");
         try
         {
             filein = new Scanner(project.getLinksFile());
@@ -1266,7 +1266,7 @@ public class ReadNetwork
         {
             output++;
             loadNetwork = false;
-            print(fileout, 1, "links.txt file not found.");
+            print(fileout, 1, project.getLinksFile()+" file not found.");
             return output;
         }
         
@@ -1274,7 +1274,7 @@ public class ReadNetwork
         {
             output++;
             loadNetwork = false;
-            print(fileout, 1, "links.txt file is empty.");
+            print(fileout, 1, project.getLinksFile()+" file is empty.");
             return output;
         }
         
@@ -1401,54 +1401,62 @@ public class ReadNetwork
             {
                 output++;
                 loadNetwork = false;
-                print(fileout, 1, "Malformed link data at line "+lineno +" of links.txt");
+                print(fileout, 1, "Malformed link data at line "+lineno+".");
             }
         }
         filein.close();
         print(fileout, -1, "Scanned "+count+" links.");
         
-        fileout.println("<h3>link_coordinates.txt</h3>");
+        fileout.println("<h3>"+project.getLinkPointsFile()+"</h3>");
         
         try
         {
             filein = new Scanner(project.getLinkPointsFile());
+            
+            
+            if(!filein.hasNextLine())
+            {
+                output++;
+                print(fileout, 1, project.getLinkPointsFile()+" file is empty.");
+            }
+            
+            lineno = 1;
+            count = 0;
+
+            filein.nextLine();
+
+            while(filein.hasNextInt())
+            {
+                lineno++;
+                count++;
+
+                int id = filein.nextInt();
+                filein.nextLine();
+
+                if(!linkids.contains(id))
+                {
+                    output++;
+                    print(fileout, 2, "Link "+id+" appears in "+project.getLinkPointsFile()+" but not in "+project.getLinksFile()+" at line "+lineno+".");
+                }
+                linkids.remove(id);
+            }
+            filein.close();
         }
         catch(IOException ex)
         {
             output++;
-            print(fileout, 1, "link_coordinates file not found.");
+            print(fileout, 1, project.getLinkPointsFile()+" file not found.");
         }
         
-        lineno = 1;
-        count = 0;
+        linkids = null;
+        tempnodes = null;
         
-        if(!filein.hasNextLine())
-        {
-            print(fileout, 1, "link_coordinates file is empty.");
-        }
         
-        filein.nextLine();
-        
-        while(filein.hasNextInt())
-        {
-            lineno++;
-            count++;
             
-            int id = filein.nextInt();
-            filein.nextLine();
-            
-            if(!linkids.contains(id))
-            {
-                output++;
-                print(fileout, 2, "Link "+id+" appears in link_coordinates.txt but not in links.txt at line "+lineno+".");
-            }
-            linkids.remove(id);
-        }
-        filein.close();
         
         for(int id : linkids)
         {
-            print(fileout, 3, "Link "+id+" appears in links.txt but not in link_coordinates.txt");
+            print(fileout, 3, "Link "+id+" appears in "+project.getLinksFile()+" but not in "+project.getLinkPointsFile()+".txt");
         }
         
         print(fileout, -1, "Scanned "+count+" links.");
@@ -1459,10 +1467,9 @@ public class ReadNetwork
             print(fileout, -1, "<p>Sanity check ended before network loading due to errors.</p>");
             return output;
         }
+   
         
-        tempnodes = null;
-        
-        fileout.println("<h2>Network structure</h2>");
+        fileout.println("<h3>Network structure</h3>");
         
         readOptions(project);
         try
@@ -1496,8 +1503,10 @@ public class ReadNetwork
                     }
                 }
             }
+            
+            print(fileout, -1, "Scanned "+nodes.size()+" nodes.");
         }
-        catch(IOException ex)
+        catch(Exception ex)
         {
             output++;
             print(fileout, 1, "Unable to load network.");
@@ -1505,173 +1514,184 @@ public class ReadNetwork
             return output;
         }
         
-        fileout.println("<h2>signals.txt</h2>");
+        fileout.println("<h3>"+project.getSignalsFile()+"</h3>");
+        
+        Set<Integer> signalnodes = new HashSet<Integer>();
         
         try
         {
             filein = new Scanner(project.getSignalsFile());
+            
+            if(!filein.hasNextLine())
+            {
+                output++;
+                print(fileout, 1, project.getSignalsFile()+" file is empty.");
+            }
+            else
+            {
+                filein.nextLine();
+
+                count = 0;
+                lineno = 1;
+
+                while(filein.hasNextInt())
+                {
+                    try
+                    {
+                        lineno++;
+                        SignalRecord signal = new SignalRecord(filein.nextLine());
+                        count++;
+
+                        
+                        signalnodes.add(signal.getNode());
+                        
+                        if(!nodesmap.containsKey(signal.getNode()))
+                        {
+                            output++;
+                            print(fileout, 2, "Node "+signal.getNode()+" appears in "+project.getSignalsFile()+" but not in "+project.getNodesFile()+" on line "+lineno+".");
+                        }
+
+                        if(signal.getOffset() < 0)
+                        {
+                            output++;
+                            print(fileout, 2, "Signal for node "+signal.getNode()+" has offset of "+signal.getOffset()+" on line "+lineno+".");
+                        }
+                    }
+                    catch(Exception ex)
+                    {
+                        output++;
+                        print(fileout, 1, "Malformed signal data on line "+lineno+".");
+                    }
+                }
+                print(fileout, -1, "Scanned "+count+" signals.");
+            }
+            filein.close();
         }
         catch(IOException ex)
         {
             output++;
-            print(fileout, 1, "signals.txt file not found.");
+            print(fileout, 1, project.getSignalsFile()+" file not found.");
         }
         
-        if(!filein.hasNextLine())
-        {
-            output++;
-            print(fileout, 1, "signals.txt file is empty.");
-        }
-        else
-        {
-            filein.nextLine();
-
-            count = 0;
-            lineno = 1;
-
-            while(filein.hasNextInt())
-            {
-                try
-                {
-                    lineno++;
-                    SignalRecord signal = new SignalRecord(filein.nextLine());
-                    count++;
-
-                    if(!nodesmap.containsKey(signal.getNode()))
-                    {
-                        output++;
-                        print(fileout, 2, "Node "+signal.getNode()+" appears in signals.txt but not in nodes.txt on line "+lineno+".");
-                    }
-
-                    if(signal.getOffset() < 0)
-                    {
-                        output++;
-                        print(fileout, 2, "Signal for node "+signal.getNode()+" has offset of "+signal.getOffset()+" on line "+lineno+".");
-                    }
-                }
-                catch(Exception ex)
-                {
-                    output++;
-                    print(fileout, 1, "Malformed signal data on line "+lineno+".");
-                }
-            }
-            print(fileout, -1, "Scanned "+count+" signals.");
-        }
-        filein.close();
+            
         
-        fileout.println("<h2>phases.txt</h2>");
+        fileout.println("<h3>"+project.getPhasesFile()+"</h3>");
         
         
         try
         {
             filein = new Scanner(project.getPhasesFile());
+            
+            if(!filein.hasNextLine())
+            {
+                output++;
+                print(fileout, 1, project.getPhasesFile()+" file is empty.");
+            }
+            else
+            {
+                filein.nextLine();
+
+                lineno = 1;
+                count = 0;
+
+                while(filein.hasNextInt())
+                {
+                    try
+                    {
+                        lineno++;
+                        PhaseRecord phase = new PhaseRecord(filein.nextLine());
+                        count++;
+                        
+                        if(!signalnodes.contains(phase.getNode()))
+                        {
+                            output++;
+                            print(fileout, 2, "Node "+phase.getNode()+" appears in "+project.getPhasesFile()+" but not in "+project.getSignalsFile()+" on line "+lineno+".");
+                        }
+
+                        if(!nodesmap.containsKey(phase.getNode()))
+                        {
+                            output++;
+                            print(fileout, 2, "Node "+phase.getNode()+" appears in "+project.getPhasesFile()+" but not in "+project.getNodesFile()+" on line "+lineno+".");
+                        }
+                        else
+                        {
+                            Node node = nodesmap.get(phase.getNode());
+                            for(TurnRecord t : phase.getTurns())
+                            {
+                                boolean found = false;
+
+                                for(Link i : node.getIncoming())
+                                {
+                                    if(i.getId() == t.getI())
+                                    {
+                                        found = true;
+                                    }
+                                }
+
+                                found = false;
+
+                                if(!found)
+                                {
+                                    print(fileout, 2, "Link "+t.getI()+" is not an incoming link for node "+phase.getNode()+" for phase "+phase.getSequence()+" on line "+lineno+".");
+                                }
+
+                                for(Link j : node.getOutgoing())
+                                {
+                                    if(j.getId() == t.getJ())
+                                    {
+                                        found = true;
+                                    }
+                                }
+
+                                if(!found)
+                                {
+                                    print(fileout, 2, "Link "+t.getJ()+" is not an outgoing link for node "+phase.getNode()+" for phase "+phase.getSequence()+" on line "+lineno+".");
+                                }
+                            }
+                        }
+
+                        if(phase.getTimeGreen() <= 0)
+                        {
+                            output++;
+                            print(fileout, 3, "Phase "+phase.getSequence()+" for node "+phase.getNode()+" has green time of "+phase.getTimeGreen()+" on line "+lineno+".");
+                        }
+
+                        if(phase.getTimeYellow() <= 0)
+                        {
+                            output++;
+                            print(fileout, 3, "Phase "+phase.getSequence()+" for node "+phase.getNode()+" has yellow time of "+phase.getTimeYellow()+" on line "+lineno+".");
+                        }
+
+                        if(phase.getTimeRed() <= 0)
+                        {
+                            output++;
+                            print(fileout, 3, "Phase "+phase.getSequence()+" for node "+phase.getNode()+" has red time of "+phase.getTimeRed()+" on line "+lineno+".");
+                        }
+
+                        if(phase.getSequence() <= 0)
+                        {
+                            output++;
+                            print(fileout, 3, "Phase "+phase.getSequence()+" for node "+phase.getNode()+" has non-positive sequence number on line "+lineno+".");
+                        }
+
+
+                    }
+                    catch(Exception ex)
+                    {
+                        output++;
+                        print(fileout, 1, "Malformed phase data on line "+lineno+".");
+                    }
+                }
+
+                print(fileout, -1, "Scanned "+count+" phases.");
+            }
+            filein.close();
         }
         catch(IOException ex)
         {
             output++;
             print(fileout, 1, "phases.txt file not found.");
         }
-        
-        if(!filein.hasNextLine())
-        {
-            output++;
-            print(fileout, 1, "phases.txt file is empty.");
-        }
-        else
-        {
-            filein.nextLine();
-            
-            lineno = 1;
-            count = 0;
-            
-            while(filein.hasNextInt())
-            {
-                try
-                {
-                    lineno++;
-                    PhaseRecord phase = new PhaseRecord(filein.nextLine());
-                    count++;
-                    
-                    if(!nodesmap.containsKey(phase.getNode()))
-                    {
-                        output++;
-                        print(fileout, 2, "Node "+phase.getNode()+" appears in phases.txt but not in nodes.txt on line "+lineno+".");
-                    }
-                    else
-                    {
-                        Node node = nodesmap.get(phase.getNode());
-                        for(TurnRecord t : phase.getTurns())
-                        {
-                            boolean found = false;
-
-                            for(Link i : node.getIncoming())
-                            {
-                                if(i.getId() == t.getI())
-                                {
-                                    found = true;
-                                }
-                            }
-                            
-                            found = false;
-
-                            if(!found)
-                            {
-                                print(fileout, 2, "Link "+t.getI()+" is not an incoming link for node "+phase.getNode()+" for phase "+phase.getSequence()+" on line "+lineno+".");
-                            }
-                            
-                            for(Link j : node.getOutgoing())
-                            {
-                                if(j.getId() == t.getJ())
-                                {
-                                    found = true;
-                                }
-                            }
-                            
-                            if(!found)
-                            {
-                                print(fileout, 2, "Link "+t.getJ()+" is not an outgoing link for node "+phase.getNode()+" for phase "+phase.getSequence()+" on line "+lineno+".");
-                            }
-                        }
-                    }
-                    
-                    if(phase.getTimeGreen() <= 0)
-                    {
-                        output++;
-                        print(fileout, 3, "Phase "+phase.getSequence()+" for node "+phase.getNode()+" has green time of "+phase.getTimeGreen()+" on line "+lineno+".");
-                    }
-                    
-                    if(phase.getTimeYellow() <= 0)
-                    {
-                        output++;
-                        print(fileout, 3, "Phase "+phase.getSequence()+" for node "+phase.getNode()+" has yellow time of "+phase.getTimeYellow()+" on line "+lineno+".");
-                    }
-                    
-                    if(phase.getTimeRed() <= 0)
-                    {
-                        output++;
-                        print(fileout, 3, "Phase "+phase.getSequence()+" for node "+phase.getNode()+" has red time of "+phase.getTimeRed()+" on line "+lineno+".");
-                    }
-                    
-                    if(phase.getSequence() <= 0)
-                    {
-                        output++;
-                        print(fileout, 3, "Phase "+phase.getSequence()+" for node "+phase.getNode()+" has non-positive sequence number on line "+lineno+".");
-                    }
-                    
-                    
-                }
-                catch(Exception ex)
-                {
-                    output++;
-                    print(fileout, 1, "Malformed phase data on line "+lineno+".");
-                }
-            }
-            
-            fileout.println("Scanned "+count+" phases.");
-        }
-        filein.close();
-        
-        
         
         
         

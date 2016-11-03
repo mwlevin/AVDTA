@@ -10,6 +10,7 @@ import avdta.demand.DemandProfile;
 import avdta.dta.VehicleRecord;
 import avdta.network.ReadNetwork;
 import avdta.project.DemandProject;
+import avdta.project.Project;
 import avdta.vehicle.VOT;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -380,5 +381,152 @@ public class ReadDemandNetwork extends ReadNetwork
             }
         }
         fileout.close();
+    }
+    
+    /**
+     * Performs a sanity check on the network data contained within the {@link Project}.
+     * @param project the {@link Project}
+     * @param fileout the {@link PrintStream} to print errors to
+     * @return the number of errors found
+     */
+    public int sanityCheck(DemandProject project, PrintStream fileout)
+    {
+        int output = super.sanityCheck(project, fileout);
+        
+        int lineno = 0;
+        int count = 0;
+        
+        Scanner filein = null;
+        
+        fileout.println("<h2>Demand</h2>");
+        
+        
+        fileout.println("<h3>"+project.getStaticODFile()+"</h3>");
+        
+        try
+        {
+            filein = new Scanner(project.getStaticODFile());
+            
+            if(!filein.hasNextLine())
+            {
+                output++;
+                print(fileout, 1, project.getStaticODFile()+" file is empty.");
+            }
+            else
+            {
+                filein.nextLine();
+                lineno = 1;
+                count = 0;
+                
+                
+                
+                print(fileout, -1, "Scanned "+count+" entries.");
+            }
+        }
+        catch(IOException ex)
+        {
+            output++;
+            print(fileout, 1, project.getStaticODFile()+" file not found.");
+        }
+        
+        
+        fileout.println("<h3>"+project.getDemandFile()+"</h3>");
+        try
+        {
+            filein = new Scanner(project.getDemandFile());
+            
+            if(!filein.hasNextLine())
+            {
+                output++;
+                print(fileout, 1, project.getDemandFile()+" file is empty.");
+            }
+            else
+            {
+                filein.nextLine();
+                lineno = 1;
+                count = 0;
+                
+                
+                
+                print(fileout, -1, "Scanned "+count+" entries.");
+            }
+        }
+        catch(IOException ex)
+        {
+            output++;
+            print(fileout, 1, project.getDemandFile()+" file not found.");
+        }
+        
+        fileout.println("<h3>"+project.getDemandProfileFile()+"</h3>");
+        try
+        {
+            filein = new Scanner(project.getDemandProfileFile());
+            
+            if(!filein.hasNextLine())
+            {
+                output++;
+                print(fileout, 1, project.getDemandProfileFile()+" file is empty.");
+            }
+            else
+            {
+                filein.nextLine();
+                lineno = 1;
+                count = 0;
+                
+                
+                
+                print(fileout, -1, "Scanned "+count+" entries.");
+            }
+        }
+        catch(IOException ex)
+        {
+            output++;
+            print(fileout, 1, project.getDemandProfileFile()+" file not found.");
+            
+        }
+        
+        DemandProfile profile = null;
+        
+        try
+        {
+            profile = readDemandProfile(project);
+        }
+        catch(Exception ex)
+        {
+            print(fileout, -1, "Scanning ended due to errors in "+project.getDemandProfileFile());
+            return output;
+        }
+        
+        fileout.println("<h3>"+project.getDynamicODFile()+"</h3>");
+        
+        try
+        {
+            filein = new Scanner(project.getDynamicODFile());
+            
+            if(!filein.hasNextLine())
+            {
+                output++;
+                print(fileout, 1, project.getDynamicODFile()+" file is empty.");
+            }
+            else
+            {
+                filein.nextLine();
+                lineno = 1;
+                count = 0;
+                
+                
+                
+                print(fileout, -1, "Scanned "+count+" entries.");
+            }
+        }
+        catch(IOException ex)
+        {
+            output++;
+            print(fileout, 1, project.getDynamicODFile()+" file not found.");
+        }
+        
+        
+        
+        return output;
     }
 }

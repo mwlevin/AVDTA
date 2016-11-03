@@ -6,6 +6,7 @@
 package avdta.project;
 
 import avdta.demand.ReadDemandNetwork;
+import avdta.network.ReadNetwork;
 import avdta.util.FileTransfer;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -211,5 +212,17 @@ public abstract class DemandProject extends TransitProject
             file.delete();
         }
         folder.delete();
+    }
+    
+    /**
+     * Performs a sanity check on the network input data.
+     * Calls {@link ReadDemandNetwork#sanityCheck(output)}.
+     * @param fileout the {@link PrintStream} to print errors to.
+     * @return the number of errors found
+     */
+    public int sanityCheck(PrintStream fileout)
+    {
+        ReadDemandNetwork read = new ReadDemandNetwork();
+        return read.sanityCheck(this, fileout);
     }
 }
