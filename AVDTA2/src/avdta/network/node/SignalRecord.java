@@ -5,6 +5,7 @@
 package avdta.network.node;
 
 import java.io.Serializable;
+import java.util.Scanner;
 
 /**
  * This class represents and manipulates stored signal data ({@link Node} and offset).
@@ -34,6 +35,17 @@ public class SignalRecord implements Serializable
     {
         this.node = node;
         this.offset = offset;
+    }
+    
+    /**
+     * Constructs the {@link SignalRecord} from the line of input data.
+     * @param line the input data
+     */
+    public SignalRecord(String line)
+    {
+        Scanner chopper = new Scanner(line);
+        node = chopper.nextInt();
+        offset = chopper.nextDouble();
     }
     
     /**

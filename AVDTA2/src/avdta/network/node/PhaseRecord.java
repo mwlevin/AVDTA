@@ -4,7 +4,9 @@
  */
 package avdta.network.node;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 /**
  * A record of a {@link Phase} used to represent and manipulate the data used to construct a {@link Phase}.
@@ -47,6 +49,40 @@ public class PhaseRecord implements java.io.Serializable, Comparable<PhaseRecord
         this.time_yellow = time_yellow;
         this.time_green = time_green;
         this.turns = turns;
+    }
+    
+    /**
+     * Constructs this {@link PhaseRecord} from the line of input data.
+     * @param line the line of input data
+     */
+    public PhaseRecord(String line)
+    {
+        Scanner chopper = new Scanner(line);
+        node = chopper.nextInt();
+        sequence = chopper.nextInt();
+        time_red = chopper.nextInt();
+        time_yellow = chopper.nextInt();
+        time_green = chopper.nextInt();
+        
+        line = chopper.nextLine();
+        
+        String from = line.substring(line.indexOf('{')+1, line.indexOf('}'));
+        line = line.substring(line.indexOf('{')+1);
+        String to = line.substring(line.indexOf('{')+1, line.indexOf('}'));
+        
+        String[] from_s = from.split(",");
+        String[] to_s = to.split(",");
+        
+        if(from_s.length != to_s.length)
+        {
+            throw new RuntimeException("Too many from or to links.");
+        }
+        
+        turns = new ArrayList<TurnRecord>();
+        for(int i = 0; i < from_s.length; i++)
+        {
+            turns.add(new TurnRecord(Integer.parseInt(from_s[i].trim()), Integer.parseInt(to_s[i].trim())));
+        }
     }
     
     /**

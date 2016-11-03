@@ -119,7 +119,7 @@ public abstract class GUI extends JFrame
         System.exit(1);
     }
     
-    private JMenuItem cloneMI, closeMI, createDatabase, editor, changeSeed;
+    private JMenuItem cloneMI, closeMI, createDatabase, editor, changeSeed, sanityCheck;
     protected Project project;
     
     private Editor openEditor;
@@ -270,6 +270,27 @@ public abstract class GUI extends JFrame
         
         me.addSeparator();
         
+        sanityCheck = new JMenuItem("Sanity check");
+        sanityCheck.addActionListener(new ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                int errors = project.sanityCheck();
+                
+                if(errors == 0)
+                {
+                    JOptionPane.showMessageDialog(frame, "No errors detected.", "Sanity check complete", JOptionPane.INFORMATION_MESSAGE);
+                }
+                else
+                {
+                    JOptionPane.showMessageDialog(frame, "Errors detected.\nView log in "+project.getSanityCheckFile().toString(), "Sanity check complete", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
+        sanityCheck.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, ActionEvent.CTRL_MASK));
+        me.add(editor);
+        sanityCheck.setEnabled(false);
+        
         changeSeed = new JMenuItem("Reset random seed");
         changeSeed.addActionListener(new ActionListener()
         {
@@ -353,6 +374,7 @@ public abstract class GUI extends JFrame
         closeMI.setEnabled(project != null);
         editor.setEnabled(project != null);
         changeSeed.setEnabled(project != null);
+        sanityCheck.setEnabled(project != null);
     }
     
     public void setupSQL()

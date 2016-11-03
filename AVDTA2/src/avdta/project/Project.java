@@ -298,17 +298,27 @@ public abstract class Project
     public abstract String getType();
     
     /**
-     * Returns the stored {@link Simulator} associated with this {@link Project}. If null, call {@link Project#getSimulator()}
-     * @return the stored {@link Simulator} associated with this {@link Project}. If null, call {@link Project#getSimulator()}
+     * Returns the stored {@link Simulator} associated with this {@link Project}. 
+     * If necessary, this calls {@link Project#loadProject()} to load the {@link Simulator}.
+     * @return the stored {@link Simulator} associated with this {@link Project}. 
      */
     public Simulator getSimulator()
     {
+        if(simulator == null)
+        {
+            try
+            {
+                loadProject();
+            }
+            catch(IOException ex){}
+        }
         return simulator;
     }
     
     /**
      * Loads a project from the specified directory.
-     * This reads the project and constructs the associated {@link Simulator}.
+     * This does not read the associated {@link Simulator}. 
+     * {@link Project#getSimulator()} will call {@link Project#loadProject()} if necessary.
      * @param dir The should be the project directory, not one of the project data files
      * @throws IOException if the file is not found
      */
@@ -316,7 +326,7 @@ public abstract class Project
     {
         networkOptions = new TreeMap<String, String>();
         setDirectory(dir);
-        loadProject();
+        //loadProject();
     }
     
     /**
@@ -687,5 +697,72 @@ public abstract class Project
     public String toString()
     {
         return getName();
+    }
+    
+    /**
+     * Returns the sanity check log file.
+     * @return {@link Project#getProjectDirectory()}/sanityCheck.txt
+     */
+    public File getSanityCheckFile()
+    {
+        return new File(getProjectDirectory()+"/sanityCheck.html");
+    }
+    
+    /**
+     * Performs a sanity check on the network input data.
+     * Calls {@link Project#sanityCheck(java.io.PrintStream)} with {@link Project#getSanityCheckFile()}, and prints any errors to that file.
+     * @return the number of errors found
+     */
+    public int sanityCheck()
+    {
+        try
+        {
+            PrintStream fileout =new PrintStream(new FileOutputStream(getSanityCheckFile()), true);
+            
+            fileout.println("<html>");
+            fileout.println("<head><title>Sanity check for "+getName()+"</title></head>");
+            fileout.println("<body>");
+            fileout.println("<h1>Sanity check for "+getName()+"</h1>");
+            
+            int output = sanityCheck(fileout);
+
+            
+            
+            
+            fileout.println("<h2>Summary</h2>");
+            if(output == 0)
+            {
+                fileout.println("<p>No errors detected.</p>");
+            }
+            else if(output == 1)
+            {
+                fileout.println("<p>1 error detected.<p>");
+            }
+            else
+            {
+                fileout.println("<p>"+output+" errors detected.</p>");
+            }
+            
+            fileout.println("</body></html>");
+
+            fileout.close();
+            return output;
+        }
+        catch(IOException ex)
+        {
+            return 0;
+        }
+    }
+    
+    /**
+     * Performs a sanity check on the network input data.
+     * Calls {@link ReadNetwork#sanityCheck(output)}.
+     * @param fileout the {@link PrintStream} to print errors to.
+     * @return the number of errors found
+     */
+    public int sanityCheck(PrintStream fileout)
+    {
+        ReadNetwork read = new ReadNetwork();
+        return read.sanityCheck(this, fileout);
     }
 }

@@ -36,12 +36,17 @@ import avdta.network.link.CACCLTMLink;
 import avdta.network.link.DLRCTMLink;
 import avdta.network.link.SharedTransitCTMLink;
 import avdta.network.link.AbstractSplitLink;
+import avdta.network.link.LinkRecord;
 import avdta.network.link.SplitCTMLink;
 import avdta.network.link.TransitLane;
 import avdta.network.node.obj.BackPressureObj;
 import avdta.network.node.obj.P0Obj;
 import avdta.project.DTAProject;
+import avdta.network.node.NodeRecord;
+import avdta.network.node.PhaseRecord;
 import avdta.network.node.PhasedTBR;
+import avdta.network.node.SignalRecord;
+import avdta.network.node.TurnRecord;
 import avdta.network.node.policy.TransitFirst;
 import avdta.project.Project;
 import avdta.project.TransitProject;
@@ -1106,5 +1111,591 @@ public class ReadNetwork
     public static String getBusPeriodFileHeader()
     {
         return "id\tstarttime\tendtime";
+    }
+    
+    
+    
+    /**
+     * Performs a sanity check on the network data contained within the {@link Project}.
+     * @param project the {@link Project}
+     * @param fileout the {@link PrintStream} to print errors to
+     * @return the number of errors found
+     */
+    public int sanityCheck(Project project, PrintStream fileout)
+    {
+        int output = 0;
+        
+        Map<Integer, NodeRecord> tempnodes = new HashMap<Integer, NodeRecord>();
+        
+        boolean loadNetwork = true;
+        
+        fileout.println("<h2>Network</h3>");
+        
+        fileout.println("<h3>nodes.txt</h3>");
+        
+        // create map of node ids to NodeRecords
+        Scanner filein = null;
+        try
+        {
+            filein = new Scanner(project.getNodesFile());
+        }
+        catch(IOException ex)
+        {
+            output++;
+            loadNetwork = false;
+            print(fileout, 1, "nodes.txt file not found.");
+            return output;
+        }
+        
+        if(!filein.hasNextLine())
+        {
+            output++;
+            loadNetwork = false;
+            print(fileout, 1, "nodes.txt files is empty.");
+            return output;
+        }
+        filein.nextLine();
+        
+        int lineno = 1;
+        int count = 0;
+        
+        while(filein.hasNextLine())
+        {
+            try
+            {
+                lineno++;
+                NodeRecord node = new NodeRecord(filein.nextLine());
+                count++;
+                
+                // check for duplicate ids
+                if(tempnodes.containsKey(node.getId()))
+                {
+                    output++;
+                    print(fileout, 2, "Duplicate node id of "+node.getId()+" at line "+lineno+".");
+                }
+                
+                tempnodes.put(node.getId(), node);
+                
+                
+                // check node type
+                boolean foundType = false;
+                
+                switch(node.getType()/100)
+                {
+                    case SIGNAL/100:
+                        foundType = true;
+                        break;
+                    case STOPSIGN/100:
+                        foundType = true;
+                        break;
+                    case RESERVATION/100:
+                    {
+                        switch(node.getType() % 100)
+                        {
+                            case FCFS: 
+                                foundType = true;
+                                break;
+                            case AUCTION: 
+                                foundType = true;
+                                break;
+                            case RANDOM: 
+                                foundType = true;
+                                break;
+                            case PRESSURE: 
+                                foundType = true;
+                                break;
+                            case P0: 
+                                foundType = true;
+                                break;
+                            case PHASED:
+                                foundType = true;
+                                break;
+                            case WEIGHTED:
+                                foundType = true;
+                                break;
+                            case TRANSIT_FIRST + FCFS: 
+                                foundType = true;
+                                break;
+                            case TRANSIT_FIRST + AUCTION: 
+                                foundType = true;
+                                break;
+                            case TRANSIT_FIRST + RANDOM: 
+                                foundType = true;
+                                break;
+                            case TRANSIT_FIRST + PRESSURE: 
+                                foundType = true;
+                                break;
+                            case TRANSIT_FIRST + P0: 
+                                foundType = true;
+                                break;
+                        }
+                        break;
+                    }
+                }
+                
+                if(!foundType)
+                {
+                    print(fileout, 3, "Unrecognized type for node "+node.getId()+": "+node.getType()+" on line "+lineno+".");
+                }
+                
+            }
+            catch(Exception ex)
+            {
+                output++;
+                loadNetwork = false;
+                print(fileout, 1, "Malformed node data at line "+lineno +" of nodes.txt");
+            }
+        }
+        filein.close();
+        
+        print(fileout, -1, "Scanned "+count+" nodes.");
+        
+        
+        
+        
+        
+        
+        Set<Integer> linkids = new HashSet<Integer>();
+        
+        fileout.println("<h2>links.txt</h2>");
+        try
+        {
+            filein = new Scanner(project.getLinksFile());
+        }
+        catch(IOException ex)
+        {
+            output++;
+            loadNetwork = false;
+            print(fileout, 1, "links.txt file not found.");
+            return output;
+        }
+        
+        if(!filein.hasNextLine())
+        {
+            output++;
+            loadNetwork = false;
+            print(fileout, 1, "links.txt file is empty.");
+            return output;
+        }
+        
+        filein.nextLine();
+        
+        lineno = 1;
+        count = 0;
+        
+        while(filein.hasNextInt())
+        {
+            try
+            {
+                lineno++;
+                LinkRecord link = new LinkRecord(filein.nextLine());
+                count++;
+                
+                // check duplicate id
+                if(linkids.contains(link.getId()))
+                {
+                    output++;
+                    print(fileout, 2, "Duplicate link id: "+link.getId()+" at line "+lineno+".");
+                }
+                
+                linkids.add(link.getId());
+                
+                // check that nodes exist
+                if(!tempnodes.containsKey(link.getSource()))
+                {
+                    output++;
+                    print(fileout, 2, "Cannot find source node "+link.getSource()+" for link "+link.getId()+" at line "+lineno+".");
+                }
+                if(!tempnodes.containsKey(link.getDest()))
+                {
+                    output++;
+                    print(fileout, 2, "Cannot find destination node "+link.getDest()+" for link "+link.getId()+" at line "+lineno+".");
+                }
+                
+                // check link type
+                boolean foundType = false;
+                
+                switch(link.getType()/100)
+                {   
+                    case CENTROID/100: 
+                        foundType = true;
+                        break;
+                    case LTM/100:
+                        foundType = true;
+                        break;
+                    case CTM/100:
+                        foundType = true;
+                        break;
+                }
+                
+                if(!foundType)
+                {
+                    print(fileout, 3, "Link type not recognized for link "+link.getId()+": "+link.getType()+" on line "+lineno+".");
+                }
+                
+                // for centroid connectors: check that one node is a zone
+                if(link.isCentroidConnector())
+                {
+                    if(tempnodes.get(link.getSource()).isZone() && tempnodes.get(link.getDest()).isZone())
+                    {
+                        output++;
+                        print(fileout, 2, "Centroid connector "+link.getId()+" is connected to two zones at line "+lineno+".");
+                    }
+                    else if(!tempnodes.get(link.getSource()).isZone() && !tempnodes.get(link.getDest()).isZone())
+                    {
+                        output++;
+                        print(fileout, 2, "Centroid connector "+link.getId()+" is not connected to any zones at line "+lineno+".");
+                    }
+                }
+                // for non-centroid connectors: check that no nodes are zones
+                else
+                {
+                    if(tempnodes.get(link.getSource()).isZone())
+                    {
+                        output++;
+                        print(fileout, 2, "Link "+link.getId()+" has a source zone of "+link.getSource()+" at line "+lineno+".");
+                    }
+                    if(tempnodes.get(link.getDest()).isZone())
+                    {
+                        output++;
+                        print(fileout, 2, "Link "+link.getId()+" has a destination zone of "+link.getDest()+" at line "+lineno+".");
+                    }
+                }
+                
+                // check free flow speed is reasonable
+                if(link.getWaveSpd() < 10 || link.getWaveSpd() > 90)
+                {
+                    output++;
+                    print(fileout, 3, "Link "+link.getId()+": congested wave speed is "+link.getWaveSpd()+" mi/hr at line "+lineno+".");
+                }
+                
+                // check congested wave speed
+                if(link.getWaveSpd() < 5 || link.getFFSpd() > 90)
+                {
+                    output++;
+                    print(fileout, 3, "Link "+link.getId()+": free flow speed is "+link.getFFSpd()+" mi/hr at line "+lineno+".");
+                }
+                
+                // check number of lanes
+                if(link.getNumLanes() < 1 || link.getNumLanes() > 6)
+                {
+                    output++;
+                    print(fileout, 3, "Link "+link.getId()+": number of lanes is "+link.getNumLanes()+" mi at line "+lineno+".");
+                }
+                
+                // check length is reasonable
+                if(link.getLength() < 200.0/5280 || link.getLength() > 20)
+                {
+                    output++;
+                    print(fileout, 3, "Link "+link.getId()+": length is "+link.getLength()+" mi at line "+lineno+".");
+                }
+                
+                // check capacity is reasonable
+                if(link.getCapacity() < 500 || link.getCapacity() > 3000)
+                {
+                    output++;
+                    print(fileout, 3, "Link "+link.getId()+": capacity is "+link.getCapacity()+" veh/hr per lane at line "+lineno+".");
+                }
+            }
+            catch(Exception ex)
+            {
+                output++;
+                loadNetwork = false;
+                print(fileout, 1, "Malformed link data at line "+lineno +" of links.txt");
+            }
+        }
+        filein.close();
+        print(fileout, -1, "Scanned "+count+" links.");
+        
+        fileout.println("<h3>link_coordinates.txt</h3>");
+        
+        try
+        {
+            filein = new Scanner(project.getLinkPointsFile());
+        }
+        catch(IOException ex)
+        {
+            output++;
+            print(fileout, 1, "link_coordinates file not found.");
+        }
+        
+        lineno = 1;
+        count = 0;
+        
+        if(!filein.hasNextLine())
+        {
+            print(fileout, 1, "link_coordinates file is empty.");
+        }
+        
+        filein.nextLine();
+        
+        while(filein.hasNextInt())
+        {
+            lineno++;
+            count++;
+            
+            int id = filein.nextInt();
+            filein.nextLine();
+            
+            if(!linkids.contains(id))
+            {
+                output++;
+                print(fileout, 2, "Link "+id+" appears in link_coordinates.txt but not in links.txt at line "+lineno+".");
+            }
+            linkids.remove(id);
+        }
+        filein.close();
+        
+        for(int id : linkids)
+        {
+            print(fileout, 3, "Link "+id+" appears in links.txt but not in link_coordinates.txt");
+        }
+        
+        print(fileout, -1, "Scanned "+count+" links.");
+        
+        
+        if(!loadNetwork)
+        {
+            print(fileout, -1, "<p>Sanity check ended before network loading due to errors.</p>");
+            return output;
+        }
+        
+        tempnodes = null;
+        
+        fileout.println("<h2>Network structure</h2>");
+        
+        readOptions(project);
+        try
+        {
+            Set<Node> nodes = readNodes(project);
+            Set<Link> links = readLinks(project);
+            
+            // check for regular nodes without incoming/outgoing links
+            // check for centroids without any incoming/outgoing links
+            for(Node n : nodes)
+            {
+                if(n.isZone())
+                {
+                    if(n.getIncoming().size() == 0 && n.getOutgoing().size() == 0)
+                    {
+                        output++;
+                        print(fileout, 2, "Zone "+n.getId()+" has no incoming or outgoing links.");
+                    }
+                }
+                else
+                {
+                    if(n.getIncoming().size() == 0)
+                    {
+                        output++;
+                        print(fileout, 2, "Node "+n.getId()+" has no incoming links.");
+                    }
+                    if(n.getOutgoing().size() == 0)
+                    {
+                        output++;
+                        print(fileout, 2, "Node "+n.getId()+" has no outgoing links.");
+                    }
+                }
+            }
+        }
+        catch(IOException ex)
+        {
+            output++;
+            print(fileout, 1, "Unable to load network.");
+            ex.printStackTrace(fileout);
+            return output;
+        }
+        
+        fileout.println("<h2>signals.txt</h2>");
+        
+        try
+        {
+            filein = new Scanner(project.getSignalsFile());
+        }
+        catch(IOException ex)
+        {
+            output++;
+            print(fileout, 1, "signals.txt file not found.");
+        }
+        
+        if(!filein.hasNextLine())
+        {
+            output++;
+            print(fileout, 1, "signals.txt file is empty.");
+        }
+        else
+        {
+            filein.nextLine();
+
+            count = 0;
+            lineno = 1;
+
+            while(filein.hasNextInt())
+            {
+                try
+                {
+                    lineno++;
+                    SignalRecord signal = new SignalRecord(filein.nextLine());
+                    count++;
+
+                    if(!nodesmap.containsKey(signal.getNode()))
+                    {
+                        output++;
+                        print(fileout, 2, "Node "+signal.getNode()+" appears in signals.txt but not in nodes.txt on line "+lineno+".");
+                    }
+
+                    if(signal.getOffset() < 0)
+                    {
+                        output++;
+                        print(fileout, 2, "Signal for node "+signal.getNode()+" has offset of "+signal.getOffset()+" on line "+lineno+".");
+                    }
+                }
+                catch(Exception ex)
+                {
+                    output++;
+                    print(fileout, 1, "Malformed signal data on line "+lineno+".");
+                }
+            }
+            print(fileout, -1, "Scanned "+count+" signals.");
+        }
+        filein.close();
+        
+        fileout.println("<h2>phases.txt</h2>");
+        
+        
+        try
+        {
+            filein = new Scanner(project.getPhasesFile());
+        }
+        catch(IOException ex)
+        {
+            output++;
+            print(fileout, 1, "phases.txt file not found.");
+        }
+        
+        if(!filein.hasNextLine())
+        {
+            output++;
+            print(fileout, 1, "phases.txt file is empty.");
+        }
+        else
+        {
+            filein.nextLine();
+            
+            lineno = 1;
+            count = 0;
+            
+            while(filein.hasNextInt())
+            {
+                try
+                {
+                    lineno++;
+                    PhaseRecord phase = new PhaseRecord(filein.nextLine());
+                    count++;
+                    
+                    if(!nodesmap.containsKey(phase.getNode()))
+                    {
+                        output++;
+                        print(fileout, 2, "Node "+phase.getNode()+" appears in phases.txt but not in nodes.txt on line "+lineno+".");
+                    }
+                    else
+                    {
+                        Node node = nodesmap.get(phase.getNode());
+                        for(TurnRecord t : phase.getTurns())
+                        {
+                            boolean found = false;
+
+                            for(Link i : node.getIncoming())
+                            {
+                                if(i.getId() == t.getI())
+                                {
+                                    found = true;
+                                }
+                            }
+                            
+                            found = false;
+
+                            if(!found)
+                            {
+                                print(fileout, 2, "Link "+t.getI()+" is not an incoming link for node "+phase.getNode()+" for phase "+phase.getSequence()+" on line "+lineno+".");
+                            }
+                            
+                            for(Link j : node.getOutgoing())
+                            {
+                                if(j.getId() == t.getJ())
+                                {
+                                    found = true;
+                                }
+                            }
+                            
+                            if(!found)
+                            {
+                                print(fileout, 2, "Link "+t.getJ()+" is not an outgoing link for node "+phase.getNode()+" for phase "+phase.getSequence()+" on line "+lineno+".");
+                            }
+                        }
+                    }
+                    
+                    if(phase.getTimeGreen() <= 0)
+                    {
+                        output++;
+                        print(fileout, 3, "Phase "+phase.getSequence()+" for node "+phase.getNode()+" has green time of "+phase.getTimeGreen()+" on line "+lineno+".");
+                    }
+                    
+                    if(phase.getTimeYellow() <= 0)
+                    {
+                        output++;
+                        print(fileout, 3, "Phase "+phase.getSequence()+" for node "+phase.getNode()+" has yellow time of "+phase.getTimeYellow()+" on line "+lineno+".");
+                    }
+                    
+                    if(phase.getTimeRed() <= 0)
+                    {
+                        output++;
+                        print(fileout, 3, "Phase "+phase.getSequence()+" for node "+phase.getNode()+" has red time of "+phase.getTimeRed()+" on line "+lineno+".");
+                    }
+                    
+                    if(phase.getSequence() <= 0)
+                    {
+                        output++;
+                        print(fileout, 3, "Phase "+phase.getSequence()+" for node "+phase.getNode()+" has non-positive sequence number on line "+lineno+".");
+                    }
+                    
+                    
+                }
+                catch(Exception ex)
+                {
+                    output++;
+                    print(fileout, 1, "Malformed phase data on line "+lineno+".");
+                }
+            }
+            
+            fileout.println("Scanned "+count+" phases.");
+        }
+        filein.close();
+        
+        
+        
+        
+        
+        return output;
+    }
+    
+    public void print(PrintStream fileout, int code, String text)
+    {
+        String color;
+        switch(code)
+        {
+            case 1: 
+                color = "#FF0000"; 
+                break;
+            case 2: 
+                color = "#FF8000";
+                break;
+            case 3: 
+                color = "#008000";
+                break;
+            default: 
+                color="#000000";
+                break;
+        }
+        fileout.println("<font color=\""+color+"\">"+text+"</font><br>");
     }
 }

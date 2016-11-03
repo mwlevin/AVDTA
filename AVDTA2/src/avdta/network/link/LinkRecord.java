@@ -4,6 +4,7 @@
  */
 package avdta.network.link;
 
+import avdta.network.ReadNetwork;
 import java.util.Scanner;
 import avdta.network.node.Node;
 
@@ -94,9 +95,18 @@ public class LinkRecord
      * Returns the congested wave speed
      * @return the congested wave speed (mi/hr)
      */
-    public double getWavespd()
+    public double getWaveSpd()
     {
         return wavespd;
+    }
+
+    /**
+     * Returns if this link represents a centroid connector by comparing the type with {@link ReadNetwork#CENTROID}.
+     * @return if this link represents a centroid connector.
+     */
+    public boolean isCentroidConnector()
+    {
+        return type/100 == ReadNetwork.CENTROID/100;
     }
     
     /**

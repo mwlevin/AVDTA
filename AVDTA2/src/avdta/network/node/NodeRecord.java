@@ -5,6 +5,7 @@
  */
 package avdta.network.node;
 
+import avdta.network.ReadNetwork;
 import java.util.Scanner;
 
 /**
@@ -68,12 +69,21 @@ public class NodeRecord
     }
     
     /**
-     * Returns the type
+     * Returns the type.
      * @return the type
      */
     public int getType()
     {
         return type;
+    }
+    
+    /**
+     * Returns whether this represents a zone by checking the type against {@link ReadNetwork#CENTROID}.
+     * @return whether this represents a zone
+     */
+    public boolean isZone()
+    {
+        return type/100 == ReadNetwork.CENTROID/100;
     }
     
     /**
