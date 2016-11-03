@@ -169,12 +169,11 @@ public class DTAGUI extends GUI implements GUIPane
         parentSetEnabled(false);
         super.openProject(p);
         
-        
         DTAProject project = (DTAProject)p;
         this.project = project;
-        
-        project.loadSimulator();
-        
+            
+        //project.loadSimulator();
+
         
         if(project != null)
         {
@@ -252,6 +251,7 @@ public class DTAGUI extends GUI implements GUIPane
         {
             try
             {
+                
                 DTAProject project = new DTAProject(chooser.getSelectedFile());
                 
                 openProject(project);
@@ -260,6 +260,10 @@ public class DTAGUI extends GUI implements GUIPane
             {
                 JOptionPane.showMessageDialog(this, "The selected folder is not a DTA network", "Invalid network", 
                         JOptionPane.ERROR_MESSAGE);
+            }
+            catch(Exception ex)
+            {
+                GUI.handleException(ex);
             }
         }
     }

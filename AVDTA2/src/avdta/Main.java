@@ -73,8 +73,8 @@ public class Main
 
         //caccTest2();
         
-        new DTAGUI();
-        //GUI.main(args);
+        //new DTAGUI();
+        GUI.main(args);
 
         
         

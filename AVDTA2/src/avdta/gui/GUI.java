@@ -51,17 +51,24 @@ public abstract class GUI extends JFrame
     {
         System.setErr(new PrintStream(new FileOutputStream(new File("error_log.txt")), true));
         
-        if(args.length > 0 && args[0].equalsIgnoreCase("editor"))
+        try
         {
-            new Editor();
+            if(args.length > 0 && args[0].equalsIgnoreCase("editor"))
+            {
+                new Editor();
+            }
+            else if(args.length > 0 && args[0].equalsIgnoreCase("dta"))
+            {
+                new DTAGUI();
+            }
+            else
+            {
+                new DTAGUI();
+            }
         }
-        else if(args.length > 0 && args[0].equalsIgnoreCase("dta"))
+        catch(Exception ex)
         {
-            new DTAGUI();
-        }
-        else
-        {
-            new DTAGUI();
+            GUI.handleException(ex);
         }
         
         

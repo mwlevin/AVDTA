@@ -587,25 +587,37 @@ public class ReadNetwork
             
             Link link = null;
             
+            Node source = nodesmap.get(source_id);
+            Node dest = nodesmap.get(dest_id);
+            
+            if(source == null)
+            {
+                throw new RuntimeException("Cannot find node "+source_id);
+            }
+            
+            if(dest == null)
+            {
+                throw new RuntimeException("Cannot find node "+dest_id);
+            }
             
             switch(type/100)
             {   
 
                 case CENTROID/100: 
-                    link = new CentroidConnector(id, nodesmap.get(source_id), nodesmap.get(dest_id));
+                    link = new CentroidConnector(id, source, dest);
                     break;
                 case LTM/100:
                     if(type % 10 == CACC)
                     {
                         if(CACCLTMLink.checkK2(capacity, ffspd, length))
                         {
-                            link = new CACCLTMLink(id, nodesmap.get(source_id), nodesmap.get(dest_id), capacity, ffspd, w, jamd, length, numLanes);
+                            link = new CACCLTMLink(id, source, dest, capacity, ffspd, w, jamd, length, numLanes);
                             
                             CACCLTMLink l = (CACCLTMLink)link;
                         }
                         else
                         {
-                            link = new LTMLink(id, nodesmap.get(source_id), nodesmap.get(dest_id), capacity, ffspd, w, jamd, length, numLanes);
+                            link = new LTMLink(id, source, dest, capacity, ffspd, w, jamd, length, numLanes);
                         }
                         
                         
@@ -614,32 +626,32 @@ public class ReadNetwork
                     }
                     else
                     {
-                        link = new LTMLink(id, nodesmap.get(source_id), nodesmap.get(dest_id), capacity, ffspd, w, jamd, length, numLanes);
+                        link = new LTMLink(id, source, dest, capacity, ffspd, w, jamd, length, numLanes);
                     }
                     break;
                 case CTM/100:
                     if(type%10 == DLR)
                     {
                         Network.dlr = true;
-                        link = new DLRCTMLink(id, nodesmap.get(source_id), nodesmap.get(dest_id), capacity, ffspd, w, jamd, length, numLanes);
+                        link = new DLRCTMLink(id, source, dest, capacity, ffspd, w, jamd, length, numLanes);
                     }
                     else if(type % 10 == SHARED_TRANSIT && numLanes > 1)
                     {
-                        TransitLane transitLane = new TransitLane(-id, nodesmap.get(source_id), nodesmap.get(dest_id), capacity, ffspd, w, jamd, length);
+                        TransitLane transitLane = new TransitLane(-id, source, dest, capacity, ffspd, w, jamd, length);
                         links.add(transitLane);
-                        link = new SharedTransitCTMLink(id, nodesmap.get(source_id), nodesmap.get(dest_id), capacity, 
+                        link = new SharedTransitCTMLink(id, source, dest, capacity, 
                                 ffspd, ffspd*mesodelta, jamd, length, numLanes-1, transitLane);
                     }
                     else if(type % 10 == SPLIT_TRANSIT && numLanes > 1)
                     {
-                        TransitLane transitLane = new TransitLane(-id, nodesmap.get(source_id), nodesmap.get(dest_id), capacity, ffspd, w, jamd, length);
+                        TransitLane transitLane = new TransitLane(-id, source, dest, capacity, ffspd, w, jamd, length);
                         links.add(transitLane);
-                        link = new SplitCTMLink(id, nodesmap.get(source_id), nodesmap.get(dest_id), capacity, 
+                        link = new SplitCTMLink(id, source, dest, capacity, 
                                 ffspd, ffspd*mesodelta, jamd, length, numLanes-1, transitLane);
                     }
                     else
                     {
-                        link = new CTMLink(id, nodesmap.get(source_id), nodesmap.get(dest_id), capacity, ffspd, w, jamd, length, numLanes);
+                        link = new CTMLink(id, source, dest, capacity, ffspd, w, jamd, length, numLanes);
                     }
                     break;
                 default:
