@@ -216,7 +216,7 @@ public abstract class DemandProject extends TransitProject
     
     /**
      * Performs a sanity check on the network input data.
-     * Calls {@link ReadDemandNetwork#sanityCheck(output)}.
+     * Calls {@link ReadDemandNetwork#sanityCheck(avdta.project.DemandProject, java.io.PrintStream)}.
      * @param fileout the {@link PrintStream} to print errors to.
      * @return the number of errors found
      */

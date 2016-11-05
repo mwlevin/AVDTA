@@ -118,6 +118,7 @@ public class ReadNetwork
     // vehicles
     public static final int HV = 10;
     public static final int AV = 20;
+    public static final int CV = 30;
     
     
     public static final int ICV = 1;
@@ -126,6 +127,12 @@ public class ReadNetwork
     public static final int DA_VEHICLE = 100;
     public static final int BUS = 500;        
     
+    // used for sanity check
+    public static final int MALFORMED_DATA = 1;
+    public static final int BAD_FILE = 1;
+    public static final int ODD_DATA = 3;
+    public static final int DATA_MISMATCH = 2;
+    public static final int NORMAL = 0;
     
     
     public Map<Integer, Node> nodesmap;
@@ -1131,7 +1138,7 @@ public class ReadNetwork
         
         fileout.println("<h2>Network</h3>");
         
-        fileout.println("<h3>"+project.getNodesFile()+"</h3>");
+        fileout.println("<h3>"+project.getNodesFile().getName()+"</h3>");
         
         // create map of node ids to NodeRecords
         Scanner filein = null;
@@ -1143,7 +1150,7 @@ public class ReadNetwork
         {
             output++;
             loadNetwork = false;
-            print(fileout, 1, project.getNodesFile()+" file not found.");
+            print(fileout, BAD_FILE, project.getNodesFile().getName()+" file not found.");
             return output;
         }
         
@@ -1151,7 +1158,7 @@ public class ReadNetwork
         {
             output++;
             loadNetwork = false;
-            print(fileout, 1, project.getNodesFile()+" file is empty.");
+            print(fileout, BAD_FILE, project.getNodesFile().getName()+" file is empty.");
             return output;
         }
         filein.nextLine();
@@ -1167,11 +1174,17 @@ public class ReadNetwork
                 NodeRecord node = new NodeRecord(filein.nextLine());
                 count++;
                 
+                if(node.getId() <= 0)
+                {
+                    output++;
+                    print(fileout, ODD_DATA, "Node "+node.getId()+" has non-positive id at line "+lineno+".");
+                }
+                
                 // check for duplicate ids
                 if(tempnodes.containsKey(node.getId()))
                 {
                     output++;
-                    print(fileout, 2, "Duplicate node id of "+node.getId()+" at line "+lineno+".");
+                    print(fileout, DATA_MISMATCH, "Duplicate node id of "+node.getId()+" at line "+lineno+".");
                 }
                 
                 tempnodes.put(node.getId(), node);
@@ -1182,6 +1195,9 @@ public class ReadNetwork
                 
                 switch(node.getType()/100)
                 {
+                    case CENTROID/100:
+                        foundType = true;
+                        break;
                     case SIGNAL/100:
                         foundType = true;
                         break;
@@ -1235,7 +1251,7 @@ public class ReadNetwork
                 
                 if(!foundType)
                 {
-                    print(fileout, 3, "Unrecognized type for node "+node.getId()+": "+node.getType()+" on line "+lineno+".");
+                    print(fileout, ODD_DATA, "Unrecognized type for node "+node.getId()+": "+node.getType()+" on line "+lineno+".");
                 }
                 
             }
@@ -1243,12 +1259,12 @@ public class ReadNetwork
             {
                 output++;
                 loadNetwork = false;
-                print(fileout, 1, "Malformed node data at line "+lineno+".");
+                print(fileout, MALFORMED_DATA, "Malformed node data at line "+lineno+".");
             }
         }
         filein.close();
         
-        print(fileout, -1, "Scanned "+count+" nodes.");
+        print(fileout, NORMAL, "Scanned "+count+" nodes.");
         
         
         
@@ -1266,7 +1282,7 @@ public class ReadNetwork
         {
             output++;
             loadNetwork = false;
-            print(fileout, 1, project.getLinksFile()+" file not found.");
+            print(fileout, BAD_FILE, project.getLinksFile().getName()+" file not found.");
             return output;
         }
         
@@ -1274,7 +1290,7 @@ public class ReadNetwork
         {
             output++;
             loadNetwork = false;
-            print(fileout, 1, project.getLinksFile()+" file is empty.");
+            print(fileout, BAD_FILE, project.getLinksFile().getName()+" file is empty.");
             return output;
         }
         
@@ -1291,11 +1307,17 @@ public class ReadNetwork
                 LinkRecord link = new LinkRecord(filein.nextLine());
                 count++;
                 
+                if(link.getId() <= 0)
+                {
+                    output++;
+                    print(fileout, ODD_DATA, "Link "+link.getId()+" has non-positive id at line "+lineno+".");
+                }
+                
                 // check duplicate id
                 if(linkids.contains(link.getId()))
                 {
                     output++;
-                    print(fileout, 2, "Duplicate link id: "+link.getId()+" at line "+lineno+".");
+                    print(fileout, DATA_MISMATCH, "Duplicate link id: "+link.getId()+" at line "+lineno+".");
                 }
                 
                 linkids.add(link.getId());
@@ -1304,12 +1326,12 @@ public class ReadNetwork
                 if(!tempnodes.containsKey(link.getSource()))
                 {
                     output++;
-                    print(fileout, 2, "Cannot find source node "+link.getSource()+" for link "+link.getId()+" at line "+lineno+".");
+                    print(fileout, DATA_MISMATCH, "Cannot find source node "+link.getSource()+" for link "+link.getId()+" at line "+lineno+".");
                 }
                 if(!tempnodes.containsKey(link.getDest()))
                 {
                     output++;
-                    print(fileout, 2, "Cannot find destination node "+link.getDest()+" for link "+link.getId()+" at line "+lineno+".");
+                    print(fileout, DATA_MISMATCH, "Cannot find destination node "+link.getDest()+" for link "+link.getId()+" at line "+lineno+".");
                 }
                 
                 // check link type
@@ -1330,7 +1352,7 @@ public class ReadNetwork
                 
                 if(!foundType)
                 {
-                    print(fileout, 3, "Link type not recognized for link "+link.getId()+": "+link.getType()+" on line "+lineno+".");
+                    print(fileout, ODD_DATA, "Link type not recognized for link "+link.getId()+": "+link.getType()+" on line "+lineno+".");
                 }
                 
                 // for centroid connectors: check that one node is a zone
@@ -1339,12 +1361,12 @@ public class ReadNetwork
                     if(tempnodes.get(link.getSource()).isZone() && tempnodes.get(link.getDest()).isZone())
                     {
                         output++;
-                        print(fileout, 2, "Centroid connector "+link.getId()+" is connected to two zones at line "+lineno+".");
+                        print(fileout, DATA_MISMATCH, "Centroid connector "+link.getId()+" is connected to two zones at line "+lineno+".");
                     }
                     else if(!tempnodes.get(link.getSource()).isZone() && !tempnodes.get(link.getDest()).isZone())
                     {
                         output++;
-                        print(fileout, 2, "Centroid connector "+link.getId()+" is not connected to any zones at line "+lineno+".");
+                        print(fileout, DATA_MISMATCH, "Centroid connector "+link.getId()+" is not connected to any zones at line "+lineno+".");
                     }
                 }
                 // for non-centroid connectors: check that no nodes are zones
@@ -1353,61 +1375,61 @@ public class ReadNetwork
                     if(tempnodes.get(link.getSource()).isZone())
                     {
                         output++;
-                        print(fileout, 2, "Link "+link.getId()+" has a source zone of "+link.getSource()+" at line "+lineno+".");
+                        print(fileout, DATA_MISMATCH, "Link "+link.getId()+" has a source zone of "+link.getSource()+" at line "+lineno+".");
                     }
                     if(tempnodes.get(link.getDest()).isZone())
                     {
                         output++;
-                        print(fileout, 2, "Link "+link.getId()+" has a destination zone of "+link.getDest()+" at line "+lineno+".");
+                        print(fileout, DATA_MISMATCH, "Link "+link.getId()+" has a destination zone of "+link.getDest()+" at line "+lineno+".");
                     }
                 }
                 
                 // check free flow speed is reasonable
-                if(link.getWaveSpd() < 10 || link.getWaveSpd() > 90)
+                if(!link.isCentroidConnector() && (link.getWaveSpd() < 5 || link.getWaveSpd() > 90))
                 {
                     output++;
-                    print(fileout, 3, "Link "+link.getId()+": congested wave speed is "+link.getWaveSpd()+" mi/hr at line "+lineno+".");
+                    print(fileout, ODD_DATA, "Link "+link.getId()+": congested wave speed is "+link.getWaveSpd()+" mi/hr at line "+lineno+".");
                 }
                 
                 // check congested wave speed
-                if(link.getWaveSpd() < 5 || link.getFFSpd() > 90)
+                if(!link.isCentroidConnector() && (link.getFFSpd() < 10 || link.getFFSpd() > 90))
                 {
                     output++;
-                    print(fileout, 3, "Link "+link.getId()+": free flow speed is "+link.getFFSpd()+" mi/hr at line "+lineno+".");
+                    print(fileout, ODD_DATA, "Link "+link.getId()+": free flow speed is "+link.getFFSpd()+" mi/hr at line "+lineno+".");
                 }
                 
                 // check number of lanes
-                if(link.getNumLanes() < 1 || link.getNumLanes() > 6)
+                if(!link.isCentroidConnector() && (link.getNumLanes() < 1 || link.getNumLanes() > 6))
                 {
                     output++;
-                    print(fileout, 3, "Link "+link.getId()+": number of lanes is "+link.getNumLanes()+" mi at line "+lineno+".");
+                    print(fileout, ODD_DATA, "Link "+link.getId()+": number of lanes is "+link.getNumLanes()+" at line "+lineno+".");
                 }
                 
                 // check length is reasonable
-                if(link.getLength() < 200.0/5280 || link.getLength() > 20)
+                if(!link.isCentroidConnector() && (link.getLength() < 20.0/5280 || link.getLength() > 20))
                 {
                     output++;
-                    print(fileout, 3, "Link "+link.getId()+": length is "+link.getLength()+" mi at line "+lineno+".");
+                    print(fileout, ODD_DATA, "Link "+link.getId()+": length is "+link.getLength()+" mi at line "+lineno+".");
                 }
                 
                 // check capacity is reasonable
-                if(link.getCapacity() < 500 || link.getCapacity() > 3000)
+                if(!link.isCentroidConnector() && (link.getCapacity() < 500 || link.getCapacity() > 3000))
                 {
                     output++;
-                    print(fileout, 3, "Link "+link.getId()+": capacity is "+link.getCapacity()+" veh/hr per lane at line "+lineno+".");
+                    print(fileout, ODD_DATA, "Link "+link.getId()+": capacity is "+link.getCapacity()+" veh/hr per lane at line "+lineno+".");
                 }
             }
             catch(Exception ex)
             {
                 output++;
                 loadNetwork = false;
-                print(fileout, 1, "Malformed link data at line "+lineno+".");
+                print(fileout, MALFORMED_DATA, "Malformed link data at line "+lineno+".");
             }
         }
         filein.close();
-        print(fileout, -1, "Scanned "+count+" links.");
+        print(fileout, NORMAL, "Scanned "+count+" links.");
         
-        fileout.println("<h3>"+project.getLinkPointsFile()+"</h3>");
+        fileout.println("<h3>"+project.getLinkPointsFile().getName()+"</h3>");
         
         try
         {
@@ -1417,7 +1439,7 @@ public class ReadNetwork
             if(!filein.hasNextLine())
             {
                 output++;
-                print(fileout, 1, project.getLinkPointsFile()+" file is empty.");
+                print(fileout, BAD_FILE, project.getLinkPointsFile().getName()+" file is empty.");
             }
             
             lineno = 1;
@@ -1428,15 +1450,16 @@ public class ReadNetwork
             while(filein.hasNextInt())
             {
                 lineno++;
-                count++;
+                
 
                 int id = filein.nextInt();
                 filein.nextLine();
+                count++;
 
                 if(!linkids.contains(id))
                 {
                     output++;
-                    print(fileout, 2, "Link "+id+" appears in "+project.getLinkPointsFile()+" but not in "+project.getLinksFile()+" at line "+lineno+".");
+                    print(fileout, DATA_MISMATCH, "Link "+id+" appears in "+project.getLinkPointsFile().getName()+" but not in "+project.getLinksFile().getName()+" at line "+lineno+".");
                 }
                 linkids.remove(id);
             }
@@ -1445,10 +1468,10 @@ public class ReadNetwork
         catch(IOException ex)
         {
             output++;
-            print(fileout, 1, project.getLinkPointsFile()+" file not found.");
+            print(fileout, BAD_FILE, project.getLinkPointsFile().getName()+" file not found.");
         }
         
-        linkids = null;
+        
         tempnodes = null;
         
         
@@ -1456,15 +1479,17 @@ public class ReadNetwork
         
         for(int id : linkids)
         {
-            print(fileout, 3, "Link "+id+" appears in "+project.getLinksFile()+" but not in "+project.getLinkPointsFile()+".txt");
+            print(fileout, ODD_DATA, "Link "+id+" appears in "+project.getLinksFile().getName()+" but not in "+project.getLinkPointsFile().getName()+".txt");
         }
         
-        print(fileout, -1, "Scanned "+count+" links.");
+        linkids = null;
+        
+        print(fileout, NORMAL, "Scanned "+count+" links.");
         
         
         if(!loadNetwork)
         {
-            print(fileout, -1, "<p>Sanity check ended before network loading due to errors.</p>");
+            print(fileout, NORMAL, "<p>Sanity check ended before network loading due to errors.</p>");
             return output;
         }
    
@@ -1486,7 +1511,7 @@ public class ReadNetwork
                     if(n.getIncoming().size() == 0 && n.getOutgoing().size() == 0)
                     {
                         output++;
-                        print(fileout, 2, "Zone "+n.getId()+" has no incoming or outgoing links.");
+                        print(fileout, ODD_DATA, "Zone "+n.getId()+" has no incoming or outgoing links.");
                     }
                 }
                 else
@@ -1494,27 +1519,27 @@ public class ReadNetwork
                     if(n.getIncoming().size() == 0)
                     {
                         output++;
-                        print(fileout, 2, "Node "+n.getId()+" has no incoming links.");
+                        print(fileout, ODD_DATA, "Node "+n.getId()+" has no incoming links.");
                     }
                     if(n.getOutgoing().size() == 0)
                     {
                         output++;
-                        print(fileout, 2, "Node "+n.getId()+" has no outgoing links.");
+                        print(fileout, ODD_DATA, "Node "+n.getId()+" has no outgoing links.");
                     }
                 }
             }
             
-            print(fileout, -1, "Scanned "+nodes.size()+" nodes.");
+            print(fileout, NORMAL, "Scanned "+nodes.size()+" nodes.");
         }
         catch(Exception ex)
         {
             output++;
-            print(fileout, 1, "Unable to load network.");
+            print(fileout, BAD_FILE, "Unable to load network.");
             ex.printStackTrace(fileout);
             return output;
         }
         
-        fileout.println("<h3>"+project.getSignalsFile()+"</h3>");
+        fileout.println("<h3>"+project.getSignalsFile().getName()+"</h3>");
         
         Set<Integer> signalnodes = new HashSet<Integer>();
         
@@ -1525,7 +1550,7 @@ public class ReadNetwork
             if(!filein.hasNextLine())
             {
                 output++;
-                print(fileout, 1, project.getSignalsFile()+" file is empty.");
+                print(fileout, BAD_FILE, project.getSignalsFile().getName()+" file is empty.");
             }
             else
             {
@@ -1548,34 +1573,34 @@ public class ReadNetwork
                         if(!nodesmap.containsKey(signal.getNode()))
                         {
                             output++;
-                            print(fileout, 2, "Node "+signal.getNode()+" appears in "+project.getSignalsFile()+" but not in "+project.getNodesFile()+" on line "+lineno+".");
+                            print(fileout, DATA_MISMATCH, "Node "+signal.getNode()+" appears in "+project.getSignalsFile()+" but not in "+project.getNodesFile()+" on line "+lineno+".");
                         }
 
                         if(signal.getOffset() < 0)
                         {
                             output++;
-                            print(fileout, 2, "Signal for node "+signal.getNode()+" has offset of "+signal.getOffset()+" on line "+lineno+".");
+                            print(fileout, DATA_MISMATCH, "Signal for node "+signal.getNode()+" has offset of "+signal.getOffset()+" on line "+lineno+".");
                         }
                     }
                     catch(Exception ex)
                     {
                         output++;
-                        print(fileout, 1, "Malformed signal data on line "+lineno+".");
+                        print(fileout, BAD_FILE, "Malformed signal data on line "+lineno+".");
                     }
                 }
-                print(fileout, -1, "Scanned "+count+" signals.");
+                print(fileout, NORMAL, "Scanned "+count+" signals.");
             }
             filein.close();
         }
         catch(IOException ex)
         {
             output++;
-            print(fileout, 1, project.getSignalsFile()+" file not found.");
+            print(fileout, BAD_FILE, project.getSignalsFile().getName()+" file not found.");
         }
         
             
         
-        fileout.println("<h3>"+project.getPhasesFile()+"</h3>");
+        fileout.println("<h3>"+project.getPhasesFile().getName()+"</h3>");
         
         
         try
@@ -1585,7 +1610,7 @@ public class ReadNetwork
             if(!filein.hasNextLine())
             {
                 output++;
-                print(fileout, 1, project.getPhasesFile()+" file is empty.");
+                print(fileout, BAD_FILE, project.getPhasesFile().getName()+" file is empty.");
             }
             else
             {
@@ -1605,13 +1630,13 @@ public class ReadNetwork
                         if(!signalnodes.contains(phase.getNode()))
                         {
                             output++;
-                            print(fileout, 2, "Node "+phase.getNode()+" appears in "+project.getPhasesFile()+" but not in "+project.getSignalsFile()+" on line "+lineno+".");
+                            print(fileout, DATA_MISMATCH, "Node "+phase.getNode()+" appears in "+project.getPhasesFile().getName()+" but not in "+project.getSignalsFile().getName()+" on line "+lineno+".");
                         }
 
                         if(!nodesmap.containsKey(phase.getNode()))
                         {
                             output++;
-                            print(fileout, 2, "Node "+phase.getNode()+" appears in "+project.getPhasesFile()+" but not in "+project.getNodesFile()+" on line "+lineno+".");
+                            print(fileout, DATA_MISMATCH, "Node "+phase.getNode()+" appears in "+project.getPhasesFile().getName()+" but not in "+project.getNodesFile().getName()+" on line "+lineno+".");
                         }
                         else
                         {
@@ -1625,53 +1650,63 @@ public class ReadNetwork
                                     if(i.getId() == t.getI())
                                     {
                                         found = true;
+                                        break;
                                     }
                                 }
 
-                                found = false;
+                                
 
                                 if(!found)
                                 {
-                                    print(fileout, 2, "Link "+t.getI()+" is not an incoming link for node "+phase.getNode()+" for phase "+phase.getSequence()+" on line "+lineno+".");
+                                    print(fileout, DATA_MISMATCH, "Link "+t.getI()+" is not an incoming link for node "+phase.getNode()+" for phase "+phase.getSequence()+" on line "+lineno+".");
                                 }
+                                
+                                found = false;
 
                                 for(Link j : node.getOutgoing())
                                 {
                                     if(j.getId() == t.getJ())
                                     {
                                         found = true;
+                                        break;
                                     }
                                 }
 
                                 if(!found)
                                 {
-                                    print(fileout, 2, "Link "+t.getJ()+" is not an outgoing link for node "+phase.getNode()+" for phase "+phase.getSequence()+" on line "+lineno+".");
+                                    output++;
+                                    print(fileout, DATA_MISMATCH, "Link "+t.getJ()+" is not an outgoing link for node "+phase.getNode()+" for phase "+phase.getSequence()+" on line "+lineno+".");
                                 }
                             }
                         }
 
+                        if(phase.getTurns().size() == 0)
+                        {
+                            output++;
+                            print(fileout, ODD_DATA, "No turns for phase "+phase.getSequence()+" for node "+phase.getNode()+" on line "+lineno+".");
+                        }
                         if(phase.getTimeGreen() <= 0)
                         {
                             output++;
-                            print(fileout, 3, "Phase "+phase.getSequence()+" for node "+phase.getNode()+" has green time of "+phase.getTimeGreen()+" on line "+lineno+".");
+                            print(fileout, ODD_DATA, "Phase "+phase.getSequence()+" for node "+phase.getNode()+" has green time of "+phase.getTimeGreen()+" on line "+lineno+".");
                         }
 
                         if(phase.getTimeYellow() <= 0)
                         {
                             output++;
-                            print(fileout, 3, "Phase "+phase.getSequence()+" for node "+phase.getNode()+" has yellow time of "+phase.getTimeYellow()+" on line "+lineno+".");
+                            print(fileout, ODD_DATA, "Phase "+phase.getSequence()+" for node "+phase.getNode()+" has yellow time of "+phase.getTimeYellow()+" on line "+lineno+".");
                         }
 
                         if(phase.getTimeRed() <= 0)
                         {
                             output++;
-                            print(fileout, 3, "Phase "+phase.getSequence()+" for node "+phase.getNode()+" has red time of "+phase.getTimeRed()+" on line "+lineno+".");
+                            print(fileout, ODD_DATA, "Phase "+phase.getSequence()+" for node "+phase.getNode()+" has red time of "+phase.getTimeRed()+" on line "+lineno+".");
                         }
 
                         if(phase.getSequence() <= 0)
                         {
                             output++;
-                            print(fileout, 3, "Phase "+phase.getSequence()+" for node "+phase.getNode()+" has non-positive sequence number on line "+lineno+".");
+                            print(fileout, DATA_MISMATCH, "Phase "+phase.getSequence()+" for node "+phase.getNode()+" has non-positive sequence number on line "+lineno+".");
                         }
 
 
@@ -1679,18 +1714,18 @@ public class ReadNetwork
                     catch(Exception ex)
                     {
                         output++;
-                        print(fileout, 1, "Malformed phase data on line "+lineno+".");
+                        print(fileout, BAD_FILE, "Malformed phase data on line "+lineno+".");
                     }
                 }
 
-                print(fileout, -1, "Scanned "+count+" phases.");
+                print(fileout, NORMAL, "Scanned "+count+" phases.");
             }
             filein.close();
         }
         catch(IOException ex)
         {
             output++;
-            print(fileout, 1, "phases.txt file not found.");
+            print(fileout, BAD_FILE, project.getPhasesFile().getName()+" file not found.");
         }
         
         

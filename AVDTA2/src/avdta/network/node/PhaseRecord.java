@@ -66,9 +66,17 @@ public class PhaseRecord implements java.io.Serializable, Comparable<PhaseRecord
         
         line = chopper.nextLine();
         
-        String from = line.substring(line.indexOf('{')+1, line.indexOf('}'));
-        line = line.substring(line.indexOf('{')+1);
-        String to = line.substring(line.indexOf('{')+1, line.indexOf('}'));
+        turns = new ArrayList<TurnRecord>();
+        
+        
+        String from = line.substring(line.indexOf('{')+1, line.indexOf('}')).trim();
+        line = line.substring(line.indexOf('}')+1);
+        String to = line.substring(line.indexOf('{')+1, line.indexOf('}')).trim();
+        
+        if(from.length() == 0 && to.length() == 0)
+        {
+            return;
+        }
         
         String[] from_s = from.split(",");
         String[] to_s = to.split(",");
@@ -78,7 +86,7 @@ public class PhaseRecord implements java.io.Serializable, Comparable<PhaseRecord
             throw new RuntimeException("Too many from or to links.");
         }
         
-        turns = new ArrayList<TurnRecord>();
+        
         for(int i = 0; i < from_s.length; i++)
         {
             turns.add(new TurnRecord(Integer.parseInt(from_s[i].trim()), Integer.parseInt(to_s[i].trim())));

@@ -74,7 +74,10 @@ public class Main
         //caccTest2();
         
         //new DTAGUI();
-        GUI.main(args);
+        //GUI.main(args);
+        
+        DTAProject project = new DTAProject(new File("projects/coacongress2"));
+        project.sanityCheck();
 
         
         

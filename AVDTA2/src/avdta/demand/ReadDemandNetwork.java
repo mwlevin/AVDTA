@@ -15,6 +15,7 @@ import avdta.vehicle.VOT;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Random;
 import java.util.Scanner;
@@ -401,7 +402,26 @@ public class ReadDemandNetwork extends ReadNetwork
         fileout.println("<h2>Demand</h2>");
         
         
-        fileout.println("<h3>"+project.getStaticODFile()+"</h3>");
+        fileout.println("<h3>"+project.getStaticODFile().getName()+"</h3>");
+        
+        Set<Integer> ids = new HashSet<Integer>();
+        
+        Set<Integer> possible_types = new HashSet<Integer>();
+        
+        int[] fuels = new int[]{ICV, BEV};
+        int[] drivers = new int[]{HV, AV, CV};
+        int[] vehicles = new int[]{DA_VEHICLE, BUS};
+        
+        for(int a : fuels)
+        {
+            for(int b : drivers)
+            {
+                for(int c : vehicles)
+                {
+                    possible_types.add(a+b+c);
+                }
+            }
+        }
         
         try
         {
@@ -410,7 +430,7 @@ public class ReadDemandNetwork extends ReadNetwork
             if(!filein.hasNextLine())
             {
                 output++;
-                print(fileout, 1, project.getStaticODFile()+" file is empty.");
+                print(fileout, BAD_FILE, project.getStaticODFile().getName()+" file is empty.");
             }
             else
             {
@@ -419,18 +439,87 @@ public class ReadDemandNetwork extends ReadNetwork
                 count = 0;
                 
                 
+                while(filein.hasNextInt())
+                {
+                    try
+                    {
+                        lineno++;
+                        StaticODRecord od = new StaticODRecord(filein.nextLine());
+                        count++;
+                        
+                        if(od.getId() <= 0)
+                        {
+                            output++;
+                            print(fileout, ODD_DATA, "OD "+od.getId()+" has non-positive id on line "+lineno+".");
+                        }
+                        
+                        if(ids.contains(od.getId()))
+                        {
+                           output++;
+                           print(fileout, DATA_MISMATCH, "Duplicate OD id of "+od.getId()+" on line "+lineno+".");
+                        }
+                        else
+                        {
+                            ids.add(od.getId());
+                        }
+                        
+                        if(!nodesmap.containsKey(od.getOrigin()))
+                        {
+                            output++;
+                            print(fileout, DATA_MISMATCH, "Origin "+od.getOrigin()+" does not appear in "+project.getNodesFile()+" on line "+lineno+".");
+                        }
+                        else if(!nodesmap.get(od.getOrigin()).isZone())
+                        {
+                            output++;
+                            print(fileout, ODD_DATA, "Origin "+od.getOrigin()+" is not a zone on line "+lineno+".");
+                        }
+                        
+                        if(!nodesmap.containsKey(od.getDest()))
+                        {
+                            output++;
+                            print(fileout, DATA_MISMATCH, "Destination "+od.getDest()+" does not appear in "+project.getNodesFile()+" on line "+lineno+".");
+                        }
+                        else if(!nodesmap.get(od.getDest()).isZone())
+                        {
+                            output++;
+                            print(fileout, ODD_DATA, "Destination "+od.getDest()+" is not a zone on line "+lineno+".");
+                        }
+                        
+                        if(!possible_types.contains(od.getType()))
+                        {
+                            output++;
+                            print(fileout, ODD_DATA, "OD "+od.getId()+" type of "+od.getType()+" not recognized on line "+lineno+".");
+                        }
+                        
+                        if(od.getDemand() <= 0)
+                        {
+                            output++;
+                            print(fileout, ODD_DATA, "OD "+od.getId()+" has demand of "+od.getDemand()+" on line "+lineno+".");
+                        }
+                    }
+                    catch(Exception ex)
+                    {
+                        print(fileout, MALFORMED_DATA, "Malformed entry at line "+lineno+".");
+                    }
+                    
+                    
+                }
                 
-                print(fileout, -1, "Scanned "+count+" entries.");
+                print(fileout, NORMAL, "Scanned "+count+" entries.");
             }
         }
         catch(IOException ex)
         {
             output++;
-            print(fileout, 1, project.getStaticODFile()+" file not found.");
+            print(fileout, BAD_FILE, project.getStaticODFile().getName()+" file not found.");
         }
         
         
-        fileout.println("<h3>"+project.getDemandFile()+"</h3>");
+        fileout.println("<h3>"+project.getDemandFile().getName()+"</h3>");
+        
+        
+        ids.clear();
+        
         try
         {
             filein = new Scanner(project.getDemandFile());
@@ -438,7 +527,7 @@ public class ReadDemandNetwork extends ReadNetwork
             if(!filein.hasNextLine())
             {
                 output++;
-                print(fileout, 1, project.getDemandFile()+" file is empty.");
+                print(fileout, BAD_FILE, project.getDemandFile().getName()+" file is empty.");
             }
             else
             {
@@ -446,18 +535,90 @@ public class ReadDemandNetwork extends ReadNetwork
                 lineno = 1;
                 count = 0;
                 
-                
-                
-                print(fileout, -1, "Scanned "+count+" entries.");
+                while(filein.hasNextInt())
+                {
+                    try
+                    {
+                        lineno++;
+                        DemandRecord demand = new DemandRecord(filein.nextLine());
+                        count++;
+                        
+                        if(demand.getId() <= 0)
+                        {
+                            output++;
+                            print(fileout, ODD_DATA, "Demand "+demand.getId()+" has non-positive id on line "+lineno+".");
+                        }
+
+                        if(ids.contains(demand.getId()))
+                        {
+                           output++;
+                           print(fileout, DATA_MISMATCH, "Duplicate demand id of "+demand.getId()+" on line "+lineno+".");
+                        }
+                        else
+                        {
+                            ids.add(demand.getId());
+                        }
+
+                        if(!nodesmap.containsKey(demand.getOrigin()))
+                        {
+                            output++;
+                            print(fileout, DATA_MISMATCH, "Origin "+demand.getOrigin()+" does not appear in "+project.getNodesFile()+" on line "+lineno+".");
+                        }
+                        else if(!nodesmap.get(demand.getOrigin()).isZone())
+                        {
+                            output++;
+                            print(fileout, ODD_DATA, "Origin "+demand.getOrigin()+" is not a zone on line "+lineno+".");
+                        }
+
+                        if(!nodesmap.containsKey(demand.getDest()))
+                        {
+                            output++;
+                            print(fileout, DATA_MISMATCH, "Destination "+demand.getDest()+" does not appear in "+project.getNodesFile()+" on line "+lineno+".");
+                        }
+                        else if(!nodesmap.get(demand.getDest()).isZone())
+                        {
+                            output++;
+                            print(fileout, ODD_DATA, "Destination "+demand.getDest()+" is not a zone on line "+lineno+".");
+                        }
+
+                        if(!possible_types.contains(demand.getType()))
+                        {
+                            output++;
+                            print(fileout, ODD_DATA, "Demand "+demand.getId()+" type of "+demand.getType()+" not recognized on line "+lineno+".");
+                        }
+
+                        
+                        if(demand.getDepTime() < 0)
+                        {
+                            output++;
+                            print(fileout, ODD_DATA, "Demand "+demand.getId()+" has departure time of "+demand.getDepTime()+" s on line "+lineno+".");
+                        }
+                        
+                        if(demand.getVOT() < 0)
+                        {
+                            output++;
+                            print(fileout, ODD_DATA, "Demand "+demand.getId()+" has value-of-time of "+demand.getVOT()+" $/hr on line "+lineno+".");
+                        }
+                    }
+                    catch(Exception ex)
+                    {
+                        output++;
+                        print(fileout, MALFORMED_DATA, "Malformed data on line "+lineno+".");
+                    }
+                }
+                print(fileout, NORMAL, "Scanned "+count+" entries.");
             }
         }
         catch(IOException ex)
         {
             output++;
-            print(fileout, 1, project.getDemandFile()+" file not found.");
+            print(fileout, BAD_FILE, project.getDemandFile().getName()+" file not found.");
         }
         
-        fileout.println("<h3>"+project.getDemandProfileFile()+"</h3>");
+        fileout.println("<h3>"+project.getDemandProfileFile().getName()+"</h3>");
+        
+        
+        ids.clear();
         try
         {
             filein = new Scanner(project.getDemandProfileFile());
@@ -465,7 +626,7 @@ public class ReadDemandNetwork extends ReadNetwork
             if(!filein.hasNextLine())
             {
                 output++;
-                print(fileout, 1, project.getDemandProfileFile()+" file is empty.");
+                print(fileout, BAD_FILE, project.getDemandProfileFile().getName()+" file is empty.");
             }
             else
             {
@@ -473,15 +634,61 @@ public class ReadDemandNetwork extends ReadNetwork
                 lineno = 1;
                 count = 0;
                 
+                while(filein.hasNextInt())
+                {
+                    try
+                    {
+                        lineno++;
+                        DemandProfileRecord ast = new DemandProfileRecord(filein.nextLine());
+                        count++;
+                        
+                        if(ast.getId() < 0)
+                        {
+                            output++;
+                            print(fileout, ODD_DATA, "AST "+ast.getId()+" has negative id on line "+lineno+".");
+                        }
+                        
+                        if(ids.contains(ast.getId()))
+                        {
+                           output++;
+                           print(fileout, DATA_MISMATCH, "Duplicate AST id of "+ast.getId()+" on line "+lineno+".");
+                        }
+                        else
+                        {
+                            ids.add(ast.getId());
+                        }
+                        
+                        if(ast.getWeight() <= 0)
+                        {
+                            output++;
+                            print(fileout, ODD_DATA, "AST "+ast.getId()+" has weight of "+ast.getWeight()+" on line "+lineno+".");
+                        }
+                        
+                        if(ast.getStartTime() < 0)
+                        {
+                            output++;
+                            print(fileout, ODD_DATA, "AST "+ast.getId()+" has start time of "+ast.getStartTime()+" s on line "+lineno+".");
+                        }
+                        
+                        if(ast.getDuration() <= 0)
+                        {
+                            output++;
+                            print(fileout, ODD_DATA, "AST "+ast.getId()+" has duration of "+ast.getDuration()+" on line "+lineno+".");
+                        }
+                    }
+                    catch(Exception ex)
+                    {
+                        print(fileout, MALFORMED_DATA, "Malformed data on line "+lineno+".");
+                    }
+                }
                 
-                
-                print(fileout, -1, "Scanned "+count+" entries.");
+                print(fileout, NORMAL, "Scanned "+count+" entries.");
             }
         }
         catch(IOException ex)
         {
             output++;
-            print(fileout, 1, project.getDemandProfileFile()+" file not found.");
+            print(fileout, BAD_FILE, project.getDemandProfileFile().getName()+" file not found.");
             
         }
         
@@ -493,11 +700,13 @@ public class ReadDemandNetwork extends ReadNetwork
         }
         catch(Exception ex)
         {
-            print(fileout, -1, "Scanning ended due to errors in "+project.getDemandProfileFile());
+            print(fileout, NORMAL, "Scanning ended due to errors in "+project.getDemandProfileFile());
             return output;
         }
         
-        fileout.println("<h3>"+project.getDynamicODFile()+"</h3>");
+        fileout.println("<h3>"+project.getDynamicODFile().getName()+"</h3>");
+        
+        ids.clear();
         
         try
         {
@@ -506,7 +715,7 @@ public class ReadDemandNetwork extends ReadNetwork
             if(!filein.hasNextLine())
             {
                 output++;
-                print(fileout, 1, project.getDynamicODFile()+" file is empty.");
+                print(fileout, BAD_FILE, project.getDynamicODFile().getName()+" file is empty.");
             }
             else
             {
@@ -514,15 +723,83 @@ public class ReadDemandNetwork extends ReadNetwork
                 lineno = 1;
                 count = 0;
                 
+                while(filein.hasNextInt())
+                {
+                    try
+                    {
+                        lineno++;
+                        DynamicODRecord od = new DynamicODRecord(filein.nextLine());
+                        count++;
+
+                        if(od.getId() <= 0)
+                        {
+                            output++;
+                            print(fileout, ODD_DATA, "OD "+od.getId()+" has non-positive id on line "+lineno+".");
+                        }
+
+                        if(ids.contains(od.getId()))
+                        {
+                           output++;
+                           print(fileout, DATA_MISMATCH, "Duplicate OD id of "+od.getId()+" on line "+lineno+".");
+                        }
+                        else
+                        {
+                            ids.add(od.getId());
+                        }
+
+                        if(!nodesmap.containsKey(od.getOrigin()))
+                        {
+                            output++;
+                            print(fileout, DATA_MISMATCH, "Origin "+od.getOrigin()+" does not appear in "+project.getNodesFile()+" on line "+lineno+".");
+                        }
+                        else if(!nodesmap.get(od.getOrigin()).isZone())
+                        {
+                            output++;
+                            print(fileout, ODD_DATA, "Origin "+od.getOrigin()+" is not a zone on line "+lineno+".");
+                        }
+
+                        if(!nodesmap.containsKey(od.getDest()))
+                        {
+                            output++;
+                            print(fileout, DATA_MISMATCH, "Destination "+od.getDest()+" does not appear in "+project.getNodesFile()+" on line "+lineno+".");
+                        }
+                        else if(!nodesmap.get(od.getDest()).isZone())
+                        {
+                            output++;
+                            print(fileout, ODD_DATA, "Destination "+od.getDest()+" is not a zone on line "+lineno+".");
+                        }
+
+                        if(!possible_types.contains(od.getType()))
+                        {
+                            output++;
+                            print(fileout, ODD_DATA, "OD "+od.getId()+" type of "+od.getType()+" not recognized on line "+lineno+".");
+                        }
+
+                        if(!profile.containsKey(od.getAST()))
+                        {
+                            output++;
+                            print(fileout, DATA_MISMATCH, "OD "+od.getId()+" AST of "+od.getAST()+" not found in file "+project.getDemandProfileFile()+" on line "+lineno+".");
+                        }
+                        if(od.getDemand() <= 0)
+                        {
+                            output++;
+                            print(fileout, ODD_DATA, "OD "+od.getId()+" has demand of "+od.getDemand()+" on line "+lineno+".");
+                        }
+                    }
+                    catch(Exception ex)
+                    {
+                        output++;
+                        print(fileout, MALFORMED_DATA, "Malformed data on line "+lineno+".");
+                    }
+                }
                 
-                
-                print(fileout, -1, "Scanned "+count+" entries.");
+                print(fileout, NORMAL, "Scanned "+count+" entries.");
             }
         }
         catch(IOException ex)
         {
             output++;
-            print(fileout, 1, project.getDynamicODFile()+" file not found.");
+            print(fileout, BAD_FILE, project.getDynamicODFile().getName()+" file not found.");
         }
         
         

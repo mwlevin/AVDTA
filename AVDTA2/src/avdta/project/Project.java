@@ -327,6 +327,7 @@ public abstract class Project
         networkOptions = new TreeMap<String, String>();
         setDirectory(dir);
         //loadProject();
+        readProperties();
     }
     
     /**
@@ -705,7 +706,7 @@ public abstract class Project
      */
     public File getSanityCheckFile()
     {
-        return new File(getProjectDirectory()+"/sanityCheck.html");
+        return new File(getResultsFolder()+"/sanityCheck.html");
     }
     
     /**
@@ -756,7 +757,7 @@ public abstract class Project
     
     /**
      * Performs a sanity check on the network input data.
-     * Calls {@link ReadNetwork#sanityCheck(output)}.
+     * Calls {@link ReadNetwork#sanityCheck(avdta.project.Project, java.io.PrintStream) }.
      * @param fileout the {@link PrintStream} to print errors to.
      * @return the number of errors found
      */
