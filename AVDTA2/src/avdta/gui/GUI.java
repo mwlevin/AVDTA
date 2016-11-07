@@ -288,7 +288,7 @@ public abstract class GUI extends JFrame
             }
         });
         sanityCheck.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, ActionEvent.CTRL_MASK));
-        me.add(editor);
+        me.add(sanityCheck);
         sanityCheck.setEnabled(false);
         
         changeSeed = new JMenuItem("Reset random seed");
