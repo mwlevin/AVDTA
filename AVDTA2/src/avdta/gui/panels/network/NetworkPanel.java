@@ -3,11 +3,14 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package avdta.gui.panels;
+package avdta.gui.panels.network;
 
+import avdta.gui.panels.network.ImportNetworkPanel;
+import avdta.gui.panels.network.LinksPanel;
 import avdta.gui.DTAGUI;
 import avdta.gui.GUI;
-import avdta.gui.panels.NodesPanel;
+import avdta.gui.panels.GUIPanel;
+import avdta.gui.panels.network.NodesPanel;
 import javax.swing.JPanel;
 import static avdta.gui.util.GraphicUtils.*;
 import avdta.project.DTAProject;

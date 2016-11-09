@@ -3,12 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package avdta.gui.panels;
+package avdta.gui.panels.network;
 
 import avdta.gui.GUI;
+import avdta.gui.panels.GUIPanel;
 import avdta.gui.util.JFileField;
 import avdta.gui.util.ProjectChooser;
-import avdta.gui.panels.NetworkPanel;
 import javax.swing.JPanel;
 import static avdta.gui.util.GraphicUtils.*;
 import avdta.network.ImportFromVISTA;

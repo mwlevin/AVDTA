@@ -2,10 +2,11 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package avdta.gui.panels;
+package avdta.gui.panels.analysis;
 
 import avdta.gui.DTAGUI;
 import avdta.gui.GUI;
+import avdta.gui.panels.GUIPanel;
 import javax.swing.JPanel;
 import java.awt.GridBagLayout;
 import static avdta.gui.util.GraphicUtils.*;

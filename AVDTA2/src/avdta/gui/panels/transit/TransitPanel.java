@@ -3,9 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package avdta.gui.panels;
+package avdta.gui.panels.transit;
 
 import avdta.gui.DTAGUI;
+import avdta.gui.panels.GUIPanel;
 import static avdta.gui.util.GraphicUtils.constrain;
 import avdta.project.TransitProject;
 import java.awt.GridBagLayout;

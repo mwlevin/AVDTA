@@ -3,10 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package avdta.gui.panels;
+package avdta.gui.panels.demand;
 
 import avdta.dta.ReadDTANetwork;
 import avdta.gui.GUI;
+import avdta.gui.panels.AbstractGUIPanel;
+import avdta.gui.panels.GUIPanel;
 import javax.swing.JPanel;
 import avdta.project.DTAProject;
 import javax.swing.JTextArea;

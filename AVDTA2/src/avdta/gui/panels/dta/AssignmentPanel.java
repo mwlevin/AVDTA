@@ -3,13 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package avdta.gui.panels;
+package avdta.gui.panels.dta;
 
-import avdta.gui.panels.DTAPanel;
 import avdta.dta.Assignment;
 import avdta.dta.DTASimulator;
 import avdta.dta.MSAAssignment;
 import avdta.gui.GUI;
+import avdta.gui.panels.GUIPanel;
 import avdta.project.DTAProject;
 import javax.swing.JPanel;
 import java.awt.GridBagLayout;

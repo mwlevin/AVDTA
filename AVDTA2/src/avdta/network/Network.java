@@ -330,6 +330,11 @@ public class Network
             output = link_trace(o, d);
         }
         
+        if(output.size() == 0)
+        {
+            throw new RuntimeException(o+" is not connected to "+d);
+        }
+        
         return paths.addPath(output);
     }
 

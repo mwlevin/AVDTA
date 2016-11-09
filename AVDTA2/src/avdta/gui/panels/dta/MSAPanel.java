@@ -2,13 +2,14 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package avdta.gui.panels;
+package avdta.gui.panels.dta;
 
 import avdta.dta.Assignment;
 import avdta.dta.DTAResults;
 import avdta.dta.DTASimulator;
 import avdta.dta.MSAAssignment;
 import avdta.gui.GUI;
+import avdta.gui.panels.GUIPanel;
 import avdta.gui.util.StatusBar;
 import avdta.project.DTAProject;
 import avdta.vehicle.DriverType;
@@ -178,18 +179,26 @@ public class MSAPanel extends GUIPanel
             public void run()
             {
 
-                DTASimulator sim = project.getSimulator();
-                sim.setStatusUpdate(status);
+                try
+                {
+                    DTASimulator sim = project.getSimulator();
+                    sim.setStatusUpdate(status);
 
-                double fftime = sim.getFFTT();
+                    double fftime = sim.getFFTT();
 
-                JOptionPane.showMessageDialog(panel, "FF TSTT: "+String.format("%.1f", fftime/3600.0)+" hr\n"+
-                        "FF Avg. TT: "+String.format("%.2f", fftime/60.0 / sim.getNumVehicles())+" min",
-                        "Simulation complete", JOptionPane.PLAIN_MESSAGE);
+                    JOptionPane.showMessageDialog(panel, "FF TSTT: "+String.format("%.1f", fftime/3600.0)+" hr\n"+
+                            "FF Avg. TT: "+String.format("%.2f", fftime/60.0 / sim.getNumVehicles())+" min",
+                            "Simulation complete", JOptionPane.PLAIN_MESSAGE);
 
-                status.update(0, 0, "");
-                status.resetTime();
+                    status.update(0, 0, "");
+                    status.resetTime();
 
+                }
+                catch(Exception ex)
+                {
+                    GUI.handleException(ex);
+                }
+                
                 parentReset();
                 parentSetEnabled(true);
             }
@@ -283,9 +292,8 @@ public class MSAPanel extends GUIPanel
                     parentReset();
                     parentSetEnabled(true);
                 }
-                catch(IOException ex)
+                catch(Exception ex)
                 {
-                    ex.printStackTrace(System.err);
                     GUI.handleException(ex);
                 }
                 

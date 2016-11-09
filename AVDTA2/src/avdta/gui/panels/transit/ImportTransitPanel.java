@@ -3,9 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package avdta.gui.panels;
+package avdta.gui.panels.transit;
 
+import avdta.gui.panels.transit.TransitPanel;
 import avdta.gui.GUI;
+import avdta.gui.panels.GUIPanel;
 import static avdta.gui.util.GraphicUtils.constrain;
 import avdta.gui.util.JFileField;
 import avdta.gui.util.ProjectChooser;

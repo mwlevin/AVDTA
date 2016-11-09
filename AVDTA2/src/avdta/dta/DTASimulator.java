@@ -218,7 +218,7 @@ public class DTASimulator extends Simulator
 
             if(temp2[ast][v.getDriver().typeIndex()] == null)
             {
-                temp2[ast][v.getDriver().typeIndex()] = findPath(o, d, getAvgDepTime(ast), v.getVOT(), v.getDriver(), costFunc);
+                temp2[ast][v.getDriver().typeIndex()] = findPath(o, d, getAvgDepTime(ast), v.getVOT(), v.getDriver(), costFunc);;
             }
             
             

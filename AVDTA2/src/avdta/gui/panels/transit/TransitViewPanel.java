@@ -3,9 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package avdta.gui.panels;
+package avdta.gui.panels.transit;
 
+import avdta.gui.panels.transit.TransitPanel;
 import avdta.gui.GUI;
+import avdta.gui.panels.GUIPanel;
 import avdta.project.TransitProject;
 import avdta.vehicle.Bus;
 import avdta.vehicle.Vehicle;

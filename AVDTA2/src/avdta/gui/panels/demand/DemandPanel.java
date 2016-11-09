@@ -3,12 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package avdta.gui.panels;
+package avdta.gui.panels.demand;
 
 import avdta.gui.DTAGUI;
-import avdta.gui.panels.ImportDemandPanel;
-import avdta.gui.panels.VehiclesPanel;
-import avdta.gui.panels.PrepareDemandPanel;
+import avdta.gui.panels.GUIPanel;
 import avdta.project.DTAProject;
 import java.awt.GridBagLayout;
 import javax.swing.JPanel;
