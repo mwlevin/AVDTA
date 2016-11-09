@@ -8,18 +8,20 @@ package avdta.gui.panels;
 import avdta.gui.GUI;
 import avdta.gui.util.JFileField;
 import avdta.gui.util.ProjectChooser;
-import avdta.gui.panels.NetworkPane;
+import avdta.gui.panels.NetworkPanel;
 import javax.swing.JPanel;
 import static avdta.gui.util.GraphicUtils.*;
 import avdta.network.ImportFromVISTA;
 import avdta.project.DTAProject;
 import avdta.project.Project;
 import avdta.project.SQLLogin;
+import java.awt.Dimension;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
@@ -29,7 +31,7 @@ import javax.swing.filechooser.FileFilter;
  *
  * @author micha
  */
-public class ImportNetworkPane extends GUIPanel
+public class ImportNetworkPanel extends GUIPanel
 {
     private Project project;
     
@@ -41,7 +43,7 @@ public class ImportNetworkPane extends GUIPanel
     private JButton sqlImport, sqlExport;
     
     
-    public ImportNetworkPane(NetworkPane parent)
+    public ImportNetworkPanel(NetworkPanel parent)
     {
         super(parent);
         
@@ -50,8 +52,8 @@ public class ImportNetworkPane extends GUIPanel
         import2 = new JButton("Import");
         import2.setEnabled(false);
         
-        sqlImport = new JButton("Import from SQL");
-        sqlExport = new JButton("Export to SQL");
+        sqlImport = new JButton("Import");
+        sqlExport = new JButton("Export");
         
         sqlImport.addActionListener(new ActionListener()
         {
@@ -193,41 +195,44 @@ public class ImportNetworkPane extends GUIPanel
         
         
         
-        JPanel p = new JPanel();
-        p.setLayout(new GridBagLayout());
-        constrain(p, new JLabel("Import network from project"), 0, 0, 3, 1);
-        constrain(p, new JLabel("Project: "), 0, 1, 1, 1);
-        constrain(p, importFromProject, 1, 1, 1, 1);
-        constrain(p, import1, 2, 1, 1, 1);
+        JPanel p1 = new JPanel();
+        p1.setLayout(new GridBagLayout());
+        p1.setBorder(BorderFactory.createTitledBorder("Import network from project"));
+        constrain(p1, new JLabel("Project: "), 0, 0, 1, 1);
+        constrain(p1, importFromProject, 1, 0, 1, 1);
+        constrain(p1, import1, 2, 0, 1, 1);
         
-        constrain(this, p, 0, 1, 1, 1);
+        constrain(this, p1, 0, 1, 1, 1);
         
-        p = new JPanel();
-        p.setLayout(new GridBagLayout());
+        JPanel p2 = new JPanel();
+        p2.setLayout(new GridBagLayout());
+        p2.setBorder(BorderFactory.createTitledBorder("Import network from VISTA"));
+        constrain(p2, new JLabel("nodes: "), 0, 1, 1, 1);
+        constrain(p2, nodes, 1, 1, 1, 1);
+        constrain(p2, new JLabel("links: "), 0, 2, 1, 1);
+        constrain(p2, linkpoints, 1, 2, 1, 1);
+        constrain(p2, new JLabel("linkdetails: "), 0, 3, 1, 1);
+        constrain(p2, linkdetails, 1, 3, 1, 1);
+        constrain(p2, new JLabel("phases: "), 0, 4, 1, 1);
+        constrain(p2, phases, 1, 4, 1, 1);
+        constrain(p2, new JLabel("signals: "), 0, 5, 1, 1);
+        constrain(p2, signals, 1, 5, 1, 1);
+        constrain(p2, new JLabel("elevation: "), 0, 6, 1, 1);
+        constrain(p2, elevation, 1, 6, 1, 1);
+        constrain(p2, import2, 2, 1, 1, 7);
         
-        constrain(p, new JLabel("Import from VISTA"), 0, 0, 4, 1);
-        constrain(p, new JLabel("nodes: "), 0, 1, 1, 1);
-        constrain(p, nodes, 1, 1, 1, 1);
-        constrain(p, new JLabel("links: "), 0, 2, 1, 1);
-        constrain(p, linkpoints, 1, 2, 1, 1);
-        constrain(p, new JLabel("linkdetails: "), 0, 3, 1, 1);
-        constrain(p, linkdetails, 1, 3, 1, 1);
-        constrain(p, new JLabel("phases: "), 0, 4, 1, 1);
-        constrain(p, phases, 1, 4, 1, 1);
-        constrain(p, new JLabel("signals: "), 0, 5, 1, 1);
-        constrain(p, signals, 1, 5, 1, 1);
-        constrain(p, new JLabel("elevation: "), 0, 6, 1, 1);
-        constrain(p, elevation, 1, 6, 1, 1);
-        constrain(p, import2, 2, 1, 1, 7);
+        constrain(this, p2, 0, 2, 1, 1);
         
-        constrain(this, p, 0, 2, 1, 1);
+        p1.setPreferredSize(new Dimension((int)p2.getPreferredSize().getWidth(), (int)p1.getPreferredSize().getHeight()));
         
-        p = new JPanel();
-        p.setLayout(new GridBagLayout());
-        constrain(p, sqlExport, 0, 0, 1, 1);
-        constrain(p, sqlImport, 0, 1, 1, 1);
+        JPanel p3 = new JPanel();
+        p3.setLayout(new GridBagLayout());
+        p3.setBorder(BorderFactory.createTitledBorder("SQL"));
+        constrain(p3, sqlExport, 0, 0, 1, 1);
+        constrain(p3, sqlImport, 1, 0, 1, 1);
         
-        constrain(this, p, 0, 3, 1, 1);
+        constrain(this, p3, 0, 3, 1, 1);
+        p3.setPreferredSize(new Dimension((int)p2.getPreferredSize().getWidth(), (int)p3.getPreferredSize().getHeight()));
         
         setEnabled(false);
     }

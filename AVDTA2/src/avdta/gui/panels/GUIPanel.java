@@ -10,11 +10,11 @@ import javax.swing.JPanel;
  *
  * @author ml26893
  */
-public class GUIPanel extends JPanel implements GUIPane
+public class GUIPanel extends JPanel implements AbstractGUIPanel
 {
-    private GUIPane parent;
+    private AbstractGUIPanel parent;
     
-    public GUIPanel(GUIPane parent)
+    public GUIPanel(AbstractGUIPanel parent)
     {
         this.parent = parent;
     }

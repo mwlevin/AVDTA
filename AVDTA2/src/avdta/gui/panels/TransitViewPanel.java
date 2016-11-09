@@ -20,13 +20,14 @@ import java.awt.event.ActionListener;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
+import javax.swing.BorderFactory;
 import javax.swing.JScrollPane;
 
 /**
  *
  * @author Michael
  */
-public class TransitViewPane extends GUIPanel
+public class TransitViewPanel extends GUIPanel
 {
     private TransitProject project;
     
@@ -34,7 +35,7 @@ public class TransitViewPane extends GUIPanel
     private JButton createBuses, clearBuses;
     
     
-    public TransitViewPane(TransitPane parent)
+    public TransitViewPanel(TransitPanel parent)
     {
         super(parent);
         
@@ -66,9 +67,14 @@ public class TransitViewPane extends GUIPanel
         JScrollPane scroll = new JScrollPane(data);
         scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         
-        constrain(this, scroll, 0, 0, 1, 1);
-        constrain(this, createBuses, 0, 1, 1, 1);
-        constrain(this, clearBuses, 0, 2, 1, 1);
+        JPanel p = new JPanel();
+        p.setLayout(new GridBagLayout());
+        p.setBorder(BorderFactory.createTitledBorder("Create transit"));
+        constrain(p, scroll, 0, 0, 1, 1);
+        constrain(p, createBuses, 0, 1, 1, 1);
+        constrain(p, clearBuses, 0, 2, 1, 1);
+        
+        constrain(this, p, 0, 0, 1, 1);
     }
     
     public void clearBuses()

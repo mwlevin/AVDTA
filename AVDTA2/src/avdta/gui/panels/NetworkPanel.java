@@ -6,7 +6,8 @@
 package avdta.gui.panels;
 
 import avdta.gui.DTAGUI;
-import avdta.gui.panels.NodesPane;
+import avdta.gui.GUI;
+import avdta.gui.panels.NodesPanel;
 import javax.swing.JPanel;
 import static avdta.gui.util.GraphicUtils.*;
 import avdta.project.DTAProject;
@@ -17,20 +18,20 @@ import java.awt.GridBagLayout;
  *
  * @author micha
  */
-public class NetworkPane extends GUIPanel
+public class NetworkPanel extends GUIPanel
 {
     
-    private LinksPane linksPane;
-    private NodesPane nodesPane;
-    private ImportNetworkPane importPane;
+    private LinksPanel linksPane;
+    private NodesPanel nodesPane;
+    private ImportNetworkPanel importPane;
     
-    public NetworkPane(DTAGUI parent)
+    public NetworkPanel(DTAGUI parent)
     {
         super(parent);
         
-        linksPane = new LinksPane(this);
-        nodesPane = new NodesPane(this);
-        importPane = new ImportNetworkPane(this);
+        linksPane = new LinksPanel(this);
+        nodesPane = new NodesPanel(this);
+        importPane = new ImportNetworkPanel(this);
         
         setLayout(new GridBagLayout());
         

@@ -5,7 +5,7 @@
  */
 package avdta.gui.panels;
 
-import avdta.gui.panels.DTAPane;
+import avdta.gui.panels.DTAPanel;
 import avdta.dta.Assignment;
 import avdta.dta.DTASimulator;
 import avdta.dta.MSAAssignment;
@@ -32,10 +32,10 @@ import javax.swing.event.ListSelectionListener;
  *
  * @author micha
  */
-public class AssignmentPane extends GUIPanel
+public class AssignmentPanel extends GUIPanel
 {
     private DTAProject project;
-    private DTAPane parent;
+    private DTAPanel parent;
     
     private JList list;
     private JButton loadAssignment;
@@ -45,7 +45,7 @@ public class AssignmentPane extends GUIPanel
     
     private Assignment mostRecent;
     
-    public AssignmentPane(DTAPane parent_)
+    public AssignmentPanel(DTAPanel parent_)
     {
         super(parent_);
         this.parent = parent_;
@@ -97,16 +97,9 @@ public class AssignmentPane extends GUIPanel
         {
            public void actionPerformed(ActionEvent e)
            {
-               String name = list.getSelectedValue().toString();
+               String name = assignments.get(list.getSelectedIndex()).getAssignmentDirectory();
                
-               try
-               {
-                    loadAssignment(name);
-               }
-               catch(IOException ex)
-               {
-                   GUI.handleException(ex);
-               }
+               loadAssignment(name);
            }
         });
         
@@ -129,27 +122,49 @@ public class AssignmentPane extends GUIPanel
         return mostRecent;
     }
     
-    public void loadAssignment(String name) throws IOException
+    public void loadAssignment(final String name)
     {
+        final JPanel panel = this;
+        
         parentSetEnabled(false);
         
-        Assignment assign = readAssignment(name);
-        
-        DTASimulator sim = project.getSimulator();
-        
-        PathList paths = new PathList(sim, assign.getPathsFile());
-        assign.readFromFile(project, sim.getVehicles(), paths);
-        parent.loadAssignment(assign);
-        
-        JOptionPane.showMessageDialog(this, "Loaded assignment "+name, "Complete", JOptionPane.INFORMATION_MESSAGE);
-        list.setSelectedIndex(-1);
-        
-        parentSetEnabled(true);
+        Thread t = new Thread()
+        {
+            public void run()
+            {
+                try
+                {
+                    Assignment assign = readAssignment(name);
+
+                    DTASimulator sim = project.getSimulator();
+
+                    PathList paths = new PathList(sim, assign.getPathsFile());
+                    assign.readFromFile(project, sim.getVehicles(), paths);
+                    parent.loadAssignment(assign);
+                
+                    sim.simulate();
+                    
+                    JOptionPane.showMessageDialog(panel, "Loaded assignment "+assign.getName(), "Complete", JOptionPane.INFORMATION_MESSAGE);
+                
+                }
+                catch(IOException ex)
+                {
+                    GUI.handleException(ex);
+                }
+
+                list.setSelectedIndex(-1);
+
+                parentSetEnabled(true);  
+            }
+        };
+        t.start();
+            
     }
+    
     
     public Assignment readAssignment(String name) throws IOException
     {
-        String folder = project.getAssignmentsFolder()+"/"+name;
+        String folder = name;
         
         File indicator = new File(folder+"/msa.dat");
         Assignment assign;
@@ -185,7 +200,7 @@ public class AssignmentPane extends GUIPanel
                 
                 try
                 {
-                    Assignment assign = readAssignment(f.getName());
+                    Assignment assign = readAssignment(f.getCanonicalPath());
                     assignments.add(assign);
 
                     if(assign.getTime() < lastModified)

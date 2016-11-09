@@ -15,16 +15,16 @@ import javax.swing.JPanel;
  *
  * @author Michael
  */
-public class TransitPane extends GUIPanel
+public class TransitPanel extends GUIPanel
 {
-    private ImportTransitPane importPane;
-    private TransitViewPane viewPane;
+    private ImportTransitPanel importPane;
+    private TransitViewPanel viewPane;
     
-    public TransitPane(DTAGUI parent)
+    public TransitPanel(DTAGUI parent)
     {
         super(parent);
-        importPane = new ImportTransitPane(this);
-        viewPane = new TransitViewPane(this);
+        importPane = new ImportTransitPanel(this);
+        viewPane = new TransitViewPanel(this);
         
         setLayout(new GridBagLayout());
         

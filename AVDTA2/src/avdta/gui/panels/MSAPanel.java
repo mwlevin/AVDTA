@@ -33,7 +33,7 @@ import javax.swing.JTextArea;
  *
  * @author ml26893
  */
-public class MSAPane extends GUIPanel
+public class MSAPanel extends GUIPanel
 {
     
     private DTAProject project;
@@ -48,7 +48,7 @@ public class MSAPane extends GUIPanel
     private JTextArea data;
     
     
-    public MSAPane(DTAPane parent)
+    public MSAPanel(DTAPanel parent)
     {
         super(parent);
         

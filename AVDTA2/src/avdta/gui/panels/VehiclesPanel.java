@@ -21,6 +21,7 @@ import avdta.vehicle.fuel.VehicleClass;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
@@ -28,7 +29,7 @@ import javax.swing.JTextField;
  *
  * @author micha
  */
-public class VehiclesPane extends GUIPanel
+public class VehiclesPanel extends GUIPanel
 {
     private DTAProject project;
     
@@ -37,7 +38,7 @@ public class VehiclesPane extends GUIPanel
     private JTextField prop;
     private JButton prepareDemand;
     
-    public VehiclesPane(DemandPane parent)
+    public VehiclesPanel(DemandPanel parent)
     {
         super(parent);
         data = new JTextArea(10, 20);
@@ -67,10 +68,15 @@ public class VehiclesPane extends GUIPanel
         JScrollPane scroll = new JScrollPane(data);
         scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         
-        constrain(this, scroll, 0, 0, 2, 1);
-        constrain(this, new JLabel("Percent of dynamic OD: "), 0, 1, 1, 1);
-        constrain(this, prop, 1, 1, 1, 1);
-        constrain(this, prepareDemand, 0, 2, 2, 1);
+        JPanel p = new JPanel();
+        p.setLayout(new GridBagLayout());
+        p.setBorder(BorderFactory.createTitledBorder("Demand"));
+        constrain(p, scroll, 0, 0, 2, 1);
+        constrain(p, new JLabel("Percent of dynamic OD: "), 0, 1, 1, 1);
+        constrain(p, prop, 1, 1, 1, 1);
+        constrain(p, prepareDemand, 0, 2, 2, 1);
+        
+        constrain(this, p, 0, 0, 1, 1);
         
         reset();
     }

@@ -9,12 +9,13 @@ import avdta.dta.Assignment;
 import avdta.dta.DTAResults;
 import avdta.gui.util.ProjectChooser;
 import avdta.Version;
-import avdta.gui.panels.DTAPane;
-import avdta.gui.panels.DemandPane;
-import avdta.gui.panels.NetworkPane;
+import avdta.gui.panels.DTAPanel;
+import avdta.gui.panels.DemandPanel;
+import avdta.gui.panels.NetworkPanel;
 import avdta.dta.DTASimulator;
-import avdta.gui.panels.GUIPane;
-import avdta.gui.panels.TransitPane;
+import avdta.gui.panels.AbstractGUIPanel;
+import avdta.gui.panels.AnalysisPanel;
+import avdta.gui.panels.TransitPanel;
 import avdta.project.DTAProject;
 import java.awt.GridBagLayout;
 import javax.swing.JFrame;
@@ -43,13 +44,14 @@ import avdta.vehicle.DriverType;
  *
  * @author micha
  */
-public class DTAGUI extends GUI implements GUIPane
+public class DTAGUI extends GUI implements AbstractGUIPanel
 {
    
-    private NetworkPane networkPane;
-    private DemandPane demandPane;
-    private DTAPane dtaPane;
-    private TransitPane transitPane;
+    private NetworkPanel networkPane;
+    private DemandPanel demandPane;
+    private DTAPanel dtaPane;
+    private TransitPanel transitPane;
+    private AnalysisPanel analysisPane;
     
     private JMenuItem lastAssignment;
     
@@ -65,15 +67,17 @@ public class DTAGUI extends GUI implements GUIPane
         
         JTabbedPane tabs = new JTabbedPane();
         
-        networkPane = new NetworkPane(this);
-        demandPane = new DemandPane(this);
-        transitPane = new TransitPane(this);
-        dtaPane = new DTAPane(this);
+        networkPane = new NetworkPanel(this);
+        demandPane = new DemandPanel(this);
+        transitPane = new TransitPanel(this);
+        dtaPane = new DTAPanel(this);
+        analysisPane = new AnalysisPanel(this);
         
         tabs.add("Network", networkPane);
         tabs.add("Demand", demandPane);
         tabs.add("Transit", transitPane);
         tabs.add("DTA", dtaPane);
+        tabs.add("Analysis", analysisPane);
         
         constrain(p, tabs, 0, 0, 1, 1);
         
@@ -103,6 +107,7 @@ public class DTAGUI extends GUI implements GUIPane
         demandPane.reset();
         networkPane.reset();
         transitPane.reset();
+        analysisPane.reset();
     }
     
     public void parentSetEnabled(boolean e)
@@ -111,6 +116,7 @@ public class DTAGUI extends GUI implements GUIPane
         demandPane.setEnabled(e);
         networkPane.setEnabled(e);
         transitPane.setEnabled(e);
+        analysisPane.setEnabled(e);
     }
     
     public JMenuBar createMenuBar()
@@ -171,9 +177,15 @@ public class DTAGUI extends GUI implements GUIPane
         
         DTAProject project = (DTAProject)p;
         this.project = project;
-            
-        //project.loadSimulator();
-
+           
+        try
+        {
+            project.loadSimulator();
+        }
+        catch(Exception ex)
+        {
+            GUI.handleException(ex);
+        }
         
         if(project != null)
         {
@@ -190,6 +202,7 @@ public class DTAGUI extends GUI implements GUIPane
         dtaPane.setProject(project);
         transitPane.setProject(project);
         lastAssignment.setEnabled(project != null);
+        analysisPane.setProject(project);
         
         
         parentSetEnabled(true);
@@ -299,10 +312,7 @@ public class DTAGUI extends GUI implements GUIPane
     
     public void reset()
     {
-        networkPane.reset();
-        demandPane.reset();
-        dtaPane.reset();
-        transitPane.reset();
+        parentReset();
     }
     
     public void createDatabase()

@@ -153,8 +153,6 @@ public class Assignment implements Comparable<Assignment>
      */
     public void readAssignment(Scanner filein)
     {
-        name = filein.nextLine();
-        
         double mintt = filein.nextDouble();
         double tstt = filein.nextDouble();
         int num_veh = filein.nextInt();

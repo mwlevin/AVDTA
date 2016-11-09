@@ -6,9 +6,9 @@
 package avdta.gui.panels;
 
 import avdta.gui.DTAGUI;
-import avdta.gui.panels.ImportDemandPane;
-import avdta.gui.panels.VehiclesPane;
-import avdta.gui.panels.PrepareDemandPane;
+import avdta.gui.panels.ImportDemandPanel;
+import avdta.gui.panels.VehiclesPanel;
+import avdta.gui.panels.PrepareDemandPanel;
 import avdta.project.DTAProject;
 import java.awt.GridBagLayout;
 import javax.swing.JPanel;
@@ -17,20 +17,20 @@ import static avdta.gui.util.GraphicUtils.*;
  *
  * @author micha
  */
-public class DemandPane extends GUIPanel
+public class DemandPanel extends GUIPanel
 {
-    private ImportDemandPane importDemandPane;
-    private PrepareDemandPane prepareDemandPane;
-    private VehiclesPane vehiclesPane;
+    private ImportDemandPanel importDemandPane;
+    private PrepareDemandPanel prepareDemandPane;
+    private VehiclesPanel vehiclesPane;
 
-    public DemandPane(DTAGUI parent)
+    public DemandPanel(DTAGUI parent)
     {
         super(parent);
         setLayout(new GridBagLayout());
         
-        importDemandPane = new ImportDemandPane(this);
-        prepareDemandPane = new PrepareDemandPane(this);
-        vehiclesPane = new VehiclesPane(this);
+        importDemandPane = new ImportDemandPanel(this);
+        prepareDemandPane = new PrepareDemandPanel(this);
+        vehiclesPane = new VehiclesPanel(this);
         
         constrain(this, importDemandPane, 0, 0, 1, 1);
         constrain(this, prepareDemandPane, 1, 0, 1, 1);

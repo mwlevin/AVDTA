@@ -114,9 +114,9 @@ public abstract class GUI extends JFrame
     
     public static void handleException(Exception ex)
     {
+        ex.printStackTrace(System.err);
         JOptionPane.showMessageDialog(frame, ex.getMessage(),
                             "Error", JOptionPane.ERROR_MESSAGE);
-        System.exit(1);
     }
     
     private JMenuItem cloneMI, closeMI, createDatabase, editor, changeSeed, sanityCheck;

@@ -17,6 +17,7 @@ import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
@@ -25,7 +26,7 @@ import javax.swing.JTextField;
  *
  * @author micha
  */
-public class PrepareDemandPane extends GUIPanel
+public class PrepareDemandPanel extends GUIPanel
 {
     private DTAProject project;
     private JButton createDynamicOD;
@@ -33,7 +34,7 @@ public class PrepareDemandPane extends GUIPanel
     private JTextField AVs;
     private JButton changeType;
     
-    public PrepareDemandPane(GUIPane parent)
+    public PrepareDemandPanel(AbstractGUIPanel parent)
     {
        super(parent);
         setLayout(new GridBagLayout());
@@ -45,12 +46,17 @@ public class PrepareDemandPane extends GUIPanel
         AVs.setText("0");
         
         setLayout(new GridBagLayout());
-        constrain(this, createDynamicOD, 0, 0, 2, 1);
-        constrain(this, new JLabel("Percent of AVs:"), 0, 1, 1, 1);
-        constrain(this, AVs, 1, 1, 1, 1);
-        constrain(this, changeType, 0, 2, 2, 1);
         
+        JPanel panel = new JPanel();
+        panel.setLayout(new GridBagLayout());
+        panel.setBorder(BorderFactory.createTitledBorder("Dynamic OD"));
         
+        constrain(panel, createDynamicOD, 0, 0, 2, 1);
+        constrain(panel, new JLabel("Percent of AVs:"), 0, 1, 1, 1);
+        constrain(panel, AVs, 1, 1, 1, 1);
+        constrain(panel, changeType, 0, 2, 2, 1);
+        
+        constrain(this, panel, 0, 0, 1, 1);
         
         createDynamicOD.addActionListener(new ActionListener()
         {

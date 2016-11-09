@@ -5,7 +5,7 @@
  */
 package avdta.gui.panels;
 
-import avdta.gui.panels.MSAPane;
+import avdta.gui.panels.MSAPanel;
 import avdta.dta.Assignment;
 import avdta.gui.DTAGUI;
 import avdta.project.DTAProject;
@@ -17,17 +17,17 @@ import static avdta.gui.util.GraphicUtils.*;
  *
  * @author micha
  */
-public class DTAPane extends GUIPanel
+public class DTAPanel extends GUIPanel
 {
-    private AssignmentPane assignPane;
-    private MSAPane msaPane;
+    private AssignmentPanel assignPane;
+    private MSAPanel msaPane;
 
-    public DTAPane(DTAGUI parent)
+    public DTAPanel(DTAGUI parent)
     {
         super(parent);
         
-        assignPane = new AssignmentPane(this);
-        msaPane = new MSAPane(this);
+        assignPane = new AssignmentPanel(this);
+        msaPane = new MSAPanel(this);
         
         setLayout(new GridBagLayout());
         constrain(this, assignPane, 0, 0, 1, 1);

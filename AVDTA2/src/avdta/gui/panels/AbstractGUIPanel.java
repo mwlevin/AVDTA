@@ -8,7 +8,7 @@ package avdta.gui.panels;
  *
  * @author ml26893
  */
-public interface GUIPane 
+public interface AbstractGUIPanel 
 {
     public void parentReset();
     

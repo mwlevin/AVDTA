@@ -48,6 +48,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
+import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -64,7 +65,7 @@ import javax.swing.event.ChangeListener;
  *
  * @author micha
  */
-public class NodesPane extends GUIPanel
+public class NodesPanel extends GUIPanel
 {
     private Project project;
     
@@ -79,7 +80,7 @@ public class NodesPane extends GUIPanel
     private static final String[] NODE_OPTIONS = new String[]{"FCFS", "backpressure", "P0", "Phased", "Signal-weighted", "Transit-FCFS"};
     private JComboBox<String> nodeOptions;
     
-    public NodesPane(NetworkPane parent)
+    public NodesPanel(NetworkPanel parent)
     {
         super(parent);
         data = new JTextArea(5, 20);
@@ -143,11 +144,14 @@ public class NodesPane extends GUIPanel
         
         setLayout(new GridBagLayout());
         
+        JPanel panel = new JPanel();
+        panel.setLayout(new GridBagLayout());
+        panel.setBorder(BorderFactory.createTitledBorder("Nodes"));
+        
         JScrollPane scroll = new JScrollPane(data);
         scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         
-        constrain(this, new JLabel("Nodes"), 0, 0, 2, 1);
-        constrain(this, scroll, 0, 1, 2, 1);
+        constrain(panel, scroll, 0, 1, 2, 1);
        
         
         JPanel p = new JPanel();
@@ -159,7 +163,7 @@ public class NodesPane extends GUIPanel
         constrain(p, stop, 0, 3, 1, 1);
         constrain(p, nodeOptions, 1, 2, 1, 2);
         
-        constrain(this, p, 0, 2, 2, 1);
+        constrain(panel, p, 0, 2, 2, 1);
         
         
         p = new JPanel();
@@ -167,15 +171,15 @@ public class NodesPane extends GUIPanel
         
         constrain(p, save, 0, 0, 1, 1);
         constrain(p, reset, 1, 0, 1, 1 );
-        constrain(this, p, 0, 4, 2, 1);
+        constrain(panel, p, 0, 4, 2, 1);
         
         p = new JPanel();
         p.setLayout(new GridBagLayout());
         constrain(p, download, 0, 0, 1, 1);
         constrain(p, update, 0, 1, 1, 1);
-        constrain(this, p, 0, 5, 2, 1);
+        constrain(panel, p, 0, 5, 2, 1);
         
-        
+        constrain(this, panel, 0, 0, 1, 1);
         
         reset();
     }

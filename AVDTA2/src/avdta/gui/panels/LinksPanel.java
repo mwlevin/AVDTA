@@ -8,7 +8,7 @@ package avdta.gui.panels;
 import avdta.gui.DTAGUI;
 import avdta.gui.GUI;
 import avdta.gui.editor.visual.rules.LinkBusRule;
-import avdta.gui.panels.NetworkPane;
+import avdta.gui.panels.NetworkPanel;
 import javax.swing.JPanel;
 import static avdta.gui.util.GraphicUtils.*;
 import avdta.network.ReadNetwork;
@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
+import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -44,7 +45,7 @@ import javax.swing.event.ChangeListener;
  *
  * @author micha
  */
-public class LinksPane extends GUIPanel
+public class LinksPanel extends GUIPanel
 {
     private Project project;
 
@@ -64,7 +65,7 @@ public class LinksPane extends GUIPanel
     private JTextField mesoDelta;
     private JTextField timestep;
     
-    public LinksPane(NetworkPane parent)
+    public LinksPanel(NetworkPanel parent)
     {
         super(parent);
         
@@ -127,11 +128,14 @@ public class LinksPane extends GUIPanel
         
         setLayout(new GridBagLayout());
         
+        JPanel panel = new JPanel();
+        panel.setLayout(new GridBagLayout());
+        
         JScrollPane scroll = new JScrollPane(data);
         scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         
-        constrain(this, new JLabel("Links"), 0, 0, 2, 1);
-        constrain(this, scroll, 0, 1, 2, 1);
+        panel.setBorder(BorderFactory.createTitledBorder("Links"));
+        constrain(panel, scroll, 0, 1, 2, 1);
         
         JPanel p = new JPanel();
         p.setLayout(new GridBagLayout());
@@ -140,7 +144,7 @@ public class LinksPane extends GUIPanel
         constrain(p, ltm, 0, 2, 1, 1);
         constrain(p, ctmOptions, 1, 1, 1, 1);
         constrain(p, ltmOptions, 1, 2, 1, 1);
-        constrain(this, p, 0, 3, 2, 1);
+        constrain(panel, p, 0, 3, 2, 1);
         
         p = new JPanel();
         p.setLayout(new GridBagLayout());
@@ -153,16 +157,16 @@ public class LinksPane extends GUIPanel
         constrain(p, new JLabel("AV reaction time: "), 0, 3, 1, 1);
         constrain(p, AVtau, 1, 3, 1, 1);
         
-        constrain(this, p, 0, 4, 2, 1);
+        constrain(panel, p, 0, 4, 2, 1);
         
         p = new JPanel();
         p.setLayout(new GridBagLayout());
         
         constrain(p, save, 0, 0, 1, 1);
         constrain(p, reset, 1, 0, 1, 1);
-        constrain(this, p, 0, 5, 2, 1);
+        constrain(panel, p, 0, 5, 2, 1);
         
-        
+        constrain(this, panel, 0, 0, 1, 1);
         
         reset();
     }

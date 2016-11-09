@@ -48,6 +48,7 @@ import java.util.Scanner;
 import java.util.Set;
 import java.util.TreeSet;
 import avdta.network.cost.FFTime;
+import avdta.network.link.LTMLink;
 
 /**
  * A {@link Simulator} extends {@link Network} in adding {@link Vehicle}s and dynamic network loading. 
@@ -114,7 +115,7 @@ public class Simulator extends Network
     private Project project;
     
   
-    
+    private int lastExit;
     
     
     
@@ -125,6 +126,8 @@ public class Simulator extends Network
     
 
     public PrintStream out;
+    
+    private boolean postProcessed;
     
 
     
@@ -142,6 +145,7 @@ public class Simulator extends Network
         this.out = System.out;
         vehicles = new ArrayList<Vehicle>();
         active = this;
+        lastExit = duration;
     }
     
     /**
@@ -164,6 +168,7 @@ public class Simulator extends Network
         vehicles = new ArrayList<Vehicle>();
  
         time = 0;
+        lastExit = duration;
     }
     
     /**
@@ -315,6 +320,9 @@ public class Simulator extends Network
     public void resetSim()
     {
         centroid_time = 0;
+        
+        lastExit = duration;
+        postProcessed = false;
 
         for(Link l : links)
         {
@@ -332,7 +340,14 @@ public class Simulator extends Network
         }
     }
 
-    
+    /**
+     * Returns the time the last vehicle exited, or the duration if a vehicle did not exit.
+     * @return the time the last vehicle exited (s)
+     */
+    public int getLastExitTime()
+    {
+        return lastExit;
+    }
     
     
     /**
@@ -751,17 +766,50 @@ public class Simulator extends Network
 
             if(isSimulationFinished())
             {
+                
                 break;
+            }
+            
+            if(exit_count == vehicles.size() -1)
+            {
+                for(Vehicle v : vehicles)
+                {
+                    if(!v.isExited())
+                    {
+                        System.out.println(v.getId()+" "+v.getOrigin()+" "+v.getDest()+" "+v.getCurrLink()+" "+v.getPath());
+                    }
+                }
             }
         }
         
 
-        
-        int last_exit = time;
+        lastExit = time;
+
         
         simulationFinished();
          
         vat.close();
+        
+        
+    }
+    
+    /**
+     * Post-process simulation data to prepare for printing results, such as average link flows.
+     * This contains an internal check to avoid post-processing multiple times.
+     */
+    public void postProcess()
+    {
+        if(postProcessed)
+        {
+            return;
+        }
+        
+        postProcessed = true;
+        
+        for(Link l : links)
+        {
+            l.postProcessFlowin();
+        }
     }
     
     /**
@@ -832,14 +880,12 @@ public class Simulator extends Network
     
     /**
      * This method prints the flowin.csv and linktt.csv files, which are VISTA outputs used for visualization.
+     * This also calls {@link Simulator#postProcess()}.
      * @throws IOException if a file cannot be accessed
      */
     public void printLinkTdd() throws IOException
     {
-        for(Link l : links)
-        {
-            l.postProcessFlowin();
-        }
+        postProcess();
         
 
         PrintStream flowout = new PrintStream(new FileOutputStream(new File(project.getResultsFolder()+"/flowin.csv")), true);
@@ -1037,7 +1083,7 @@ public class Simulator extends Network
     {
         PrintStream fileout = new PrintStream(new FileOutputStream(file), true);
         
-        fileout.print("Link source\tLink dest\tType\tFFtime");
+        fileout.print("Link id\tType\tFFtime");
         
         for(int t = (start / ast_duration) * ast_duration; t <= end; t += ast_duration)
         {
@@ -1048,7 +1094,7 @@ public class Simulator extends Network
         
         for(Link l : links)
         {
-            fileout.print(l.getSource()+"\t"+l.getDest()+"\t"+l.getType()+"\t"+l.getFFTime());
+            fileout.print(l.getId()+"\t"+l.getType()+"\t"+l.getFFTime());
             
             for(int t = (start / ast_duration) * ast_duration; t <= end; t += ast_duration)
             {
@@ -1060,6 +1106,117 @@ public class Simulator extends Network
         
         fileout.close();
     }
+    
+    /**
+     * This prints average link travel times for all assignment interval indexes between the start and end times.
+     * @param start the start time (s)
+     * @param end the end time (s)
+     * @param file the output file
+     * @param linkids the set of links to include
+     * @throws IOException if a file cannot be accessed
+     */
+    public void printLinkTT(int start, int end, File file, Set<Integer> linkids) throws IOException
+    {
+        PrintStream fileout = new PrintStream(new FileOutputStream(file), true);
+        
+        fileout.print("Link id\tFFtime");
+        
+        for(int t = (start / ast_duration) * ast_duration; t <= end; t += ast_duration)
+        {
+            fileout.print("\t"+t);
+        }
+        
+        fileout.println();
+        
+        for(Link l : links)
+        {
+            if(linkids.contains(l.getId()))
+            {
+                fileout.print(l.getId()+"\t"+l.getFFTime());
+
+                for(int t = (start / ast_duration) * ast_duration; t <= end; t += ast_duration)
+                {
+                    fileout.print("\t"+l.getAvgTT(t));
+                }
+
+                fileout.println();
+            }
+        }
+        
+        fileout.print("Total\t");
+        
+        double total = 0.0;
+        
+        for(Link l : links)
+        {
+            if(linkids.contains(l.getId()))
+            {
+                total += l.getFFTime();
+            }
+        }
+        
+        fileout.print(total);
+        
+        for(int t = (start / ast_duration) * ast_duration; t <= end; t += ast_duration)
+        {
+            total = 0;
+            
+            for(Link l : links)
+            {
+                if(linkids.contains(l.getId()))
+                {
+                    total += l.getAvgTT(t);
+                }
+            }
+            fileout.print("\t"+total);
+        }
+        
+        fileout.close();
+    }
+    
+    
+    /**
+     * This prints average link flows for all assignment interval indexes between the start and end times.
+     * Note that this only works for LTM links.
+     * @param start the start time (s)
+     * @param end the end time (s)
+     * @param file the output file
+     * @param linkids the set of links to include
+     * @throws IOException if a file cannot be accessed
+     */
+    public void printLinkFlow(int start, int end, File file, Set<Integer> linkids) throws IOException
+    {
+        PrintStream fileout = new PrintStream(new FileOutputStream(file), true);
+        
+        fileout.print("Link id");
+        
+        for(int t = (start / ast_duration) * ast_duration; t <= end; t += ast_duration)
+        {
+            fileout.print("\t"+t);
+        }
+        
+        fileout.println();
+        
+        for(Link l : links)
+        {
+            if((l instanceof LTMLink) && linkids.contains(l.getId()))
+            {
+                fileout.print(l.getId());
+
+                for(int t = (start / ast_duration) * ast_duration; t <= end; t += ast_duration)
+                {
+                    fileout.print("\t"+l.getAvgFlow(t));
+                }
+
+                fileout.println();
+            }
+        }
+        
+
+        fileout.close();
+    }
+    
+    
     
     /**
      * This calculates the number of vehicles waiting on centroid connectors.

@@ -16,11 +16,13 @@ import avdta.project.TransitProject;
 import avdta.project.Project;
 import avdta.project.SQLLogin;
 import avdta.project.TransitProject;
+import java.awt.Dimension;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -30,7 +32,7 @@ import javax.swing.filechooser.FileFilter;
  *
  * @author Michael
  */
-public class ImportTransitPane extends GUIPanel
+public class ImportTransitPanel extends GUIPanel
 {
     private TransitProject project;
     
@@ -41,7 +43,7 @@ public class ImportTransitPane extends GUIPanel
     private JButton import2;
     private JButton sqlImport, sqlExport;
     
-    public ImportTransitPane(TransitPane parent)
+    public ImportTransitPanel(TransitPanel parent)
     {
         super(parent);
         
@@ -51,8 +53,8 @@ public class ImportTransitPane extends GUIPanel
         import2 = new JButton("Import");
         import2.setEnabled(false);
         
-        sqlImport = new JButton("Import from SQL");
-        sqlExport = new JButton("Export to SQL");
+        sqlImport = new JButton("Import");
+        sqlExport = new JButton("Export");
         
         sqlImport.addActionListener(new ActionListener()
         {
@@ -186,37 +188,43 @@ public class ImportTransitPane extends GUIPanel
         
         
         
-        JPanel p = new JPanel();
-        p.setLayout(new GridBagLayout());
-        constrain(p, new JLabel("Import transit from project"), 0, 0, 3, 1);
-        constrain(p, new JLabel("Project: "), 0, 1, 1, 1);
-        constrain(p, importFromProject, 1, 1, 1, 1);
-        constrain(p, import1, 2, 1, 1, 1);
+        JPanel p1 = new JPanel();
+        p1.setLayout(new GridBagLayout());
+        p1.setBorder(BorderFactory.createTitledBorder("Import transit from project"));
+        constrain(p1, new JLabel("Project: "), 0, 1, 1, 1);
+        constrain(p1, importFromProject, 1, 1, 1, 1);
+        constrain(p1, import1, 2, 1, 1, 1);
         
-        constrain(this, p, 0, 1, 1, 1);
+        constrain(this, p1, 0, 1, 1, 1);
         
-        p = new JPanel();
-        p.setLayout(new GridBagLayout());
+        JPanel p2 = new JPanel();
+        p2.setLayout(new GridBagLayout());
         
-        constrain(p, new JLabel("Import from VISTA"), 0, 0, 4, 1);
-        constrain(p, new JLabel("bus: "), 0, 1, 1, 1);
-        constrain(p, bus, 1, 1, 1, 1);
-        constrain(p, new JLabel("bus_route_link: "), 0, 2, 1, 1);
-        constrain(p, busroutelink, 1, 2, 1, 1);
-        constrain(p, new JLabel("bus_frequency: "), 0, 3, 1, 1);
-        constrain(p, busfrequency, 1, 3, 1, 1);
-        constrain(p, new JLabel("bus_period: "), 0, 4, 1, 1);
-        constrain(p, busperiod, 1, 4, 1, 1);
-        constrain(p, import2, 2, 1, 1, 4);
+        p2.setBorder(BorderFactory.createTitledBorder("Import transit from VISTA"));
+        constrain(p2, new JLabel("bus: "), 0, 1, 1, 1);
+        constrain(p2, bus, 1, 1, 1, 1);
+        constrain(p2, new JLabel("bus_route_link: "), 0, 2, 1, 1);
+        constrain(p2, busroutelink, 1, 2, 1, 1);
+        constrain(p2, new JLabel("bus_frequency: "), 0, 3, 1, 1);
+        constrain(p2, busfrequency, 1, 3, 1, 1);
+        constrain(p2, new JLabel("bus_period: "), 0, 4, 1, 1);
+        constrain(p2, busperiod, 1, 4, 1, 1);
+        constrain(p2, import2, 2, 1, 1, 4);
         
-        constrain(this, p, 0, 2, 1, 1);
+        constrain(this, p2, 0, 2, 1, 1);
         
-        p = new JPanel();
-        p.setLayout(new GridBagLayout());
-        constrain(p, sqlExport, 0, 0, 1, 1);
-        constrain(p, sqlImport, 0, 1, 1, 1);
+        p1.setPreferredSize(new Dimension((int)p2.getPreferredSize().getWidth(), (int)p1.getPreferredSize().getHeight()));
         
-        constrain(this, p, 0, 3, 1, 1);
+        JPanel p3 = new JPanel();
+        p3.setLayout(new GridBagLayout());
+        p3.setBorder(BorderFactory.createTitledBorder("SQL"));
+        
+        constrain(p3, sqlExport, 0, 0, 1, 1);
+        constrain(p3, sqlImport, 1, 0, 1, 1);
+        
+        p3.setPreferredSize(new Dimension((int)p2.getPreferredSize().getWidth(), (int)p3.getPreferredSize().getHeight()));
+        
+        constrain(this, p3, 0, 3, 1, 1);
         
         setEnabled(false);
     }
