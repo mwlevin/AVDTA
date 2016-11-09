@@ -30,11 +30,14 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
@@ -70,6 +73,8 @@ public class EditLink extends JPanel implements SelectListener
     private JButton up, down, remove, add, saveCoord;
     private List<Location> coords;
     
+    private JCheckBox selected;
+    
     public EditLink(Editor editor)
     {
         this(editor, null);
@@ -81,7 +86,7 @@ public class EditLink extends JPanel implements SelectListener
         source.setText(""+n1.getId());
         dest.setText(""+n2.getId());
     }
-    public EditLink(Editor editor_, Link prev)
+    public EditLink(Editor editor_, final Link prev)
     {
         this.prev = prev;
         this.editor = editor_;
@@ -100,6 +105,8 @@ public class EditLink extends JPanel implements SelectListener
         coordsList.setFixedCellWidth(150);
         coordsList.setFixedCellHeight(20);
         coordsList.setVisibleRowCount(4);
+        
+        selected = new JCheckBox("Selected");
         
         up = new JButton("↑");
         down = new JButton("↓");
@@ -194,6 +201,14 @@ public class EditLink extends JPanel implements SelectListener
         
         constrain(p, save, 0, 0, 1, 1);
         constrain(p, cancel, 1, 0, 1, 1);
+        constrain(p, selected, 2, 0, 1, 1);
+        
+        if(prev == null)
+        {
+            selected.setEnabled(false);
+        }
+        
+        
         
         constrain(this, p, 0, 3, 1, 1);
         
@@ -258,6 +273,18 @@ public class EditLink extends JPanel implements SelectListener
                 lat.setText("");
                 lon.setText("");
                 refreshCoords();
+            }
+        });
+        
+        selected.addChangeListener(new ChangeListener()
+        {
+            public void stateChanged(ChangeEvent e)
+            {
+                if(prev != null)
+                {
+                    prev.setSelected(selected.isSelected());
+                    editor.repaintMap();
+                }
             }
         });
         
@@ -429,6 +456,7 @@ public class EditLink extends JPanel implements SelectListener
             length.setText("");
             capacity.setText("");
             coordsList.setListData(new String[]{});
+            selected.setSelected(false);
         }
         else
         {
@@ -440,6 +468,7 @@ public class EditLink extends JPanel implements SelectListener
             ffspd.setText(String.format("%.2f", prev.getFFSpeed()));
             wavespd.setText(String.format("%.2f", prev.getWaveSpeed()));
             length.setText(String.format("%.1f", prev.getLength()*5280));
+            selected.setSelected(prev.isSelected());
             
             Location[] c = prev.getCoordinates();
             coords.clear();

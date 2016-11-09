@@ -39,8 +39,11 @@ import avdta.network.node.policy.MCKSTBR;
 import avdta.network.node.policy.SignalWeightedTBR;
 import avdta.network.node.policy.TransitFirst;
 import javax.swing.BorderFactory;
+import javax.swing.JCheckBox;
 import javax.swing.JInternalFrame;
 import javax.swing.JLayeredPane;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
@@ -80,9 +83,12 @@ public class EditNode extends JPanel
 
     private Node prev;
     
+    private JCheckBox selected;
     
-    public EditNode(Editor editor)
+    
+    public EditNode(Editor editor_)
     {
+        this.editor = editor;
         id = new JTextField(6);
         
         type = new JComboBox(TYPES);
@@ -95,6 +101,8 @@ public class EditNode extends JPanel
         control.setEnabled(false);
         
         editSignal = new JButton("Edit signal");
+        
+        selected = new JCheckBox("Selected");
         
         JPanel p = new JPanel();
         p.setLayout(new GridBagLayout());
@@ -136,8 +144,11 @@ public class EditNode extends JPanel
         
         p2 = new JPanel();
         p2.setLayout(new GridBagLayout());
-        constrain(p2, save, 0, 3, 1, 1);
-        constrain(p2, cancel, 1, 3, 1, 1);
+        constrain(p2, save, 0, 0, 1, 1);
+        constrain(p2, cancel, 1, 0, 1, 1);
+        constrain(p2, selected, 2, 0, 1, 1);
+        
+        selected.setEnabled(false);
         
         constrain(p, p2, 0, 2, 2, 1);
         
@@ -156,6 +167,18 @@ public class EditNode extends JPanel
                 save.setEnabled(true);
             }
         };
+        
+        selected.addChangeListener(new ChangeListener()
+        {
+            public void stateChanged(ChangeEvent e)
+            {
+                if(prev != null)
+                {
+                    prev.setSelected(selected.isSelected());
+                    editor.repaintMap();
+                }
+            }
+        });
         
         id.getDocument().addDocumentListener(changeListener);
         
@@ -240,10 +263,10 @@ public class EditNode extends JPanel
     }
     
     
-    public EditNode(Editor editor, Node node)
+    public EditNode(Editor editor_, Node node)
     {
-        this(editor);
-        this.editor = editor;
+        this(editor_);
+        
         this.prev = node;
         this.loc = node;
         
@@ -303,6 +326,10 @@ public class EditNode extends JPanel
                 }
             }
         }
+        
+        selected.setSelected(prev.isSelected());
+        selected.setEnabled(true);
+        
         
         save.setEnabled(false);
         checkEditSignal();

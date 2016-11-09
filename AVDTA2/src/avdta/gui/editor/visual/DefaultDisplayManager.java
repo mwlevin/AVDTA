@@ -19,7 +19,7 @@ import java.io.IOException;
  */
 public class DefaultDisplayManager implements DisplayManager
 {
-    private boolean displayLinks, displayNodes, displayCentroids, displayNonCentroids;
+    private boolean displayLinks, displayNodes, displayCentroids, displayNonCentroids, displaySelected;
     private boolean enabled;
     
     public DefaultDisplayManager()
@@ -28,6 +28,7 @@ public class DefaultDisplayManager implements DisplayManager
         displayNodes = false;
         displayCentroids = false;
         displayNonCentroids = true;
+        displaySelected = true;
         enabled = true;
     }
     
@@ -47,6 +48,7 @@ public class DefaultDisplayManager implements DisplayManager
         disp.displayCentroids = displayCentroids;
         disp.displayNonCentroids = displayNonCentroids;
         disp.enabled = enabled;
+        disp.displaySelected = displaySelected;
     }
     
     public void setEnabled(boolean e)
@@ -57,6 +59,16 @@ public class DefaultDisplayManager implements DisplayManager
     public boolean isEnabled()
     {
         return enabled;
+    }
+    
+    public void setDisplaySelected(boolean d)
+    {
+        displaySelected = d;
+    }
+    
+    public boolean isDisplaySelected()
+    {
+        return displaySelected;
     }
     
     public void setDisplayCentroids(boolean c)
@@ -116,13 +128,13 @@ public class DefaultDisplayManager implements DisplayManager
     
     public Color getBackColor(Node n, int t)
     {
-        return Color.yellow;
+        return n.isSelected()? Color.red : Color.black;
     }
     
     public int getRadius(Node n, int t)
     {
         return 0;
-    }
+   }
     
     public boolean hasSpecialDisplay(Link l, int t)
     {

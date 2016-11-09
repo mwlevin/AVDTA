@@ -21,6 +21,7 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.Stroke;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -53,7 +54,7 @@ import org.openstreetmap.gui.jmapviewer.tilesources.OsmTileSource;
  *
  * @author ml26893
  */
-public class MapViewer extends avdta.gui.editor.JMapViewer
+public class MapViewer extends avdta.gui.editor.JMapViewer implements MouseListener, MouseMotionListener
 {
     private static final Point[] move = {new Point(1, 0), new Point(0, 1), new Point(-1, 0), new Point(0, -1)};
 
@@ -68,7 +69,9 @@ public class MapViewer extends avdta.gui.editor.JMapViewer
     
     private int scale;
     
-
+    private int mouseStartX, mouseStartY, mouseEndX, mouseEndY;
+    private boolean drawSelection;
+    
     public MapViewer(DisplayManager display, int viewWidth, int viewHeight)
     {
         this.display = display;
@@ -78,8 +81,12 @@ public class MapViewer extends avdta.gui.editor.JMapViewer
         links = new HashSet<Link>();
         
         scale = 1;
+        drawSelection = false;
         
         setFont(new Font("Arial", Font.BOLD, 14));
+        
+        addMouseListener(this);
+        addMouseMotionListener(this);
     }
     
     public MapViewer(DisplayManager display, int viewWidth, int viewHeight, Network network)
@@ -87,6 +94,79 @@ public class MapViewer extends avdta.gui.editor.JMapViewer
         this(display, viewWidth, viewHeight);
         setNetwork(network);
     }
+    
+    public void mousePressed(MouseEvent e)
+    {
+        if(e.getButton() == MouseEvent.BUTTON1)
+        {
+            mouseStartX = e.getX();
+            mouseStartY = e.getY();
+            mouseEndX = e.getX();
+            mouseEndY = e.getY();
+            
+            drawSelection = true;
+
+            repaint();
+        }
+    }
+    
+    public void mouseReleased(MouseEvent e)
+    {
+        if(e.getButton() == MouseEvent.BUTTON1)
+        {
+            drawSelection = false;
+            
+            // select nodes and links
+            Location start = new Location(getPosition(new Point(mouseStartX, mouseStartY)));
+            Location end = new Location(getPosition(new Point(mouseEndX, mouseEndY)));
+            
+            double xmin = Math.min(start.getX(), end.getX());
+            double ymin = Math.min(start.getY(), end.getY());
+            double xmax = Math.max(start.getX(), end.getX());
+            double ymax = Math.max(start.getY(), end.getY());
+            
+            for(Node n : nodes)
+            {
+                if(n.getX() >= xmin && n.getX() <= xmax &&
+                        n.getY() >= ymin && n.getY() <= ymax)
+                {
+                    n.setSelected(true);
+                }
+            }
+            
+            for(Link l : links)
+            {
+                Node r = l.getSource();
+                Node s = l.getDest();
+                
+                if(r.getX() >= xmin && r.getX() <= xmax &&
+                        r.getY() >= ymin && r.getY() <= ymax &&
+                        s.getX() >= xmin && s.getX() <= xmax &&
+                        s.getY() >= ymin && s.getY() <= ymax)
+                {
+                    l.setSelected(true);
+                }
+            }
+
+            repaint();
+        }
+    }
+    
+    public void mouseDragged(MouseEvent e)
+    {
+
+        mouseEndX = e.getX();
+        mouseEndY = e.getY();
+
+
+        repaint();
+        
+    }
+    
+    public void mouseEntered(MouseEvent e){}
+    public void mouseExited(MouseEvent e){}
+    public void mouseClicked(MouseEvent e){}
+    public void mouseMoved(MouseEvent e){}
     
     public void setScale(int scale)
     {
@@ -233,6 +313,20 @@ public class MapViewer extends avdta.gui.editor.JMapViewer
             {
                 paintNode(g, n);
             }
+        }
+        
+        if(drawSelection)
+        {
+            int x = (int)Math.min(mouseStartX, mouseEndX);
+            int y = (int)Math.min(mouseStartY, mouseEndY);
+            int dx = (int)Math.abs(mouseEndX - mouseStartX);
+            int dy = (int)Math.abs(mouseEndY - mouseStartY);
+
+            Stroke dashed = new BasicStroke(3, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 0, new float[]{9}, 0);
+            g.setStroke(dashed);
+            g.setColor(Color.DARK_GRAY);
+
+            g.drawRect(x, y, dx, dy);
         }
     }
     

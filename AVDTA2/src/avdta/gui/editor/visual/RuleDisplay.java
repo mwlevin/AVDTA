@@ -142,6 +142,11 @@ public class RuleDisplay extends DefaultDisplayManager
     
     public Color getColor(Link l, int t)
     {
+        if(isDisplaySelected())
+        {
+            return super.getColor(l, t);
+        }
+        
         if(isEnabled())
         {
             return findLinkRule(l, t).getColor(l, t);
@@ -154,6 +159,11 @@ public class RuleDisplay extends DefaultDisplayManager
     
     public int getWidth(Link l, int t)
     {
+        if(isDisplaySelected())
+        {
+            return super.getWidth(l, t);
+        }
+        
         if(isEnabled())
         {
             return findLinkRule(l, t).getWidth(l, t);
@@ -166,6 +176,11 @@ public class RuleDisplay extends DefaultDisplayManager
     
     public Color getColor(Node n, int t)
     {
+        if(isDisplaySelected())
+        {
+            return super.getColor(n, t);
+        }
+        
         if(isEnabled())
         {
             return findNodeRule(n, t).getColor(n, t);
@@ -178,6 +193,11 @@ public class RuleDisplay extends DefaultDisplayManager
     
     public Color getBackColor(Node n, int t)
     {
+        if(isDisplaySelected())
+        {
+            return super.getBackColor(n, t);
+        }
+        
         if(isEnabled())
         {
             return findNodeRule(n, t).getBackColor(n, t);
@@ -190,6 +210,11 @@ public class RuleDisplay extends DefaultDisplayManager
     
     public int getRadius(Node n, int t)
     {
+        if(isDisplaySelected())
+        {
+            return super.getRadius(n, t);
+        }
+        
         if(isEnabled())
         {
             return findNodeRule(n, t).getRadius(n, t);

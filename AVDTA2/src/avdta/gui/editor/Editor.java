@@ -26,6 +26,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import static avdta.gui.util.GraphicUtils.*;
 import avdta.gui.util.ProjectChooser;
+import avdta.network.ReadNetwork;
 import avdta.network.Simulator;
 import avdta.network.link.Link;
 import avdta.network.link.SharedTransitCTMLink;
@@ -54,10 +55,13 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
 import java.awt.image.VolatileImage;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -108,7 +112,7 @@ public class Editor extends JFrame implements MouseListener
     private Set<Link> selectedLinks;
     
     
-    private JCheckBox linksSelect, nodesSelect, osmSelect, centroidSelect, nonCentroidSelect;
+    private JCheckBox linksSelect, nodesSelect, osmSelect, centroidSelect, nonCentroidSelect, selectedSelect;
     private JMenuItem save, close;
     
     private Project project;
@@ -126,6 +130,8 @@ public class Editor extends JFrame implements MouseListener
     
     private Editor thisEditor;
     private JPanel thisPanel;
+    
+    private int mouseX, mouseY;
 
     
     public static String getTitleName()
@@ -174,6 +180,7 @@ public class Editor extends JFrame implements MouseListener
         map = new MapViewer(display, size, size);
         
         map.addMouseListener(this);
+
         
         timeSlider = new JSlider(0, 3600, 0);
         timeSlider.setEnabled(false);
@@ -195,12 +202,14 @@ public class Editor extends JFrame implements MouseListener
         osmSelect = new JCheckBox("OpenStreetMaps");
         centroidSelect = new JCheckBox("Centroids");
         nonCentroidSelect = new JCheckBox("Non-centroids");
+        selectedSelect = new JCheckBox("Selected");
         
         linksSelect.setSelected(display.isDisplayLinks());
         nodesSelect.setSelected(display.isDisplayNodes());
         osmSelect.setSelected(map.isDisplayOSM());
         centroidSelect.setSelected(display.isDisplayCentroids());
         nonCentroidSelect.setSelected(display.isDisplayNonCentroids());
+        selectedSelect.setSelected(display.isDisplaySelected());
         
         linksSelect.addActionListener(new ActionListener()
         {
@@ -216,6 +225,15 @@ public class Editor extends JFrame implements MouseListener
             public void actionPerformed(ActionEvent e)
             {
                 display.setDisplayNodes(nodesSelect.isSelected());
+                map.repaint();
+            }
+        });
+        
+        selectedSelect.addActionListener(new ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                display.setDisplaySelected(selectedSelect.isSelected());
                 map.repaint();
             }
         });
@@ -257,11 +275,13 @@ public class Editor extends JFrame implements MouseListener
         
         JPanel layers = new JPanel();
         layers.setLayout(new GridBagLayout());
+        
         constrain(layers, nodesSelect, 0, 0, 1, 1);
         constrain(layers, linksSelect, 0, 1, 1, 1);
         constrain(layers, osmSelect, 0, 4, 1, 1);
         constrain(layers, centroidSelect, 0, 2, 1, 1);
         constrain(layers, nonCentroidSelect, 0, 3, 1, 1);
+        constrain(layers, selectedSelect, 1, 0, 1, 1);
         
         layers.setBorder(BorderFactory.createTitledBorder("Layers"));
         
@@ -528,6 +548,18 @@ public class Editor extends JFrame implements MouseListener
         mi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_D, ActionEvent.CTRL_MASK));
         me2.add(mi);
         
+        me2.addSeparator();
+        
+        mi = new JMenuItem("Print selected nodes");
+        mi.addActionListener(new ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                printSelectedNodes();
+            }
+        });
+        me2.add(mi);
+        
         me.add(me2);
         
         me2 = new JMenu("Links");
@@ -581,6 +613,18 @@ public class Editor extends JFrame implements MouseListener
             }
         });
         mi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_D, ActionEvent.CTRL_MASK+ActionEvent.SHIFT_MASK));
+        me2.add(mi);
+        
+        me2.addSeparator();
+        
+        mi = new JMenuItem("Print selected links");
+        mi.addActionListener(new ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                printSelectedLinks();
+            }
+        });
         me2.add(mi);
         
         me.add(me2);
@@ -1223,6 +1267,11 @@ public class Editor extends JFrame implements MouseListener
         openProject(null);
     }
     
+    public void repaintMap()
+    {
+        map.repaint();
+    }
+    
     public void refresh()
     {
         if(project != null)
@@ -1607,6 +1656,87 @@ public class Editor extends JFrame implements MouseListener
     {
         display.getNodeRules().add(rule);
         map.repaint();
+    }
+    
+    public void printSelectedNodes()
+    {
+        try
+        {
+            JFileChooser fc = new JFileChooser(project.getResultsFolder());
+            fc.setFileFilter(new FileNameExtensionFilter("Text files", ".txt"));
+            int return_val = fc.showSaveDialog(this);
+            
+            if(return_val == JFileChooser.APPROVE_OPTION)
+            {
+                File file = fc.getSelectedFile();
+                String name = file.getCanonicalPath();
+                if(name.indexOf('.') < 0)
+                {
+                    name += ".txt";
+                    file = new File(name);
+                }
+                
+                PrintStream fileout = new PrintStream(new FileOutputStream(file), true);
+                
+                fileout.println(ReadNetwork.getNodesFileHeader());
+                
+                for(int id : nodes.keySet())
+                {
+                    Node n = nodes.get(id);
+                    
+                    if(n.isSelected())
+                    {
+                        fileout.println(n.createNodeRecord());
+                    }
+                }
+                fileout.close();
+            }
+        }
+        catch(Exception ex)
+        {
+            GUI.handleException(ex);
+        }
+    }
+    
+    public void printSelectedLinks()
+    {
+        try
+        {
+            JFileChooser fc = new JFileChooser(project.getResultsFolder());
+            fc.setFileFilter(new FileNameExtensionFilter("Text files", "txt"));
+            int return_val = fc.showSaveDialog(this);
+            
+            if(return_val == JFileChooser.APPROVE_OPTION)
+            {
+                File file = fc.getSelectedFile();
+                String name = file.getCanonicalPath();
+                if(name.indexOf('.') < 0)
+                {
+                    name += ".txt";
+                    file = new File(name);
+                }
+                
+                PrintStream fileout = new PrintStream(new FileOutputStream(file), true);
+                
+                fileout.println(ReadNetwork.getLinksFileHeader());
+                
+                for(int id : links.keySet())
+                {
+                    Link l = links.get(id);
+                    
+                    if(l.isSelected())
+                    {
+                        fileout.println(l.createLinkRecord());
+                    }
+                }
+                fileout.close();
+                
+            }
+        }
+        catch(Exception ex)
+        {
+            GUI.handleException(ex);
+        }
     }
 }
 

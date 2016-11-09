@@ -173,6 +173,11 @@ public class AnalysisPanel extends GUIPanel
         {
             Scanner filein = new Scanner(linkids.getFile());
             
+            while(!filein.hasNextInt())
+            {
+                filein.nextLine();
+            }
+            
             while(filein.hasNextInt())
             {
                 output.add(filein.nextInt());
