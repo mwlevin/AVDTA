@@ -766,20 +766,9 @@ public class Simulator extends Network
 
             if(isSimulationFinished())
             {
-                
                 break;
             }
-            
-            if(exit_count == vehicles.size() -1)
-            {
-                for(Vehicle v : vehicles)
-                {
-                    if(!v.isExited())
-                    {
-                        System.out.println(v.getId()+" "+v.getOrigin()+" "+v.getDest()+" "+v.getCurrLink()+" "+v.getPath());
-                    }
-                }
-            }
+
         }
         
 
