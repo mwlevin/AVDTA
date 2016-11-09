@@ -69,7 +69,7 @@ public class MapViewer extends avdta.gui.editor.JMapViewer implements MouseListe
     
     private int scale;
     
-    private int mouseStartX, mouseStartY, mouseEndX, mouseEndY;
+    private Location mouseStart, mouseEnd;
     private boolean drawSelection;
     
     public MapViewer(DisplayManager display, int viewWidth, int viewHeight)
@@ -99,10 +99,9 @@ public class MapViewer extends avdta.gui.editor.JMapViewer implements MouseListe
     {
         if(e.getButton() == MouseEvent.BUTTON1)
         {
-            mouseStartX = e.getX();
-            mouseStartY = e.getY();
-            mouseEndX = e.getX();
-            mouseEndY = e.getY();
+            Location loc = new Location(getPosition(e.getX(), e.getY()));
+            mouseStart = loc;
+            mouseEnd = loc;
             
             drawSelection = true;
 
@@ -117,13 +116,11 @@ public class MapViewer extends avdta.gui.editor.JMapViewer implements MouseListe
             drawSelection = false;
             
             // select nodes and links
-            Location start = new Location(getPosition(new Point(mouseStartX, mouseStartY)));
-            Location end = new Location(getPosition(new Point(mouseEndX, mouseEndY)));
             
-            double xmin = Math.min(start.getX(), end.getX());
-            double ymin = Math.min(start.getY(), end.getY());
-            double xmax = Math.max(start.getX(), end.getX());
-            double ymax = Math.max(start.getY(), end.getY());
+            double xmin = Math.min(mouseStart.getX(), mouseEnd.getX());
+            double ymin = Math.min(mouseStart.getY(), mouseEnd.getY());
+            double xmax = Math.max(mouseStart.getX(), mouseEnd.getX());
+            double ymax = Math.max(mouseStart.getY(), mouseEnd.getY());
             
             for(Node n : nodes)
             {
@@ -155,8 +152,7 @@ public class MapViewer extends avdta.gui.editor.JMapViewer implements MouseListe
     public void mouseDragged(MouseEvent e)
     {
 
-        mouseEndX = e.getX();
-        mouseEndY = e.getY();
+        mouseEnd = new Location(getPosition(e.getX(), e.getY()));
 
 
         repaint();
@@ -317,10 +313,12 @@ public class MapViewer extends avdta.gui.editor.JMapViewer implements MouseListe
         
         if(drawSelection)
         {
-            int x = (int)Math.min(mouseStartX, mouseEndX);
-            int y = (int)Math.min(mouseStartY, mouseEndY);
-            int dx = (int)Math.abs(mouseEndX - mouseStartX);
-            int dy = (int)Math.abs(mouseEndY - mouseStartY);
+            Point start = this.getMapPosition(mouseStart.getLat(), mouseStart.getLon());
+            Point end = getMapPosition(mouseEnd.getLat(), mouseEnd.getLon());
+            int x = (int)Math.min(start.getX(), end.getX());
+            int y = (int)Math.min(start.getY(), end.getY());
+            int dx = (int)Math.abs(end.getX() - start.getX());
+            int dy = (int)Math.abs(end.getY() - start.getY());
 
             Stroke dashed = new BasicStroke(3, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 0, new float[]{9}, 0);
             g.setStroke(dashed);
