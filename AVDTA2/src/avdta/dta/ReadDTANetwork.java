@@ -139,6 +139,11 @@ public class ReadDTANetwork extends ReadDemandNetwork
                 VehicleClass vehClass = null;
                 DriverType driver = null;
                 
+                if(type /100 == TRANSIT / 100)
+                {
+                    continue;
+                }
+                
                 switch(type % 10)
                 {
                     case ICV:

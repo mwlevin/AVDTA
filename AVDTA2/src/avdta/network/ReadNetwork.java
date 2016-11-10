@@ -125,7 +125,10 @@ public class ReadNetwork
     public static final int BEV = 2;
     
     public static final int DA_VEHICLE = 100;
-    public static final int BUS = 500;        
+    public static final int BUS = 500;  
+    
+    // a traveler
+    public static final int TRANSIT = 600; 
     
     // used for sanity check
     public static final int MALFORMED_DATA = 1;
