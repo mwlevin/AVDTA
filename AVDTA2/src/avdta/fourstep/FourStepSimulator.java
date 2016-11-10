@@ -158,7 +158,7 @@ public class FourStepSimulator extends DTASimulator
     /**
      * Updates the beta value for arrival time penalty.
      * Beta is the penalty for early arrival time.
-     * @param alpha the new beta value ($/hr)
+     * @param beta the new beta value ($/hr)
      */
     public void setBeta(double beta)
     {

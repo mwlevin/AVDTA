@@ -576,7 +576,7 @@ public class ReadNetwork
      * Creates zones for the specified id and location.
      * The destination zone uses -id.
      * @param id the id of the zone
-     * @param location the location
+     * @param loc the location
      */
     public Zone[] createZones(int id, Location loc)
     {
