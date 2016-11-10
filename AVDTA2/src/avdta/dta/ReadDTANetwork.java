@@ -71,11 +71,7 @@ public class ReadDTANetwork extends ReadDemandNetwork
         
         DTASimulator sim = new DTASimulator(project, nodes, links);
 
-        vehicles = new ArrayList<Vehicle>();
-        readTransit(project);
-        readVehicles(project);
-        
-        sim.setVehicles(vehicles);
+        readVehicles(project, sim);
         
         sim.initialize();
         
@@ -84,7 +80,17 @@ public class ReadDTANetwork extends ReadDemandNetwork
         return sim;
     }
     
-    
+    /**
+     * 
+     */
+    public void readVehicles(DTAProject project, DTASimulator sim) throws IOException
+    {
+        vehicles = new ArrayList<Vehicle>();
+        readTransit(project);
+        readVehicles(project);
+        
+        sim.setVehicles(vehicles);
+    }
     
     
     
@@ -109,7 +115,9 @@ public class ReadDTANetwork extends ReadDemandNetwork
             int id = filein.nextInt();
             int type = filein.nextInt();
             int origin_id = filein.nextInt();
-            int dest_id = filein.nextInt();
+            
+            // take the negative id to get the destination zone
+            int dest_id = -filein.nextInt();
             int dtime = filein.nextInt();
             double vot = filein.nextDouble();
             filein.nextLine();

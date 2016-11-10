@@ -61,6 +61,15 @@ public class AST implements Comparable<AST>
     }
     
     /**
+     * Returns the end time/
+     * @return the end time (s)
+     */
+    public int getEnd()
+    {
+        return start + duration;
+    }
+    
+    /**
      * Returns the duration 
      * @return the duration (s)
      */

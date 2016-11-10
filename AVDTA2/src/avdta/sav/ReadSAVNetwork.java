@@ -14,6 +14,7 @@ import avdta.network.ReadNetwork;
 import avdta.network.Simulator;
 import avdta.network.link.CentroidConnector;
 import avdta.network.link.Link;
+import avdta.network.node.Location;
 import avdta.network.node.Node;
 import avdta.network.node.Zone;
 import avdta.project.DTAProject;
@@ -75,10 +76,6 @@ public class ReadSAVNetwork extends ReadDemandNetwork
         readIntersections(project);
         readPhases(project);
         
-        nodes = replaceZones(nodes);
-        
-        linkZones(nodes);
-        createMissingZones(nodes, links);
         
         SAVSimulator sim = new SAVSimulator(project, nodes, links);
 
@@ -90,33 +87,22 @@ public class ReadSAVNetwork extends ReadDemandNetwork
         
         return sim;
     }
+    
     /**
-     * When origins/destinations have separate zones, this attempts to link these separated zones. Origins are expected to have id of 100000+x, with corresponding destination id of 200000+x. Linked zones can be accessed from {@link Zone}.
-     * @param nodes the set of nodes
+     * Creates zones for the specified id and location.
+     * The destination zone uses -id.
+     * @param id the id of the zone
+     * @param location the location
      */
-    public void linkZones(Set<Node> nodes)
+    public Zone[] createZones(int id, Location loc)
     {
-        for(int id : zones.keySet())
-        {
-            Zone i = zones.get(id);
-            
-            for(int id2 : zones.keySet())
-            {
-                Zone j = zones.get(id2);
-                
-                if(i == j)
-                {
-                    continue;
-                }
-                else if(i.getCoordinate().equals(j.getCoordinate()))
-                {
-                    i.setLinkedZone(j);
-                    j.setLinkedZone(i);
-                }
-            }
-            
-        }
-
+        Zone origin = new SAVOrigin(id, loc);
+        Zone dest = new SAVDest(-id, loc);
+        
+        origin.setLinkedZone(dest);
+        dest.setLinkedZone(origin);
+        
+        return new Zone[]{origin, dest};
     }
     
     /**
@@ -139,7 +125,7 @@ public class ReadSAVNetwork extends ReadDemandNetwork
             int id = filein.nextInt();
             int type = filein.nextInt();
             int origin_id = filein.nextInt();
-            int dest_id = filein.nextInt();
+            int dest_id = -filein.nextInt();
             int dtime = filein.nextInt();
             double vot = filein.nextDouble();
             filein.nextLine();
@@ -177,130 +163,9 @@ public class ReadSAVNetwork extends ReadDemandNetwork
     
 
     
-    /**
-     * This method replaces zones with SAVOrigin or SAVDest, as appropriate
-     * @param nodes the current set of nodes
-     * @return the set of nodes with replaced zones
-     * @throws IOException if a file cannot be accessed
-     */
-    public Set<Node> replaceZones(Set<Node> nodes) throws IOException
-    {
-        Set<Node> nodes2 = new HashSet<Node>();
-        
-        
-        for(Node n : nodes)
-        {
-            
-            if(n instanceof Zone)
-            {
-                Zone z = (Zone)n;
-                
-                Zone node;
-                if(n.getOutgoing().size() > 0)
-                {
-                    node = new SAVOrigin(n.getId());
-                }
-                else
-                {
-                    node = new SAVDest(n.getId());
-                }
-
-                 
-                for(Link l : n.getOutgoing())
-                {
-                    l.setSource(node);
-                }
-                
-                for(Link l : n.getIncoming())
-                {
-                    l.setDest(node);
-                }
-                
-                
-
-                node.setIncoming(n.getIncoming());
-                node.setOutgoing(n.getOutgoing());
-                
-                n.setIncoming(new HashSet<Link>());
-                n.setOutgoing(new HashSet<Link>());
-                
-                nodes2.add(node);
-                nodesmap.put(n.getId(), node);
-                
-                zones.remove(n.getId());
-                zones.put(node.getId(), node);
-            }
-            else
-            {
-                nodes2.add(n);
-            }
-            
-        }
-  
-        
-        return nodes2;
-    }
     
-    /**
-     * After linking zones, if some origins/destinations lack a counterpart, this creates the missing origins/destinations as well as their centroid connectors.
-     * @param nodes the set of nodes
-     * @param links the set of links 
-     */
-    public void createMissingZones(Set<Node> nodes, Set<Link> links)
-    {
-        for(int id : zones.keySet())
-        {
-            
-            Zone zone = zones.get(id);
-            
-            if(zone.getLinkedZone() == null)
-            {
-                if(zone instanceof SAVOrigin)
-                {
-                    Zone newZone = new SAVDest(id+400000);
-                    
-                    // replicate centroid connectors
-                    for(Link l : zone.getOutgoing())
-                    {
-                        if(l instanceof CentroidConnector)
-                        {
-                            CentroidConnector newLink = new CentroidConnector(l.getId()+400000, l.getDest(), newZone);
-                            
-                            links.add(newLink);
-                        }
-                    }
-                    
-                    zone.setLinkedZone(newZone);
-                    newZone.setLinkedZone(zone);
-                    nodes.add(newZone);
-                    
-                    System.out.println("Added "+newZone);
-                }
-                else
-                {
-                    Zone newZone = new SAVOrigin(id+400000);
-                    
-                    // replicate centroid connectors
-                    for(Link l : zone.getIncoming())
-                    {
-                        if(l instanceof CentroidConnector)
-                        {
-                            CentroidConnector newLink = new CentroidConnector(l.getId()+300000, newZone, l.getSource());
-                            
-                            links.add(newLink);
-                        }
-                    }
-                    
-                    zone.setLinkedZone(newZone);
-                    newZone.setLinkedZone(zone);
-                    nodes.add(newZone);
-                    
-                    System.out.println("Added "+newZone);
-                }
-            }
-            
-        }
-    }
+    
+    
 
     
   

@@ -73,12 +73,12 @@ public class Main
 
         //caccTest2();
         
-        //new DTAGUI();
-        GUI.main(args);
-        /*
-        DTAProject project = new DTAProject(new File("projects/coacongress2"));
-        project.sanityCheck();
-        */
+        DTAProject project = new DTAProject(new File("projects/SiouxFalls"));
+        DTASimulator sim = project.getSimulator();
+        sim.msa(3);
+        
+        //GUI.main(args);
+
         
         
         //CACCConvert.convert(project, 1);

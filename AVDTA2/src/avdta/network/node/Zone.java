@@ -207,39 +207,7 @@ public class Zone extends Node
      */
     public int getType()
     {
-        // check if this is an input or output zone
-        
-        boolean input = true;
-        boolean output = true;
-        
-        for(Link l : getIncoming())
-        {
-            if(l instanceof CentroidConnector)
-            {
-                input = false;
-            }
-        }
-        
-        for(Link l : getOutgoing())
-        {
-            if(l instanceof CentroidConnector)
-            {
-                output = false;
-            }
-        }
-        
-        if(input)
-        {
-            return ReadNetwork.CENTROID+1;
-        }
-        else if(output)
-        {
-            return ReadNetwork.CENTROID+2;
-        }
-        else
-        {
-            return ReadNetwork.CENTROID;
-        }
+        return ReadNetwork.CENTROID;
     }
     
     /**

@@ -6,11 +6,14 @@
 package avdta.project;
 
 import avdta.demand.ReadDemandNetwork;
-import fourstep.ReadFourStepNetwork;
+import avdta.fourstep.ReadFourStepNetwork;
+import avdta.network.ReadNetwork;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.util.Map;
+import java.util.TreeMap;
 
 /**
  *
@@ -18,14 +21,18 @@ import java.io.PrintStream;
  */
 public class FourStepProject extends DTAProject
 {
+    private Map<String, String> networkOptions;
+    
     public FourStepProject()
     {
-        
+        networkOptions = new TreeMap<String, String>();
     }
     
     public FourStepProject(File dir) throws IOException
     {
         super(dir);
+        
+        networkOptions = new TreeMap<String, String>();
     }
     
     /**
@@ -53,31 +60,116 @@ public class FourStepProject extends DTAProject
     {
         super.writeEmptyFiles();
         
-        PrintStream fileout = new PrintStream(new FileOutputStream(getProductionsFile()), true);
-        fileout.println(ReadFourStepNetwork.getProductionsFileHeader());
+        PrintStream fileout = new PrintStream(new FileOutputStream(getZonesFile()), true);
+        fileout.println(ReadFourStepNetwork.getZonesFileHeader());
         fileout.close();
         
-        fileout = new PrintStream(new FileOutputStream(getAttractionsFile()), true);
-        fileout.println(ReadFourStepNetwork.getAttractionsFileHeader());
+    }
+    
+    /**
+     * Returns the productions file.
+     * @return {@link Project#getProjectDirectory()}/fourstep/zones.txt
+     */
+    public File getZonesFile()
+    {
+        return new File(getProjectDirectory()+"/fourstep/zones.txt");
+    }
+    
+    /**
+     * Returns the four-step options file.
+     * @return {@link Project#getProjectDirectory()}/fourstep/options.txt
+     */
+    public File getFourStepOptionsFile()
+    {
+        return new File(getProjectDirectory()+"/fourstep/options.txt");
+    }
+    
+    
+    /**
+     * Fills the project options with default values.
+     * Also calls {@link Project#fillOptions()}.
+     */
+    public void fillOptions()
+    {
+        super.fillOptions();
+        
+        double vot = 3.198; // $/hr
+        double TR_asc = -52.6, logit_dispersion = 0.0548, transitFee = 1;
+        double AV_asc = 0;
+    
+    
+        // arrival time penalty values
+        double alpha = 1*vot, beta = 0.609375*vot, gamma = 2.376525*vot;
+        
+        setFourStepOption("allow-repositioning", "true");
+        setFourStepOption("arrival-time-alpha", ""+alpha);
+        setFourStepOption("arrival-time-beta", ""+beta);
+        setFourStepOption("arrival-time-gamma", ""+gamma);
+        setFourStepOption("transit-asc", ""+TR_asc);
+        setFourStepOption("reposition-asc", ""+AV_asc);
+        setFourStepOption("logit-dispersion", ""+logit_dispersion);
+        setFourStepOption("transit-fee", ""+transitFee);
+        setFourStepOption("all-avs", "true");
+        setFourStepOption("fuel-cost", "2");
+        setFourStepOption("demand-asts", "8");
+    }
+    
+    /**
+     * Adds/updates the options to contain the specified key and value
+     * @param key the key
+     * @param val the value
+     */
+    public void setFourStepOption(String key, String val)
+    {
+        networkOptions.put(key.toLowerCase(), val);
+    }
+    
+    /**
+     * Returns the value associated with the specified key
+     * @param k the key
+     * @return the value associated with the specified key
+     */
+    public String getFourStepOption(String k)
+    {
+        return networkOptions.get(k.toLowerCase());
+    }
+    
+    /**
+     * Returns the project type
+     * @return FourStep
+     */
+    public String getType()
+    {
+        return "FourStep";
+    }
+    
+    /**
+     * Returns the type indicator {@link String} used to create the indicator file to determine the type of this project.
+     * @return "fourstep"
+     */
+    public String getTypeIndicator()
+    {
+        return "fourstep";
+    }
+    
+    /**
+     * Writes the four-step options file.
+     * Also calls {@link DTAProject#writeOptions()}.
+     * @throws IOException if the file is not found
+     */
+    public void writeOptions() throws IOException
+    {
+        super.writeOptions();
+        
+        PrintStream fileout = new PrintStream(new FileOutputStream(getFourStepOptionsFile()), true);
+
+        fileout.println(ReadNetwork.getOptionsFileHeader());
+        for(String k : networkOptions.keySet())
+        {
+            fileout.println(k+"\t"+networkOptions.get(k));
+        }
+        
         fileout.close();
-    }
-    
-    /**
-     * Returns the productions file
-     * @return {@link Project#getProjectDirectory()}/fourstep/productions.txt
-     */
-    public File getProductionsFile()
-    {
-        return new File(getProjectDirectory()+"/fourstep/productions.txt");
-    }
-    
-    /**
-     * Returns the attractions file
-     * @return {@link Project#getProjectDirectory()}/fourstep/attractions.txt
-     */
-    public File getAttractionsFile()
-    {
-        return new File(getProjectDirectory()+"/fourstep/attractions.txt");
     }
     
 }

@@ -550,21 +550,44 @@ public class ReadNetwork
 
             if(type / 100 == CENTROID/100)
             {
-                node = new Zone(id, new Location(x, y));
+                Zone[] zones = createZones(id, new Location(x, y));
+                
+                for(Zone z : zones)
+                {
+                    nodesmap.put(z.getId(), z);
+                    nodes.add(z);
+                }
             }
             else
             {
                 node = new Intersection(id, new Location(x, y), null);
+                nodesmap.put(id, node);
+                nodes.add(node);
             }
             
-            nodesmap.put(id, node);
-            nodes.add(node);
+            
         }
         filein.close();
         
         return nodes;
     }
     
+    /**
+     * Creates zones for the specified id and location.
+     * The destination zone uses -id.
+     * @param id the id of the zone
+     * @param location the location
+     */
+    public Zone[] createZones(int id, Location loc)
+    {
+        Zone origin = new Zone(id, loc);
+        Zone dest = new Zone(-id, loc);
+        
+        origin.setLinkedZone(dest);
+        dest.setLinkedZone(origin);
+        
+        return new Zone[]{origin, dest};
+    }
     
     /**
      * Reads in all links from the links file.
@@ -613,6 +636,12 @@ public class ReadNetwork
             if(dest == null)
             {
                 throw new RuntimeException("Cannot find node "+dest_id);
+            }
+            
+            // positive dest ids will return the origin zone, swap to get the destination zone
+            if(dest_id > 0 && dest instanceof Zone)
+            {
+                dest = ((Zone)dest).getLinkedZone();
             }
             
             switch(type/100)
@@ -848,55 +877,7 @@ public class ReadNetwork
     
     
     
-    /*
-    public void linkZones(Network sim)
-    {
-        zones.clear();
-        
-        for(Node n : sim.getNodes())
-        {
-            if(n instanceof Zone)
-            {
-                Zone z = (Zone)n;
-                
-                zones.put(z.getId(), z);
-                
-            }
-        }
-        
-        for(int id : zones.keySet())
-        {
-            Zone zone = zones.get(id);
-            
-            
-            if(zone.getOutgoing().size() > 0)
-            {
-                Node i = zone.getOutgoing().iterator().next().getDest();
-
-                
-                
-                for(Link l : i.getOutgoing())
-                {
-                    if(l.getDest() instanceof Zone)
-                    {
-                        zone.setLinkedZone((Zone)l.getDest());
-                        ((Zone)l.getDest()).setLinkedZone(zone);
-                        
-                        
-                        break;
-                    }
-                }
-            }
-            
-            if(id >= 10000 && id < 20000)
-            {
-                zone.setLinkedZone(zones.get(id+10000));
-                zones.get(id+10000).setLinkedZone(zone);
-            }
-        }
-
-    }
-    */
+    
     
     /**
      * Reads the project options from the options file.
@@ -950,6 +931,7 @@ public class ReadNetwork
                     Network.setDLR(true);
                 }
             }
+            filein.close();
         }
         catch(IOException ex)
         {

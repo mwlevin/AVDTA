@@ -483,7 +483,7 @@ public abstract class Project
         setOption("hv-reaction-time","1");
         setOption("av-reaction-time","0.5");
         setOption("hvs-use-reservations","false");
-        setOption("dynamic-lane-reversal","false");
+        setOption("dynamic-lane-reversal","true");
         setOption("simulation-mesoscopic-step","6");
         
         

@@ -6,7 +6,9 @@
 package avdta.demand;
 
 import avdta.project.DemandProject;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.Scanner;
 import java.util.TreeMap;
 
@@ -44,6 +46,22 @@ public class DemandProfile extends TreeMap<Integer, AST>
         filein.close();
 
         normalizeWeights();
+    }
+    
+    public void save(DemandProject project) throws IOException
+    {
+        PrintStream fileout = new PrintStream(new FileOutputStream(project.getDemandProfileFile()), true);
+        
+        fileout.println(ReadDemandNetwork.getDemandProfileFileHeader());
+        
+        for(int id : keySet())
+        {
+            AST ast = get(id);
+            
+            fileout.println(ast.getId()+"\t"+ast.getWeight()+"\t"+ast.getStart()+"\t"+ast.getDuration());
+        }
+        
+        fileout.close();
     }
     
     /**

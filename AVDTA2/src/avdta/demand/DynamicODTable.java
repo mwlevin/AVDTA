@@ -7,6 +7,7 @@ package avdta.demand;
 
 import avdta.dta.VehicleRecord;
 import avdta.network.node.Node;
+import avdta.network.node.Zone;
 import avdta.project.DemandProject;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -31,6 +32,14 @@ public class DynamicODTable
     public DynamicODTable()
     {
         table = new HashMap<Integer, Map<Integer, Map<Integer, Map<Integer, Double>>>>();
+    }
+    
+    /**
+     * Empties all entries in this dynamic OD table.
+     */
+    public void clear()
+    {
+        table.clear();
     }
     
     /**
@@ -59,6 +68,19 @@ public class DynamicODTable
         }
         
         filein.close();
+    }
+    
+    /**
+     * Adds the specified amount of demand.
+     * @param origin the origin
+     * @param dest the destination
+     * @param ast the assignment interval
+     * @param type the type code of the vehicle
+     * @param dem the amount of demand
+     */
+    public void addDemand(Zone origin, Zone dest, int ast, int type, double dem)
+    {
+        addDemand(origin.getId(), dest.getId(), ast, type, dem);
     }
     
     /**

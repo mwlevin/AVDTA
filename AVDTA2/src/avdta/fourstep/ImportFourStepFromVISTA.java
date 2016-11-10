@@ -3,8 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package fourstep;
+package avdta.fourstep;
 
+import avdta.demand.DemandProfile;
+import avdta.demand.ReadDemandNetwork;
 import java.io.File;
 import java.io.IOException;
 import avdta.project.FourStepProject;
@@ -12,6 +14,7 @@ import java.io.FileOutputStream;
 import java.io.PrintStream;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 import java.util.Scanner;
 
 /**
@@ -27,8 +30,15 @@ public class ImportFourStepFromVISTA
     
     public void convertDynamicOD(FourStepProject project, File dynamic_od) throws IOException
     {
-        Map<Integer, Double> productions = new HashMap<Integer, Double>();
-        Map<Integer, Double> attractions = new HashMap<Integer, Double>();
+        ReadDemandNetwork read = new ReadDemandNetwork();
+        
+        DemandProfile profile = read.readDemandProfile(project);
+        
+        
+        Map<Integer, Double[]> productions = new HashMap<Integer, Double[]>();
+        
+        int max_time = 0;
+        int ast_duration = Integer.parseInt(project.getOption("ast-duration"));
         
         Scanner filein = new Scanner(dynamic_od);
         
@@ -41,44 +51,44 @@ public class ImportFourStepFromVISTA
             double dem = filein.nextDouble();
             int ast = filein.nextInt();
             
+            max_time = (int)Math.max(max_time, profile.get(ast).getEnd());
+            
             if(productions.containsKey(o))
             {
-                productions.put(o, productions.get(o)+dem);
+                Double[] temp = productions.get(o);
+                temp[0] += dem;
             }
             else
             {
-                productions.put(o, dem);
+                productions.put(o, new Double[]{dem, 0.0});
             }
             
-            if(attractions.containsKey(d))
+            if(productions.containsKey(d))
             {
-                attractions.put(d, attractions.get(d)+dem);
+                Double[] temp = productions.get(d);
+                temp[1] += dem;
             }
             else
             {
-                attractions.put(d, dem);
+                productions.put(o, new Double[]{0.0, dem});
             }
         }
         filein.close();
         
-        PrintStream fileout = new PrintStream(new FileOutputStream(project.getProductionsFile()), true);
-        fileout.println(ReadFourStepNetwork.getProductionsFileHeader());
+        project.setOption("demand-asts", ""+(int)Math.ceil(max_time / ast_duration));
+        project.writeOptions();
+        
+        PrintStream fileout = new PrintStream(new FileOutputStream(project.getZonesFile()), true);
+        fileout.println(ReadFourStepNetwork.getZonesFileHeader());
+        
+        Random rand = new Random();
         
         for(int o : productions.keySet())
         {
-            fileout.println(o+"\t"+productions.get(o));
+            Double[] temp = productions.get(o);
+            double pat = rand.nextGaussian() * 7200;
+            fileout.println(o+"\t"+temp[0]+"\t"+temp[1]+"\t"+pat+"\t"+5);
         }
         fileout.close();
-        productions = null;
-        
-        fileout = new PrintStream(new FileOutputStream(project.getAttractionsFile()), true);
-        fileout.println(ReadFourStepNetwork.getAttractionsFileHeader());
-        
-        for(int d : attractions.keySet())
-        {
-            fileout.println(d+"\t"+attractions.get(d));
-        }
-        fileout.close();
-        
     }
 }

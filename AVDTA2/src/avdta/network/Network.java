@@ -9,6 +9,7 @@ import avdta.network.link.LinkRecord;
 import avdta.network.node.Intersection;
 import avdta.network.node.Node;
 import avdta.network.link.SharedTransitCTMLink;
+import avdta.network.link.transit.TransitLink;
 import avdta.network.node.Location;
 import avdta.network.node.NodeRecord;
 import avdta.network.node.Phase;
@@ -850,6 +851,10 @@ public class Network
         
         for(Node n : nodes)
         {
+            if(n.getId() < 0)
+            {
+                continue;
+            }
             NodeRecord record = n.createNodeRecord();
             
             if(record != null)
@@ -865,6 +870,10 @@ public class Network
         
         for(Link l : links)
         {
+            if(l.getId() < 0)
+            {
+                continue;
+            }
             LinkRecord record = l.createLinkRecord();
             
             if(record != null)
@@ -998,5 +1007,76 @@ public class Network
         }
         
         return output;
+    }
+    
+    public double transit_trace(Node origin, Node dest)
+    {
+        double cost = 0;
+        
+        Node curr = dest;
+        
+        while(curr != origin)
+        {
+            cost += dest.label;
+            curr = dest.transit_prev.getSource();
+        }
+        
+        return cost;
+    }
+    
+    public void transit_dijkstras(Node o, int dep_time)
+    {
+        
+        for(Node n : nodes)
+        {
+            n.label = Integer.MAX_VALUE;
+            n.transit_prev = null;
+        }
+        
+        o.label = dep_time;
+        
+        Set<Node> Q = new HashSet<Node>();
+        
+        Q.add(o);
+        
+        
+        while(!Q.isEmpty())
+        {
+            double min = Integer.MAX_VALUE;
+            Node u = null;
+            
+            for(Node n : Q)
+            {
+                if(n.label < min)
+                {
+                    u = n;
+                    min = n.label;
+                }
+            }
+            
+            Q.remove(u);
+            
+            for(TransitLink l : u.getTransitOut())
+            {
+                Node v = l.getDest();
+                
+                double temp = u.label;
+                
+                
+                temp += l.getTT((int)temp);
+                
+                if(temp < v.label)
+                {
+                    v.label = temp;
+                    v.transit_prev = l;
+                    
+                    if(!(v instanceof Zone))
+                    {
+                        Q.add(v);
+                    }
+                }
+            }
+            
+        }
     }
 }
