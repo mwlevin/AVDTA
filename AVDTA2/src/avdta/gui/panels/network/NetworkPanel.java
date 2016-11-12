@@ -9,6 +9,7 @@ import avdta.gui.panels.network.ImportNetworkPanel;
 import avdta.gui.panels.network.LinksPanel;
 import avdta.gui.DTAGUI;
 import avdta.gui.GUI;
+import avdta.gui.panels.AbstractGUIPanel;
 import avdta.gui.panels.GUIPanel;
 import avdta.gui.panels.network.NodesPanel;
 import javax.swing.JPanel;
@@ -28,7 +29,7 @@ public class NetworkPanel extends GUIPanel
     private NodesPanel nodesPane;
     private ImportNetworkPanel importPane;
     
-    public NetworkPanel(DTAGUI parent)
+    public NetworkPanel(AbstractGUIPanel parent)
     {
         super(parent);
         

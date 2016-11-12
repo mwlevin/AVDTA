@@ -51,8 +51,11 @@ public class FourStepProject extends DTAProject
         File file = new File(dirStr+"/fourstep");
         file.mkdirs();
         
-        
-    }/**
+        createIndicatorFile(super.getTypeIndicator());
+    }
+    
+    
+    /**
      * Writes empty FourStep files. Also calls {@link DTAProject#writeEmptyFiles()}
      * @throws IOException if a file cannot be created
      */

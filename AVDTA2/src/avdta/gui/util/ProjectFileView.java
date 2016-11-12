@@ -44,7 +44,7 @@ public class ProjectFileView extends FileView
      */
     public ProjectFileView(String type)
     {
-        this.type = type;
+        this.type = type.toLowerCase();
     }
     
     /**
