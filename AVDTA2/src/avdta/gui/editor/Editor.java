@@ -4,6 +4,7 @@
  */
 package avdta.gui.editor;
 
+import avdta.dta.DTASimulator;
 import avdta.gui.editor.visual.DefaultDisplayManager;
 import avdta.gui.editor.visual.DisplayManager;
 import avdta.gui.GUI;
@@ -41,6 +42,7 @@ import avdta.network.node.Signalized;
 import avdta.network.node.Turn;
 import avdta.network.node.TurnRecord;
 import avdta.project.DTAProject;
+import avdta.project.DemandProject;
 import avdta.project.Project;
 import java.awt.Color;
 import java.awt.Cursor;
@@ -113,7 +115,7 @@ public class Editor extends JFrame implements MouseListener
     
     
     private JCheckBox linksSelect, nodesSelect, osmSelect, centroidSelect, nonCentroidSelect, selectedSelect;
-    private JMenuItem save, close;
+    private JMenuItem save, close, createSubnetwork;
     
     private Project project;
     
@@ -562,6 +564,8 @@ public class Editor extends JFrame implements MouseListener
         
         me.add(me2);
         
+        
+        
         me2 = new JMenu("Links");
         
         mi = new JMenuItem("Find link");
@@ -630,20 +634,20 @@ public class Editor extends JFrame implements MouseListener
         me.add(me2);
         
         
-        /*
+        
         me.addSeparator();
         
+        createSubnetwork = new JMenuItem("Create subnetwork");
+        createSubnetwork.setEnabled(false);
         
-        mi = new JMenuItem("Create subnetwork");
-        mi.addActionListener(new ActionListener()
+        createSubnetwork.addActionListener(new ActionListener()
         {
             public void actionPerformed(ActionEvent e)
             {
                 createSubnetwork();
             }
-        };
-        me.add(mi));
-        */
+        });
+        me.add(createSubnetwork);
         
         menu.add(me);
         
@@ -681,6 +685,74 @@ public class Editor extends JFrame implements MouseListener
         }
         
         setMode(PAN);
+    }
+    
+    public void createSubnetwork()
+    {
+        JFileChooser chooser = new JFileChooser(project.getProjectDirectory());
+        
+        chooser.addChoosableFileFilter(new FileNameExtensionFilter("VAT files", "vat"));
+        int output = chooser.showOpenDialog(this);
+        
+        File simVat;
+        
+        if(output == JFileChooser.APPROVE_OPTION)
+        {
+            simVat = chooser.getSelectedFile();
+        }
+        else
+        {
+            return;
+        }
+        
+        Set<Link> newLinks = new HashSet<Link>();
+        
+        for(int id : links.keySet())
+        {
+            Link l = links.get(id);
+            
+            if(l.isSelected())
+            {
+                newLinks.add(l);
+            }
+        }
+        
+        
+        
+        chooser = new ProjectChooser(new File(GUI.getDefaultDirectory()));
+               
+        int returnVal = chooser.showDialog(this, "Select folder");
+        
+        if(returnVal == JFileChooser.APPROVE_OPTION)
+        {
+            File dir = chooser.getSelectedFile();
+            
+            String name = JOptionPane.showInputDialog(this, "What do you want to name this project? ", "Project name", 
+                    JOptionPane.QUESTION_MESSAGE);
+            
+            if(name != null)
+            {
+                try
+                {
+                    DTAProject rhs = new DTAProject();
+                    rhs.createProject(name, dir);
+                    
+                    DTASimulator sim = ((DTAProject)project).getSimulator();
+                    
+
+                    sim.createSubnetwork(newLinks, simVat, rhs);
+                    JOptionPane.showMessageDialog(this, "Subnetwork created.", "Complete", JOptionPane.INFORMATION_MESSAGE);
+
+                }
+                catch(Exception ex)
+                {
+                    handleException(ex);
+                }
+            }
+        }
+        
+        
+        
     }
     
     public void addLink()
@@ -1239,6 +1311,7 @@ public class Editor extends JFrame implements MouseListener
         linkPanel.setEnabled(enable);
         timeSlider.setEnabled(enable);
         
+        createSubnetwork.setEnabled(enable && (project instanceof DTAProject));
         
         if(project != null)
         {

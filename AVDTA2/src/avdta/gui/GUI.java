@@ -7,6 +7,7 @@ package avdta.gui;
 
 import avdta.gui.editor.Editor;
 import avdta.Version;
+import avdta.gui.util.ProjectChooser;
 import java.awt.Color;
 import java.awt.Image;
 import java.io.File;
@@ -18,8 +19,11 @@ import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import avdta.network.node.PhasedTBR;
+import avdta.project.DTAProject;
+import avdta.project.FourStepProject;
 import avdta.project.Project;
 import avdta.project.SQLLogin;
+import avdta.project.TransitProject;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -27,6 +31,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.JFileChooser;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -234,7 +239,6 @@ public abstract class GUI extends JFrame
                 setupSQL();
                 
                 createDatabase.setEnabled(SQLLogin.hasSQL());
-                reset();
             }
         });
         
@@ -353,11 +357,98 @@ public abstract class GUI extends JFrame
         return me;
     }
     
-    public abstract void newProject();
-    public abstract void closeProject();
-    public abstract void openProject();
-    public abstract void cloneProject();
-    public abstract void reset();
+    public abstract Project openProject(File file) throws IOException;
+    public abstract String getProjectType();
+    public abstract Project createEmptyProject();
+    
+    public void cloneProject()
+    {
+        JFileChooser chooser = new ProjectChooser(new File(GUI.getDefaultDirectory()));
+        
+        
+        
+        int returnVal = chooser.showDialog(this, "Select folder");
+        
+        if(returnVal == JFileChooser.APPROVE_OPTION)
+        {
+            File dir = chooser.getSelectedFile();
+            
+            String name = JOptionPane.showInputDialog(this, "What do you want to name this project? ", "Project name", 
+                    JOptionPane.QUESTION_MESSAGE);
+            
+            if(name != null)
+            {
+                try
+                {
+                    Project rhs = createEmptyProject();
+                    rhs.createProject(name, new File(dir.getCanonicalPath()+"/"+name));
+                    
+                    if(project instanceof FourStepProject)
+                    {
+                        rhs.cloneFromProject((FourStepProject)project);
+                    }
+                    else if(project instanceof DTAProject)
+                    {
+                        rhs.cloneFromProject((DTAProject)project);
+                    }
+                    else if(project instanceof TransitProject)
+                    {
+                        rhs.cloneFromProject((TransitProject)project);
+                    }
+                    else
+                    {
+                        rhs.cloneFromProject(project);
+                    }
+                    
+                    openProject(rhs);
+                }
+                catch(IOException ex)
+                {
+                    handleException(ex);
+                }
+            }
+        }
+    }
+    
+    public void newProject(File dir, String name)
+    {
+        try
+        {
+            Project project = createEmptyProject();
+            project.createProject(name, new File(dir.getCanonicalPath()+"/"+name));
+            openProject(project);
+        }
+        catch(IOException ex)
+        {
+            handleException(ex);
+        }
+    }
+    
+    public void openProject()
+    {
+        JFileChooser chooser = new ProjectChooser(new File(GUI.getDefaultDirectory()), getProjectType());
+        
+        int returnVal = chooser.showDialog(this, "Open project");
+        
+        if(returnVal == chooser.APPROVE_OPTION)
+        {
+            try
+            {
+                Project project = openProject(chooser.getSelectedFile());
+                
+                openProject(project);
+            }
+            catch(IOException ex)
+            {
+                JOptionPane.showMessageDialog(this, "The selected folder is not a "+getProjectType()+" network", "Invalid network", 
+                        JOptionPane.ERROR_MESSAGE);
+            }
+            catch(Exception ex)
+            {
+                GUI.handleException(ex);
+            }
+        }
+    }
     
     public abstract void createDatabase();
     
@@ -386,5 +477,39 @@ public abstract class GUI extends JFrame
     public static String getTitleName()
     {
         return "AVDTA";
+    }
+    
+    public void newProject()
+    {
+        JFileChooser chooser = new ProjectChooser(new File(GUI.getDefaultDirectory()));
+               
+        int returnVal = chooser.showDialog(this, "Select folder");
+        
+        if(returnVal == JFileChooser.APPROVE_OPTION)
+        {
+            File dir = chooser.getSelectedFile();
+            
+            String name = JOptionPane.showInputDialog(this, "What do you want to name this project? ", "Project name", 
+                    JOptionPane.QUESTION_MESSAGE);
+            
+            if(name != null)
+            {
+                newProject(dir, name);
+                
+            }
+        }
+    }
+    
+    public void closeProject()
+    {
+        try
+        {
+            Project project = null;
+            openProject(project);
+        }
+        catch(IOException ex)
+        {
+            GUI.handleException(ex);
+        }
     }
 }

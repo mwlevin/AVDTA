@@ -6,6 +6,7 @@
 package avdta.gui.panels.demand;
 
 import avdta.gui.DTAGUI;
+import avdta.gui.panels.AbstractGUIPanel;
 import avdta.gui.panels.GUIPanel;
 import avdta.project.DTAProject;
 import java.awt.GridBagLayout;
@@ -21,7 +22,7 @@ public class DemandPanel extends GUIPanel
     private PrepareDemandPanel prepareDemandPane;
     private VehiclesPanel vehiclesPane;
 
-    public DemandPanel(DTAGUI parent)
+    public DemandPanel(AbstractGUIPanel parent)
     {
         super(parent);
         setLayout(new GridBagLayout());

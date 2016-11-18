@@ -7,60 +7,45 @@ package avdta.gui;
 
 import avdta.dta.Assignment;
 import avdta.dta.DTAResults;
-import avdta.gui.util.ProjectChooser;
-import avdta.Version;
-import avdta.gui.panels.dta.DTAPanel;
-import avdta.gui.panels.demand.DemandPanel;
-import avdta.gui.panels.network.NetworkPanel;
-import avdta.dta.DTASimulator;
 import static avdta.gui.GUI.handleException;
 import avdta.gui.panels.AbstractGUIPanel;
 import avdta.gui.panels.analysis.AnalysisPanel;
+import avdta.gui.panels.demand.DemandPanel;
+import avdta.gui.panels.dta.DTAPanel;
+import avdta.gui.panels.network.NetworkPanel;
 import avdta.gui.panels.transit.TransitPanel;
-import avdta.project.DTAProject;
-import java.awt.GridBagLayout;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
 import static avdta.gui.util.GraphicUtils.*;
+import avdta.project.DTAProject;
+import avdta.project.FourStepProject;
+import avdta.project.Project;
+import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
-import javax.swing.JFileChooser;
+import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import javax.swing.JTextField;
-import javax.swing.filechooser.FileView;
-import avdta.network.ReadNetwork;
-import avdta.project.Project;
-import avdta.project.TransitProject;
-import avdta.vehicle.DriverType;
+import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
 
 /**
  *
  * @author micha
  */
-public class DTAGUI extends GUI implements AbstractGUIPanel
+public class FourStepGUI extends GUI implements AbstractGUIPanel 
 {
-   
     private NetworkPanel networkPane;
     private DemandPanel demandPane;
-    private DTAPanel dtaPane;
     private TransitPanel transitPane;
     private AnalysisPanel analysisPane;
     
     private JMenuItem lastAssignment;
     
-    
-    public DTAGUI()
+    public FourStepGUI()
     {
-
-        
         JPanel p = new JPanel();
         p.setLayout(new GridBagLayout());
 
@@ -71,53 +56,15 @@ public class DTAGUI extends GUI implements AbstractGUIPanel
         networkPane = new NetworkPanel(this);
         demandPane = new DemandPanel(this);
         transitPane = new TransitPanel(this);
-        dtaPane = new DTAPanel(this);
         analysisPane = new AnalysisPanel(this);
         
         tabs.add("Network", networkPane);
         tabs.add("Demand", demandPane);
         tabs.add("Transit", transitPane);
-        tabs.add("DTA", dtaPane);
+        
         tabs.add("Analysis", analysisPane);
         
         constrain(p, tabs, 0, 0, 1, 1);
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        add(p);
-        pack();
-        setResizable(false);
-        
-
-        setLocationRelativeTo(null);
-
-        
-        
-        setVisible(true);
-    }
-    
-    public void parentReset()
-    {
-        dtaPane.reset();
-        demandPane.reset();
-        networkPane.reset();
-        transitPane.reset();
-        analysisPane.reset();
-    }
-    
-    public void parentSetEnabled(boolean e)
-    {
-        dtaPane.setEnabled(e);
-        demandPane.setEnabled(e);
-        networkPane.setEnabled(e);
-        transitPane.setEnabled(e);
-        analysisPane.setEnabled(e);
     }
     
     public JMenuBar createMenuBar()
@@ -128,6 +75,8 @@ public class DTAGUI extends GUI implements AbstractGUIPanel
         
         JMenu me = new JMenu("DTA");
         lastAssignment = new JMenuItem("Last assignment");
+        
+        /*
         lastAssignment.addActionListener(new ActionListener()
         {
             public void actionPerformed(ActionEvent e)
@@ -150,6 +99,8 @@ public class DTAGUI extends GUI implements AbstractGUIPanel
                 }
             }
         });
+        */
+        
         me.add(lastAssignment);
         
         lastAssignment.setEnabled(false);
@@ -159,14 +110,56 @@ public class DTAGUI extends GUI implements AbstractGUIPanel
         return menu;
     }
     
+    public void parentReset()
+    {
+        demandPane.reset();
+        networkPane.reset();
+        transitPane.reset();
+        analysisPane.reset();
+    }
     
+    public void parentSetEnabled(boolean e)
+    {
+        demandPane.setEnabled(e);
+        networkPane.setEnabled(e);
+        transitPane.setEnabled(e);
+        analysisPane.setEnabled(e);
+    }
+    
+    public void reset()
+    {
+        parentReset();
+    }
+    
+    public void createDatabase()
+    {
+        if(project == null)
+        {
+            return;
+        }
+        try
+        {
+            project.createDatabase();
+        }
+        catch(Exception ex)
+        {
+            GUI.handleException(ex);
+        }
+    }
+    
+    
+    public FourStepProject openProject(File file) throws IOException
+    {
+        return new FourStepProject(file);
+                
+    }
     
     public void openProject(Project p) throws IOException
     {
         parentSetEnabled(false);
         super.openProject(p);
         
-        DTAProject project = (DTAProject)p;
+        FourStepProject project = (FourStepProject)p;
         this.project = project;
            
         try
@@ -190,7 +183,6 @@ public class DTAGUI extends GUI implements AbstractGUIPanel
         
         networkPane.setProject(project);
         demandPane.setProject(project);
-        dtaPane.setProject(project);
         transitPane.setProject(project);
         lastAssignment.setEnabled(project != null);
         analysisPane.setProject(project);
@@ -200,42 +192,13 @@ public class DTAGUI extends GUI implements AbstractGUIPanel
         
     }
     
-    public Project createEmptyProject()
-    {
-        return new DTAProject();
-    }
-    
     public String getProjectType()
     {
-        return "DTA";
+        return "FourStep";
     }
     
-    public DTAProject openProject(File file) throws IOException
+    public Project createEmptyProject()
     {
-        return new DTAProject(file);
-                
-    }
-    
-    
-    
-    public void reset()
-    {
-        parentReset();
-    }
-    
-    public void createDatabase()
-    {
-        if(project == null)
-        {
-            return;
-        }
-        try
-        {
-            project.createDatabase();
-        }
-        catch(Exception ex)
-        {
-            GUI.handleException(ex);
-        }
+        return new FourStepProject();
     }
 }

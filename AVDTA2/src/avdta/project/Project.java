@@ -587,9 +587,19 @@ public abstract class Project
         file = new File(dirStr+"/results");
         file.mkdirs();
         
-        PrintStream fileout = new PrintStream(getProjectDirectory()+"/"+getTypeIndicator()+".dat");
-        fileout.close();
+        createIndicatorFile(getTypeIndicator());
         
+    }
+    
+    /**
+     * Creates a file of the specified name indicating the type of project.
+     * @param type the type indicator
+     * @throws IOException if the file cannot be created
+     */
+    protected void createIndicatorFile(String type) throws IOException
+    {
+        PrintStream fileout = new PrintStream(getProjectDirectory()+"/"+type+".dat");
+        fileout.close();
     }
 
     

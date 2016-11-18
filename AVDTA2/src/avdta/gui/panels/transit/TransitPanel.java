@@ -6,6 +6,7 @@
 package avdta.gui.panels.transit;
 
 import avdta.gui.DTAGUI;
+import avdta.gui.panels.AbstractGUIPanel;
 import avdta.gui.panels.GUIPanel;
 import static avdta.gui.util.GraphicUtils.constrain;
 import avdta.project.TransitProject;
@@ -21,7 +22,7 @@ public class TransitPanel extends GUIPanel
     private ImportTransitPanel importPane;
     private TransitViewPanel viewPane;
     
-    public TransitPanel(DTAGUI parent)
+    public TransitPanel(AbstractGUIPanel parent)
     {
         super(parent);
         importPane = new ImportTransitPanel(this);

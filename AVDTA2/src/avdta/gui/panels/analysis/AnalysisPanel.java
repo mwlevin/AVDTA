@@ -6,6 +6,7 @@ package avdta.gui.panels.analysis;
 
 import avdta.gui.DTAGUI;
 import avdta.gui.GUI;
+import avdta.gui.panels.AbstractGUIPanel;
 import avdta.gui.panels.GUIPanel;
 import javax.swing.JPanel;
 import java.awt.GridBagLayout;
@@ -36,7 +37,7 @@ public class AnalysisPanel extends GUIPanel
     
     private Project project;
     
-    public AnalysisPanel(DTAGUI parent)
+    public AnalysisPanel(AbstractGUIPanel parent)
     {
         super(parent);
         
