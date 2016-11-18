@@ -50,7 +50,15 @@ public class Assignment implements Comparable<Assignment>
         
         Scanner filein = new Scanner(getPropertiesFile());
         
-        readAssignment(filein);
+        try
+        {
+            readAssignment(filein);
+        }
+        catch(RuntimeException ex)
+        {
+            filein.close();
+            throw ex;
+        }
         
         filein.close();
 
@@ -153,6 +161,7 @@ public class Assignment implements Comparable<Assignment>
      */
     public void readAssignment(Scanner filein)
     {
+        name = filein.nextLine().trim();
         double mintt = filein.nextDouble();
         double tstt = filein.nextDouble();
         int num_veh = filein.nextInt();

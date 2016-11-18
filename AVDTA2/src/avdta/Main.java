@@ -73,9 +73,7 @@ public class Main
 
         //caccTest2();
         
-        DTAProject project = new DTAProject(new File("projects/SiouxFalls"));
-        DTASimulator sim = project.getSimulator();
-        sim.msa(3);
+        new DTAGUI();
         
         //GUI.main(args);
 

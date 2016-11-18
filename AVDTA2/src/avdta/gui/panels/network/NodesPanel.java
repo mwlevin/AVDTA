@@ -216,9 +216,12 @@ public class NodesPanel extends GUIPanel
             
             for(Node n : project.getSimulator().getNodes())
             {
-                if(n instanceof Zone && n.getId() > 0)
+                if(n instanceof Zone)
                 {
-                    centroidCount++;
+                    if(n.getId() >= 0)
+                    {
+                        centroidCount++;
+                    }
                 }
                 else
                 {

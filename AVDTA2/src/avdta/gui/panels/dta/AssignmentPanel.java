@@ -209,7 +209,7 @@ public class AssignmentPanel extends GUIPanel
                         mostRecent = assign;
                     }
                 }
-                catch(IOException ex)
+                catch(Exception ex)
                 {
                     delete(f);
                 }
@@ -231,11 +231,13 @@ public class AssignmentPanel extends GUIPanel
     
     public void delete(File folder) throws IOException
     {
-        for(File f : folder.listFiles())
+        if(folder.isDirectory())
         {
-            f.delete();
+            for(File f : folder.listFiles())
+            {
+                delete(f);
+            }
         }
-        folder.delete();
     }
     
     public void setProject(DTAProject project)
