@@ -450,8 +450,6 @@ public abstract class GUI extends JFrame
         }
     }
     
-    public abstract void createDatabase();
-    
     public void openProject(Project p) throws IOException
     {
         if(openEditor != null)
@@ -508,6 +506,22 @@ public abstract class GUI extends JFrame
             openProject(project);
         }
         catch(IOException ex)
+        {
+            GUI.handleException(ex);
+        }
+    }
+    
+    public void createDatabase()
+    {
+        if(project == null)
+        {
+            return;
+        }
+        try
+        {
+            project.createDatabase();
+        }
+        catch(Exception ex)
         {
             GUI.handleException(ex);
         }

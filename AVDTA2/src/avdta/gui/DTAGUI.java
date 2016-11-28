@@ -223,19 +223,5 @@ public class DTAGUI extends GUI implements AbstractGUIPanel
         parentReset();
     }
     
-    public void createDatabase()
-    {
-        if(project == null)
-        {
-            return;
-        }
-        try
-        {
-            project.createDatabase();
-        }
-        catch(Exception ex)
-        {
-            GUI.handleException(ex);
-        }
-    }
+    
 }
