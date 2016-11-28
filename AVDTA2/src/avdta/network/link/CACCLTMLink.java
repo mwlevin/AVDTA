@@ -41,11 +41,7 @@ public class CACCLTMLink extends LTMLink
         
         return N20 * 3600;
     }
-    public void addVehicle(Vehicle veh)
-    {
-        super.addVehicle(veh);
 
-    }
     
     /**
      * Scales the congested wave speed according to MIXIC based on the free flow speed

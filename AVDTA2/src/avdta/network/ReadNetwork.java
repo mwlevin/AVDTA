@@ -917,10 +917,12 @@ public class ReadNetwork
                 else if(key.equals("hv-reaction-time"))
                 {
                     DriverType.HV.setReactionTime(Double.parseDouble(val));
+                    DriverType.BUS_HV.setReactionTime(Double.parseDouble(val));
                 }
                 else if(key.equals("av-reaction-time"))
                 {
                     DriverType.AV.setReactionTime(Double.parseDouble(val));
+                    DriverType.BUS_AV.setReactionTime(Double.parseDouble(val));
                 }
                 else if(key.equals("hvs-use-reservations"))
                 {
