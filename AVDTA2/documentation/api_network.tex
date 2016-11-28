@@ -203,3 +203,15 @@ After creating a new link class, it must be added to \texttt{avdta.network.ReadN
 \subsection{\texttt{avdta.network.link.transit}}
 
 \texttt{TransitLink}s are virtual links that model connections via transit or walking. These links may not correspond to physical links in the network, and are not usable by vehicles. \texttt{WalkingLink}s are created alongside physical links, and have a fixed travel time set by the walking speed. \texttt{BusLink}s represent connections between bus stops. \texttt{TransitLink}s have separate shortest path methods in \texttt{Network} and separate methods to get the sets of incoming and outgoing links from \texttt{Node}s. \texttt{BusLink}s are created during the instantiation of bus routes, and contain a set of travel time records (\texttt{TTRecord}). Every time a bus travels directly (without stopping) from the source to the destination of a \texttt{BusLink} the travel time records are updated. When a traveler seeks to use the buses, the appropriate travel time for the traveler's departure time is returned.
+
+\section{``Record'' classes}
+
+AVDTA contains several ``Record'' classes: \texttt{NodeRecord}, \texttt{LinkRecord}, etc. Each class provides an interface for a single entry in the corresponding data file (see Chapter \ref{ch:network}). For instance, \texttt{NodeRecord} is an interface for the data for a single node, which is one line of data in the \texttt{nodes.txt} file. These classes are designed to provide easy access to reading and writing input data. Each class has a constructor which takes a line of input data, and a \texttt{toString()} method which will output the data in the correct format. For instance, data may be read via the following code:
+\begin{algorithmic}[1]
+\State{\texttt{DTAProject project = \linebreak new DTAProject(new File("projects/SiouxFalls"));}}
+\State{\texttt{Scanner filein = new Scanner(project.getNodesFile());}}
+\State{\texttt{filein.nextLine()}} \Comment{Header data}
+\State{\texttt{While(filein.hasNextLine())\{}}
+\State\hspace{\algorithmicindent} \texttt{NodeRecord data = new NodeRecord(filein.nextLine());}
+\State{\texttt{\}}}
+\end{algorithmic}
