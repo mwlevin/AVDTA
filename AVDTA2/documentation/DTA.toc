@@ -88,6 +88,18 @@
 \contentsline {subsection}{\numberline {10.4.2}\texttt {LTMLink}}{53}{subsection.10.4.2}
 \contentsline {subsection}{\numberline {10.4.3}Creating a new link class}{53}{subsection.10.4.3}
 \contentsline {subsection}{\numberline {10.4.4}\texttt {avdta.network.link.transit}}{53}{subsection.10.4.4}
-\contentsline {chapter}{Appendices}{55}{section*.1}
-\contentsline {chapter}{\numberline {A}Abbreviations}{56}{Appendix.1.A}
-\contentsline {chapter}{References}{56}{table.1.A.1}
+\contentsline {chapter}{\numberline {11}Package \texttt {avdta.vehicle}}{55}{chapter.11}
+\contentsline {section}{\numberline {11.1}Location tracking}{55}{section.11.1}
+\contentsline {section}{\numberline {11.2}\texttt {PersonalVehicle}}{56}{section.11.2}
+\contentsline {section}{\numberline {11.3}\texttt {DriverType}}{56}{section.11.3}
+\contentsline {section}{\numberline {11.4}\texttt {VehicleClass}}{56}{section.11.4}
+\contentsline {chapter}{\numberline {12}Package \texttt {avdta.dta}}{57}{chapter.12}
+\contentsline {section}{\numberline {12.1}Method of successive averages}{57}{section.12.1}
+\contentsline {subsection}{\numberline {12.1.1}Creating subnetworks}{57}{subsection.12.1.1}
+\contentsline {chapter}{\numberline {13}Package \texttt {avdta.gui}}{58}{chapter.13}
+\contentsline {section}{\numberline {13.1}Package \texttt {avdta.gui.panels}}{59}{section.13.1}
+\contentsline {section}{\numberline {13.2}Package \texttt {avdta.gui.util}}{60}{section.13.2}
+\contentsline {section}{\numberline {13.3}Package \texttt {avdta.gui.editor}}{60}{section.13.3}
+\contentsline {chapter}{Appendices}{61}{section*.1}
+\contentsline {chapter}{\numberline {A}Abbreviations}{62}{Appendix.1.A}
+\contentsline {chapter}{References}{62}{table.1.A.1}

@@ -36,9 +36,22 @@ The GUI packages are organized as follows:
 	\end{list}
 	
 \end{list}
+%
+The \texttt{avdta.gui.GUI} class provides a template for types of GUIs specific to different project types (such as DTA, SAVs, etc.). \texttt{GUI.main(String[])} creates the appropriate type of GUI based on the parameters. New types of GUIs for different subclasses should be modeled after \texttt{DTAGUI}. The main coding work occurs in the various panels, described in Section \ref{gui:panels}. The template extension of \texttt{GUI} itself need only create the tabs (see \texttt{javax.swing.JTabbedPane}), and implement a few methods. \texttt{parentReset()} and \texttt{parentSetEnabled(boolean)} should call \texttt{reset()} and \texttt{setEnabled($\cdot$)} for all component panels. The \texttt{openProject($\cdot$)} methods need to be implemented to pass the \texttt{Project} to component panels. Optionally, \texttt{createMenuBar()} may be overridden to add menus to the menubar.
 
 \section{Package \texttt{avdta.gui.panels}}
+\label{gui:panels}
 
+\texttt{DTAGUI} makes use of various panels, that appear as separate tabs. The code for these panels appears in package \texttt{avdta.gui.panels}. Each panel must implement the interface \texttt{AbstractGUIPanel}, which defines several methods regarding the components:
+\begin{itemize}
+	\item \texttt{reset()}: reloads the panel
+	\item \texttt{setEnabled(boolean)}: enables/disables the panel; used when performing computations that require significant time
+	\item \texttt{parentReset()}: a call back to the parent panel to reset other panels
+	\item \texttt{parentSetEnabled(boolean)}: a call back to the parent panel to enable/disable other panels
+\end{itemize} 
+Most panels will want to extend \texttt{GUIPanel}, which implements the parent call backs, and implement \texttt{reset()} and \texttt{setEnabled($\cdot$)} on its components. The design philosophy for each panel is as follows. Each panel consists of various components which may change display or whether they are enabled, based on the project properties. When a project is loaded, the \texttt{reset()} method will update these components. These components are instantiated in the constructor, and event listeners are used to add actions. See \texttt{javax.swing}, \texttt{java.awt}, and \texttt{java.awt.event} for more information. \texttt{GUI} will automatically resize itself based on its component panels; however, having a large \texttt{GUI} may cause issues for users with low-resolution displays. Large panels should be separated into multiple tabs.
+
+The panels are designed in a modular fashion. Most project types will use network, transit, and demand panels, and these can be added exactly to any new GUI. These require a \texttt{Project}, \texttt{TransitProject}, and \texttt{DemandProject}, respectively, which most project types are likely to extend. Note that \texttt{LinksPanel} and \texttt{NodesPanel} in package \texttt{avdta.gui.network} have options to change link and node types, respectively. If new link or node types are created, these panels must be updated before the options will appear in the GUI.
 
 
 
