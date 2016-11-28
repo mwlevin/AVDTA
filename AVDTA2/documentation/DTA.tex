@@ -27,7 +27,7 @@
 
 \setcounter{secnumdepth}{5}
 \setcounter{tocdepth}{2}
-\usepackage[]{appendix}
+\usepackage[toc, page]{appendix}
 \usepackage{titlesec}
 \usepackage{textcomp}
 
@@ -53,10 +53,11 @@
 \usepackage{color}
 
 
-\title{AVDTA: Dynamic Traffic Assignment}
+\title{AVDTA}
 \author{Michael W. Levin}
 
 \begin{document}
+	\setcounter{tocdepth}{3}
 	\allowdisplaybreaks
 	\pagenumbering{gobble}
 	
@@ -91,6 +92,8 @@
 	%	Options
 	\input{DTAProject.tex}
 	
+	\part{User interface}
+	\label{part:ui}
 	
 	\input{Network.tex}
 	
@@ -104,6 +107,10 @@
 	
 	\input{Editor.tex}
 	
+	\part{Application programming interface} 
+	\label{part:api}
+	
+	\input{api.tex}
 	
 	\begin{appendices}
 	

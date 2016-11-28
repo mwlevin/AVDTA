@@ -1,67 +1,93 @@
 \contentsline {chapter}{\numberline {1}Introduction}{1}{chapter.1}
 \contentsline {section}{\numberline {1.1}Contributors}{1}{section.1.1}
-\contentsline {section}{\numberline {1.2}Distribution}{1}{section.1.2}
-\contentsline {chapter}{\numberline {2}Project structure}{2}{chapter.2}
-\contentsline {section}{\numberline {2.1}Introduction}{2}{section.2.1}
-\contentsline {section}{\numberline {2.2}GUI}{2}{section.2.2}
-\contentsline {subsection}{\numberline {2.2.1}New project}{2}{subsection.2.2.1}
-\contentsline {subsection}{\numberline {2.2.2}Open project}{3}{subsection.2.2.2}
-\contentsline {subsection}{\numberline {2.2.3}Clone opened project}{4}{subsection.2.2.3}
-\contentsline {section}{\numberline {2.3}Files and folders}{4}{section.2.3}
-\contentsline {subsection}{\numberline {2.3.1}Working with SQL}{5}{subsection.2.3.1}
-\contentsline {subsection}{\numberline {2.3.2}Files}{5}{subsection.2.3.2}
-\contentsline {subsubsection}{\numberline {2.3.2.1}\texttt {project.txt}}{5}{subsubsection.2.3.2.1}
-\contentsline {subsubsection}{\numberline {2.3.2.2}\texttt {options.txt}}{6}{subsubsection.2.3.2.2}
-\contentsline {subsubsection}{\numberline {2.3.2.3}\texttt {dta.dat}}{7}{subsubsection.2.3.2.3}
-\contentsline {subsubsection}{\numberline {2.3.2.4}\texttt {paths.dat}}{7}{subsubsection.2.3.2.4}
-\contentsline {subsection}{\numberline {2.3.3}Folders}{7}{subsection.2.3.3}
-\contentsline {chapter}{\numberline {3}Traffic network}{8}{chapter.3}
-\contentsline {section}{\numberline {3.1}Introduction}{8}{section.3.1}
-\contentsline {section}{\numberline {3.2}Nodes}{8}{section.3.2}
-\contentsline {subsection}{\numberline {3.2.1}\texttt {nodes.txt}}{9}{subsection.3.2.1}
-\contentsline {subsection}{\numberline {3.2.2}\texttt {phases.txt}}{10}{subsection.3.2.2}
-\contentsline {subsection}{\numberline {3.2.3}\texttt {signals.txt}}{10}{subsection.3.2.3}
-\contentsline {subsection}{\numberline {3.2.4}GUI panel}{11}{subsection.3.2.4}
-\contentsline {section}{\numberline {3.3}Links}{12}{section.3.3}
-\contentsline {subsection}{\numberline {3.3.1}\texttt {links.txt}}{12}{subsection.3.3.1}
-\contentsline {subsection}{\numberline {3.3.2}\texttt {link\_coordinates.txt}}{13}{subsection.3.3.2}
-\contentsline {subsection}{\numberline {3.3.3}GUI}{14}{subsection.3.3.3}
-\contentsline {section}{\numberline {3.4}Import network}{15}{section.3.4}
-\contentsline {chapter}{\numberline {4}Transit}{18}{chapter.4}
-\contentsline {section}{\numberline {4.1}Introduction}{18}{section.4.1}
-\contentsline {section}{\numberline {4.2}Files}{18}{section.4.2}
-\contentsline {subsection}{\numberline {4.2.1}\texttt {bus.txt}}{18}{subsection.4.2.1}
-\contentsline {subsection}{\numberline {4.2.2}\texttt {bus\_route\_link.txt}}{19}{subsection.4.2.2}
-\contentsline {subsection}{\numberline {4.2.3}\texttt {bus\_frequency.txt}}{19}{subsection.4.2.3}
-\contentsline {subsection}{\numberline {4.2.4}\texttt {bus\_period.txt}}{20}{subsection.4.2.4}
-\contentsline {section}{\numberline {4.3}GUI}{20}{section.4.3}
-\contentsline {chapter}{\numberline {5}Demand}{21}{chapter.5}
-\contentsline {section}{\numberline {5.1}Introduction}{21}{section.5.1}
-\contentsline {section}{\numberline {5.2}Files}{21}{section.5.2}
-\contentsline {subsection}{\numberline {5.2.1}\texttt {static\_od.txt}}{21}{subsection.5.2.1}
-\contentsline {subsection}{\numberline {5.2.2}\texttt {dynamic\_od.txt}}{22}{subsection.5.2.2}
-\contentsline {subsection}{\numberline {5.2.3}\texttt {demand\_profile.txt}}{22}{subsection.5.2.3}
-\contentsline {subsection}{\numberline {5.2.4}\texttt {demand.txt}}{23}{subsection.5.2.4}
-\contentsline {section}{\numberline {5.3}GUI}{23}{section.5.3}
-\contentsline {subsection}{\numberline {5.3.1}Import demand}{23}{subsection.5.3.1}
-\contentsline {subsection}{\numberline {5.3.2}Creating demand}{25}{subsection.5.3.2}
-\contentsline {chapter}{\numberline {6}Dynamic traffic assignment}{28}{chapter.6}
-\contentsline {chapter}{\numberline {7}Editor}{30}{chapter.7}
-\contentsline {section}{\numberline {7.1}View options}{31}{section.7.1}
-\contentsline {subsection}{\numberline {7.1.1}Map}{31}{subsection.7.1.1}
-\contentsline {subsection}{\numberline {7.1.2}View menu}{31}{subsection.7.1.2}
-\contentsline {subsection}{\numberline {7.1.3}Layers panel}{32}{subsection.7.1.3}
-\contentsline {section}{\numberline {7.2}Visualization panel}{32}{section.7.2}
-\contentsline {subsection}{\numberline {7.2.1}Node visualization}{33}{subsection.7.2.1}
-\contentsline {subsubsection}{\numberline {7.2.1.1}Node type rule}{33}{subsubsection.7.2.1.1}
-\contentsline {subsubsection}{\numberline {7.2.1.2}Node data rule}{33}{subsubsection.7.2.1.2}
-\contentsline {subsubsection}{\numberline {7.2.1.3}Node file rule}{34}{subsubsection.7.2.1.3}
-\contentsline {subsection}{\numberline {7.2.2}Link visualization}{34}{subsection.7.2.2}
-\contentsline {subsubsection}{\numberline {7.2.2.1}Link type rule}{34}{subsubsection.7.2.2.1}
-\contentsline {subsubsection}{\numberline {7.2.2.2}Link data rule}{35}{subsubsection.7.2.2.2}
-\contentsline {subsubsection}{\numberline {7.2.2.3}Link file rule}{35}{subsubsection.7.2.2.3}
-\contentsline {section}{\numberline {7.3}Network modification}{36}{section.7.3}
-\contentsline {subsection}{\numberline {7.3.1}Node options}{36}{subsection.7.3.1}
-\contentsline {subsection}{\numberline {7.3.2}Link options}{37}{subsection.7.3.2}
-\contentsline {chapter}{\numberline {A}Abbreviations}{39}{Appendix.1.A}
-\contentsline {chapter}{References}{39}{table.1.A.1}
+\contentsline {section}{\numberline {1.2}Distribution}{2}{section.1.2}
+\contentsline {chapter}{\numberline {2}Project structure}{3}{chapter.2}
+\contentsline {section}{\numberline {2.1}Introduction}{3}{section.2.1}
+\contentsline {section}{\numberline {2.2}GUI}{3}{section.2.2}
+\contentsline {subsection}{\numberline {2.2.1}New project}{3}{subsection.2.2.1}
+\contentsline {subsection}{\numberline {2.2.2}Open project}{4}{subsection.2.2.2}
+\contentsline {subsection}{\numberline {2.2.3}Clone opened project}{5}{subsection.2.2.3}
+\contentsline {section}{\numberline {2.3}Files and folders}{5}{section.2.3}
+\contentsline {subsection}{\numberline {2.3.1}Working with SQL}{6}{subsection.2.3.1}
+\contentsline {subsection}{\numberline {2.3.2}Files}{6}{subsection.2.3.2}
+\contentsline {subsubsection}{\numberline {2.3.2.1}\texttt {project.txt}}{6}{subsubsection.2.3.2.1}
+\contentsline {subsubsection}{\numberline {2.3.2.2}\texttt {options.txt}}{7}{subsubsection.2.3.2.2}
+\contentsline {subsubsection}{\numberline {2.3.2.3}\texttt {dta.dat}}{8}{subsubsection.2.3.2.3}
+\contentsline {subsubsection}{\numberline {2.3.2.4}\texttt {paths.dat}}{8}{subsubsection.2.3.2.4}
+\contentsline {subsection}{\numberline {2.3.3}Folders}{8}{subsection.2.3.3}
+\contentsline {part}{I\hspace {1em}User interface}{9}{part.1}
+\contentsline {chapter}{\numberline {3}Traffic network}{10}{chapter.3}
+\contentsline {section}{\numberline {3.1}Introduction}{10}{section.3.1}
+\contentsline {section}{\numberline {3.2}Nodes}{10}{section.3.2}
+\contentsline {subsection}{\numberline {3.2.1}\texttt {nodes.txt}}{11}{subsection.3.2.1}
+\contentsline {subsection}{\numberline {3.2.2}\texttt {phases.txt}}{12}{subsection.3.2.2}
+\contentsline {subsection}{\numberline {3.2.3}\texttt {signals.txt}}{12}{subsection.3.2.3}
+\contentsline {subsection}{\numberline {3.2.4}GUI panel}{13}{subsection.3.2.4}
+\contentsline {section}{\numberline {3.3}Links}{14}{section.3.3}
+\contentsline {subsection}{\numberline {3.3.1}\texttt {links.txt}}{14}{subsection.3.3.1}
+\contentsline {subsection}{\numberline {3.3.2}\texttt {link\_coordinates.txt}}{15}{subsection.3.3.2}
+\contentsline {subsection}{\numberline {3.3.3}GUI}{16}{subsection.3.3.3}
+\contentsline {section}{\numberline {3.4}Import network}{17}{section.3.4}
+\contentsline {chapter}{\numberline {4}Transit}{20}{chapter.4}
+\contentsline {section}{\numberline {4.1}Introduction}{20}{section.4.1}
+\contentsline {section}{\numberline {4.2}Files}{20}{section.4.2}
+\contentsline {subsection}{\numberline {4.2.1}\texttt {bus.txt}}{20}{subsection.4.2.1}
+\contentsline {subsection}{\numberline {4.2.2}\texttt {bus\_route\_link.txt}}{21}{subsection.4.2.2}
+\contentsline {subsection}{\numberline {4.2.3}\texttt {bus\_frequency.txt}}{21}{subsection.4.2.3}
+\contentsline {subsection}{\numberline {4.2.4}\texttt {bus\_period.txt}}{22}{subsection.4.2.4}
+\contentsline {section}{\numberline {4.3}GUI}{22}{section.4.3}
+\contentsline {chapter}{\numberline {5}Demand}{23}{chapter.5}
+\contentsline {section}{\numberline {5.1}Introduction}{23}{section.5.1}
+\contentsline {section}{\numberline {5.2}Files}{23}{section.5.2}
+\contentsline {subsection}{\numberline {5.2.1}\texttt {static\_od.txt}}{23}{subsection.5.2.1}
+\contentsline {subsection}{\numberline {5.2.2}\texttt {dynamic\_od.txt}}{24}{subsection.5.2.2}
+\contentsline {subsection}{\numberline {5.2.3}\texttt {demand\_profile.txt}}{24}{subsection.5.2.3}
+\contentsline {subsection}{\numberline {5.2.4}\texttt {demand.txt}}{25}{subsection.5.2.4}
+\contentsline {section}{\numberline {5.3}GUI}{25}{section.5.3}
+\contentsline {subsection}{\numberline {5.3.1}Import demand}{25}{subsection.5.3.1}
+\contentsline {subsection}{\numberline {5.3.2}Creating demand}{27}{subsection.5.3.2}
+\contentsline {chapter}{\numberline {6}Dynamic traffic assignment}{30}{chapter.6}
+\contentsline {chapter}{\numberline {7}Editor}{32}{chapter.7}
+\contentsline {section}{\numberline {7.1}View options}{33}{section.7.1}
+\contentsline {subsection}{\numberline {7.1.1}Map}{33}{subsection.7.1.1}
+\contentsline {subsection}{\numberline {7.1.2}View menu}{33}{subsection.7.1.2}
+\contentsline {subsection}{\numberline {7.1.3}Layers panel}{34}{subsection.7.1.3}
+\contentsline {section}{\numberline {7.2}Visualization panel}{34}{section.7.2}
+\contentsline {subsection}{\numberline {7.2.1}Node visualization}{35}{subsection.7.2.1}
+\contentsline {subsubsection}{\numberline {7.2.1.1}Node type rule}{35}{subsubsection.7.2.1.1}
+\contentsline {subsubsection}{\numberline {7.2.1.2}Node data rule}{35}{subsubsection.7.2.1.2}
+\contentsline {subsubsection}{\numberline {7.2.1.3}Node file rule}{36}{subsubsection.7.2.1.3}
+\contentsline {subsection}{\numberline {7.2.2}Link visualization}{36}{subsection.7.2.2}
+\contentsline {subsubsection}{\numberline {7.2.2.1}Link type rule}{36}{subsubsection.7.2.2.1}
+\contentsline {subsubsection}{\numberline {7.2.2.2}Link data rule}{37}{subsubsection.7.2.2.2}
+\contentsline {subsubsection}{\numberline {7.2.2.3}Link file rule}{37}{subsubsection.7.2.2.3}
+\contentsline {section}{\numberline {7.3}Network modification}{38}{section.7.3}
+\contentsline {subsection}{\numberline {7.3.1}Node options}{38}{subsection.7.3.1}
+\contentsline {subsection}{\numberline {7.3.2}Link options}{39}{subsection.7.3.2}
+\contentsline {part}{II\hspace {1em}Application programming interface}{41}{part.2}
+\contentsline {chapter}{\numberline {8}\texttt {avdta} package}{42}{chapter.8}
+\contentsline {chapter}{\numberline {9}Package \texttt {avdta.project}}{44}{chapter.9}
+\contentsline {section}{\numberline {9.1}Organization}{44}{section.9.1}
+\contentsline {section}{\numberline {9.2}Working with \texttt {Project}s}{45}{section.9.2}
+\contentsline {subsection}{\numberline {9.2.1}Creating a new project}{45}{subsection.9.2.1}
+\contentsline {subsection}{\numberline {9.2.2}Importing data}{45}{subsection.9.2.2}
+\contentsline {subsection}{\numberline {9.2.3}Opening a project}{46}{subsection.9.2.3}
+\contentsline {chapter}{\numberline {10}Package \texttt {avdta.network}}{47}{chapter.10}
+\contentsline {section}{\numberline {10.1}Package \texttt {avdta.network} organization}{47}{section.10.1}
+\contentsline {subsection}{\numberline {10.1.1}Shortest paths}{48}{subsection.10.1.1}
+\contentsline {subsection}{\numberline {10.1.2}Simulation}{48}{subsection.10.1.2}
+\contentsline {section}{\numberline {10.2}\texttt {avdta.network.cost}}{49}{section.10.2}
+\contentsline {section}{\numberline {10.3}Package \texttt {avdta.network.node}}{49}{section.10.3}
+\contentsline {subsection}{\numberline {10.3.1}\texttt {Node.step()}}{50}{subsection.10.3.1}
+\contentsline {subsection}{\numberline {10.3.2}\texttt {Signalized}}{50}{subsection.10.3.2}
+\contentsline {subsubsection}{\numberline {10.3.2.1}Intersection controls}{50}{subsubsection.10.3.2.1}
+\contentsline {subsection}{\numberline {10.3.3}Reservation-based intersection control}{51}{subsection.10.3.3}
+\contentsline {subsection}{\numberline {10.3.4}Creating a new type of intersection control}{51}{subsection.10.3.4}
+\contentsline {section}{\numberline {10.4}Package \texttt {avdta.network.link}}{51}{section.10.4}
+\contentsline {subsection}{\numberline {10.4.1}\texttt {CTMLink}}{52}{subsection.10.4.1}
+\contentsline {subsection}{\numberline {10.4.2}\texttt {LTMLink}}{53}{subsection.10.4.2}
+\contentsline {subsection}{\numberline {10.4.3}Creating a new link class}{53}{subsection.10.4.3}
+\contentsline {subsection}{\numberline {10.4.4}\texttt {avdta.network.link.transit}}{53}{subsection.10.4.4}
+\contentsline {chapter}{Appendices}{55}{section*.1}
+\contentsline {chapter}{\numberline {A}Abbreviations}{56}{Appendix.1.A}
+\contentsline {chapter}{References}{56}{table.1.A.1}

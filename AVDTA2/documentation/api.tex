@@ -1,0 +1,72 @@
+\chapter{\texttt{avdta} package}
+
+This part gives an overview of the application programming interface (API), and is intended for users who wish to write code to run the existing software or modify the software itself. The code is organized into a number of packages based on function. Most of the code also has Javadoc documentation, which is also included with AVDTA.
+
+
+%\section{Working with GIT}
+
+AVDTA is set up as NetBeans project, and is easiest to open and edit through NetBeans. NetBeans is a free Java integrated development environment. When installing NetBeans, also install the latest Java Development Kit. AVDTA is also setup to work with Git for version control, and most functionality is through the NetBeans interface. The easiest way to access NetBeans is to generate a SSH key for Git and upload it to the appropriate Github  (\href{https://help.github.com/articles/generating-an-ssh-key/}{\texttt{https://help.github.com/articles/generating-an-ssh-key/}}). Then, see \href{https://netbeans.org/kb/docs/ide/git.html}{\texttt{https://netbeans.org/kb/docs/ide/git.html}} for using Git within NetBeans.
+
+%\section{Required libraries}
+
+Certain code in AVDTA relies on two external libraries. The libraries are included in the GIT distribution.
+\begin{enumerate}
+	\item CPLEX
+	
+	Although it is not necessary for CPLEX to be installed, the CPLEX library must be included to compile.
+	
+	\item Java Open Street Maps (\href{https://josm.openstreetmap.de/}{\texttt{https://josm.openstreetmap.de/}}), which is used for visualization in the editor.
+\end{enumerate}
+The network and simulation packages are organized as follows:
+\begin{list}{$\circ$}{}
+	\item \texttt{avdta.demand}
+	\item \texttt{avdta.dta}
+	\item \texttt{avdta.fourstep}
+	\item \texttt{avdta.microtoll}
+	
+	\item \texttt{avdta.moves}
+	
+	\item \texttt{avdta.network}
+	
+	\begin{list}{$\circ$}{}
+		\item \texttt{avdta.network.cost}
+		\item \texttt{avdta.network.link}
+		
+		\begin{list}{$\circ$}{}
+			\item \texttt{avdta.network.link.cell}
+			\item \texttt{avdta.network.link.transit}
+		\end{list}
+		
+		\item \texttt{avdta.network.node}
+		\begin{list}{$\circ$}{}
+			\item \texttt{avdta.network.node.obj}
+			\item \texttt{avdta.network.node.policy}
+		\end{list}
+	\end{list}
+	
+	\item \texttt{avdta.project}
+	
+	\item \texttt{avdta.sav}
+	
+	\begin{list}{$\circ$}{}
+		\item \texttt{avdta.sav.dispatch}
+	\end{list}
+	
+	\item \texttt{avdta.util}
+	\item \texttt{avdta.vehicle}
+	
+	\begin{list}{$\circ$}{}
+		\item \texttt{avdta.vehicle.fuel}
+		\item \texttt{avdta.vehicle.wallet}
+	\end{list}
+\end{list}
+
+
+\input{api_project.tex}
+
+\input{api_network.tex}
+
+
+
+
+
