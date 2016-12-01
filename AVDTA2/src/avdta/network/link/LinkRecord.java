@@ -36,8 +36,8 @@ public class LinkRecord
     {
         this.id = id;
         this.type = type;
-        this.source = source;
-        this.dest = dest;
+        this.source = (int)Math.abs(source);
+        this.dest = (int)Math.abs(dest);
         this.capacity = capacity;
         this.ffspd = ffspd;
         this.wavespd = wavespd;

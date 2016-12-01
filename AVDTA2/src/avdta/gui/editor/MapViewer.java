@@ -373,6 +373,11 @@ public class MapViewer extends avdta.gui.editor.JMapViewer implements MouseListe
             return;
         }
         
+        if(n.getId() < 0)
+        {
+            return;
+        }
+        
         int sizeH = (int)display.getRadius(n, time) * scale;
         Point position = getMapPosition(n, false);
         int size = sizeH * 2;

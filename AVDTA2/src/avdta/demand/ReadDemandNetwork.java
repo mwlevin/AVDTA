@@ -113,8 +113,7 @@ public class ReadDemandNetwork extends ReadNetwork
         
         for(VehicleRecord v : vehicles)
         {
-            double vot = avdta.vehicle.VOT.dagum_rand(rand);
-            fileout.println(v+"\t"+vot);
+            fileout.println(v);
         }
         fileout.close();
         

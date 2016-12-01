@@ -24,6 +24,7 @@ import avdta.gui.editor.visual.rules.data.LinkFileSource;
 import avdta.gui.editor.visual.rules.data.VolumeLinkData;
 import avdta.network.Path;
 import avdta.network.Simulator;
+import avdta.network.cost.TravelCost;
 import avdta.project.DTAProject;
 import avdta.project.Project;
 import java.io.File;
@@ -73,7 +74,7 @@ public class Main
 
         //caccTest2();
         
-        new DTAGUI();
+        //new DTAGUI();
         
         //GUI.main(args);
 
@@ -84,6 +85,138 @@ public class Main
         
         //createCACCNetwork();
         
+        //fixConnectivity2();
+        connectivityTest();
+    }
+    
+    public static void fixConnectivity2() throws Exception
+    {
+        DTAProject project = new DTAProject(new File("projects/scenario_2_pm_sub_CACC"));
+        DTASimulator sim = project.getSimulator();
+        
+        DTAProject project2 = new DTAProject(new File("projects/scenario_2_pm"));
+        DTASimulator sim2 = project2.getSimulator();
+        
+        Set<Link> newLinks = new HashSet<Link>();
+        
+        for(Link l : sim.getLinks())
+        {
+            if(l.isCentroidConnector())
+            {
+                continue;
+            }
+            
+            Node r = l.getSource();
+            Node s = l.getDest();
+            
+            boolean found = false;
+            
+            for(Link v : r.getIncoming())
+            {
+                if(v.getSource() == s)
+                {
+                    found = true;
+                    break;
+                }
+            }
+            
+            if(!found)
+            {
+                for(Link l2 : sim2.getLinks())
+                {
+                    if(l2.getSource().getId() == s.getId() && l2.getDest().getId() == r.getId())
+                    {
+                        newLinks.add(l2);
+                    }
+                }
+            }
+        }
+        
+        PrintStream fileout = new PrintStream(new FileOutputStream(new File("newLinks.txt")), true);
+        for(Link l : newLinks)
+        {
+            fileout.println(l.createLinkRecord());
+        }
+        fileout.close();
+    }
+    public static void fixConnectivity() throws Exception
+    {
+        
+        DTAProject project = new DTAProject(new File("projects/scenario_2_pm_sub_CACC"));
+        DTASimulator sim = project.getSimulator();
+        
+        Set<Link> newLinks = new HashSet<Link>();
+        
+        int new_id = 80000001;
+        
+        for(Link l : sim.getLinks())
+        {
+            if(!l.isCentroidConnector())
+            {
+                continue;
+            }
+            
+            Node r = l.getSource();
+            Node s = l.getDest();
+            
+            boolean found = false;
+            
+            for(Link v : r.getIncoming())
+            {
+                if(v.getSource() == s)
+                {
+                    found = true;
+                    break;
+                }
+            }
+            
+            if(!found)
+            {
+                Link u = new CentroidConnector(new_id++, s, r);
+                newLinks.add(u);
+            }
+        }
+        
+        PrintStream fileout = new PrintStream(new FileOutputStream(new File("newLinks.txt")), true);
+        for(Link l : newLinks)
+        {
+            fileout.println(l.createLinkRecord());
+        }
+        fileout.close();
+    }
+    
+    public static void connectivityTest() throws Exception
+    {
+        
+        DTAProject project = new DTAProject(new File("projects/scenario_2_pm_sub_CACC"));
+        DTASimulator sim = project.getSimulator();
+        
+        Set<String> unconnected = new HashSet<String>();
+        for(Vehicle v : sim.getVehicles())
+        {
+            if(!(v instanceof PersonalVehicle))
+            {
+                continue;
+            }
+            Path p = null;
+            try
+            {
+                p = sim.findPath((PersonalVehicle)v, TravelCost.ffTime);
+            }
+            catch(Exception ex){}
+            
+            if(p == null)
+            {
+                unconnected.add(v.getOrigin()+"\t"+(int)Math.abs(v.getDest().getId()));
+            }
+        }
+        
+        PrintStream fileout =new PrintStream(new FileOutputStream(new File("unconnected.txt")), true);
+        for(String x : unconnected)
+        {
+            fileout.println(x);
+        }
+        fileout.close();
         
     }
     
