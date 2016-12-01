@@ -33,7 +33,7 @@ import javax.swing.event.DocumentListener;
  *
  * @author ml26893
  */
-public class NodeDataRulePanel extends JPanel
+public abstract class NodeDataRulePanel extends JPanel implements AbstractNodeRulePanel
 {
     private static final NodeDataSource[] SOURCES = new NodeDataSource[]{NodeDataSource.max_delay};
     
@@ -201,11 +201,7 @@ public class NodeDataRulePanel extends JPanel
         }
     }
     
-    public void cancel(){}
     
-    public void addRule(NodeRule rule){}
-    
-    public void saveRule(NodeDataRule rule){}
     
     public boolean save()
     {

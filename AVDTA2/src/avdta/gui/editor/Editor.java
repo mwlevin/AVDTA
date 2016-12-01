@@ -1685,6 +1685,11 @@ public class Editor extends JFrame implements MouseListener
         return nodes.get(id);
     }
     
+    public RuleDisplay getDisplay()
+    {
+        return display;
+    }
+    
     public Link getLink(int id)
     {
         return links.get(id);

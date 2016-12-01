@@ -94,7 +94,6 @@ public class LinkRulePanel extends JPanel
                     {
                         public void cancel()
                         {
-                            super.cancel();
                             frame.setVisible(false);
                         }
                         public void addRule(LinkRule rule)
@@ -103,9 +102,10 @@ public class LinkRulePanel extends JPanel
                             newRule(rule);
                         }
 
-                        public void saveRule(LinkTypeRule rule)
+                        public void saveRule(LinkRule rule)
                         {
                             rule.initialize(editor.getProject());
+                            editor.getDisplay().setDisplaySelected(false);
                             editor.getMap().repaint();
                         }
                     });
@@ -118,18 +118,18 @@ public class LinkRulePanel extends JPanel
                     {
                         public void cancel()
                         {
-                            super.cancel();
                             frame.setVisible(false);
                         }
-                        public void addRule(LinkDataRule rule)
+                        public void addRule(LinkRule rule)
                         {
                             rule.initialize(editor.getProject());
                             newRule(rule);
                         }
 
-                        public void saveRule(LinkDataRule rule)
+                        public void saveRule(LinkRule rule)
                         {
                             rule.initialize(editor.getProject());
+                            editor.getDisplay().setDisplaySelected(false);
                             editor.getMap().repaint();
                         }
                     });
@@ -187,17 +187,19 @@ public class LinkRulePanel extends JPanel
                 {
                     public void cancel()
                     {
-                        super.cancel();
                         frame.setVisible(false);
                     }
                     
                     public void addRule(LinkRule rule)
                     {
+                        rule.initialize(editor.getProject());
                         newRule(rule);
                     }
                     
-                    public void saveRule()
+                    public void saveRule(LinkRule rule)
                     {
+                        rule.initialize(editor.getProject());
+                        editor.getDisplay().setDisplaySelected(false);
                         editor.getMap().repaint();
                     }
                 });
@@ -228,7 +230,6 @@ public class LinkRulePanel extends JPanel
                 {
                     public void cancel()
                     {
-                        super.cancel();
                         frame.setVisible(false);
                     }
                     
@@ -237,8 +238,9 @@ public class LinkRulePanel extends JPanel
                         newRule(rule);
                     }
                     
-                    public void saveRule()
+                    public void saveRule(LinkRule rule)
                     {
+                        editor.getDisplay().setDisplaySelected(false);
                         editor.getMap().repaint();
                     }
                 });
@@ -265,6 +267,7 @@ public class LinkRulePanel extends JPanel
             public void actionPerformed(ActionEvent e)
             {
                 rules.remove(list.getSelectedIndex());
+                editor.getDisplay().setDisplaySelected(false);
                 refresh();
             }
         });
@@ -339,6 +342,7 @@ public class LinkRulePanel extends JPanel
     public void newRule(LinkRule r)
     {
         rules.add(r);
+        editor.getDisplay().setDisplaySelected(false);
         refresh();
         editor.getMap().repaint();
     }

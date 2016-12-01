@@ -30,7 +30,7 @@ import javax.swing.event.DocumentListener;
  *
  * @author micha
  */
-public class NodeTypeRulePanel extends JPanel
+public abstract class NodeTypeRulePanel extends JPanel implements AbstractNodeRulePanel
 {
     private JComboBox type, control, policy;
     private JButton save;
@@ -213,13 +213,6 @@ public class NodeTypeRulePanel extends JPanel
         
         return true;
     }
-    
-    public void addRule(NodeRule rule)
-    {
-        
-    }
-    
-    public void saveRule(NodeRule rule){}
-    public void cancel(){}
 }
+
 

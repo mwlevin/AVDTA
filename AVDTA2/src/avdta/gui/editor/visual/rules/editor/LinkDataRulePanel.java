@@ -33,7 +33,7 @@ import javax.swing.event.DocumentListener;
  *
  * @author ml26893
  */
-public class LinkDataRulePanel extends JPanel
+public abstract class LinkDataRulePanel extends JPanel implements AbstractLinkRulePanel
 {
     private static final LinkDataSource[] SOURCES = new LinkDataSource[]{LinkDataSource.tt, LinkDataSource.ffspd, LinkDataSource.capacity, 
         LinkDataSource.numLanes, LinkDataSource.volume};
@@ -201,13 +201,7 @@ public class LinkDataRulePanel extends JPanel
             }
         }
     }
-    
-    public void cancel(){}
-    
-    public void addRule(LinkRule rule){}
-    
-    public void saveRule(LinkDataRule rule){}
-    
+
     public boolean save()
     {
         int minWidth_ = 0;
