@@ -1426,6 +1426,7 @@ public class Editor extends JFrame implements MouseListener
     {
         n.setSelected(true);
         selectedNodes.add(n);
+        display.setDisplaySelected(true);
         
         map.repaint();
     }
@@ -1434,6 +1435,7 @@ public class Editor extends JFrame implements MouseListener
     {
         l.setSelected(true);
         selectedLinks.add(l);
+        display.setDisplaySelected(true);
         
         map.repaint();
     }
@@ -1442,6 +1444,7 @@ public class Editor extends JFrame implements MouseListener
     {
         n.setSelected(false);
         selectedNodes.remove(n);
+        display.setDisplaySelected(true);
         
         map.repaint();
     }
@@ -1464,6 +1467,7 @@ public class Editor extends JFrame implements MouseListener
     {
         l.setSelected(false);
         selectedLinks.remove(l);
+        display.setDisplaySelected(true);
         
         map.repaint();
     }
@@ -1472,6 +1476,7 @@ public class Editor extends JFrame implements MouseListener
     {
         clearSelectedNodes();
         clearSelectedLinks();
+        display.setDisplaySelected(false);
     }
     
     public void addSelectListener(SelectListener s)

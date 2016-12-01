@@ -74,7 +74,7 @@ public class Main
 
         //caccTest2();
         
-        //new DTAGUI();
+        new DTAGUI();
         
         //GUI.main(args);
 
@@ -86,7 +86,7 @@ public class Main
         //createCACCNetwork();
         
         //fixConnectivity2();
-        connectivityTest();
+        //connectivityTest();
     }
     
     public static void fixConnectivity2() throws Exception
