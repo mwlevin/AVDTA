@@ -773,6 +773,16 @@ public class Simulator extends Network
         
 
         lastExit = time;
+        
+        for(Vehicle v : vehicles)
+        {
+            if(!v.isExited())
+            {
+                Link l = v.getCurrLink();
+                l.updateTT(v.enter_time, Simulator.time);
+            }
+        }
+        
 
         
         simulationFinished();

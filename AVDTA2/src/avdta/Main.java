@@ -63,7 +63,7 @@ public class Main
 {
     public static void main(String[] args) throws Exception
     {
-        //caccTest1("coacongress2_LTM", "coacongress2_CACC");
+        caccTest1("coacongress2_LTM", "coacongress2_CACC");
         //caccTest1("coacongress2_LTM", "coacongress2_CACC");
         //caccTest1("scenario_2_pm_sub", "scenario_2_pm_sub_CACC");
         
@@ -76,19 +76,12 @@ public class Main
         
         //new DTAGUI();
         
-        
+        /*
         DTAProject project = new DTAProject(new File("projects/coacongress2_LTM"));
         DTASimulator sim = project.getSimulator();
-        sim.msa(2);
+        sim.msa(10);
         
-        for(Vehicle v : sim.getVehicles())
-        {
-            if(!v.isExited())
-            {
-                System.out.println(v.getNextLink()+" "+v.getPath()+" "+v.getNextLink().getReceivingFlow()+" "+v.getNextLink().getOccupancy());
-            }
-        }
-        
+        */
         //GUI.main(args);
 
         
@@ -485,7 +478,7 @@ public class Main
             
             ReadDTANetwork read1 = new ReadDTANetwork();
             read1.changeDynamicType(austin, proportions);
-            read1.prepareDemand(austin, 1);
+            read1.prepareDemand(austin, 0.9);
             austin.loadProject();
             
             austin_CACC.importDemandFromProject(austin);
@@ -574,7 +567,7 @@ public class Main
         int max_iter = 50;
         double min_gap = 1;
             
-        for(int i = 100; i <= 100; i+= 5)
+        for(int i = 100; i >= 70; i-= 5)
         {
             
             

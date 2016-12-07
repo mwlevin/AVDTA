@@ -47,8 +47,11 @@ public class LTMLink extends Link
      */
     public LTMLink(int id, Node source, Node dest, double capacity, double ffspd, double wavespd, double jamd, double length, int numLanes)
     {
-        super(id, source, dest, capacity, ffspd, wavespd = capacity / (jamd - capacity / ffspd), jamd, length, numLanes);
-        
+        //super(id, source, dest, capacity, ffspd, wavespd = capacity / (jamd - capacity / ffspd), jamd, length, numLanes);
+        //super(id, source, dest, capacity = ffspd * (wavespd/2 * jamd) / (ffspd + wavespd/2), ffspd, wavespd/2, jamd, length, numLanes);
+        super(id, source, dest, capacity, ffspd, wavespd, jamd, length, numLanes);
+
+
         queue = new LinkedList<VehTime>();
         init = false;
     }
@@ -272,7 +275,7 @@ public class LTMLink extends Link
                 getCurrentUpstreamCapacity());
 
     }
-
+    
     
     /**
      * Returns the number of vehicles waiting to exit, i.e. the component of sending flow unbounded by capacity.
