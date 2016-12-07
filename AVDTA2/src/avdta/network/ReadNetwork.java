@@ -1495,11 +1495,15 @@ public class ReadNetwork
             {
                 if(n.isZone())
                 {
-                    if(n.getIncoming().size() == 0 && n.getOutgoing().size() == 0)
+                    if(n.getId() > 0)
                     {
-                        output++;
-                        print(fileout, ODD_DATA, "Zone "+n.getId()+" has no incoming or outgoing links.");
+                        if(n.getOutgoing().size() == 0 && nodesmap.get(-n.getId()).getIncoming().size() == 0)
+                        {
+                            output++;
+                            print(fileout, ODD_DATA, "Zone "+n.getId()+" has no incoming or outgoing links.");
+                        }
                     }
+                    
                 }
                 else
                 {
