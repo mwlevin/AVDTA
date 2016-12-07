@@ -270,7 +270,9 @@ public class LTMLink extends Link
         return Math.min(getN_down(Simulator.time - getLength()/getWaveSpeed()*3600 + Network.dt) 
                 + getJamDensity() * getLength() - getN_up(Simulator.time),
                 getCurrentUpstreamCapacity());
+
     }
+
     
     /**
      * Returns the number of vehicles waiting to exit, i.e. the component of sending flow unbounded by capacity.

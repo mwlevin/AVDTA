@@ -67,10 +67,14 @@ public abstract class TransitProject extends Project
      * @param rhs the project to be cloned
      * @throws IOException if a file is not found
      */
-    public void cloneFromProject(TransitProject rhs) throws IOException
+    public void cloneFromProject(Project rhs) throws IOException
     {
         super.cloneFromProject(rhs);
-        importTransitFromProject(rhs);
+        
+        if(rhs instanceof TransitProject)
+        {
+            importTransitFromProject((TransitProject)rhs);
+        }
     }
     
     /**

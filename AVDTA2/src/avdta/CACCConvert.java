@@ -15,6 +15,7 @@ import avdta.network.link.Link;
 import avdta.network.link.LinkRecord;
 import avdta.network.link.SharedTransitCTMLink;
 import avdta.network.link.TransitLane;
+import avdta.network.node.NodeRecord;
 import avdta.project.Project;
 import avdta.vehicle.Vehicle;
 import java.io.File;
@@ -22,7 +23,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 
 /**
@@ -33,11 +36,26 @@ public class CACCConvert {
     
     public static void convert(Project project, int max_lanes) throws IOException
     {
-
-        Scanner filein = new Scanner(project.getLinksFile());
+        Map<Integer, NodeRecord> nodes = new HashMap<Integer, NodeRecord>();
+        
+        Scanner filein = new Scanner(project.getNodesFile());
+        filein.nextLine();
+        
+        while(filein.hasNext())
+        {
+            NodeRecord node = new NodeRecord(filein.nextLine());
+            nodes.put(node.getId(), node);
+        }
+        filein.close();
+        
+        filein = new Scanner(project.getLinksFile());
         filein.nextLine();
         
         ArrayList<LinkRecord> newLinks = new ArrayList<LinkRecord>();
+        
+       
+        
+        
         
         
         while(filein.hasNext())
@@ -59,6 +77,10 @@ public class CACCConvert {
                     l2.setId(l2.getId()+100000);
                     l2.setType(ReadNetwork.LTM+ReadNetwork.CACC);
                     newLinks.add(l2);
+                    
+                    nodes.get(l2.getSource()).setType(ReadNetwork.HIGHWAY);
+                    nodes.get(l2.getDest()).setType(ReadNetwork.HIGHWAY);
+
                 }
                 
                 newLinks.add(link);
@@ -75,7 +97,17 @@ public class CACCConvert {
         
         filein.close();
         
-        PrintStream fileout = new PrintStream(new FileOutputStream(project.getLinksFile()), true);
+        PrintStream fileout = new PrintStream(new FileOutputStream(project.getNodesFile()), true);
+        fileout.println(ReadNetwork.getNodesFileHeader());
+        
+        for(int id : nodes.keySet())
+        {
+            fileout.println(nodes.get(id));
+        }
+        
+        fileout.close();
+        
+        fileout = new PrintStream(new FileOutputStream(project.getLinksFile()), true);
         fileout.println(ReadNetwork.getLinksFileHeader());
         
         for(LinkRecord l : newLinks)

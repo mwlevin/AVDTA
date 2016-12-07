@@ -63,7 +63,7 @@ public class Main
 {
     public static void main(String[] args) throws Exception
     {
-        //caccTest2("coacongress2_LTM", "coacongress2_CACC");
+        //caccTest1("coacongress2_LTM", "coacongress2_CACC");
         //caccTest1("coacongress2_LTM", "coacongress2_CACC");
         //caccTest1("scenario_2_pm_sub", "scenario_2_pm_sub_CACC");
         
@@ -74,12 +74,25 @@ public class Main
 
         //caccTest2();
         
-        new DTAGUI();
+        //new DTAGUI();
+        
+        
+        DTAProject project = new DTAProject(new File("projects/coacongress2_LTM"));
+        DTASimulator sim = project.getSimulator();
+        sim.msa(2);
+        
+        for(Vehicle v : sim.getVehicles())
+        {
+            if(!v.isExited())
+            {
+                System.out.println(v.getNextLink()+" "+v.getPath()+" "+v.getNextLink().getReceivingFlow()+" "+v.getNextLink().getOccupancy());
+            }
+        }
         
         //GUI.main(args);
 
         
-        
+        //DTAProject project = new DTAProject(new File("projects/coacongress2_CACC"));
         //CACCConvert.convert(project, 1);
         //caccVisualize("coacongress2");
         
@@ -461,8 +474,8 @@ public class Main
         PrintStream out2 = new PrintStream(new FileOutputStream(new File("CACC_results2_corridor.txt")), true);
         out2.println("Proportion\tCorridor TT\tCorridor TT w/ CACC\tDemand");
         
-        int max_iter = 30;
-        double min_gap = 2;
+        int max_iter = 50;
+        double min_gap = 1;
             
         for(int i = 0; i <= 50; i+= 5)
         {
@@ -558,10 +571,10 @@ public class Main
         proportions.put(ReadDTANetwork.AV+ReadDTANetwork.ICV+ReadDTANetwork.DA_VEHICLE, 0.5);
         proportions.put(ReadDTANetwork.HV+ReadDTANetwork.ICV+ReadDTANetwork.DA_VEHICLE, 0.5);
         
-        int max_iter = 30;
-        double min_gap = 2;
+        int max_iter = 50;
+        double min_gap = 1;
             
-        for(int i = 100; i >= 100; i-= 5)
+        for(int i = 100; i <= 100; i+= 5)
         {
             
             
@@ -779,9 +792,7 @@ public class Main
         rule.setMaxValue(1);
         editor.addVisualization(rule);
         
-        //editor.saveHighResScreenshot(new File("test.png"));
         
-        //System.exit(0);
     }
     
     

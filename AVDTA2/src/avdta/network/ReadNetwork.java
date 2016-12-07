@@ -39,6 +39,7 @@ import avdta.network.link.AbstractSplitLink;
 import avdta.network.link.LinkRecord;
 import avdta.network.link.SplitCTMLink;
 import avdta.network.link.TransitLane;
+import avdta.network.node.Highway;
 import avdta.network.node.obj.BackPressureObj;
 import avdta.network.node.obj.P0Obj;
 import avdta.project.DTAProject;
@@ -92,6 +93,7 @@ public class ReadNetwork
     public static final int SIGNAL = 100;
     public static final int STOPSIGN = 200;
     public static final int RESERVATION = 300;
+    public static final int HIGHWAY = 400;
     
     // reservation policies
     public static final int FCFS = 1;
@@ -468,6 +470,9 @@ public class ReadNetwork
                         break;
                     case STOPSIGN/100:
                         node.setControl(new StopSign());
+                        break;
+                    case HIGHWAY/100:
+                        node.setControl(new Highway());
                         break;
                     case RESERVATION/100:
                     {
