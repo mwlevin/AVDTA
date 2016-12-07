@@ -15,6 +15,8 @@ import avdta.network.node.Node;
 import avdta.network.node.Zone;
 import avdta.network.Path;
 import avdta.network.Simulator;
+import avdta.vehicle.route.FixedPath;
+import avdta.vehicle.route.RouteChoice;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Random;
@@ -35,10 +37,7 @@ public abstract class Vehicle implements Serializable, Comparable<Vehicle>
     private Wallet wallet;
     private int id;
 
-    private Path route;
-    
-    public int path_idx;
-    private int exit_time, net_enter_time;
+    private RouteChoice routeChoice;
     
     private double total_toll;
     private double vot;
@@ -49,6 +48,10 @@ public abstract class Vehicle implements Serializable, Comparable<Vehicle>
     public double bid;
     
     private int time_waiting;
+    
+    private Link curr;
+    
+    private int exit_time, net_enter_time;
     
     // energy
     private int prev_cell_time;
@@ -100,10 +103,10 @@ public abstract class Vehicle implements Serializable, Comparable<Vehicle>
 
         exit_time = -1;
         
-        path_idx = -1;
         arr_time = 0;
         
         effFactor = .5 + Math.round(Simulator.rand.nextDouble());
+        curr = null;
     }
     
     /**
@@ -114,6 +117,9 @@ public abstract class Vehicle implements Serializable, Comparable<Vehicle>
     {
         return false;
     }
+    
+    
+    
     
     /**
      * Returns the {@link VehicleClass} used for calculating energy consumption.
@@ -332,7 +338,7 @@ public abstract class Vehicle implements Serializable, Comparable<Vehicle>
      */
     public double getMPG()
     {
-        return route.getLength() / (total_energy / VehicleClass.E_PER_GALLON);
+        return routeChoice.getLength() / (total_energy / VehicleClass.E_PER_GALLON);
     }
     
     /**
@@ -366,17 +372,20 @@ public abstract class Vehicle implements Serializable, Comparable<Vehicle>
         }
         */ 
         
-        path_idx++;
+        routeChoice.exited();
+        curr = null;
     }
     /**
      * Resets the vehicle properties.
      */
     public void reset()
     {
+        curr = null;
         wallet.reset();
         exit_time = -1;
         time_waiting = 0;
-        path_idx = -1;
+        
+        routeChoice.reset();
         
         cell_enter = 0;
         prev_cell_time = 0;
@@ -396,10 +405,19 @@ public abstract class Vehicle implements Serializable, Comparable<Vehicle>
      * @return Returns an integer indicating #remaining links to  be traversed 
      * on the vehicle route.
      */
-    public int numRemainingLinks()
+    
+    public int getNumRemainingLinks()
     {
-        return route.size() - path_idx;
+        if(routeChoice instanceof FixedPath)
+        {
+            return ((FixedPath)routeChoice).getNumRemainingLinks();
+        }
+        else
+        {
+            return 1;
+        }
     }
+    
     
     /**
      * Update the path of this {@link Vehicle}
@@ -407,8 +425,7 @@ public abstract class Vehicle implements Serializable, Comparable<Vehicle>
      */
     public void setPath(Path p)
     {
-        route = p;
-        path_idx = -1;
+        routeChoice = new FixedPath(p);
         
     }
     
@@ -465,13 +482,18 @@ public abstract class Vehicle implements Serializable, Comparable<Vehicle>
     }
     
     /**
-     * Return the path
+     * Return the path.
      * @return the path
      */
     public Path getPath()
     {
-        return route;
+        if(routeChoice == null)
+        {
+            return null;
+        }
+        return routeChoice.getPath();
     }
+    
     /**
      * Gets the next link in the route of the vehicle.
      * @return Returns the next {@link Link} in the route of the vehicle, if 
@@ -479,14 +501,7 @@ public abstract class Vehicle implements Serializable, Comparable<Vehicle>
      */
     public Link getNextLink()
     {
-        if(path_idx < route.size() - 1)
-        {
-            return route.get(path_idx+1);
-        }
-        else
-        {
-            return null;
-        }
+        return routeChoice.getNextLink(curr);
     }
     /**
      * Gets the previous link in the route of the vehicle.
@@ -495,14 +510,7 @@ public abstract class Vehicle implements Serializable, Comparable<Vehicle>
      */
     public Link getCurrLink()
     {
-        if(path_idx >= 0 && path_idx < route.size())
-        {
-            return route.get(path_idx);
-        }
-        else
-        {
-            return null;
-        }
+        return curr;
     }
     
     /**
@@ -521,8 +529,12 @@ public abstract class Vehicle implements Serializable, Comparable<Vehicle>
      */
     public void enteredLink(Link l)
     {
+        curr = l;
+        
         
         Link i = getPrevLink();
+        
+        
 
 
         if(i == null)
@@ -531,7 +543,9 @@ public abstract class Vehicle implements Serializable, Comparable<Vehicle>
         }
         
         
-        path_idx++;
+        routeChoice.enteredLink(l);
+        
+        
         
         time_waiting += Simulator.time + Network.dt - arr_time;
         
@@ -581,22 +595,22 @@ public abstract class Vehicle implements Serializable, Comparable<Vehicle>
     }
     
     /**
-     * Returns the origin {@link Node} for this {@link Vehicle}. 
+     * Returns the origin {@link Node} for this {@link Vehicle} based on the path. 
      * Note that this {@link Node} may not be a {@link Zone}, such as for buses.
      * @return the origin {@link Node} for this {@link Vehicle}
      */
     public Node getOrigin()
     {
-        return route.get(0).getSource();
+        return routeChoice.getOrigin();
     }
     
     /**
-     * Returns the destination {@link Node} for this {@link Vehicle}. 
+     * Returns the destination {@link Node} for this {@link Vehicle} based on the path. 
      * Note that this {@link Node} may not be a {@link Zone}, such as for buses.
      * @return the destination {@link Node} for this {@link Vehicle}
      */
     public Node getDest()
     {
-        return route.get(route.size()-1).getDest();
+    return routeChoice.getDest();
     }
 }
