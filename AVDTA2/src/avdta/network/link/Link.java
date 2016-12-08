@@ -631,7 +631,7 @@ public abstract class Link implements Serializable, Comparable<Link>
         }
         else
         {
-            return getFFTime();
+            return getFFTime()-0.1;
         }
     }
     

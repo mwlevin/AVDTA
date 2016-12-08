@@ -64,16 +64,6 @@ public class Highway extends IntersectionControl
         int moved = 0;
 
 
-        for(Link l : node.getIncoming())
-        {
-            List<Vehicle> temp = l.getSendingFlow();
-
-            l.q = 0;
-            l.Q = Math.max(l.getCapacityPerTimestep(), temp.size());
-            l.lanes_blocked = 0;
-            
-
-        }
 
         // initializations
 
@@ -81,17 +71,20 @@ public class Highway extends IntersectionControl
         for(Link l : node.getOutgoing())
         {
             l.R = l.getReceivingFlow();
+            
         }
 
         Set<Vehicle> vehicles = new TreeSet<Vehicle>(policy);
         
         for(Link i : node.getIncoming())
         {
-            for(Vehicle v : i.getSendingFlow())
+            List<Vehicle> S = i.getSendingFlow();
+            for(Vehicle v : S)
             {
                 vehicles.add(v);
             }
         }
+        
 
         for(Vehicle v : vehicles)
         {
@@ -115,7 +108,6 @@ public class Highway extends IntersectionControl
 
 
                 j.R -= receivingFlow;
-                i.q += equiv_flow;
                 moved++;
 
 
@@ -124,9 +116,11 @@ public class Highway extends IntersectionControl
                 j.addVehicle(v);
 
             }
+            
+
         }
         
-
+  
        
         
         return exited;

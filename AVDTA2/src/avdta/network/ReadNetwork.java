@@ -450,11 +450,11 @@ public class ReadNetwork
             
             Intersection node = (Intersection)nodesmap.get(id);
         
-            if(node.getIncoming().size() == 1)
+            if(node.getIncoming().size() == 1 && type != HIGHWAY)
             {
                 node.setControl(new Diverge());
             }
-            else if(node.getOutgoing().size() == 1)
+            else if(node.getOutgoing().size() == 1 && type != HIGHWAY)
             {
                 node.setControl(new Merge());
             }

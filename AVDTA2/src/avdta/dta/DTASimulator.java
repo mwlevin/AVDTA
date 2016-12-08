@@ -115,7 +115,7 @@ public class DTASimulator extends Simulator
         if(print_status)
         {
             out.println(getProject().getName());
-            out.println("Iter\tStep\tGap %\tAEC\tTTT\tTrips\tNon-exiting\ttime");
+            out.println("Iter\tStep\tGap %\tAEC\tTSTT\tTrips\tNon-exiting\ttime");
         }
         
         
@@ -558,7 +558,7 @@ public class DTASimulator extends Simulator
             out.println("Iter\tStep\tGap %\tAEC\tTSTT\tTrips\tNon-exit\ttime");
         }
         
-        fileout.println("Iter\tStep\tGap %\tAEC\tTTT\tTrips\tNon-exit\ttime");
+        fileout.println("Iter\tStep\tGap %\tAEC\tTSTT\tTrips\tNon-exit\ttime");
         
         int max_iter_contingency = max_iter + 3;
         

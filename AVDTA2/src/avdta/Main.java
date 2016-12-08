@@ -75,19 +75,19 @@ public class Main
 
         //caccTest2();
         
-        new DTAGUI();
+        //new DTAGUI();
         
-        /*
-        DTAProject project = new DTAProject(new File("projects/scenario_2_PM"));
+        
+        DTAProject project = new DTAProject(new File("projects/scenario_2_pm_CACC"));
         DTASimulator sim = project.getSimulator();
         sim.partial_demand(5);
         sim.msa_cont(5, 30);
-        */
-        
+
+
         //GUI.main(args);
 
         /*
-        DTAProject project = new DTAProject(new File("projects/scenario_2_PM_CACC"));
+        DTAProject project = new DTAProject(new File("projects/coacongress2_CACC"));
         CACCConvert.convertAll(project);
     */
         //caccVisualize("coacongress2");
@@ -513,10 +513,10 @@ public class Main
         proportions.put(ReadDTANetwork.AV+ReadDTANetwork.ICV+ReadDTANetwork.DA_VEHICLE, 1.0);
 
         
-        int max_iter = 70;
+        int max_iter = 30;
         double min_gap = 1;
             
-        for(int i = 100; i >= 70; i-= 5)
+        for(int i = 100; i >= 100; i-= 5)
         {
             
             
