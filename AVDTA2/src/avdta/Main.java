@@ -75,15 +75,16 @@ public class Main
 
         //caccTest2();
         
-        //new DTAGUI();
+        new DTAGUI();
         
-        
-        DTAProject project = new DTAProject(new File("projects/scenario_2_pm_CACC"));
+        /*
+        DTAProject project = new DTAProject(new File("projects/coacongress2_LTM"));
+        ReadDTANetwork read = new ReadDTANetwork();
+        read.prepareDemand(project, 0.8);
+        project.loadSimulator();
         DTASimulator sim = project.getSimulator();
-        sim.partial_demand(5);
-        sim.msa_cont(5, 30);
-
-
+        sim.msa(10);
+*/
         //GUI.main(args);
 
         /*
@@ -94,6 +95,7 @@ public class Main
         
         //createCACCNetwork();
         
+        //fixConnectivity();
         //fixConnectivity2();
         //connectivityTest();
     }
@@ -548,44 +550,28 @@ public class Main
             out.println(i+"\t"+sim1.getTSTT()+"\t"+sim2.getTSTT()+"\t"+sim1.getNumVehicles());
             
             Set<Link> corridor1 = new HashSet<Link>();
-            Set<Link> corridor2 = new HashSet<Link>();
             
             for(Link l : sim1.getLinks())
             {
                 if(l.getFFSpeed() >= 60)
                 {
-                    if(l.getDirection() > 0 && l.getDirection() < Math.PI)
-                    {
-                        corridor1.add(l);
-                    }
-                    else
-                    {
-                        corridor2.add(l);
-                    }
+                    corridor1.add(l);
                 }
             }
             
-            double avg1 = (sim1.getTT(corridor1, 3600) + sim1.getTT(corridor2, 3600))/2;
+            double avg1 = sim1.getTT(corridor1, 3600);
             
             corridor1.clear();
-            corridor2.clear();
             
             for(Link l : sim2.getLinks())
             {
                 if(l.getFFSpeed() >= 60)
                 {
-                    if(l.getDirection() > 0 && l.getDirection() < Math.PI)
-                    {
-                        corridor1.add(l);
-                    }
-                    else
-                    {
-                        corridor2.add(l);
-                    }
+                    corridor1.add(l);
                 }
             }
             
-            double avg2 = (sim2.getTT(corridor1, 3600) + sim2.getTT(corridor2, 3600))/2;
+            double avg2 = sim2.getTT(corridor1, 3600);
             
             out2.println(i+"\t"+avg1+"\t"+avg2+"\t"+sim1.getNumVehicles());
             
@@ -607,7 +593,7 @@ public class Main
                     
                     double d1 = data1.getData(l1, 0);
                     double d2 = data2.getData(l2, 0);
-                    
+                    /*
                     if(l2.getFFSpeed() >= 60)
                     {
                         Link l2a = sim2.getLink(l1.getId()+100000);
@@ -616,7 +602,7 @@ public class Main
                         {
                             d2 += data2.getData(l2a, 0);
                         }
-                    }
+                    }*/
                     
                     fileout.println(l1.getId()+"\t"+((d2 - d1)/d1)+"\t"+(d2-d1));
                 }

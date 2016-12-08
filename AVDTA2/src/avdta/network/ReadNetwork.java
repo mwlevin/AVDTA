@@ -216,12 +216,16 @@ public class ReadNetwork
         Scanner filein = new Scanner(project.getBusPeriodFile());
         filein.nextLine();
         
-        while(filein.hasNextLine())
+        while(filein.hasNextInt())
         {
             int id = filein.nextInt();
             int starttime = filein.nextInt();
             int endtime = filein.nextInt();
-            filein.nextLine();
+            
+            if(filein.hasNextLine())
+            {
+                filein.nextLine();
+            }
             
             busPeriod.put(id, new Integer[]{starttime, endtime});
         }     
@@ -235,13 +239,17 @@ public class ReadNetwork
         
         int type = BUS + AV + ICV;
         
-        while(filein.hasNextLine())
+        while(filein.hasNextInt())
         {
             int routeId = filein.nextInt();
             int periodId = filein.nextInt();
             int frequency = filein.nextInt();
             int offset = filein.nextInt();
-            filein.nextLine();
+            
+            if(filein.hasNextLine())
+            {
+                filein.nextLine();
+            }
             
             Integer[] period = busPeriod.get(periodId);
             
@@ -291,7 +299,11 @@ public class ReadNetwork
             int linkid = filein.nextInt();
             boolean stop = filein.nextInt() == 1;
             int dwelltime = filein.nextInt();
-            filein.nextLine();
+            
+            if(filein.hasNextLine())
+            {
+                filein.nextLine();
+            }
             
             Link link = linksmap.get(linkid);
             
@@ -386,7 +398,11 @@ public class ReadNetwork
             int type = filein.nextInt();
             int routeid = filein.nextInt();
             int dtime = filein.nextInt();
-            filein.nextLine();
+            
+            if(filein.hasNextLine())
+            {
+                filein.nextLine();
+            }
             
             VehicleClass vehClass = null;
             DriverType driver = null;
@@ -441,7 +457,11 @@ public class ReadNetwork
             double x = filein.nextDouble();
             double y = filein.nextDouble();
             double elevation = filein.nextDouble();
-            filein.nextLine();
+            
+            if(filein.hasNextLine())
+            {
+                filein.nextLine();
+            }
             
             if(type/100 == CENTROID/100)
             {
@@ -549,7 +569,11 @@ public class ReadNetwork
             double x = filein.nextDouble();
             double y = filein.nextDouble();
             double elevation = filein.nextDouble();
-            filein.nextLine();
+            
+            if(filein.hasNextLine())
+            {
+                filein.nextLine();
+            }
             
             Node node;
 
@@ -626,7 +650,10 @@ public class ReadNetwork
             double jamd = 5280.0/Vehicle.vehicle_length;
             
             
-            filein.nextLine();
+            if(filein.hasNextLine())
+            {
+                filein.nextLine();
+            }
             
             Link link = null;
             
@@ -742,7 +769,10 @@ public class ReadNetwork
                 list.add(loc);
             }
             
-            linksmap.get(id).setCoordinates(list);
+            if(linksmap.containsKey(id))
+            {
+                linksmap.get(id).setCoordinates(list);
+            }
         }
         filein.close();
 
@@ -858,7 +888,11 @@ public class ReadNetwork
         {
             int node = filein.nextInt();
             double offset = filein.nextDouble();
-            filein.nextLine();
+            
+            if(filein.hasNextLine())
+            {
+                filein.nextLine();
+            }
             
             Node n = nodesmap.get(node);
             

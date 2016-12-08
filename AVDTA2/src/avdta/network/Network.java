@@ -333,7 +333,7 @@ public class Network
         
         if(output.size() == 0)
         {
-            throw new RuntimeException(o+" is not connected to "+d);
+            throw new RuntimeException(o+" is not connected to "+(-d.getId()));
         }
         
         return paths.addPath(output);
