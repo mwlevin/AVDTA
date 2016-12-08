@@ -34,6 +34,44 @@ import java.util.Scanner;
  */
 public class CACCConvert {
     
+    public static void convertAll(Project project) throws IOException
+    {
+        ArrayList<LinkRecord> newLinks = new ArrayList<LinkRecord>();
+        
+       
+        
+        Scanner filein = new Scanner(project.getLinksFile());
+        filein.nextLine();
+        
+        while(filein.hasNext())
+        {
+            LinkRecord link = new LinkRecord(filein.nextLine());
+            
+            
+            
+            
+            if(link.getType() != ReadNetwork.CENTROID && CACCLTMLink.checkK2(link.getCapacity(), link.getFFSpd(), link.getLength()) && link.getFFSpd() >= 60)
+            {
+                link.setType(ReadNetwork.LTM + ReadNetwork.CACC);
+            }
+            
+            newLinks.add(link);
+           
+            
+        }
+        
+        filein.close();
+        
+        PrintStream fileout = new PrintStream(new FileOutputStream(project.getLinksFile()), true);
+        fileout.println(ReadNetwork.getLinksFileHeader());
+        
+        for(LinkRecord l : newLinks)
+        {
+            fileout.println(l);
+        }
+        fileout.close();
+    }
+    
     public static void convert(Project project, int max_lanes) throws IOException
     {
         Map<Integer, NodeRecord> nodes = new HashMap<Integer, NodeRecord>();
@@ -68,7 +106,7 @@ public class CACCConvert {
             if(link.getType() != ReadNetwork.CENTROID && CACCLTMLink.checkK2(link.getCapacity(), link.getFFSpd(), link.getLength()) && link.getFFSpd() >= 60
                     && link.getNumLanes() > 1)
             {
-                int newLanes = (int)Math.min(link.getNumLanes()-1, max_lanes);
+                int newLanes = link.getNumLanes()/2;
                 if(newLanes > 0)
                 {
                     LinkRecord l2 = link.clone();

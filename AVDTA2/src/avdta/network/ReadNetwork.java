@@ -660,9 +660,9 @@ public class ReadNetwork
                     {
                         if(CACCLTMLink.checkK2(capacity, ffspd, length))
                         {
+                            //link = new LTMLink(id, source, dest, capacity, ffspd, w, jamd, length, numLanes);
                             link = new CACCLTMLink(id, source, dest, capacity, ffspd, w, jamd, length, numLanes);
                             
-                            CACCLTMLink l = (CACCLTMLink)link;
                         }
                         else
                         {

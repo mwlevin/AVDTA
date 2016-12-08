@@ -134,11 +134,11 @@ public class CACCLTMLink extends LTMLink
     {
         
         double output = 
-         Math.min(Math.min(getN_down(Simulator.time - getLength()/wavespd2*3600 + Network.dt) 
-                + getJamDensity() * getLength() - getN_up(Simulator.time),
-                getN_down(Simulator.time - getLength()/wavespd1*3600 + Network.dt) 
-                + k2 * getLength() - getN_up(Simulator.time)),
-                getCurrentUpstreamCapacity());
+         Math.min(Math.min(Math.round(getN_down(Simulator.time - getLength()/wavespd2*3600 + Network.dt) 
+                + getJamDensity() * getLength() - getN_up(Simulator.time)),
+                Math.round(getN_down(Simulator.time - getLength()/wavespd1*3600 + Network.dt) 
+                + k2 * getLength() - getN_up(Simulator.time))),
+                Math.min(getJamDensity() * getLength() - getOccupancy(), getCurrentUpstreamCapacity()));
         
         return output;
     }

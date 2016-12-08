@@ -62,13 +62,7 @@ public class Highway extends IntersectionControl
         int exited = 0;
         
         int moved = 0;
-        
 
-        // split to improve performance
-        
-        Set<Vehicle> vehicles = new TreeSet<Vehicle>(policy);
-
-        Map<Link, Iterator<Vehicle>> inc_flow = new HashMap<Link, Iterator<Vehicle>>();
 
         for(Link l : node.getIncoming())
         {
@@ -78,19 +72,7 @@ public class Highway extends IntersectionControl
             l.Q = Math.max(l.getCapacityPerTimestep(), temp.size());
             l.lanes_blocked = 0;
             
-            
-            Iterator<Vehicle> iter = temp.iterator();
 
-            inc_flow.put(l, iter);
-
-            for(int i = 0; i < l.getDsLanes() && iter.hasNext(); i++)
-            {
-                Vehicle v = iter.next();
-
-                iter.remove();
-                policy.initialize(null, v);
-                vehicles.add(v); 
-            }
         }
 
         // initializations
@@ -101,87 +83,51 @@ public class Highway extends IntersectionControl
             l.R = l.getReceivingFlow();
         }
 
-
-
-
-        outer: while(!vehicles.isEmpty())
+        Set<Vehicle> vehicles = new TreeSet<Vehicle>(policy);
+        
+        for(Link i : node.getIncoming())
         {
-            Iterator<Vehicle> iter = vehicles.iterator();
-
-            while(iter.hasNext())
+            for(Vehicle v : i.getSendingFlow())
             {
-                Vehicle v = iter.next();
-                
-
-                Link i = v.getPrevLink();
-                Link j = v.getNextLink();
-
-                if(j == null)
-                {
-                    i.removeVehicle(v);
-                    iter.remove();
-                    v.exited();
-                    exited++;
-
-                    Iterator<Vehicle> queue = inc_flow.get(i);
-
-                    if(queue.hasNext())
-                    {
-                        Vehicle v2 = queue.next();
-                        queue.remove();
-
-                        policy.initialize(null, v2);
-                        vehicles.add(v2); 
-                    }
-
-                    continue outer;
-                }
-
-                double equiv_flow = v.getDriver().getEquivFlow(i.getFFSpeed());
-                
-
-                double receivingFlow =  i.scaleReceivingFlow(v);
-
-
-                if(j.R >= receivingFlow)
-                {
-
-
-                    j.R -= receivingFlow;
-                    i.q += equiv_flow;
-                    moved++;
-
-
-
-                    i.removeVehicle(v);
-                    iter.remove();
-                    j.addVehicle(v);
-
-
-                    policy.onAccept(v);
-
-                    Iterator<Vehicle> queue = inc_flow.get(i);
-
-                    if(queue.hasNext())
-                    {
-                        Vehicle v2 = queue.next();
-                        queue.remove();
-
-                        policy.initialize(null, v2);
-
-                        vehicles.add(v2);
-
-
-                    }
-
-                    continue outer;
-                }
-
-                
-                
+                vehicles.add(v);
             }
-            break;
         }
+
+        for(Vehicle v : vehicles)
+        {
+            Link i = v.getPrevLink();
+            Link j = v.getNextLink();
+
+            if(j == null)
+            {
+                i.removeVehicle(v);
+                v.exited();
+                exited++;
+            }
+
+            double equiv_flow = v.getDriver().getEquivFlow(i.getFFSpeed());
+
+
+            double receivingFlow =  i.scaleReceivingFlow(v);
+
+            if(j.R >= receivingFlow)
+            {
+
+
+                j.R -= receivingFlow;
+                i.q += equiv_flow;
+                moved++;
+
+
+
+                i.removeVehicle(v);
+                j.addVehicle(v);
+
+            }
+        }
+        
+
+       
         
         return exited;
         

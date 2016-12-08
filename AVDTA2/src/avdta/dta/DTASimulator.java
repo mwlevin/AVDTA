@@ -114,6 +114,7 @@ public class DTASimulator extends Simulator
         
         if(print_status)
         {
+            out.println(getProject().getName());
             out.println("Iter\tStep\tGap %\tAEC\tTTT\tTrips\tNon-exiting\ttime");
         }
         
@@ -546,7 +547,7 @@ public class DTASimulator extends Simulator
         }
         
         
-        PrintStream fileout = new PrintStream(new FileOutputStream(currAssign.getLogFile()), true);
+        PrintStream fileout = new PrintStream(new FileOutputStream(currAssign.getLogFile(), start_iter > 1), true);
         
         iteration = start_iter;
         DTAResults output = null;

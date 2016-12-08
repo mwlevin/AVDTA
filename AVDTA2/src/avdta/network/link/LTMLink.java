@@ -11,6 +11,9 @@ import avdta.network.ReadNetwork;
 import avdta.network.node.Node;
 import avdta.network.Simulator;
 import avdta.network.link.Link;
+import avdta.network.node.Highway;
+import avdta.network.node.Intersection;
+import avdta.network.node.IntersectionControl;
 import avdta.vehicle.Vehicle;
 import avdta.vehicle.VehTime;
 import java.util.ArrayList;
@@ -47,9 +50,9 @@ public class LTMLink extends Link
      */
     public LTMLink(int id, Node source, Node dest, double capacity, double ffspd, double wavespd, double jamd, double length, int numLanes)
     {
-        //super(id, source, dest, capacity, ffspd, wavespd = capacity / (jamd - capacity / ffspd), jamd, length, numLanes);
+        super(id, source, dest, capacity, ffspd, wavespd = capacity / (jamd - capacity / ffspd), jamd, length, numLanes);
         //super(id, source, dest, capacity = ffspd * (wavespd/2 * jamd) / (ffspd + wavespd/2), ffspd, wavespd/2, jamd, length, numLanes);
-        super(id, source, dest, capacity, ffspd, wavespd, jamd, length, numLanes);
+        //super(id, source, dest, capacity, ffspd, wavespd, jamd, length, numLanes);
 
 
         queue = new LinkedList<VehTime>();
@@ -69,10 +72,11 @@ public class LTMLink extends Link
         this.capacityDown = getCapacity() * Network.dt / 3600.0;
         
         init = true;
+
     }
     
     /**
-     * Returns how far to look backwards in timefor the upstream end
+     * Returns how far to look backwards in time for the upstream end
      * @return {@link Link#getLength()}/{@link Link#getFFSpeed()} (s)
      */
     public int getUSLookBehind()
@@ -159,6 +163,8 @@ public class LTMLink extends Link
         queue.add(new VehTime(veh, Simulator.time));     
         
         addN_up(Simulator.time, 1);
+        
+        
 
     }
     
@@ -270,9 +276,12 @@ public class LTMLink extends Link
      */
     public double getReceivingFlow()
     {
-        return Math.min(getN_down(Simulator.time - getLength()/getWaveSpeed()*3600 + Network.dt) 
-                + getJamDensity() * getLength() - getN_up(Simulator.time),
+        
+        return Math.min(
+                Math.min(Math.round(getN_down(Simulator.time - getLength()/getWaveSpeed()*3600 + Network.dt) 
+                + getJamDensity() * getLength() - getN_up(Simulator.time)), getJamDensity()*getLength() - queue.size()),
                 getCurrentUpstreamCapacity());
+        
 
     }
     
