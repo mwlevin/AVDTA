@@ -31,7 +31,7 @@ public class StaticODRecord implements Serializable
         this.id = id;
         this.type = type;
         this.origin = origin;
-        this.destination = destination;
+        this.destination = (int)Math.abs(destination);
         this.demand = demand;
     }
     

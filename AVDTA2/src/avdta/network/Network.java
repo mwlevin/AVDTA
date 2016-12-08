@@ -1,5 +1,6 @@
 package avdta.network;
 
+import avdta.dta.DTASimulator;
 import avdta.network.cost.TravelCost;
 import avdta.network.link.CTMLink;
 import avdta.network.link.DLRCTMLink;
@@ -17,8 +18,11 @@ import avdta.network.node.Signalized;
 import avdta.network.node.TBR;
 import avdta.network.node.Turn;
 import avdta.network.node.Zone;
+import avdta.project.DTAProject;
 import avdta.project.Project;
 import avdta.vehicle.DriverType;
+import avdta.vehicle.PersonalVehicle;
+import avdta.vehicle.Vehicle;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -322,15 +326,30 @@ public class Network
      */
     public Path findPath(Node o, Node d, int dep_time, double vot, DriverType driver, TravelCost costFunc)
     {
-        node_dijkstras(o, dep_time, vot, driver, costFunc);
-        Path output = node_trace(o, d);
+        Path output;
         
-        if(output.size() == 0)
+        if(link_dijkstras)
         {
             link_dijkstras(o, dep_time, vot, driver, costFunc);
             output = link_trace(o, d);
         }
+        else
+        {
+            node_dijkstras(o, dep_time, vot, driver, costFunc);
+
+
+            output = node_trace(o, d);
+
+
+            if(output.size() == 0)
+            {
+                link_dijkstras(o, dep_time, vot, driver, costFunc);
+                output = link_trace(o, d);
+            }
+        }
         
+        
+
         if(output.size() == 0)
         {
             throw new RuntimeException(o+" is not connected to "+(-d.getId()));
@@ -402,6 +421,7 @@ public class Network
             l.arr_time = Integer.MAX_VALUE;
             l.prev = null;
             l.added = false;
+            l.settled = false;
         }
         
         PriorityQueue<Link> Q = new PriorityQueue<Link>(8, new Comparator<Link>()
@@ -432,7 +452,7 @@ public class Network
         while(!Q.isEmpty())
         {
             Link u = Q.remove();
-            u.added = false;
+            u.settled = true;
             
             Node d = u.getDest();
             
@@ -443,6 +463,10 @@ public class Network
                     continue;
                 }
                 
+                if(v.settled)
+                {
+                    continue;
+                }
                 
                 double tt = v.getAvgTT(u.arr_time);
                 
@@ -452,6 +476,8 @@ public class Network
                 if(new_label < v.label)
                 {
                     v.arr_time = (int)(u.arr_time + tt);
+                    
+                    
                    
                     // if v is already in Q, remove v to reset the order
                     if(v.added)
@@ -568,7 +594,8 @@ public class Network
         {
             n.label = Integer.MAX_VALUE;
             n.prev = null;
-            o.added = false;
+            n.added = false;
+            n.settled = false;
         }
 
         o.arr_time = dep_time;
@@ -589,20 +616,12 @@ public class Network
 
         while(!Q.isEmpty())
         {
-            double min = Integer.MAX_VALUE-1;
-            Node u = null;
 
-            for(Node n : Q)
-            {
-                if(n.label < min)
-                {
-                    u = n;
-                    min = n.label;
-                }
-            }
-
+            Node u = Q.remove();
             u.added = false;
-            Q.remove(u);
+            
+            u.settled = true;
+
 
             for(Link l : u.getOutgoing())
             {
@@ -616,6 +635,12 @@ public class Network
                 
 
                 Node v = l.getDest();
+                
+                if(v.settled)
+                {
+                    continue;
+                }
+                
 
                 double temp = u.label;
                 int arr_time = u.arr_time;
@@ -637,7 +662,7 @@ public class Network
                         Q.remove(v);
                     }
                     
-                    
+                    //System.out.println("Add "+v);
                     v.label = temp;
                     v.prev = l;
                     v.arr_time = arr_time;
@@ -1079,4 +1104,6 @@ public class Network
             
         }
     }
+    
+    
 }

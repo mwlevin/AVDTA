@@ -62,7 +62,7 @@ public abstract class Node extends Location implements Serializable, Comparable<
     public int arr_time;
     public Link prev;
     public TransitLink transit_prev;
-    public boolean added;
+    public boolean added, settled;
     
     public double vc;
     

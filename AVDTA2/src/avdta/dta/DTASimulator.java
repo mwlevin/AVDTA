@@ -174,6 +174,7 @@ public class DTASimulator extends Simulator
 
         int count = 0;
         
+
         for(Vehicle x : vehicles)
         {
             
@@ -184,6 +185,7 @@ public class DTASimulator extends Simulator
             Node d = v.getDest();
             int ast = v.getAST();
             int dep_time = v.getDepTime();
+
 
             if(v.getExitTime() < Simulator.duration)
             {

@@ -13,6 +13,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Scanner;
 
@@ -21,7 +22,7 @@ import java.util.Scanner;
  * Note that the class references assignment intervals in the project's demand profile table (see {@link DemandProfile}).
  * @author Michael
  */
-public class DynamicODTable 
+public class DynamicODTable implements Iterable<DynamicODRecord>
 {
     // the order is origin, dest, type, ast
     private Map<Integer, Map<Integer, Map<Integer, Map<Integer, Double>>>> table;
@@ -32,6 +33,11 @@ public class DynamicODTable
     public DynamicODTable()
     {
         table = new HashMap<Integer, Map<Integer, Map<Integer, Map<Integer, Double>>>>();
+    }
+    
+    public Iterator<DynamicODRecord> iterator()
+    {
+        return new TableIterator();
     }
     
     /**
@@ -59,7 +65,7 @@ public class DynamicODTable
             int id = filein.nextInt();
             int type = filein.nextInt();
             int o = filein.nextInt();
-            int d = filein.nextInt();
+            int d = (int)Math.abs(filein.nextInt());
             int ast = filein.nextInt();
             double dem = filein.nextDouble();
             filein.nextLine();
@@ -68,6 +74,15 @@ public class DynamicODTable
         }
         
         filein.close();
+    }
+    
+    /**
+     * Adds the specified {@link DynamicODRecord} to the table.
+     * @param odt the {@link DynamicODRecord} to be added
+     */
+    public void addDemand(DynamicODRecord odt)
+    {
+        addDemand(odt.getOrigin(), odt.getDest(), odt.getAST(), odt.getType(), odt.getDemand());
     }
     
     /**
@@ -93,6 +108,12 @@ public class DynamicODTable
      */
     public void addDemand(int origin, int dest, int ast, int type, double dem)
     {
+        if(dem <= 0.0)
+        {
+            return;
+        }
+        
+        dest = (int)Math.abs(dest);
         if(ast < 0)
         {
             throw new RuntimeException("AST is "+ast);
@@ -187,6 +208,10 @@ public class DynamicODTable
         fileout.close();
     }
     
+    public boolean isEmpty()
+    {
+        return table.isEmpty();
+    }
     /**
      * Prints the static OD file for the specified project by aggregating over assignment intervals (see {@link DemandProject#getStaticODFile()}).
      * @param project the project
@@ -251,6 +276,7 @@ public class DynamicODTable
      */
     public double getTrips(int origin, int dest, int ast, int type)
     {
+        dest = (int)Math.abs(dest);
         try
         {
             return table.get(origin).get(dest).get(type).get(ast);
@@ -282,6 +308,7 @@ public class DynamicODTable
      */
     public double getTrips(int origin, int dest, int type)
     {
+        dest = (int)Math.abs(dest);
         try
         {
             Map<Integer, Double> allTimes = table.get(origin).get(dest).get(type);
@@ -299,6 +326,136 @@ public class DynamicODTable
         {
             return 0.0;
         }
+    }
+    
+    private void delete(int o, int d, int ast, int type)
+    {
+        remove(o, d, ast, type);
+    }
+    
+    public void remove(int o, int d, int ast, int type)
+    {
+        d = (int)Math.abs(d);
+        
+        table.get(o).get(d).get(ast).remove(type);
+        
+        if(table.get(o).get(d).get(ast).isEmpty())
+        {
+            table.get(o).get(d).remove(ast);
+        }
+        
+        if(table.get(o).get(d).isEmpty())
+        {
+            table.get(o).remove(d);
+        }
+        
+        if(table.get(o).isEmpty())
+        {
+            table.remove(o);
+        }
+    }
+    
+    class TableIterator implements Iterator<DynamicODRecord> 
+    {
+        private int o, d, ast, type;
+
+        private Iterator<Integer> origins;
+        private Iterator<Integer> destinations;
+        private Iterator<Integer> asts;
+        private Iterator<Integer> types;
+
+        public TableIterator() 
+        {
+            origins = table.keySet().iterator();
+            destinations = null;
+            asts = null;
+            types = null;
+        }
+        
+        public boolean hasNext()
+        {
+            if(types != null && types.hasNext())
+            {
+                return true;
+            }
+            
+            if(asts != null && asts.hasNext())
+            {
+                ast = asts.next();
+                
+                types = table.get(o).get(d).get(ast).keySet().iterator();
+                
+                return hasNext();
+            }
+            
+            if(destinations != null && destinations.hasNext())
+            {
+                d = destinations.next();
+                
+                asts = table.get(o).get(d).keySet().iterator();
+                
+                return hasNext();
+            }
+            
+            if(origins != null && origins.hasNext())
+            {
+                o = origins.next();
+                
+                destinations = table.get(o).keySet().iterator();
+                
+                return hasNext();
+            }
+            
+            return false;
+        }
+        
+
+        public DynamicODRecord next()
+        {
+            if(types != null && types.hasNext())
+            {
+                type = types.next();
+                double trips = table.get(o).get(d).get(ast).get(type);
+                
+                return new DynamicODRecord(0, type, o, d, ast, trips);
+            }
+            
+            if(asts != null && asts.hasNext())
+            {
+                ast = asts.next();
+                
+                types = table.get(o).get(d).get(ast).keySet().iterator();
+                
+                return next();
+            }
+            
+            if(destinations != null && destinations.hasNext())
+            {
+                d = destinations.next();
+                
+                asts = table.get(o).get(d).keySet().iterator();
+                
+                return next();
+            }
+            
+            if(origins != null && origins.hasNext())
+            {
+                o = origins.next();
+                
+                destinations = table.get(o).keySet().iterator();
+                
+                return next();
+            }
+            
+            return null;
+            
+        }
+        
+        public void remove()
+        {
+            delete(o, d, ast, type);
+        }
+
     }
     
 }

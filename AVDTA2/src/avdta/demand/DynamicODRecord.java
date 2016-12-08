@@ -32,7 +32,7 @@ public class DynamicODRecord implements Serializable
         this.id = id;
         this.type = type;
         this.origin = origin;
-        this.destination = destination;
+        this.destination = (int)Math.abs(destination);
         this.ast = ast;
         this.demand = demand;
     }
@@ -145,7 +145,7 @@ public class DynamicODRecord implements Serializable
      */
     public void setDest(int dest)
     {
-        this.destination = destination;
+        this.destination = dest;
     }
     
     /**

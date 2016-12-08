@@ -82,7 +82,7 @@ public abstract class Link implements Serializable, Comparable<Link>
     public double label;
     public int arr_time;
     public Link prev;
-    public boolean added;
+    public boolean added, settled;
 
     
     // elevation

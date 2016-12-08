@@ -125,7 +125,7 @@ public abstract class GUI extends JFrame
                             "Error", JOptionPane.ERROR_MESSAGE);
     }
     
-    private JMenuItem cloneMI, closeMI, createDatabase, editor, changeSeed, sanityCheck;
+    private JMenuItem cloneMI, closeMI, createDatabase, editor, changeSeed, sanityCheck, connectivityTest;
     protected Project project;
     
     private Editor openEditor;
@@ -274,6 +274,33 @@ public abstract class GUI extends JFrame
         editor.setEnabled(false);
         
         me.addSeparator();
+        
+        connectivityTest = new JMenuItem("Connectivity test");
+        connectivityTest.addActionListener(new ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                try
+                {
+                    boolean output = project.getSimulator().connectivityTest();
+
+                    if(output)
+                    {
+                        JOptionPane.showMessageDialog(frame, "All vehicles have a connected path.", "Connectivity test", JOptionPane.INFORMATION_MESSAGE);
+                    }
+                    else
+                    {
+                        JOptionPane.showMessageDialog(frame, "Connectivity errors detected.\n"+project.getResultsFolder()+"/unconnected.txt", 
+                                "Connectivity test", JOptionPane.WARNING_MESSAGE);
+                    }
+                }
+                catch(Exception ex)
+                {
+                    GUI.handleException(ex);
+                }
+            }
+        });
+        connectivityTest.setEnabled(false);
         
         sanityCheck = new JMenuItem("Sanity check");
         sanityCheck.addActionListener(new ActionListener()
@@ -465,6 +492,7 @@ public abstract class GUI extends JFrame
         editor.setEnabled(project != null);
         changeSeed.setEnabled(project != null);
         sanityCheck.setEnabled(project != null);
+        connectivityTest.setEnabled(project != null);
     }
     
     public void setupSQL()
