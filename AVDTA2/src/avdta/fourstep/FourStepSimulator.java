@@ -205,7 +205,16 @@ public class FourStepSimulator extends DTASimulator
     }
     
     
-    public void four_step(int max_iter, int ta_iter, File output) throws IOException
+    public DTAResults four_step(int max_iter, int ta_iter, File output) throws IOException
+    {
+        return four_step(max_iter, ta_iter, 0, output);
+    }
+    
+    public DTAResults four_step(int max_iter, int ta_iter, double ta_min_gap, File output) throws IOException
+    {
+        return four_step(max_iter, ta_iter, 0, ta_min_gap, output);
+    }
+    public DTAResults four_step(int max_iter, int ta_iter, int pd_iter, double ta_min_gap, File output) throws IOException
     {
         int AV_type = ReadNetwork.DA_VEHICLE + ReadNetwork.AV + ReadNetwork.ICV;
         int HV_type = ReadNetwork.DA_VEHICLE + ReadNetwork.HV + ReadNetwork.ICV;
@@ -245,6 +254,7 @@ public class FourStepSimulator extends DTASimulator
         
         fileout.println("Iter\tRMSE\tDA\tAV\tTR\tveh trips\tgap\ttime");
 	
+        DTAResults results = null;
         
         while(++iter <= max_iter)
         {
@@ -296,7 +306,7 @@ public class FourStepSimulator extends DTASimulator
             
             System.out.print("Traffic assignment...");
             time = System.nanoTime();
-            DTAResults results = traffic_assign(ta_iter);
+            results = traffic_assign(pd_iter, ta_iter, ta_min_gap);
             System.out.println("done. "+String.format("%.1f", (System.nanoTime() - time)/1.0e9));
             
             System.out.println("ITERATION "+iter+"\t"+String.format("%.2f", results.getGapPercent()));
@@ -308,6 +318,8 @@ public class FourStepSimulator extends DTASimulator
         }
         
         fileout.close();
+        
+        return results;
     }
     
     
@@ -787,9 +799,18 @@ public class FourStepSimulator extends DTASimulator
         }
     }
     
-    public DTAResults traffic_assign(int max_iter) throws IOException
+    public DTAResults traffic_assign(int pd, int max_iter, double min_gap) throws IOException
     {
-        return msa(max_iter);
+        if(pd > 0)
+        {
+            partial_demand(pd);
+            return msa_cont(pd+1, max_iter, min_gap);
+        }
+        else
+        {
+            return msa(max_iter, min_gap);
+        }
+        
     }
     
     static class CostTuple

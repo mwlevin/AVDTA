@@ -6,6 +6,8 @@
 package avdta.project;
 
 import avdta.demand.ReadDemandNetwork;
+import avdta.dta.DTASimulator;
+import avdta.fourstep.FourStepSimulator;
 import avdta.fourstep.ReadFourStepNetwork;
 import avdta.network.ReadNetwork;
 import java.io.File;
@@ -33,6 +35,16 @@ public class FourStepProject extends DTAProject
         super(dir);
         
         networkOptions = new TreeMap<String, String>();
+    }
+    
+    /**
+     * Returns the {@link DTASimulator} associated with this project. 
+     * If null, call {@link DTAProject#loadSimulator()}
+     * @return the {@link DTASimulator} associated with this project
+     */
+    public FourStepSimulator getSimulator()
+    {
+        return (FourStepSimulator)super.getSimulator();
     }
     
     /**

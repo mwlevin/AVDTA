@@ -12,6 +12,7 @@ import avdta.gui.panels.AbstractGUIPanel;
 import avdta.gui.panels.analysis.AnalysisPanel;
 import avdta.gui.panels.demand.DemandPanel;
 import avdta.gui.panels.dta.DTAPanel;
+import avdta.gui.panels.fourstep.FourStepPanel;
 import avdta.gui.panels.network.NetworkPanel;
 import avdta.gui.panels.transit.TransitPanel;
 import static avdta.gui.util.GraphicUtils.*;
@@ -40,6 +41,7 @@ public class FourStepGUI extends GUI implements AbstractGUIPanel
     private NetworkPanel networkPane;
     private DemandPanel demandPane;
     private TransitPanel transitPane;
+    private FourStepPanel fourstepPane;
     private AnalysisPanel analysisPane;
     
     private JMenuItem lastAssignment;
@@ -56,15 +58,28 @@ public class FourStepGUI extends GUI implements AbstractGUIPanel
         networkPane = new NetworkPanel(this);
         demandPane = new DemandPanel(this);
         transitPane = new TransitPanel(this);
+        fourstepPane = new FourStepPanel(this);
         analysisPane = new AnalysisPanel(this);
         
         tabs.add("Network", networkPane);
         tabs.add("Demand", demandPane);
         tabs.add("Transit", transitPane);
-        
+        tabs.add("Four-step", fourstepPane);
         tabs.add("Analysis", analysisPane);
         
         constrain(p, tabs, 0, 0, 1, 1);
+        
+        
+        add(p);
+        pack();
+        setResizable(false);
+        
+
+        setLocationRelativeTo(null);
+
+        
+        
+        setVisible(true);
     }
     
     public JMenuBar createMenuBar()
