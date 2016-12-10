@@ -7,9 +7,7 @@ package avdta;
 
 import avdta.demand.DemandImportFromVISTA;
 import avdta.demand.DemandProfile;
-import avdta.demand.DynamicODRecord;
 import avdta.demand.DynamicODTable;
-import avdta.demand.ReadDemandNetwork;
 import avdta.dta.Assignment;
 import avdta.dta.DTAImportFromVISTA;
 import avdta.network.link.transit.BusLink;
@@ -50,7 +48,6 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
@@ -67,7 +64,7 @@ public class Main
     public static void main(String[] args) throws Exception
     {
         //caccTest1("scenario_2_PM", "scenario_2_PM_CACC");
-        //caccTest2("scenario_2_PM_CACC");
+        caccTest2("scenario_2_PM_2_CACC");
         //caccTest1("coacongress2_LTM", "coacongress2_CACC");
         //caccTest1("scenario_2_pm_sub", "scenario_2_pm_sub_CACC");
         
@@ -80,18 +77,15 @@ public class Main
         
         //new DTAGUI();
         
-        
-        //DTAProject project = new DTAProject(new File("projects/SiouxFalls"));
         /*
-        DTAProject project = new DTAProject(new File("projects/scenario_2_pm_sub"));
-        ReadDemandNetwork read = new ReadDemandNetwork();
-        read.prepareDemand(project, 0.5);
+        DTAProject project = new DTAProject(new File("projects/coacongress2_LTM"));
+        ReadDTANetwork read = new ReadDTANetwork();
+        read.prepareDemand(project, 0.8);
         project.loadSimulator();
         DTASimulator sim = project.getSimulator();
-        sim.msa(3);
-        */
-
-        GUI.main(args);
+        sim.msa(10);
+*/
+        //GUI.main(args);
 
         /*
         DTAProject project = new DTAProject(new File("projects/coacongress2_CACC"));
@@ -102,41 +96,8 @@ public class Main
         //createCACCNetwork();
         
         //fixConnectivity();
-        //fixConnectivity3();
+        //fixConnectivity2();
         //connectivityTest();
-    }
-    
-    public static void fixConnectivity3() throws Exception
-    {
-        DTAProject project = new DTAProject(new File("projects/scenario_2_pm_sub_CACC"));
-        DTASimulator sim = project.getSimulator();
-        
-        DynamicODTable table = new DynamicODTable(project);
-        ReadDemandNetwork read = new ReadDemandNetwork();
-        DemandProfile profile = read.readDemandProfile(project);
-
-        DynamicODTable rhs = new DynamicODTable();
-        
-        for(DynamicODRecord odt : table)
-        {
-
-            if(odt.getOrigin() == 4001944)
-            {
-                odt.setOrigin(4004218);
-            }
-
-            if(odt.getDest() == 4014718)
-            {
-                odt.setDest(4003389);
-            }
-            
-            rhs.addDemand(odt);
-        }
-        
-        rhs.printDynamicOD(project);
-
-        read.prepareDemand(project, 1);
-        
     }
     
     public static void fixConnectivity2() throws Exception
@@ -241,7 +202,32 @@ public class Main
         DTAProject project = new DTAProject(new File("projects/scenario_2_pm_sub_CACC"));
         DTASimulator sim = project.getSimulator();
         
-        System.out.println(sim.connectivityTest());
+        Set<String> unconnected = new HashSet<String>();
+        for(Vehicle v : sim.getVehicles())
+        {
+            if(!(v instanceof PersonalVehicle))
+            {
+                continue;
+            }
+            Path p = null;
+            try
+            {
+                p = sim.findPath((PersonalVehicle)v, TravelCost.ffTime);
+            }
+            catch(Exception ex){}
+            
+            if(p == null)
+            {
+                unconnected.add(v.getOrigin()+"\t"+(int)Math.abs(v.getDest().getId()));
+            }
+        }
+        
+        PrintStream fileout =new PrintStream(new FileOutputStream(new File("unconnected.txt")), true);
+        for(String x : unconnected)
+        {
+            fileout.println(x);
+        }
+        fileout.close();
         
     }
     
@@ -483,10 +469,10 @@ public class Main
         out.println("Proportion\tTSTT\tTSTT w CACC\tDemand");
 
         
-        int max_iter = 70;
+        int max_iter = 100;
         double min_gap = 1;
             
-        for(int i = 0; i <= 70; i+= 5)
+        for(int i = 0; i <= 50; i+= 5)
         {
             Map<Integer, Double> proportions = new HashMap<Integer, Double>();
             proportions.put(ReadDTANetwork.AV+ReadDTANetwork.ICV+ReadDTANetwork.DA_VEHICLE, i/100.0);
@@ -494,7 +480,7 @@ public class Main
             
             ReadDTANetwork read1 = new ReadDTANetwork();
             read1.changeDynamicType(austin, proportions);
-            read1.prepareDemand(austin, 0.9);
+            read1.prepareDemand(austin, 0.6);
             austin.loadProject();
             
             

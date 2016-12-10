@@ -314,6 +314,7 @@ public class DTASimulator extends Simulator
     /**
      * Opens an {@link Assignment} from the given {@link Assignment} folder and assigns vehicles as specified.
      * This calls {@link Assignment#readFromFile(avdta.project.DTAProject, java.util.List, avdta.network.PathList)} and {@link DTASimulator#loadAssignment(avdta.dta.Assignment)}.
+     * * To obtain data about the {@link Assignment}, call {@link DTASimulator#simulate()}.
      * @param file the assignment directory
      * @throws IOException if a file cannot be accessed
      */
@@ -325,7 +326,7 @@ public class DTASimulator extends Simulator
     /**
      * This reads the specified {@link Assignment} and assigns the vehicles in this simulator accordingly.
      * Vehicles and their ids must match the vehicles specified in the assignment. 
-     * 
+     * * To obtain data about the {@link Assignment}, call {@link DTASimulator#simulate()}.
      * @param assign the assignment to be loaded
      * @throws IOException if a file cannot be accessed
      */
