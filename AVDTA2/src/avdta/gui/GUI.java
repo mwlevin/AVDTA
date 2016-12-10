@@ -301,6 +301,7 @@ public abstract class GUI extends JFrame
             }
         });
         connectivityTest.setEnabled(false);
+        me.add(connectivityTest);
         
         sanityCheck = new JMenuItem("Sanity check");
         sanityCheck.addActionListener(new ActionListener()
