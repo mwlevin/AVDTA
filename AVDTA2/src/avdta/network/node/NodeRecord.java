@@ -28,7 +28,7 @@ public class NodeRecord
      */
     public NodeRecord(int id, int type, double lng, double lat, double elev)
     {
-        this.id = id;
+        this.id = (int)Math.abs(id);
         this.type = type;
         this.longitude = lng;
         this.latitude = lat;

@@ -48,7 +48,7 @@ public class VehicleRecord implements Comparable<VehicleRecord>
         this.id = id;
         this.dtime = dtime;
         this.origin = origin;
-        this.dest = dest;
+        this.dest = (int)Math.abs(dest);
         this.type = type;
         this.vot = vot;
     }

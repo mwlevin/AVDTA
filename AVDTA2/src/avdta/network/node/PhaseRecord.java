@@ -17,6 +17,7 @@ public class PhaseRecord implements java.io.Serializable, Comparable<PhaseRecord
     private int node, sequence;
     private double time_red, time_yellow, time_green;
     private List<TurnRecord> turns;
+    private int type;
     
     /**
      * Constructs this {@link PhaseRecord} with all data
@@ -49,6 +50,7 @@ public class PhaseRecord implements java.io.Serializable, Comparable<PhaseRecord
         this.time_yellow = time_yellow;
         this.time_green = time_green;
         this.turns = turns;
+        this.type = 1;
     }
     
     /**
@@ -59,10 +61,11 @@ public class PhaseRecord implements java.io.Serializable, Comparable<PhaseRecord
     {
         Scanner chopper = new Scanner(line);
         node = chopper.nextInt();
+        type = chopper.nextInt();
         sequence = chopper.nextInt();
-        time_red = chopper.nextInt();
-        time_yellow = chopper.nextInt();
-        time_green = chopper.nextInt();
+        time_red = chopper.nextDouble();
+        time_yellow = chopper.nextDouble();
+        time_green = chopper.nextDouble();
         
         line = chopper.nextLine();
         
@@ -114,7 +117,17 @@ public class PhaseRecord implements java.io.Serializable, Comparable<PhaseRecord
             out = out.substring(0, out.length()-1);
         }
         
-        return node+"\t1\t"+sequence+"\t"+time_red+"\t"+time_yellow+"\t"+time_green+"\t"+turns.size()+"\t{"+inc+"}\t{"+out+"}";
+        return node+"\t"+type+"\t"+sequence+"\t"+time_red+"\t"+time_yellow+"\t"+time_green+"\t"+turns.size()+"\t{"+inc+"}\t{"+out+"}";
+    }
+    
+    public int getType()
+    {
+        return type;
+    }
+    
+    public void setType(int type)
+    {
+        this.type = type;
     }
     
     /**

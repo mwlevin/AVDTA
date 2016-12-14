@@ -191,6 +191,18 @@ public class DTAProject extends DemandProject
     }
     
     
+    /**
+     * Opens an {@link Assignment} from the given {@link Assignment} folder and assigns vehicles as specified.
+     * This calls {@link DTASimulator#loadAssignment(avdta.dta.Assignment)}.
+     * To obtain data about the {@link Assignment}, call {@link DTASimulator#simulate()}.
+     * @param file the assignment directory
+     * @throws IOException if a file cannot be accessed
+     */
+    public void openAssignment(File file) throws IOException
+    {
+        loadAssignment(new Assignment(file));
+    }
+    
     
     
 }

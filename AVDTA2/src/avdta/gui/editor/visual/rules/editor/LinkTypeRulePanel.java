@@ -37,7 +37,7 @@ import javax.swing.JLabel;
  *
  * @author ml26893
  */
-public class LinkTypeRulePanel extends JPanel
+public abstract class LinkTypeRulePanel extends JPanel implements AbstractLinkRulePanel
 {
     private JComboBox type;
     private JButton save;
@@ -212,11 +212,5 @@ public class LinkTypeRulePanel extends JPanel
         return true;
     }
     
-    public void addRule(LinkRule rule)
-    {
-        System.out.println("check");
-    }
     
-    public void saveRule(LinkTypeRule rule){}
-    public void cancel(){}
 }

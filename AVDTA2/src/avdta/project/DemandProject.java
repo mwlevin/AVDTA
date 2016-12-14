@@ -49,10 +49,14 @@ public abstract class DemandProject extends TransitProject
      * @param rhs the project to be cloned
      * @throws IOException if a file is not found
      */
-    public void cloneFromProject(DemandProject rhs) throws IOException
+    public void cloneFromProject(Project rhs) throws IOException
     {
         super.cloneFromProject(rhs);
-        importDemandFromProject(rhs);
+        
+        if(rhs instanceof DemandProject)
+        {
+            importDemandFromProject((DemandProject)rhs);
+        }
     }
     
      /**

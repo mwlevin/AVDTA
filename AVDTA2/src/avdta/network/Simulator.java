@@ -758,7 +758,6 @@ public class Simulator extends Network
         for(time = 0; time < duration; time += dt)
         {
             // push vehicles onto centroid connectors at departure time
-
             addVehicles();
             
             
@@ -773,6 +772,16 @@ public class Simulator extends Network
         
 
         lastExit = time;
+        
+        for(Vehicle v : vehicles)
+        {
+            if(!v.isExited())
+            {
+                Link l = v.getCurrLink();
+                l.updateTT(v.enter_time, Simulator.time);
+            }
+        }
+        
 
         
         simulationFinished();
@@ -1327,5 +1336,44 @@ public class Simulator extends Network
         }
         
         return output;
+    }
+    
+    public boolean connectivityTest() throws Exception
+    {
+        
+        Set<String> unconnected = new HashSet<String>();
+        for(Vehicle v : getVehicles())
+        {
+            if(!(v instanceof PersonalVehicle))
+            {
+                continue;
+            }
+            String od = v.getOrigin()+"\t"+(int)Math.abs(v.getDest().getId());
+            
+            if(unconnected.contains(od))
+            {
+                continue;
+            }
+            Path p = null;
+            try
+            {
+                p = findPath((PersonalVehicle)v, TravelCost.ffTime);
+            }
+            catch(Exception ex){}
+            
+            if(p == null)
+            {
+                unconnected.add(od);
+            }
+        }
+        
+        PrintStream fileout =new PrintStream(new FileOutputStream(new File(project.getResultsFolder()+"/unconnected.txt")), true);
+        for(String x : unconnected)
+        {
+            fileout.println(x);
+        }
+        fileout.close();
+     
+        return unconnected.size() == 0;
     }
 }

@@ -82,6 +82,7 @@ public class NodeRulePanel extends JPanel
             public void actionPerformed(ActionEvent e)
             {
                 rules.remove(list.getSelectedIndex());
+                editor.getDisplay().setDisplaySelected(false);
                 refresh();
             }
         });
@@ -128,16 +129,18 @@ public class NodeRulePanel extends JPanel
                     {
                         public void cancel()
                         {
-                            super.cancel();
                             frame.setVisible(false);
                         }
                         public void addRule(NodeRule rule)
                         {
+                            rule.initialize(editor.getProject());
                             newRule(rule);
                         }
 
-                        public void saveRule()
+                        public void saveRule(NodeRule rule)
                         {
+                            rule.initialize(editor.getProject());
+                            editor.getDisplay().setDisplaySelected(false);
                             editor.getMap().repaint();
                         }
                     });
@@ -150,16 +153,18 @@ public class NodeRulePanel extends JPanel
                     {
                         public void cancel()
                         {
-                            super.cancel();
                             frame.setVisible(false);
                         }
                         public void addRule(NodeRule rule)
                         {
+                            rule.initialize(editor.getProject());
                             newRule(rule);
                         }
 
-                        public void saveRule()
+                        public void saveRule(NodeRule rule)
                         {
+                            rule.initialize(editor.getProject());
+                            editor.getDisplay().setDisplaySelected(false);
                             editor.getMap().repaint();
                         }
                     });
@@ -217,19 +222,19 @@ public class NodeRulePanel extends JPanel
                 {
                     public void cancel()
                     {
-                        super.cancel();
                         frame.setVisible(false);
                     }
                     
-                    public void addRule(NodeTypeRule rule)
+                    public void addRule(NodeRule rule)
                     {
                         rule.initialize(editor.getProject());
                         newRule(rule);
                     }
                     
-                    public void saveRule(NodeTypeRule rule)
+                    public void saveRule(NodeRule rule)
                     {
                         rule.initialize(editor.getProject());
+                        editor.getDisplay().setDisplaySelected(false);
                         editor.getMap().repaint();
                     }
                 });
@@ -260,19 +265,19 @@ public class NodeRulePanel extends JPanel
                 {
                     public void cancel()
                     {
-                        super.cancel();
                         frame.setVisible(false);
                     }
                     
-                    public void addRule(NodeDataRule rule)
+                    public void addRule(NodeRule rule)
                     {
                         rule.initialize(editor.getProject());
                         newRule(rule);
                     }
                     
-                    public void saveRule(NodeDataRule rule)
+                    public void saveRule(NodeRule rule)
                     {
                         rule.initialize(editor.getProject());
+                        editor.getDisplay().setDisplaySelected(false);
                         editor.getMap().repaint();
                     }
                 });
@@ -359,6 +364,7 @@ public class NodeRulePanel extends JPanel
     public void newRule(NodeRule r)
     {
         rules.add(r);
+        editor.getDisplay().setDisplaySelected(false);
         refresh();
         editor.getMap().repaint();
     }

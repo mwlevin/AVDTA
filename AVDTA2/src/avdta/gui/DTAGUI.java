@@ -169,18 +169,20 @@ public class DTAGUI extends GUI implements AbstractGUIPanel
         DTAProject project = (DTAProject)p;
         this.project = project;
            
-        try
-        {
-            project.loadSimulator();
-        }
-        catch(Exception ex)
-        {
-            GUI.handleException(ex);
-        }
+
         
         if(project != null)
         {
             setTitle(project.getName()+" - "+ GUI.getTitleName());
+            
+            try
+            {
+                project.loadSimulator();
+            }
+            catch(Exception ex)
+            {
+                GUI.handleException(ex);
+            }
         }
         else
         {

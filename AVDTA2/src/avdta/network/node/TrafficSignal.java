@@ -9,6 +9,7 @@ import avdta.network.link.Link;
 import avdta.network.Network;
 import avdta.network.ReadNetwork;
 import avdta.network.Simulator;
+import avdta.network.link.LTMLink;
 import avdta.network.link.TransitLane;
 import avdta.vehicle.Vehicle;
 import java.util.ArrayList;
@@ -437,6 +438,7 @@ public class TrafficSignal extends IntersectionControl implements Signalized
                 
                 mvt.addLeftovers();
                 mvt.q = Math.ceil(mvt.q);
+
             }
             
             i.S = i.getNumSendingFlow();
@@ -521,6 +523,10 @@ public class TrafficSignal extends IntersectionControl implements Signalized
                     i.removeVehicle(v);
                     j.addVehicle(v);
                     moved++;     
+                }
+                else
+                {
+
                 }
                
 

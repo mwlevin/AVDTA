@@ -39,6 +39,7 @@ import avdta.network.link.AbstractSplitLink;
 import avdta.network.link.LinkRecord;
 import avdta.network.link.SplitCTMLink;
 import avdta.network.link.TransitLane;
+import avdta.network.node.Highway;
 import avdta.network.node.obj.BackPressureObj;
 import avdta.network.node.obj.P0Obj;
 import avdta.project.DTAProject;
@@ -92,6 +93,7 @@ public class ReadNetwork
     public static final int SIGNAL = 100;
     public static final int STOPSIGN = 200;
     public static final int RESERVATION = 300;
+    public static final int HIGHWAY = 400;
     
     // reservation policies
     public static final int FCFS = 1;
@@ -214,12 +216,16 @@ public class ReadNetwork
         Scanner filein = new Scanner(project.getBusPeriodFile());
         filein.nextLine();
         
-        while(filein.hasNextLine())
+        while(filein.hasNextInt())
         {
             int id = filein.nextInt();
             int starttime = filein.nextInt();
             int endtime = filein.nextInt();
-            filein.nextLine();
+            
+            if(filein.hasNextLine())
+            {
+                filein.nextLine();
+            }
             
             busPeriod.put(id, new Integer[]{starttime, endtime});
         }     
@@ -233,13 +239,17 @@ public class ReadNetwork
         
         int type = BUS + AV + ICV;
         
-        while(filein.hasNextLine())
+        while(filein.hasNextInt())
         {
             int routeId = filein.nextInt();
             int periodId = filein.nextInt();
             int frequency = filein.nextInt();
             int offset = filein.nextInt();
-            filein.nextLine();
+            
+            if(filein.hasNextLine())
+            {
+                filein.nextLine();
+            }
             
             Integer[] period = busPeriod.get(periodId);
             
@@ -289,7 +299,11 @@ public class ReadNetwork
             int linkid = filein.nextInt();
             boolean stop = filein.nextInt() == 1;
             int dwelltime = filein.nextInt();
-            filein.nextLine();
+            
+            if(filein.hasNextLine())
+            {
+                filein.nextLine();
+            }
             
             Link link = linksmap.get(linkid);
             
@@ -384,7 +398,11 @@ public class ReadNetwork
             int type = filein.nextInt();
             int routeid = filein.nextInt();
             int dtime = filein.nextInt();
-            filein.nextLine();
+            
+            if(filein.hasNextLine())
+            {
+                filein.nextLine();
+            }
             
             VehicleClass vehClass = null;
             DriverType driver = null;
@@ -439,7 +457,11 @@ public class ReadNetwork
             double x = filein.nextDouble();
             double y = filein.nextDouble();
             double elevation = filein.nextDouble();
-            filein.nextLine();
+            
+            if(filein.hasNextLine())
+            {
+                filein.nextLine();
+            }
             
             if(type/100 == CENTROID/100)
             {
@@ -448,11 +470,11 @@ public class ReadNetwork
             
             Intersection node = (Intersection)nodesmap.get(id);
         
-            if(node.getIncoming().size() == 1)
+            if(node.getIncoming().size() == 1 && type != HIGHWAY)
             {
                 node.setControl(new Diverge());
             }
-            else if(node.getOutgoing().size() == 1)
+            else if(node.getOutgoing().size() == 1 && type != HIGHWAY)
             {
                 node.setControl(new Merge());
             }
@@ -468,6 +490,9 @@ public class ReadNetwork
                         break;
                     case STOPSIGN/100:
                         node.setControl(new StopSign());
+                        break;
+                    case HIGHWAY/100:
+                        node.setControl(new Highway());
                         break;
                     case RESERVATION/100:
                     {
@@ -544,7 +569,11 @@ public class ReadNetwork
             double x = filein.nextDouble();
             double y = filein.nextDouble();
             double elevation = filein.nextDouble();
-            filein.nextLine();
+            
+            if(filein.hasNextLine())
+            {
+                filein.nextLine();
+            }
             
             Node node;
 
@@ -621,7 +650,10 @@ public class ReadNetwork
             double jamd = 5280.0/Vehicle.vehicle_length;
             
             
-            filein.nextLine();
+            if(filein.hasNextLine())
+            {
+                filein.nextLine();
+            }
             
             Link link = null;
             
@@ -655,9 +687,9 @@ public class ReadNetwork
                     {
                         if(CACCLTMLink.checkK2(capacity, ffspd, length))
                         {
+                            //link = new LTMLink(id, source, dest, capacity, ffspd, w, jamd, length, numLanes);
                             link = new CACCLTMLink(id, source, dest, capacity, ffspd, w, jamd, length, numLanes);
                             
-                            CACCLTMLink l = (CACCLTMLink)link;
                         }
                         else
                         {
@@ -737,7 +769,10 @@ public class ReadNetwork
                 list.add(loc);
             }
             
-            linksmap.get(id).setCoordinates(list);
+            if(linksmap.containsKey(id))
+            {
+                linksmap.get(id).setCoordinates(list);
+            }
         }
         filein.close();
 
@@ -853,7 +888,11 @@ public class ReadNetwork
         {
             int node = filein.nextInt();
             double offset = filein.nextDouble();
-            filein.nextLine();
+            
+            if(filein.hasNextLine())
+            {
+                filein.nextLine();
+            }
             
             Node n = nodesmap.get(node);
             
@@ -1495,11 +1534,15 @@ public class ReadNetwork
             {
                 if(n.isZone())
                 {
-                    if(n.getIncoming().size() == 0 && n.getOutgoing().size() == 0)
+                    if(n.getId() > 0)
                     {
-                        output++;
-                        print(fileout, ODD_DATA, "Zone "+n.getId()+" has no incoming or outgoing links.");
+                        if(n.getOutgoing().size() == 0 && nodesmap.get(-n.getId()).getIncoming().size() == 0)
+                        {
+                            output++;
+                            print(fileout, ODD_DATA, "Zone "+n.getId()+" has no incoming or outgoing links.");
+                        }
                     }
+                    
                 }
                 else
                 {

@@ -5,8 +5,6 @@
 package avdta.gui.editor;
 
 import avdta.dta.DTASimulator;
-import avdta.gui.editor.visual.DefaultDisplayManager;
-import avdta.gui.editor.visual.DisplayManager;
 import avdta.gui.GUI;
 import static avdta.gui.GUI.getIcon;
 import static avdta.gui.GUI.handleException;
@@ -32,17 +30,9 @@ import avdta.network.Simulator;
 import avdta.network.link.Link;
 import avdta.network.link.SharedTransitCTMLink;
 import avdta.network.link.TransitLane;
-import avdta.network.node.Intersection;
 import avdta.network.node.Location;
 import avdta.network.node.Node;
-import avdta.network.node.Phase;
-import avdta.network.node.PhaseRecord;
-import avdta.network.node.SignalRecord;
-import avdta.network.node.Signalized;
-import avdta.network.node.Turn;
-import avdta.network.node.TurnRecord;
 import avdta.project.DTAProject;
-import avdta.project.DemandProject;
 import avdta.project.Project;
 import java.awt.Color;
 import java.awt.Cursor;
@@ -50,43 +40,31 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
-import java.awt.Image;
 import java.awt.Point;
-import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
-import java.awt.image.VolatileImage;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
-import java.util.Scanner;
 import java.util.Set;
 import java.util.TreeSet;
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
-import javax.swing.JDesktopPane;
 import javax.swing.JFileChooser;
 import javax.swing.JInternalFrame;
 import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
 import javax.swing.JOptionPane;
-import javax.swing.JScrollPane;
 import javax.swing.JSlider;
 import javax.swing.JTabbedPane;
 import javax.swing.KeyStroke;
-import javax.swing.ScrollPaneConstants;
-import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -1448,6 +1426,7 @@ public class Editor extends JFrame implements MouseListener
     {
         n.setSelected(true);
         selectedNodes.add(n);
+        display.setDisplaySelected(true);
         
         map.repaint();
     }
@@ -1456,6 +1435,7 @@ public class Editor extends JFrame implements MouseListener
     {
         l.setSelected(true);
         selectedLinks.add(l);
+        display.setDisplaySelected(true);
         
         map.repaint();
     }
@@ -1464,6 +1444,7 @@ public class Editor extends JFrame implements MouseListener
     {
         n.setSelected(false);
         selectedNodes.remove(n);
+        display.setDisplaySelected(true);
         
         map.repaint();
     }
@@ -1486,6 +1467,7 @@ public class Editor extends JFrame implements MouseListener
     {
         l.setSelected(false);
         selectedLinks.remove(l);
+        display.setDisplaySelected(true);
         
         map.repaint();
     }
@@ -1494,6 +1476,7 @@ public class Editor extends JFrame implements MouseListener
     {
         clearSelectedNodes();
         clearSelectedLinks();
+        display.setDisplaySelected(false);
     }
     
     public void addSelectListener(SelectListener s)
@@ -1683,6 +1666,11 @@ public class Editor extends JFrame implements MouseListener
     public Node getNode(int id)
     {
         return nodes.get(id);
+    }
+    
+    public RuleDisplay getDisplay()
+    {
+        return display;
     }
     
     public Link getLink(int id)

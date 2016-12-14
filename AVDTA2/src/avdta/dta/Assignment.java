@@ -332,9 +332,7 @@ public class Assignment implements Comparable<Assignment>
         Map<Integer, Path> paths = pathlist.createPathIdsMap();
         
         Scanner filein = new Scanner(getVehiclesFile());
-        
-        filein.nextLine();
-        
+
         while(filein.hasNextInt())
         {
             int id = filein.nextInt();

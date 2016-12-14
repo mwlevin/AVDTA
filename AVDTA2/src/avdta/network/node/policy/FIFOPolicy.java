@@ -11,7 +11,7 @@ import avdta.vehicle.Vehicle;
 import avdta.network.node.TBR;
 import avdta.network.node.TBR;
 
-@Deprecated
+
 /**
  * Prioritizes vehicles based on arrival time at intersection (set when the vehicle is part of sending flow). 
  * This differs from the {@link FCFSPolicy} in that {@link FCFSPolicy} is based on the reservation time.

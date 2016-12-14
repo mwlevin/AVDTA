@@ -114,7 +114,8 @@ public class DTASimulator extends Simulator
         
         if(print_status)
         {
-            out.println("Iter\tStep\tGap %\tAEC\tTTT\tTrips\tNon-exiting\ttime");
+            out.println(getProject().getName());
+            out.println("Iter\tStep\tGap %\tAEC\tTSTT\tTrips\tNon-exiting\ttime");
         }
         
         
@@ -173,6 +174,7 @@ public class DTASimulator extends Simulator
 
         int count = 0;
         
+
         for(Vehicle x : vehicles)
         {
             
@@ -183,6 +185,7 @@ public class DTASimulator extends Simulator
             Node d = v.getDest();
             int ast = v.getAST();
             int dep_time = v.getDepTime();
+
 
             if(v.getExitTime() < Simulator.duration)
             {
@@ -311,6 +314,7 @@ public class DTASimulator extends Simulator
     /**
      * Opens an {@link Assignment} from the given {@link Assignment} folder and assigns vehicles as specified.
      * This calls {@link Assignment#readFromFile(avdta.project.DTAProject, java.util.List, avdta.network.PathList)} and {@link DTASimulator#loadAssignment(avdta.dta.Assignment)}.
+     * * To obtain data about the {@link Assignment}, call {@link DTASimulator#simulate()}.
      * @param file the assignment directory
      * @throws IOException if a file cannot be accessed
      */
@@ -322,7 +326,7 @@ public class DTASimulator extends Simulator
     /**
      * This reads the specified {@link Assignment} and assigns the vehicles in this simulator accordingly.
      * Vehicles and their ids must match the vehicles specified in the assignment. 
-     * 
+     * * To obtain data about the {@link Assignment}, call {@link DTASimulator#simulate()}.
      * @param assign the assignment to be loaded
      * @throws IOException if a file cannot be accessed
      */
@@ -546,7 +550,7 @@ public class DTASimulator extends Simulator
         }
         
         
-        PrintStream fileout = new PrintStream(new FileOutputStream(currAssign.getLogFile()), true);
+        PrintStream fileout = new PrintStream(new FileOutputStream(currAssign.getLogFile(), start_iter > 1), true);
         
         iteration = start_iter;
         DTAResults output = null;
@@ -557,7 +561,7 @@ public class DTASimulator extends Simulator
             out.println("Iter\tStep\tGap %\tAEC\tTSTT\tTrips\tNon-exit\ttime");
         }
         
-        fileout.println("Iter\tStep\tGap %\tAEC\tTTT\tTrips\tNon-exit\ttime");
+        fileout.println("Iter\tStep\tGap %\tAEC\tTSTT\tTrips\tNon-exit\ttime");
         
         int max_iter_contingency = max_iter + 3;
         

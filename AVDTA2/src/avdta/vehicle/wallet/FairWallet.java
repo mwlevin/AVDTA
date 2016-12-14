@@ -30,6 +30,6 @@ public class FairWallet extends Wallet
      */
     public double bid(Vehicle vehicle)
     {
-        return getMoney() / vehicle.numRemainingLinks();
+        return getMoney() / vehicle.getNumRemainingLinks();
     }
 }
