@@ -1,0 +1,61 @@
+\section{Sanity check}
+
+The editor contains a ``sanity check'' option under the Network menu. The sanity check scans through network and demand data, and attempts to report any errors discovered in an output file. The errors are color-coded to indicate their estimated severity. Although reported errors may not prevent solving the model, they are likely to introduce issues into the results. The paragraphs below describe the possible errors received, and the likely cause(s).
+
+\subsection{Static OD file}
+
+\paragraph*{\texttt{static\_od.txt} file is empty}
+File is empty of entries as well as header data.
+
+\paragraph*{Demand $x$ has non-positive id}
+All entry ids must be positive.
+
+\paragraph*{Duplicate OD id of $x$}
+Each entry in the static OD file must have a separate id, and a duplicate id was found.
+
+\paragraph*{OD $x$ type of $y$ not recognized}
+The traveler or vehicle type for entry $x$ is not recognized (see Section \ref{sec:staticod}).
+
+\paragraph*{Origin/destination $x$ does not appear in nodes}
+Node $x$ does not have an entry in the \texttt{nodes.txt} file.
+
+\paragraph*{Origin/destination $x$ is not a zone}
+The type of node $x$ is not a zone, and traveler trips cannot depart or arrive at $x$. See Section \ref{sec:nodes}.
+
+\paragraph*{OD $x$ has demand of $y$}
+The demand $y$ is zero or negative for OD $x$.
+
+\paragraph*{Malformed entry}
+The entry (single line) is missing data or is in the wrong format.
+
+
+
+
+\subsection{Dynamic OD file}
+
+\paragraph*{\texttt{dynamic\_od.txt} file is empty}
+File is empty of entries as well as header data.
+
+\paragraph*{Demand $x$ has non-positive id}
+All entry ids must be positive.
+
+\paragraph*{Duplicate OD id of $x$}
+Each entry in the static OD file must have a separate id, and a duplicate id was found.
+
+\paragraph*{OD $x$ type of $y$ not recognized}
+The traveler or vehicle type for entry $x$ is not recognized (see Section \ref{sec:staticod}).
+
+\paragraph*{Origin/destination $x$ does not appear in nodes}
+Node $x$ does not have an entry in the \texttt{nodes.txt} file.
+
+\paragraph*{Origin/destination $x$ is not a zone}
+Node $x$ is not a zone, and traveler trips cannot depart or arrive at $x$. See Section \ref{sec:nodes}.
+
+\paragraph*{OD $x$ AST of $y$ not found in file \texttt{demand\_profile.txt}}
+The AST $y$ does not appear in the \texttt{demand\_profile.txt} file.
+
+\paragraph*{OD $x$ has demand of $y$}
+The demand $y$ is zero or negative for OD $x$.
+
+\paragraph*{Malformed entry}
+The entry (single line) is missing data or is in the wrong format.
