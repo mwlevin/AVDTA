@@ -9,6 +9,7 @@ import avdta.demand.AST;
 import avdta.demand.DemandProfile;
 import avdta.dta.VehicleRecord;
 import avdta.network.ReadNetwork;
+import static avdta.network.ReadNetwork.DATA_MISMATCH;
 import avdta.project.DemandProject;
 import avdta.project.Project;
 import avdta.vehicle.VOT;
@@ -470,7 +471,7 @@ public class ReadDemandNetwork extends ReadNetwork
                         else if(!nodesmap.get(od.getOrigin()).isZone())
                         {
                             output++;
-                            print(fileout, ODD_DATA, "Origin "+od.getOrigin()+" is not a zone on line "+lineno+".");
+                            print(fileout, DATA_MISMATCH, "Origin "+od.getOrigin()+" is not a zone on line "+lineno+".");
                         }
                         
                         if(!nodesmap.containsKey(od.getDest()))
@@ -481,7 +482,7 @@ public class ReadDemandNetwork extends ReadNetwork
                         else if(!nodesmap.get(od.getDest()).isZone())
                         {
                             output++;
-                            print(fileout, ODD_DATA, "Destination "+od.getDest()+" is not a zone on line "+lineno+".");
+                            print(fileout, DATA_MISMATCH, "Destination "+od.getDest()+" is not a zone on line "+lineno+".");
                         }
                         
                         if(!possible_types.contains(od.getType()))
