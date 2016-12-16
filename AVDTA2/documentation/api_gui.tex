@@ -67,8 +67,8 @@ The panels are designed in a modular fashion. Most project types will use networ
 
 
 
-\section{Package \texttt{avdta.gui.editor}}
-
+%\section{Package \texttt{avdta.gui.editor}}
+%\label{api:editor}
 
 
 
@@ -82,3 +82,25 @@ The panels are designed in a modular fashion. Most project types will use networ
 
 \section{Package \texttt{avdta.gui.util}}
 \label{api:util}
+
+This package contains utility methods and classes for GUI construction.
+
+\paragraph*{\texttt{GraphicUtils}} This class was developed externally, and works with a specific type of layout, \texttt{java.awt.GridBagLayout}, for arranging GUI components. The methods provide a matrix-based alignment; each component has a row and column where the left corner is located, and a width and height in numbers of columns and rows, respectively.
+
+\paragraph*{\texttt{JColorButton}}
+This class allows the user to choose among multiple colors. It appears as a button which displays the currently selected color, and opens a color selector when clicked. 
+
+\paragraph*{\texttt{JFileField}}
+This is a non-editable text field that, when clicked, will prompt the user to select a file. The text field stores the selected file, which can be accessed. Hovering the mouse over a \texttt{JFileField} will indicate its clickability.
+
+\paragraph*{\texttt{ProjectChooser}}
+This is an extension of \texttt{JFileChooser}, which is used to choose files. The \texttt{ProjectChooser} is used to select projects. Project folders are displayed with a special icon within the \texttt{ProjectChooser} (although they are a normal folder in the Windows file system) to indicate their status to users. The type of projects available for selection is determined by the \texttt{ProjectFileView}.
+
+\paragraph*{\texttt{ProjectFileView}}
+This class extends \texttt{FileView} to 
+
+\paragraph*{\texttt{StatusBar}} This provides a progress bar component that can be created with a corresponding \texttt{StatusUpdate} class. Updates made by the \texttt{StatusUpdate} will be visually shown in the \texttt{StatusBar} component.
+
+\paragraph*{\texttt{StatusUpdate}} Any implementing class can send updates to a corresponding \texttt{StatusBar}. Several classes, such as \texttt{DTASimulator}, use \texttt{StatusUpdate} to update progress.
+
+

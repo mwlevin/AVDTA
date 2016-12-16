@@ -64,46 +64,42 @@
 \contentsline {section}{\numberline {7.3}Network modification}{38}{section.7.3}
 \contentsline {subsection}{\numberline {7.3.1}Node options}{38}{subsection.7.3.1}
 \contentsline {subsection}{\numberline {7.3.2}Link options}{39}{subsection.7.3.2}
-\contentsline {section}{\numberline {7.4}Sanity check}{40}{section.7.4}
-\contentsline {subsection}{\numberline {7.4.1}Static OD file}{40}{subsection.7.4.1}
-\contentsline {subsection}{\numberline {7.4.2}Dynamic OD file}{41}{subsection.7.4.2}
-\contentsline {part}{II\hspace {1em}Application programming interface}{42}{part.2}
-\contentsline {chapter}{\numberline {8}\texttt {avdta} package}{43}{chapter.8}
-\contentsline {chapter}{\numberline {9}Package \texttt {avdta.project}}{45}{chapter.9}
-\contentsline {section}{\numberline {9.1}Organization}{45}{section.9.1}
-\contentsline {section}{\numberline {9.2}Working with \texttt {Project}s}{46}{section.9.2}
-\contentsline {subsection}{\numberline {9.2.1}Creating a new project}{46}{subsection.9.2.1}
-\contentsline {subsection}{\numberline {9.2.2}Importing data}{46}{subsection.9.2.2}
-\contentsline {subsection}{\numberline {9.2.3}Opening a project}{47}{subsection.9.2.3}
-\contentsline {chapter}{\numberline {10}Package \texttt {avdta.network}}{48}{chapter.10}
-\contentsline {section}{\numberline {10.1}Package \texttt {avdta.network} organization}{48}{section.10.1}
-\contentsline {subsection}{\numberline {10.1.1}Shortest paths}{49}{subsection.10.1.1}
-\contentsline {subsection}{\numberline {10.1.2}Simulation}{49}{subsection.10.1.2}
-\contentsline {section}{\numberline {10.2}\texttt {avdta.network.cost}}{50}{section.10.2}
-\contentsline {section}{\numberline {10.3}Package \texttt {avdta.network.node}}{50}{section.10.3}
-\contentsline {subsection}{\numberline {10.3.1}\texttt {Node.step()}}{51}{subsection.10.3.1}
-\contentsline {subsection}{\numberline {10.3.2}\texttt {Signalized}}{51}{subsection.10.3.2}
-\contentsline {subsubsection}{\numberline {10.3.2.1}Intersection controls}{51}{subsubsection.10.3.2.1}
-\contentsline {subsection}{\numberline {10.3.3}Reservation-based intersection control}{52}{subsection.10.3.3}
-\contentsline {subsection}{\numberline {10.3.4}Creating a new type of intersection control}{52}{subsection.10.3.4}
-\contentsline {section}{\numberline {10.4}Package \texttt {avdta.network.link}}{52}{section.10.4}
-\contentsline {subsection}{\numberline {10.4.1}\texttt {CTMLink}}{53}{subsection.10.4.1}
-\contentsline {subsection}{\numberline {10.4.2}\texttt {LTMLink}}{54}{subsection.10.4.2}
-\contentsline {subsection}{\numberline {10.4.3}Creating a new link class}{54}{subsection.10.4.3}
-\contentsline {subsection}{\numberline {10.4.4}\texttt {avdta.network.link.transit}}{54}{subsection.10.4.4}
-\contentsline {section}{\numberline {10.5}``Record'' classes}{55}{section.10.5}
-\contentsline {chapter}{\numberline {11}Package \texttt {avdta.vehicle}}{56}{chapter.11}
-\contentsline {section}{\numberline {11.1}Location tracking}{56}{section.11.1}
-\contentsline {section}{\numberline {11.2}\texttt {PersonalVehicle}}{57}{section.11.2}
-\contentsline {section}{\numberline {11.3}\texttt {DriverType}}{57}{section.11.3}
-\contentsline {section}{\numberline {11.4}\texttt {VehicleClass}}{57}{section.11.4}
-\contentsline {chapter}{\numberline {12}Package \texttt {avdta.dta}}{58}{chapter.12}
-\contentsline {section}{\numberline {12.1}Method of successive averages}{58}{section.12.1}
-\contentsline {section}{\numberline {12.2}Creating subnetworks}{59}{section.12.2}
-\contentsline {chapter}{\numberline {13}Package \texttt {avdta.gui}}{60}{chapter.13}
-\contentsline {section}{\numberline {13.1}Package \texttt {avdta.gui.panels}}{61}{section.13.1}
-\contentsline {section}{\numberline {13.2}Package \texttt {avdta.gui.editor}}{62}{section.13.2}
-\contentsline {section}{\numberline {13.3}Package \texttt {avdta.gui.util}}{62}{section.13.3}
-\contentsline {chapter}{Appendices}{63}{section*.1}
-\contentsline {chapter}{\numberline {A}Abbreviations}{64}{Appendix.1.A}
-\contentsline {chapter}{References}{64}{table.1.A.1}
+\contentsline {part}{II\hspace {1em}Application programming interface}{41}{part.2}
+\contentsline {chapter}{\numberline {8}\texttt {avdta} package}{42}{chapter.8}
+\contentsline {chapter}{\numberline {9}Package \texttt {avdta.project}}{44}{chapter.9}
+\contentsline {section}{\numberline {9.1}Organization}{44}{section.9.1}
+\contentsline {section}{\numberline {9.2}Working with \texttt {Project}s}{45}{section.9.2}
+\contentsline {subsection}{\numberline {9.2.1}Creating a new project}{45}{subsection.9.2.1}
+\contentsline {subsection}{\numberline {9.2.2}Importing data}{45}{subsection.9.2.2}
+\contentsline {subsection}{\numberline {9.2.3}Opening a project}{46}{subsection.9.2.3}
+\contentsline {chapter}{\numberline {10}Package \texttt {avdta.network}}{47}{chapter.10}
+\contentsline {section}{\numberline {10.1}Package \texttt {avdta.network} organization}{47}{section.10.1}
+\contentsline {subsection}{\numberline {10.1.1}Shortest paths}{48}{subsection.10.1.1}
+\contentsline {subsection}{\numberline {10.1.2}Simulation}{48}{subsection.10.1.2}
+\contentsline {section}{\numberline {10.2}\texttt {avdta.network.cost}}{49}{section.10.2}
+\contentsline {section}{\numberline {10.3}Package \texttt {avdta.network.node}}{49}{section.10.3}
+\contentsline {subsection}{\numberline {10.3.1}\texttt {Node.step()}}{50}{subsection.10.3.1}
+\contentsline {subsection}{\numberline {10.3.2}\texttt {Signalized}}{50}{subsection.10.3.2}
+\contentsline {subsubsection}{\numberline {10.3.2.1}Intersection controls}{50}{subsubsection.10.3.2.1}
+\contentsline {subsection}{\numberline {10.3.3}Reservation-based intersection control}{51}{subsection.10.3.3}
+\contentsline {subsection}{\numberline {10.3.4}Creating a new type of intersection control}{51}{subsection.10.3.4}
+\contentsline {section}{\numberline {10.4}Package \texttt {avdta.network.link}}{51}{section.10.4}
+\contentsline {subsection}{\numberline {10.4.1}\texttt {CTMLink}}{52}{subsection.10.4.1}
+\contentsline {subsection}{\numberline {10.4.2}\texttt {LTMLink}}{53}{subsection.10.4.2}
+\contentsline {subsection}{\numberline {10.4.3}Creating a new link class}{53}{subsection.10.4.3}
+\contentsline {subsection}{\numberline {10.4.4}\texttt {avdta.network.link.transit}}{53}{subsection.10.4.4}
+\contentsline {section}{\numberline {10.5}``Record'' classes}{54}{section.10.5}
+\contentsline {chapter}{\numberline {11}Package \texttt {avdta.vehicle}}{55}{chapter.11}
+\contentsline {section}{\numberline {11.1}Location tracking}{55}{section.11.1}
+\contentsline {section}{\numberline {11.2}\texttt {PersonalVehicle}}{56}{section.11.2}
+\contentsline {section}{\numberline {11.3}\texttt {DriverType}}{56}{section.11.3}
+\contentsline {section}{\numberline {11.4}\texttt {VehicleClass}}{56}{section.11.4}
+\contentsline {chapter}{\numberline {12}Package \texttt {avdta.dta}}{57}{chapter.12}
+\contentsline {section}{\numberline {12.1}Method of successive averages}{57}{section.12.1}
+\contentsline {section}{\numberline {12.2}Creating subnetworks}{58}{section.12.2}
+\contentsline {chapter}{\numberline {13}Package \texttt {avdta.gui}}{59}{chapter.13}
+\contentsline {section}{\numberline {13.1}Package \texttt {avdta.gui.panels}}{60}{section.13.1}
+\contentsline {section}{\numberline {13.2}Package \texttt {avdta.gui.util}}{60}{section.13.2}
+\contentsline {chapter}{Appendices}{62}{section*.1}
+\contentsline {chapter}{\numberline {A}Abbreviations}{63}{Appendix.1.A}
+\contentsline {chapter}{References}{63}{table.1.A.1}
