@@ -33,7 +33,7 @@ import javax.swing.JOptionPane;
 public class AnalysisPanel extends GUIPanel
 {
     private JFileField linkids;
-    private JButton tt, volume;
+    private JButton tt, volume, printLinkTT;
     
     private Project project;
     
@@ -49,6 +49,53 @@ public class AnalysisPanel extends GUIPanel
 
         tt.setEnabled(false);
         volume.setEnabled(false);
+        
+        printLinkTT = new JButton("Link travel times");
+        printLinkTT.setEnabled(false);
+        
+        printLinkTT.addActionListener(new ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                int start, end;
+                
+                try
+                {
+                    start = Integer.parseInt(JOptionPane.showInputDialog(panel, "Enter start time (s)", "Link travel times", JOptionPane.QUESTION_MESSAGE));
+                }
+                catch(Exception ex)
+                {
+                    return;
+                }
+                
+                try
+                {
+                    end = Integer.parseInt(JOptionPane.showInputDialog(panel, "Enter end time (s)", "Link travel times", JOptionPane.QUESTION_MESSAGE));
+                }
+                catch(Exception ex)
+                {
+                    return;
+                }
+                
+                try
+                {
+                    if(linkids.getFile() != null)
+                    {
+                        project.getSimulator().printLinkTT(start, end, new File(project.getResultsFolder()+"/linkTT.txt"), readLinkIds());
+                    }
+                    else
+                    {
+                        project.getSimulator().printLinkTT(start, end, new File(project.getResultsFolder()+"/linkTT.txt"));
+                    }
+                
+                    JOptionPane.showMessageDialog(panel, "Link travel times printed to file linkTT.txt", "Link travel times", JOptionPane.INFORMATION_MESSAGE);
+                }
+                catch(Exception ex)
+                {
+                    GUI.handleException(ex);
+                }
+            }
+        });
         
         linkids = new JFileField(10, null, "projects/")
         {
@@ -144,6 +191,7 @@ public class AnalysisPanel extends GUIPanel
         
         constrain(p2, tt, 0, 0, 1, 1);
         constrain(p2, volume, 0, 1, 1, 1);
+        constrain(p2, printLinkTT, 0, 2, 1, 1);
         
         p2.setPreferredSize(new Dimension((int)p.getPreferredSize().getWidth(), (int)p2.getPreferredSize().getHeight()));
         
@@ -205,6 +253,7 @@ public class AnalysisPanel extends GUIPanel
         boolean enable = linkids.getFile() != null && project != null;
         tt.setEnabled(enable);
         volume.setEnabled(enable);
+        printLinkTT.setEnabled(project != null);
     }
     
     public void setEnabled(boolean e)
@@ -214,6 +263,8 @@ public class AnalysisPanel extends GUIPanel
         boolean enable = linkids.getFile() != null && project != null;
         tt.setEnabled(e && enable);
         volume.setEnabled(e && enable);
+        
+        printLinkTT.setEnabled(e && project != null);
         
         super.setEnabled(e);
     }
