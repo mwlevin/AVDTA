@@ -88,7 +88,7 @@ public class AnalysisPanel extends GUIPanel
                         project.getSimulator().printLinkTT(start, end, new File(project.getResultsFolder()+"/linkTT.txt"));
                     }
                 
-                    JOptionPane.showMessageDialog(panel, "Link travel times printed to file linkTT.txt", "Link travel times", JOptionPane.INFORMATION_MESSAGE);
+                    JOptionPane.showMessageDialog(panel, "Link travel times printed to \n"+project.getResultsFolder()+"/linkTT.txt", "Link travel times", JOptionPane.INFORMATION_MESSAGE);
                 }
                 catch(Exception ex)
                 {
