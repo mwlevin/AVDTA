@@ -49,8 +49,10 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
@@ -1620,18 +1622,37 @@ public class Editor extends JFrame implements MouseListener
             return null;
         }
 
+        Set<Link> output = new TreeSet<Link>();
         
-        Set<Link> opposite_candidates = closest.getSource().getIncoming();
         
-        for(Link l : opposite_candidates)
+        for(Link l : closest.getSource().getOutgoing())
         {
-            if(l.getSource() == closest.getDest() && !(l instanceof TransitLane))
+            if(l.getDest() == closest.getDest() && !(l instanceof TransitLane))
             {
-                return new Link[]{closest, l};
+                output.add(l);
             }
         }
         
-        return new Link[]{closest};
+        for(Link l : closest.getSource().getIncoming())
+        {
+            if(l.getSource() == closest.getDest() && !(l instanceof TransitLane))
+            {
+                output.add(l);
+            }
+        }
+        
+        
+        Link[] array = new Link[output.size()];
+        
+        int idx = 0;
+        
+        for(Link l : output)
+        {
+            array[idx++] = l;
+        }
+
+        
+        return array;
     }
     
     public void replaceNode(Node prev, Node newNode)
