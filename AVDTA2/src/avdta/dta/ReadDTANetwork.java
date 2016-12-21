@@ -81,7 +81,10 @@ public class ReadDTANetwork extends ReadDemandNetwork
     }
     
     /**
-     * 
+     * Reads in the list of vehicles, including both transit and personal vehicles.
+     * @param project the project
+     * @param sim the simulator
+     * @throws IOException if a file cannot be accessed
      */
     public void readVehicles(DTAProject project, DTASimulator sim) throws IOException
     {
