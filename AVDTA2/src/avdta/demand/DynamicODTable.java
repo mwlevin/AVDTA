@@ -70,7 +70,7 @@ public class DynamicODTable implements Iterable<DynamicODRecord>
             double dem = filein.nextDouble();
             filein.nextLine();
             
-            addDemand(o, d, type, ast, dem);
+            addDemand(o, d, ast, type, dem);
         }
         
         filein.close();

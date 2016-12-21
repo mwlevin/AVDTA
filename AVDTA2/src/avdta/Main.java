@@ -78,7 +78,7 @@ public class Main
 
         //caccTest2();
         
-        //new DTAGUI();
+        new DTAGUI();
         
         /*
         DTAProject project = new DTAProject(new File("projects/coacongress2_LTM"));
@@ -88,7 +88,9 @@ public class Main
         DTASimulator sim = project.getSimulator();
         sim.msa(10);
 */
-        GUI.main(args);
+        //GUI.main(args);
+        
+        //removeDuplicateCentroids();
 
         /*
         DTAProject project = new DTAProject(new File("projects/coacongress2_CACC"));
