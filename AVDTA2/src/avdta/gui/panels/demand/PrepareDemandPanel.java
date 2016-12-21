@@ -15,6 +15,7 @@ import avdta.project.DTAProject;
 import javax.swing.JTextArea;
 import java.awt.GridBagLayout;
 import static avdta.gui.util.GraphicUtils.*;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
@@ -51,18 +52,31 @@ public class PrepareDemandPanel extends GUIPanel
         
         setLayout(new GridBagLayout());
         
-        JPanel panel = new JPanel();
-        panel.setLayout(new GridBagLayout());
-        panel.setBorder(BorderFactory.createTitledBorder("Dynamic OD"));
+        JPanel p = new JPanel();
+        p.setLayout(new GridBagLayout());
+        p.setBorder(BorderFactory.createTitledBorder("Static OD"));
         
-        constrain(panel, createStaticOD, 0, 0, 2, 1);
-        constrain(panel, new JLabel(""), 0, 1, 2, 1);
-        constrain(panel, createDynamicOD, 0, 2, 2, 1);
-        constrain(panel, new JLabel("Percent of AVs:"), 0, 3, 1, 1);
-        constrain(panel, AVs, 1, 3, 1, 1);
-        constrain(panel, changeType, 0, 4, 2, 1);
+        constrain(p, createStaticOD, 0, 0, 1, 1);
         
-        constrain(this, panel, 0, 0, 1, 1);
+        constrain(this, p, 0, 0, 1, 1);
+        
+        
+        
+        
+        
+        
+        JPanel p2 = new JPanel();
+        p2.setLayout(new GridBagLayout());
+        p2.setBorder(BorderFactory.createTitledBorder("Dynamic OD"));
+        
+        constrain(p2, createDynamicOD, 0, 0, 2, 1);
+        constrain(p2, new JLabel("Percent of AVs:"), 0, 1, 1, 1);
+        constrain(p2, AVs, 1, 1, 1, 1);
+        constrain(p2, changeType, 0, 2, 2, 1);
+        
+        constrain(this, p2, 0, 1, 1, 1);
+        
+        p.setPreferredSize(new Dimension((int)p2.getPreferredSize().getWidth(), (int)p.getPreferredSize().getHeight()));
         
         createDynamicOD.addActionListener(new ActionListener()
         {
@@ -194,6 +208,7 @@ public class PrepareDemandPanel extends GUIPanel
     public void setEnabled(boolean e)
     {
         createDynamicOD.setEnabled(e);
+        createStaticOD.setEnabled(e);
         AVs.setEditable(e);
         changeType.setEnabled(e);
         super.setEnabled(e);
