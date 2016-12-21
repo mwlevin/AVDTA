@@ -66,6 +66,10 @@ public abstract class GUI extends JFrame
             {
                 new DTAGUI();
             }
+            else if(args.length > 0 && args[0].equalsIgnoreCase("fourstep"))
+            {
+                new FourStepGUI();
+            }
             else
             {
                 new DTAGUI();

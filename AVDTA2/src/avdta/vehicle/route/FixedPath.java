@@ -5,6 +5,7 @@
  */
 package avdta.vehicle.route;
 
+import avdta.vehicle.Vehicle;
 import avdta.network.Path;
 import avdta.network.link.Link;
 import avdta.network.node.Node;

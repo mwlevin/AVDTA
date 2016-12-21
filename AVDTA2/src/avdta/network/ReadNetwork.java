@@ -606,6 +606,7 @@ public class ReadNetwork
      * The destination zone uses -id.
      * @param id the id of the zone
      * @param loc the location
+     * @return returns an array containing the created zones in the order (origin, dest).
      */
     public Zone[] createZones(int id, Location loc)
     {
