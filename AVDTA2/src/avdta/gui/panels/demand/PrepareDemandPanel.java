@@ -5,6 +5,7 @@
  */
 package avdta.gui.panels.demand;
 
+import avdta.demand.DynamicODTable;
 import avdta.dta.ReadDTANetwork;
 import avdta.gui.GUI;
 import avdta.gui.panels.AbstractGUIPanel;
@@ -31,7 +32,7 @@ import javax.swing.JTextField;
 public class PrepareDemandPanel extends GUIPanel
 {
     private DTAProject project;
-    private JButton createDynamicOD;
+    private JButton createDynamicOD, createStaticOD;
     
     private JTextField AVs;
     private JButton changeType;
@@ -43,6 +44,7 @@ public class PrepareDemandPanel extends GUIPanel
         
         changeType = new JButton("Change type");
         createDynamicOD = new JButton("Create dynamic OD");
+        createStaticOD = new JButton("Create static OD");
         
         AVs = new JTextField(5);
         AVs.setText("0");
@@ -53,10 +55,12 @@ public class PrepareDemandPanel extends GUIPanel
         panel.setLayout(new GridBagLayout());
         panel.setBorder(BorderFactory.createTitledBorder("Dynamic OD"));
         
-        constrain(panel, createDynamicOD, 0, 0, 2, 1);
-        constrain(panel, new JLabel("Percent of AVs:"), 0, 1, 1, 1);
-        constrain(panel, AVs, 1, 1, 1, 1);
-        constrain(panel, changeType, 0, 2, 2, 1);
+        constrain(panel, createStaticOD, 0, 0, 2, 1);
+        constrain(panel, new JLabel(""), 0, 1, 2, 1);
+        constrain(panel, createDynamicOD, 0, 2, 2, 1);
+        constrain(panel, new JLabel("Percent of AVs:"), 0, 3, 1, 1);
+        constrain(panel, AVs, 1, 3, 1, 1);
+        constrain(panel, changeType, 0, 4, 2, 1);
         
         constrain(this, panel, 0, 0, 1, 1);
         
@@ -67,6 +71,15 @@ public class PrepareDemandPanel extends GUIPanel
                 createDynamicOD();
             }
         });
+        
+        createStaticOD.addActionListener(new ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                createStaticOD();
+            }
+        });
+        
         changeType.addActionListener(new ActionListener()
         {
             public void actionPerformed(ActionEvent e)
@@ -76,6 +89,32 @@ public class PrepareDemandPanel extends GUIPanel
         });
 
         reset();
+    }
+    
+    public void createStaticOD()
+    {
+        parentSetEnabled(false);
+        
+        Thread t = new Thread()
+        {
+            public void run()
+            {
+                try
+                {
+                    DynamicODTable table = new DynamicODTable(project);
+                    
+                    table.printStaticOD(project);
+                }
+                catch(IOException ex)
+                {
+                    GUI.handleException(ex);
+                }
+                
+                parentReset();
+                parentSetEnabled(true); 
+            }
+        };
+        t.start();
     }
     
     public void createDynamicOD()
@@ -92,13 +131,14 @@ public class PrepareDemandPanel extends GUIPanel
         
                     read.createDynamicOD(project);
 
-                    parentReset();
-                    parentSetEnabled(true); 
                 }
                 catch(IOException ex)
                 {
                     GUI.handleException(ex);
                 }
+                
+                parentReset();
+                parentSetEnabled(true);
             }
         };
         t.start();

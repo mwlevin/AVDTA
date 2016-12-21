@@ -7,7 +7,9 @@ package avdta;
 
 import avdta.demand.DemandImportFromVISTA;
 import avdta.demand.DemandProfile;
+import avdta.demand.DynamicODRecord;
 import avdta.demand.DynamicODTable;
+import avdta.demand.ReadDemandNetwork;
 import avdta.dta.Assignment;
 import avdta.dta.DTAImportFromVISTA;
 import avdta.network.link.transit.BusLink;
@@ -23,6 +25,7 @@ import avdta.gui.editor.visual.rules.LinkDataRule;
 import avdta.gui.editor.visual.rules.data.LinkFileSource;
 import avdta.gui.editor.visual.rules.data.VolumeLinkData;
 import avdta.network.Path;
+import avdta.network.ReadNetwork;
 import avdta.network.Simulator;
 import avdta.network.cost.TravelCost;
 import avdta.project.DTAProject;
@@ -98,6 +101,96 @@ public class Main
         //fixConnectivity();
         //fixConnectivity2();
         //connectivityTest();
+        
+        
+        
+    }
+    
+    public static void removeDuplicateCentroids() throws IOException
+    {
+        DTAProject project = new DTAProject(new File("projects/coacongress2"));
+        DTASimulator sim = project.getSimulator();
+        Map<Integer, Link> linksmap = sim.createLinkIdsMap();
+        
+        DTAProject project2 = new DTAProject(new File("projects/coacongress3"));
+        
+        Scanner filein = new Scanner(project.getNodesFile());
+        
+        PrintStream fileout = new PrintStream(new FileOutputStream(project2.getNodesFile()), true);
+        
+        filein.nextLine();
+        fileout.println(ReadNetwork.getNodesFileHeader());
+        
+        while(filein.hasNextInt())
+        {
+            NodeRecord node = new NodeRecord(filein.nextLine());
+            
+            if(node.getId() > 200000)
+            {
+                if(linksmap.containsKey(node.getId() - 100000))
+                {
+                    
+                }
+                else
+                {
+                    node.setId(node.getId() - 100000);
+                    fileout.println(node);
+                }
+            }
+            else
+            {
+                fileout.println(node);
+            }
+        }
+        fileout.close();
+        
+        filein = new Scanner(project.getLinksFile());
+        
+        fileout = new PrintStream(new FileOutputStream(project2.getLinksFile()), true);
+        
+        filein.nextLine();
+        fileout.println(ReadNetwork.getLinksFileHeader());
+        
+        while(filein.hasNextInt())
+        {
+            LinkRecord link = new LinkRecord(filein.nextLine());
+            
+            if(link.getSource() > 200000)
+            {
+                link.setSource(link.getSource() - 100000);
+            }
+            if(link.getDest() > 200000)
+            {
+                link.setDest(link.getDest() - 100000);
+            }
+            
+            fileout.println(link);
+        }
+        fileout.close();
+        
+        
+        
+        filein = new Scanner(project.getDynamicODFile());
+        
+        fileout = new PrintStream(new FileOutputStream(project2.getDynamicODFile()), true);
+        
+        filein.nextLine();
+        fileout.println(ReadDemandNetwork.getDynamicODFileHeader());
+        
+        while(filein.hasNextInt())
+        {
+            DynamicODRecord od = new DynamicODRecord(filein.nextLine());
+            
+            if(od.getDest() > 200000)
+            {
+                od.setDest(od.getDest() - 100000);
+            }
+            
+            fileout.println(od);
+        }
+        fileout.close();
+        
+        
     }
     
     public static void fixConnectivity2() throws Exception
