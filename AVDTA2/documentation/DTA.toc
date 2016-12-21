@@ -99,7 +99,10 @@
 \contentsline {section}{\numberline {12.2}Creating subnetworks}{58}{section.12.2}
 \contentsline {chapter}{\numberline {13}Package \texttt {avdta.gui}}{59}{chapter.13}
 \contentsline {section}{\numberline {13.1}Package \texttt {avdta.gui.panels}}{60}{section.13.1}
-\contentsline {section}{\numberline {13.2}Package \texttt {avdta.gui.util}}{60}{section.13.2}
-\contentsline {chapter}{Appendices}{62}{section*.1}
-\contentsline {chapter}{\numberline {A}Abbreviations}{63}{Appendix.1.A}
-\contentsline {chapter}{References}{63}{table.1.A.1}
+\contentsline {section}{\numberline {13.2}Package \texttt {avdta.gui.editor}}{61}{section.13.2}
+\contentsline {subsection}{\numberline {13.2.1}Package \texttt {avdta.gui.editor.visual}}{61}{subsection.13.2.1}
+\contentsline {subsection}{\numberline {13.2.2}Editing nodes and links}{63}{subsection.13.2.2}
+\contentsline {section}{\numberline {13.3}Package \texttt {avdta.gui.util}}{63}{section.13.3}
+\contentsline {chapter}{Appendices}{65}{section*.1}
+\contentsline {chapter}{\numberline {A}Abbreviations}{66}{Appendix.1.A}
+\contentsline {chapter}{References}{66}{table.1.A.1}
