@@ -28,7 +28,7 @@ import java.util.List;
  *
  * @author micha
  */
-public class RuleDisplay extends DefaultDisplayManager
+public class RuleDisplay extends DefaultDisplay
 {
     private List<NodeRule> nodeRules;
     private List<LinkRule> linkRules;

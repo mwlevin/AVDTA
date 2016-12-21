@@ -17,12 +17,12 @@ import java.io.IOException;
  *
  * @author micha
  */
-public class DefaultDisplayManager implements DisplayManager
+public class DefaultDisplay implements DisplayManager
 {
     private boolean displayLinks, displayNodes, displayCentroids, displayNonCentroids, displaySelected;
     private boolean enabled;
     
-    public DefaultDisplayManager()
+    public DefaultDisplay()
     {
         displayLinks = true;
         displayNodes = false;
@@ -32,16 +32,16 @@ public class DefaultDisplayManager implements DisplayManager
         enabled = true;
     }
     
-    public DefaultDisplayManager clone()
+    public DefaultDisplay clone()
     {
-        DefaultDisplayManager output = new DefaultDisplayManager();
+        DefaultDisplay output = new DefaultDisplay();
         
         clone_setOptions(output);
         
         return output;
     }
     
-    protected void clone_setOptions(DefaultDisplayManager disp)
+    protected void clone_setOptions(DefaultDisplay disp)
     {
         disp.displayLinks = displayLinks;
         disp.displayNodes = displayNodes;
