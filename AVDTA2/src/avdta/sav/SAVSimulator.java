@@ -310,7 +310,22 @@ public class SAVSimulator extends Simulator
         dispatch.newTimestep();
     }
     
-    
+    /**
+     * Returns the total system travel time.
+     * This method iterates over all vehicles, and sums their travel time (see {@link Vehicle#getTT()}).
+     * @return the total system travel time(s)
+     */
+    public double getTSTT()
+    {
+    	double output = 0;
+
+    	for(Taxi v : taxis)
+    	{
+            output += v.getTT();   
+    	}
+
+    	return output;
+    }
     
 
     /**

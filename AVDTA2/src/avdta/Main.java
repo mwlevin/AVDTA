@@ -40,6 +40,12 @@ import avdta.network.link.cell.Cell;
 import avdta.network.node.policy.TransitFirst;
 import avdta.project.SAVProject;
 import avdta.sav.ReadSAVNetwork;
+import avdta.sav.SAVOrigin;
+import avdta.sav.SAVSimulator;
+import avdta.sav.SAVZone;
+import avdta.sav.Taxi;
+import avdta.sav.Traveler;
+import avdta.sav.dispatch.DefaultDispatch;
 import avdta.util.RunningAvg;
 import avdta.vehicle.Bus;
 import avdta.vehicle.DriverType;
@@ -54,6 +60,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.TreeMap;
 import org.openstreetmap.gui.jmapviewer.Demo;
 
 
@@ -78,7 +85,9 @@ public class Main
 
         //caccTest2();
         
-        new DTAGUI();
+        //new DTAGUI();
+        
+        SAVtest();
         
         /*
         DTAProject project = new DTAProject(new File("projects/coacongress2_LTM"));
@@ -107,6 +116,155 @@ public class Main
         
         
     }
+    
+    
+    public static void SAVtest() throws IOException
+    {
+        
+        
+        SAVProject project = new SAVProject(new File("projects/grid_mel2"));
+        
+        PrintStream fileout = new PrintStream(new FileOutputStream(new File(project.getResultsFolder()+"/SAV_base.txt")), true);
+        
+        fileout.println("Taxis\tOVTT\tIVTT\tTT\tEnergy\tVMT\tExiting");
+        
+        for(int i = 20; i <= 20; i += 10)
+        {
+            Object[] output = test((int)Math.round(575*i/100.0), project);
+            
+            fileout.print(i);
+            
+            for(int j = 0; j < output.length; j++)
+            {
+                fileout.print("\t"+output[j]);
+            }
+            
+            fileout.println();
+        }
+        
+        fileout.close();
+    }
+    
+    public static Object[] test(int taxis, SAVProject project) throws IOException
+    {
+        
+        
+        long time = System.nanoTime();
+        
+        project.loadSimulator();
+        
+        ReadSAVNetwork input = new ReadSAVNetwork();
+        
+        System.out.println("Fleet: "+taxis);
+        input.createFleetEq(project, taxis);
+        
+        project.loadSimulator();
+        SAVSimulator test = project.getSimulator();
+        
+        DefaultDispatch dispatch = new DefaultDispatch();
+        
+        test.setDispatch(dispatch);
+        
+
+        test.initialize();
+
+        
+        System.out.println("Simulating...");
+        test.simulate();
+        
+        time = System.nanoTime() - time;
+        System.out.printf("%.2f s\n", time/1.0e9);
+        
+        System.out.println("Avg. delay: "+test.getAvgWait());
+        System.out.println("Avg. IVTT: "+test.getAvgIVTT());
+        System.out.println("Avg. TT: "+test.getAvgTT());
+        System.out.println("Total energy: "+test.getTotalEnergy());
+        System.out.println("Avg. MPG: "+test.getAvgMPG());
+        System.out.println("Total VMT: "+test.getTotalVMT());
+        System.out.println("Empty VMT: "+test.getEmptyVMT());
+        System.out.println("TSTT: "+test.getTSTT());
+
+        
+        int inTaxi = 0;
+        int waiting = dispatch.getWaiting().size();
+        int exited = 0;
+        int notDeparted = 0;
+        
+        for(Taxi t : test.getTaxis())
+        {
+            inTaxi += t.getNumPassengers();
+        }
+        
+        Map<Integer, Integer> errors = new TreeMap<Integer, Integer>();
+        
+        for(Traveler t : test.getTravelers())
+        {
+            if(t.isExited())
+            {
+                exited++;
+            }
+            else if(t.getDepTime() > Simulator.time)
+            {
+                notDeparted ++;
+            }
+            else
+            {
+                if(errors.containsKey(t.getOrigin().getId()))
+                {
+                    errors.put(t.getOrigin().getId(), errors.get(t.getOrigin().getId())+1);
+                }
+                else
+                {
+                    errors.put(t.getOrigin().getId(), 1);
+                }
+            }
+        }
+        
+        for(Node n : test.getNodes())
+        {
+            if(n instanceof SAVOrigin)
+            {
+                SAVOrigin zone = (SAVOrigin)n;
+                
+
+                System.out.println(zone.getId()+"\t"+zone.getParkedTaxis().size()+"\t"+zone.getFreeTaxis().size());
+            }
+        }
+        //test.relocateTaxis();
+        
+        if(errors.size() > 0)
+        {
+            System.out.println("Non-exiting travelers");
+            for(int k : errors.keySet())
+            {
+                System.out.println(k+" "+errors.get(k));
+            }
+        }
+        
+        System.out.println("---");
+        System.out.println("Exited: "+exited);
+        System.out.println("Waiting: "+waiting);
+        System.out.println("In taxi: "+inTaxi);
+        System.out.println("Departing later: "+notDeparted);
+        
+        int accountedFor = inTaxi + waiting + exited + notDeparted;
+        
+        System.out.println("Accounted for: "+accountedFor+" / "+test.getTravelers().size());
+        
+
+        Object[] output = new Object[7];
+
+        output[0] = test.getAvgWait();
+        output[1] = test.getAvgIVTT();
+        output[2] = test.getAvgTT();
+        output[3] = test.getTotalEnergy();
+        output[4] = test.getTotalVMT();
+        output[5] = test.getEmptyVMT();
+        output[6] = exited;
+        
+        return output;
+    }
+    
     
     public static void removeDuplicateCentroids() throws IOException
     {

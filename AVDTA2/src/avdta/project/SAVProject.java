@@ -85,6 +85,7 @@ public class SAVProject extends DemandProject
         }
         catch(Exception ex)
         {
+            ex.printStackTrace(System.err);
             setSimulator(createEmptySimulator());
         }
 

@@ -7,6 +7,7 @@ package avdta.sav;
 import avdta.network.Path;
 import avdta.network.Simulator;
 import avdta.network.cost.TravelCost;
+import avdta.network.link.Link;
 import avdta.network.node.Zone;
 import avdta.vehicle.fuel.VehicleClass;
 import avdta.vehicle.Vehicle;
@@ -39,6 +40,8 @@ public class Taxi extends Vehicle
     public boolean tempTaxi = false;
     
     
+    private int ttt;
+    
     private int capacity;
     
     public Taxi(int id, SAVOrigin startLocation, int capacity)
@@ -55,6 +58,18 @@ public class Taxi extends Vehicle
         this.capacity = capacity;
         
         setEfficiency(1);
+    }
+    
+    public void enteredLink(Link l)
+    {
+        ttt += Simulator.time - enter_time;
+
+        super.enteredLink(l);
+    }
+    
+    public int getTT()
+    {
+        return ttt;
     }
     
     public boolean isTransit()
@@ -94,6 +109,7 @@ public class Taxi extends Vehicle
         passengers.clear();
         
         total_distance = 0;
+        ttt = 0;
     }
     
     public double getMPG()
@@ -112,12 +128,21 @@ public class Taxi extends Vehicle
     
     public void setPath(Path p)
     {
-        ((SAVOrigin)((Zone)getPath().getDest()).getLinkedZone()).removeEnrouteTaxi(this);
+        Path curr = getPath();
+        
+        if(curr != null)
+        {
+            ((SAVOrigin)((Zone)curr.getDest()).getLinkedZone()).removeEnrouteTaxi(this);
+        }
         
         super.setPath(p);
         
-        eta = (int)(p.getAvgCost(Simulator.time, 1.0, TravelCost.dnlTime)) + delay;
-        ((SAVOrigin)((Zone)p.getDest()).getLinkedZone()).addEnrouteTaxi(this);
+
+        if(p != null)
+        {
+            eta = (int)(p.getAvgCost(Simulator.time, 1.0, TravelCost.dnlTime)) + delay;
+            ((SAVOrigin)((Zone)p.getDest()).getLinkedZone()).addEnrouteTaxi(this);
+        }
     }
     
     public List<Traveler> getPassengers()

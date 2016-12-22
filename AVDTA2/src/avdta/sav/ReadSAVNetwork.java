@@ -224,6 +224,64 @@ public class ReadSAVNetwork extends ReadDemandNetwork
     }
     
     /**
+     * This creates a fleet of the specified size, distributing them among centroids proportional to productions.
+     * The output is in the project fleet file.
+     * @param project the project
+     * @param total the fleet size
+     * @throws IOException if a file cannot be accessed
+     */
+    public void createFleetEq(SAVProject project, int total) throws IOException
+    {
+        PrintStream fileout = new PrintStream(new FileOutputStream(project.getFleetFile()), true);
+        
+        fileout.println(getFleetFileHeader());
+
+        
+        int new_id = 1;
+        
+        int count = 0;
+
+        
+        for(Node n : project.getSimulator().getNodes())
+        {
+            if((n instanceof Zone) && n.getId() > 0)
+            {
+                count++;
+            }
+            
+        }
+        
+        System.out.println(count);
+
+        for(Node n : project.getSimulator().getNodes())
+        {
+            if(!(n instanceof Zone))
+            {
+                continue;
+            }
+            
+            Zone z = (Zone)n;
+            
+
+            if(z instanceof SAVOrigin)
+            {
+                
+                SAVOrigin o = (SAVOrigin)z;
+                
+                int num = total / count;
+                
+
+                for(int i = 0; i < num; i++)
+                {
+                    fileout.println((new_id++)+"\t"+z.getId()+"\t"+4);
+                }
+            }
+        }
+        fileout.close();
+        
+    }
+    
+    /**
      * Read the fleet from the fleet file.
      * @param project the project
      * @param sim the {@link SAVSimulator} (its construction is in progress)
@@ -241,7 +299,9 @@ public class ReadSAVNetwork extends ReadDemandNetwork
             int origin_id = filein.nextInt();
             int capacity = filein.nextInt();
             
-            Taxi taxi = new Taxi(id, (SAVOrigin)zones.get(origin_id), capacity);
+            Taxi taxi = new Taxi(id, (SAVOrigin)nodesmap.get(origin_id), capacity);
+            
+
             sim.addTaxi(taxi);
         }
         

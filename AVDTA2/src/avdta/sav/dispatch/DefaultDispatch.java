@@ -32,14 +32,13 @@ import java.util.TreeSet;
 public class DefaultDispatch extends Dispatch
 {
     private TreeSet<Traveler> waiting;
-    private Map<SAVOrigin, TreeSet<Taxi>> freeTaxis;
-
     
     
     private boolean relocate;
     private boolean ride_share;
     private double cost_factor;
     
+    private Set<SAVOrigin> origins;;
     
     
     public DefaultDispatch()
@@ -55,13 +54,14 @@ public class DefaultDispatch extends Dispatch
         cost_factor = Double.parseDouble(project.getOption("cost-factor"));
         
         waiting = new TreeSet<Traveler>();
-        freeTaxis = new HashMap<SAVOrigin, TreeSet<Taxi>>();
         
+        
+        origins = new HashSet<SAVOrigin>();
         for(Node n : simulator.getNodes())
         {
             if(n instanceof SAVOrigin)
             {
-                freeTaxis.put((SAVOrigin)n, new TreeSet<Taxi>());
+                origins.add((SAVOrigin)n);
             }
         }
         
@@ -125,11 +125,11 @@ public class DefaultDispatch extends Dispatch
             }
         });
         
-        for(SAVOrigin o : freeTaxis.keySet())
+        for(SAVOrigin o : origins)
         {
             int freecount = 0;
             
-            for(Taxi t : freeTaxis.get(o))
+            for(Taxi t : o.getFreeTaxis())
             {
                 if(Simulator.time - t.park_time > 0*60)
                 {
@@ -189,7 +189,7 @@ public class DefaultDispatch extends Dispatch
                 
                 for(int i = 0; i < numToSend; i++)
                 {
-                    freeTaxis.get(r).pollFirst().setPath(getPath(r, dest));
+                    r.getFreeTaxis().pollFirst().setPath(getPath(r, dest));
                     count++;
                 }
             }
@@ -454,7 +454,7 @@ public class DefaultDispatch extends Dispatch
         {
             if(person.unable)
             {
-                continue;
+                //continue;
             }
             
             int etd = person.getEtd();
@@ -473,13 +473,14 @@ public class DefaultDispatch extends Dispatch
             Taxi best = null;
             Path path = null;
             
-            for(SAVOrigin origin : freeTaxis.keySet())
+            for(SAVOrigin origin : origins)
             {
-                if(freeTaxis.get(origin).size() == 0)
+                if(origin.getFreeTaxis().size() == 0)
                 {
                     continue;
                 }
 
+                
 
                 Path temp = getPath(origin, (SAVDest)(person.getOrigin().getLinkedZone()));
                 double cost = temp.getCost();
@@ -487,11 +488,12 @@ public class DefaultDispatch extends Dispatch
                 if(cost < min)
                 {
                     min = cost;
-                    best = freeTaxis.get(origin).first();
+                    best = origin.getFreeTaxis().first();
                     path = temp;
                 }
 
             }
+
             
             // assign taxi to travel to person
        
@@ -510,7 +512,7 @@ public class DefaultDispatch extends Dispatch
                 // can add enroute taxi twice because using set
                 person.getOrigin().addEnrouteTaxi(best);
             }
-            else if(freeTaxis.size() > 0)
+            else if(origins.size() > 0)
             {/*
                 Taxi tempTaxi = new Taxi(-1, person.getOrigin());
                 tempTaxi.tempTaxi = true;
@@ -592,7 +594,9 @@ public class DefaultDispatch extends Dispatch
         // if no travelers waiting, hold taxi
         else if(node.getNumWaiting() == 0)
         {
+
             addFreeTaxi(taxi);
+
         }
         // otherwise, give taxi to longest waiting traveler
         else

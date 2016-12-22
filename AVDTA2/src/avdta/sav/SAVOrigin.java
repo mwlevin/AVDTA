@@ -28,7 +28,7 @@ public class SAVOrigin extends SAVZone
     private TreeSet<Traveler> waitingTravelers;
     
     private TreeSet<Taxi> enrouteTaxis;
-    private Set<Taxi> freeTaxis;
+    private TreeSet<Taxi> freeTaxis;
     
     private int storedGoal;
     public int storedDiff;
@@ -133,12 +133,16 @@ public class SAVOrigin extends SAVZone
             
             Iterator<Taxi> iter = enrouteTaxis.iterator();
             
-            for(int i = 0; i < count; i++)
+            for(int i = 0; i < count && iter.hasNext(); i++)
             {
                 iter.next();
             }
             
-            p.setEtd(iter.next().eta);
+            if(iter.hasNext())
+            {
+                p.setEtd(iter.next().eta);
+            }
+            
         }
         
     }
@@ -172,6 +176,15 @@ public class SAVOrigin extends SAVZone
     }
     
     /**
+     * Returns a set of free taxis.
+     * @return a set of free taxis
+     */
+    public TreeSet<Taxi> getFreeTaxis()
+    {
+        return freeTaxis;
+    }
+    
+    /**
      * Adds a taxi to the list of enroute taxis.
      * @param t the taxi to be added
      */
@@ -194,7 +207,11 @@ public class SAVOrigin extends SAVZone
     public void removeEnrouteTaxi(Taxi t)
     {
         enrouteTaxis.remove(t);
-        updateEtds(enrouteTaxis.first().eta);
+        
+        if(enrouteTaxis.size() > 0)
+        {
+            updateEtds(enrouteTaxis.first().eta);
+        }
     }
     
     /**
