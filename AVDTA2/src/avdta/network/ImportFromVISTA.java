@@ -328,6 +328,8 @@ public class ImportFromVISTA
         }
         filein.close();
         fileout.close(); 
+        project.getNodesFile().delete();
+
         tempFile.renameTo(project.getNodesFile());
         
         
@@ -358,6 +360,7 @@ public class ImportFromVISTA
         filein.close();
         fileout.close();
         
+        project.getLinksFile().delete();
         tempFile.renameTo(project.getLinksFile());
         
         
@@ -386,7 +389,8 @@ public class ImportFromVISTA
             }
             filein.close();
             fileout.close();
-
+            
+            demProject.getDynamicODFile().delete();
             tempFile.renameTo(demProject.getDynamicODFile());
             
             
@@ -414,6 +418,7 @@ public class ImportFromVISTA
             filein.close();
             fileout.close();
             
+            demProject.getStaticODFile().delete();
             tempFile.renameTo(demProject.getStaticODFile());
         }
         
