@@ -12,9 +12,13 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import static avdta.gui.util.GraphicUtils.*;
 import java.awt.Dimension;
+import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JButton;
+import javax.swing.JList;
+import javax.swing.JScrollPane;
+import javax.swing.ListSelectionModel;
 
 /**
  *
@@ -22,6 +26,15 @@ import javax.swing.JButton;
  */
 public class Start extends JFrame
 {
+    private JList list;
+    
+    private static final String[] options = new String[]{"DTA", "Four-step", "SAV", "Editor"};
+    
+    private static final int DTA = 0;
+    private static final int FOURSTEP = 1;
+    private static final int SAV = 2;
+    private static final int EDITOR = 3;
+    
     public Start()
     {
         setTitle(GUI.getTitleName());
@@ -31,33 +44,43 @@ public class Start extends JFrame
         JPanel p = new JPanel();
         p.setLayout(new GridBagLayout());
         
+        list = new JList(options);
+        list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        list.setSelectedIndex(DTA);
+        
+        JButton start = new JButton("Start");
         
         
-        JButton dta = new JButton("DTA");
-        
-        JButton editor = new JButton("Editor");
-        
-        
-        dta.addActionListener(new ActionListener()
+        start.addActionListener(new ActionListener()
         {
             public void actionPerformed(ActionEvent e)
             {
                 setVisible(false);
-                new DTAGUI();
+                int idx = list.getSelectedIndex();
+                
+                switch(idx)
+                {
+                    case DTA:
+                        new DTAGUI();
+                        break;
+                    case FOURSTEP:
+                        new FourStepGUI();
+                        break;
+                    case SAV:
+                        new SAVGUI();
+                        break;
+                    case EDITOR:
+                        new Editor();
+                        break;
+                }
+                
             }
         });
         
-        editor.addActionListener(new ActionListener()
-        {
-            public void actionPerformed(ActionEvent e)
-            {
-                setVisible(false);
-                new Editor();
-            }
-        });
+
         
-        constrain(p, dta, 0, 0, 1, 1);
-        constrain(p, editor, 1, 0, 1, 1);
+        constrain(p, new JScrollPane(list), 0, 0, 1, 1);
+        constrain(p, start, 1, 0, 1, 1, GridBagConstraints.CENTER);
         
         add(p);
         

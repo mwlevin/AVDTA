@@ -70,9 +70,17 @@ public abstract class GUI extends JFrame
             {
                 new FourStepGUI();
             }
+            else if(args.length > 0 && args[0].equalsIgnoreCase("sav"))
+            {
+                new SAVGUI();
+            }
+            else if(args.length > 0 && args[0].equalsIgnoreCase("all"))
+            {
+                new Start();
+            }
             else
             {
-                new DTAGUI();
+                new Start();
             }
         }
         catch(Exception ex)

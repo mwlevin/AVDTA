@@ -47,6 +47,34 @@ import java.util.TreeSet;
  */
 public abstract class Dispatch 
 {
+    public static final String[] DISPATCHERS = new String[]{"default"};
+    public static final int DEFAULT = 0;
+    
+    public static int findDispatch(String d)
+    {
+        for(int i = 0; i < DISPATCHERS.length; i++)
+        {
+            if(d.equalsIgnoreCase(DISPATCHERS[i]))
+            {
+                return i;
+            }
+        }
+        return -1;
+    }
+    
+    public static Dispatch createDispatch(String d)
+    {
+        int idx = findDispatch(d);
+        
+        switch(idx)
+        {
+            case DEFAULT:
+                return new DefaultDispatch();
+            default:
+                throw new RuntimeException("Dispatcher \""+d+"\" not found.");
+        }
+    }
+    
     private Map<SAVOrigin, Map<SAVDest, Path>> paths;
     
     private SAVSimulator simulator;

@@ -19,6 +19,7 @@ import avdta.dta.ReadDTANetwork;
 import avdta.dta.VehicleRecord;
 import avdta.gui.DTAGUI;
 import avdta.gui.GUI;
+import avdta.gui.SAVGUI;
 import avdta.gui.editor.Editor;
 import avdta.gui.editor.visual.rules.LinkBusRule;
 import avdta.gui.editor.visual.rules.LinkDataRule;
@@ -87,7 +88,7 @@ public class Main
         
         //new DTAGUI();
         
-        SAVtest();
+        //SAVtest();
         
         /*
         DTAProject project = new DTAProject(new File("projects/coacongress2_LTM"));
@@ -98,6 +99,8 @@ public class Main
         sim.msa(10);
 */
         //GUI.main(args);
+        
+        new SAVGUI();
         
         //removeDuplicateCentroids();
 

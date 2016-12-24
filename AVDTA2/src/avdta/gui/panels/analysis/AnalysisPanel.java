@@ -33,7 +33,7 @@ import javax.swing.JOptionPane;
 public class AnalysisPanel extends GUIPanel
 {
     private JFileField linkids;
-    private JButton tt, volume, printLinkTT;
+    private JButton tt, volume;
     
     private Project project;
     
@@ -45,57 +45,11 @@ public class AnalysisPanel extends GUIPanel
         
         tt = new JButton("Travel times");
         volume = new JButton("Link volume");
-        volume.setToolTipText("Link volumes for LTM links");
 
         tt.setEnabled(false);
         volume.setEnabled(false);
         
-        printLinkTT = new JButton("Link travel times");
-        printLinkTT.setEnabled(false);
-        
-        printLinkTT.addActionListener(new ActionListener()
-        {
-            public void actionPerformed(ActionEvent e)
-            {
-                int start, end;
-                
-                try
-                {
-                    start = Integer.parseInt(JOptionPane.showInputDialog(panel, "Enter start time (s)", "Link travel times", JOptionPane.QUESTION_MESSAGE));
-                }
-                catch(Exception ex)
-                {
-                    return;
-                }
-                
-                try
-                {
-                    end = Integer.parseInt(JOptionPane.showInputDialog(panel, "Enter end time (s)", "Link travel times", JOptionPane.QUESTION_MESSAGE));
-                }
-                catch(Exception ex)
-                {
-                    return;
-                }
-                
-                try
-                {
-                    if(linkids.getFile() != null)
-                    {
-                        project.getSimulator().printLinkTT(start, end, new File(project.getResultsFolder()+"/linkTT.txt"), readLinkIds());
-                    }
-                    else
-                    {
-                        project.getSimulator().printLinkTT(start, end, new File(project.getResultsFolder()+"/linkTT.txt"));
-                    }
-                
-                    JOptionPane.showMessageDialog(panel, "Link travel times printed to \n"+project.getResultsFolder()+"/linkTT.txt", "Link travel times", JOptionPane.INFORMATION_MESSAGE);
-                }
-                catch(Exception ex)
-                {
-                    GUI.handleException(ex);
-                }
-            }
-        });
+       
         
         linkids = new JFileField(10, null, "projects/")
         {
@@ -118,19 +72,32 @@ public class AnalysisPanel extends GUIPanel
                     public void run()
                     {
                         Simulator sim = project.getSimulator();
-                        String name = getFilename();
                         
-                        String filename = project.getResultsFolder()+"/link_tt_"+name+".txt";
+                        String filename;
+                        
                         try
                         {
-                            sim.printLinkTT(0, sim.getLastExitTime()+sim.ast_duration, new File(filename), readLinkIds());
+                            if(linkids.getFile() != null)
+                            {
+                                String name = getFilename();
+                        
+                                filename = project.getResultsFolder()+"/link_tt_"+name+".txt";
+                                sim.printLinkTT(0, sim.getLastExitTime()+sim.ast_duration, new File(filename), readLinkIds());
+                            }
+                            else
+                            {
+                                filename = project.getResultsFolder()+"/link_tt.txt";
+                                sim.printLinkTT(0, sim.getLastExitTime()+sim.ast_duration, new File(filename));
+                            }
+                            
+                            JOptionPane.showMessageDialog(panel, "Travel time data printed to "+filename, "Complete", JOptionPane.INFORMATION_MESSAGE);
                         }
                         catch(IOException ex)
                         {
                             GUI.handleException(ex);
                         }
                         
-                        JOptionPane.showMessageDialog(panel, "Travel time data printed to "+filename, "Complete", JOptionPane.INFORMATION_MESSAGE);
+                        
                         parentSetEnabled(true);
                     }
                 };
@@ -151,22 +118,35 @@ public class AnalysisPanel extends GUIPanel
                     public void run()
                     {
                         Simulator sim = project.getSimulator();
-                        String name = getFilename();
                         
-                        String filename = project.getResultsFolder()+"/link_flow_"+name+".txt";
+                        String filename;
                         
                         try
                         {
-
+                            
                             sim.postProcess();
-                            sim.printLinkFlow(0, sim.getLastExitTime()+sim.ast_duration, new File(filename), readLinkIds());
+                            
+                            if(linkids.getFile() != null)
+                            {
+                                String name = getFilename();
+                        
+                                filename = project.getResultsFolder()+"/link_flow_"+name+".txt";
+                                sim.printLinkFlow(0, sim.getLastExitTime()+sim.ast_duration, new File(filename), readLinkIds());
+                            }
+                            else
+                            {
+                                filename = project.getResultsFolder()+"/link_flow.txt";
+                                sim.printLinkFlow(0, sim.getLastExitTime()+sim.ast_duration, new File(filename));
+                            }
+                            
+                            JOptionPane.showMessageDialog(panel, "Link flow data printed to "+filename, "Complete", JOptionPane.INFORMATION_MESSAGE);
                         }
                         catch(IOException ex)
                         {
                             GUI.handleException(ex);
                         }
                         
-                        JOptionPane.showMessageDialog(panel, "Link flow data printed to "+filename, "Complete", JOptionPane.INFORMATION_MESSAGE);
+                        
 
                         parentSetEnabled(true);
                     }
@@ -191,7 +171,6 @@ public class AnalysisPanel extends GUIPanel
         
         constrain(p2, tt, 0, 0, 1, 1);
         constrain(p2, volume, 0, 1, 1, 1);
-        constrain(p2, printLinkTT, 0, 2, 1, 1);
         
         p2.setPreferredSize(new Dimension((int)p.getPreferredSize().getWidth(), (int)p2.getPreferredSize().getHeight()));
         
@@ -250,21 +229,17 @@ public class AnalysisPanel extends GUIPanel
     {
         this.project = project;
         
-        boolean enable = linkids.getFile() != null && project != null;
-        tt.setEnabled(enable);
-        volume.setEnabled(enable);
-        printLinkTT.setEnabled(project != null);
+        setEnabled(project != null);
     }
     
     public void setEnabled(boolean e)
     {
-        linkids.setEnabled(e);
+        boolean enable = e && project != null;
         
-        boolean enable = linkids.getFile() != null && project != null;
-        tt.setEnabled(e && enable);
-        volume.setEnabled(e && enable);
+        linkids.setEnabled(enable);
+        tt.setEnabled(enable);
+        volume.setEnabled(enable);
         
-        printLinkTT.setEnabled(e && project != null);
         
         super.setEnabled(e);
     }

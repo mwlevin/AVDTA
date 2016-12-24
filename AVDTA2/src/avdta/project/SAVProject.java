@@ -67,6 +67,7 @@ public class SAVProject extends DemandProject
         setOption("relocate", "false");
         setOption("ride-sharing", "false");
         setOption("cost-factor", "1.4");
+        setOption("dispatcher", "default");
     }
     
     /**

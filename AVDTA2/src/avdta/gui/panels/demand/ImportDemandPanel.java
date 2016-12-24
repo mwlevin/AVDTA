@@ -5,19 +5,17 @@
  */
 package avdta.gui.panels.demand;
 
-import avdta.gui.panels.demand.DemandPanel;
 import avdta.demand.DemandImportFromVISTA;
 import avdta.gui.GUI;
+import avdta.gui.panels.AbstractGUIPanel;
 import avdta.gui.panels.GUIPanel;
 import avdta.gui.util.JFileField;
 import avdta.gui.util.ProjectChooser;
 import javax.swing.JPanel;
-import avdta.project.DTAProject;
-import javax.swing.JTextArea;
 import java.awt.GridBagLayout;
 import static avdta.gui.util.GraphicUtils.*;
-import avdta.network.ImportFromVISTA;
-import avdta.project.Project;
+import avdta.project.DTAProject;
+import avdta.project.DemandProject;
 import avdta.project.SQLLogin;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -41,9 +39,9 @@ public class ImportDemandPanel extends GUIPanel
     private JFileField staticOD, dynamicOD, demandProfile, demand;
     private JButton import1, import2;
     private JButton sqlImport, sqlExport;
-    private DTAProject project;
+    private DemandProject project;
     
-    public ImportDemandPanel(DemandPanel parent)
+    public ImportDemandPanel(AbstractGUIPanel parent)
     {
         super(parent);
         
@@ -210,7 +208,7 @@ public class ImportDemandPanel extends GUIPanel
             {
                 try
                 {
-                    DTAProject rhs = new DTAProject(importFromProject.getFile());
+                    DemandProject rhs = new DTAProject(importFromProject.getFile());
         
                     project.importDemandFromProject(rhs);
                     project.loadSimulator();
@@ -330,7 +328,7 @@ public class ImportDemandPanel extends GUIPanel
         super.setEnabled(e);
     }
     
-    public void setProject(DTAProject project)
+    public void setProject(DemandProject project)
     {
         this.project = project;
         

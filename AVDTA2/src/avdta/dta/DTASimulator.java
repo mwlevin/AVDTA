@@ -99,6 +99,11 @@ public class DTASimulator extends Simulator
      */
     public DTAResults partial_demand(int iter) throws IOException
     {
+        if(statusUpdate != null)
+        {
+            statusUpdate.update(0, 0, "Starting partial demand");
+        }
+        
         List<Vehicle> temp = new ArrayList<Vehicle>();
         
         for(Vehicle v : vehicles)
@@ -149,6 +154,11 @@ public class DTASimulator extends Simulator
                 out.println((i+1)+"\t"+String.format("%.4f", 0.0)+"\t"+String.format("%.2f", output.getGapPercent())+"%\t"+
                         String.format("%.1f", output.getAEC())+"\t"+String.format("%.1f", output.getTSTT())+"\t"+output.getTrips()+"\t"+
                         output.getNonExiting()+"\t"+String.format("%.2f", time / 1.0e9));
+            }
+            
+            if(statusUpdate != null)
+            {
+                statusUpdate.update((i+1)/iter, 1.0/iter, "Assigned "+Math.round(100.0/iter)+"% demand");
             }
         }
         

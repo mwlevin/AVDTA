@@ -234,6 +234,11 @@ public class SAVSimulator extends Simulator
      */
     public void resetSim()
     {
+        if(statusUpdate != null)
+        {
+            statusUpdate.update(0, 0, "Starting simulation");
+        }
+        
         super.resetSim();
         
         for(Taxi t : taxis)
@@ -279,7 +284,7 @@ public class SAVSimulator extends Simulator
             
             if(statusUpdate != null)
             {
-                statusUpdate.update((double) time / Simulator.duration, ((double)ast_duration) / Simulator.duration);
+                statusUpdate.update((double) time / Simulator.duration, ((double)ast_duration) / Simulator.duration, "Simulation time: "+Simulator.time);
             }
             
             dispatch.updateShortestPaths();
@@ -464,7 +469,7 @@ public class SAVSimulator extends Simulator
     {
         if(statusUpdate != null)
         {
-            statusUpdate.update(1, 0);
+            statusUpdate.update(1, 0, "");
         }
     }
     

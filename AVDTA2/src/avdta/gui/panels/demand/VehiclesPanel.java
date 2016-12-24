@@ -8,8 +8,9 @@ package avdta.gui.panels.demand;
 import avdta.gui.panels.demand.DemandPanel;
 import avdta.dta.ReadDTANetwork;
 import avdta.gui.GUI;
+import avdta.gui.panels.AbstractGUIPanel;
 import avdta.gui.panels.GUIPanel;
-import avdta.project.DTAProject;
+import avdta.project.DemandProject;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -33,14 +34,14 @@ import javax.swing.JTextField;
  */
 public class VehiclesPanel extends GUIPanel
 {
-    private DTAProject project;
+    private DemandProject project;
     
     private JTextArea data;
     
     private JTextField prop;
     private JButton prepareDemand;
     
-    public VehiclesPanel(DemandPanel parent)
+    public VehiclesPanel(AbstractGUIPanel parent)
     {
         super(parent);
         data = new JTextArea(10, 20);
@@ -208,7 +209,7 @@ public class VehiclesPanel extends GUIPanel
         }
     }
     
-    public void setProject(DTAProject project)
+    public void setProject(DemandProject project)
     {
         this.project = project;
         reset();

@@ -222,17 +222,6 @@ public class FourStepPanel extends GUIPanel
     
     public void reset()
     {
-        dta_max_iter.setText("30");
-        fs_max_iter.setText("1");
-        dta_min_gap.setText("1");
-    }
-    
-    public void setProject(FourStepProject project)
-    {
-        this.project = project;
-        
-        data.setText("");
-        
         if(project != null)
         {
             fs_max_iter.setText("15");
@@ -249,6 +238,17 @@ public class FourStepPanel extends GUIPanel
             partial_demand.setText("");
             setEnabled(false);
         }
+    }
+    
+    public void setProject(FourStepProject project)
+    {
+        this.project = project;
+        
+        data.setText("");
+        
+        reset();
+        
+        
     }
     
     public void showResults(DTAResults results)

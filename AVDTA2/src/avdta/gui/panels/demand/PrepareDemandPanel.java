@@ -11,8 +11,7 @@ import avdta.gui.GUI;
 import avdta.gui.panels.AbstractGUIPanel;
 import avdta.gui.panels.GUIPanel;
 import javax.swing.JPanel;
-import avdta.project.DTAProject;
-import javax.swing.JTextArea;
+import avdta.project.DemandProject;
 import java.awt.GridBagLayout;
 import static avdta.gui.util.GraphicUtils.*;
 import java.awt.Dimension;
@@ -32,7 +31,7 @@ import javax.swing.JTextField;
  */
 public class PrepareDemandPanel extends GUIPanel
 {
-    private DTAProject project;
+    protected DemandProject project;
     private JButton createDynamicOD, createStaticOD;
     
     private JTextField AVs;
@@ -173,6 +172,12 @@ public class PrepareDemandPanel extends GUIPanel
             return;
         }
         
+        changeType(Double.parseDouble(AVs.getText().trim())/100.0);
+    }
+    
+    
+    public void changeType(final double prop)
+    {
         parentSetEnabled(false);
         
         Thread t = new Thread()
@@ -182,8 +187,7 @@ public class PrepareDemandPanel extends GUIPanel
                 try
                 {
                     Map<Integer, Double> proportionMap = new HashMap<Integer, Double>();
-        
-                    double prop = Double.parseDouble(AVs.getText().trim())/100.0;
+
 
                     proportionMap.put(ReadDTANetwork.AV + ReadDTANetwork.DA_VEHICLE + ReadDTANetwork.ICV, prop);
                     proportionMap.put(ReadDTANetwork.HV + ReadDTANetwork.DA_VEHICLE + ReadDTANetwork.ICV, 1-prop);
@@ -195,8 +199,10 @@ public class PrepareDemandPanel extends GUIPanel
                 }
                 catch(IOException ex)
                 {
-                    
+                    GUI.handleException(ex);
                 }
+                
+                parentSetEnabled(true);
             }
         };
         t.start();
@@ -227,7 +233,7 @@ public class PrepareDemandPanel extends GUIPanel
         }
     }
     
-    public void setProject(DTAProject project)
+    public void setProject(DemandProject project)
     {
         this.project = project;
         reset();
