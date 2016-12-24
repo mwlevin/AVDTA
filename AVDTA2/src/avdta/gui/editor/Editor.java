@@ -1478,17 +1478,23 @@ public class Editor extends JFrame implements MouseListener
     {
         clearSelectedNodes();
         clearSelectedLinks();
-        display.setDisplaySelected(false);
+        //display.setDisplaySelected(false);
     }
     
     public void addSelectListener(SelectListener s)
     {
-        listeners.add(s);
+        synchronized(listeners)
+        {
+            listeners.add(s);
+        }
     }
     
     public void removeSelectListener(SelectListener s)
     {
-        listeners.remove(s);
+        synchronized(listeners)
+        {
+            listeners.remove(s);
+        }
     }
     
     public void mousePressed(MouseEvent e){}

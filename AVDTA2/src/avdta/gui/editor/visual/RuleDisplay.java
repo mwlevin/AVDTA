@@ -137,11 +137,13 @@ public class RuleDisplay extends DefaultDisplay
     
     public boolean hasSpecialDisplay(Link l, int t)
     {
-        return isEnabled() && findLinkRule(l, t) != defaultLinkRule;
+        return isEnabled() && (!isDisplaySelected() && findLinkRule(l, t) != defaultLinkRule) ||
+                (isDisplaySelected() && l.isSelected());
     }
     
     public Color getColor(Link l, int t)
     {
+
         if(isDisplaySelected())
         {
             return super.getColor(l, t);

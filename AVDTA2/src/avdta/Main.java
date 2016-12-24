@@ -101,7 +101,7 @@ public class Main
 */
         //GUI.main(args);
         
-        new FourStepGUI();
+        new DTAGUI();
         
         //removeDuplicateCentroids();
 
