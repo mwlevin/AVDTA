@@ -326,6 +326,8 @@ public abstract class Project
     {
         networkOptions = new TreeMap<String, String>();
         setDirectory(dir);
+        
+        new File(getResultsFolder()).mkdirs();
         //loadProject();
         readProperties();
     }
