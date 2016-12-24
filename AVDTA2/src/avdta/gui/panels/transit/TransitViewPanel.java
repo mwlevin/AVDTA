@@ -77,6 +77,8 @@ public class TransitViewPanel extends GUIPanel
         constrain(p, clearBuses, 0, 2, 1, 1);
         
         constrain(this, p, 0, 0, 1, 1);
+        
+        setEnabled(false);
     }
     
     public void clearBuses()
@@ -141,6 +143,7 @@ public class TransitViewPanel extends GUIPanel
     
     public void setEnabled(boolean e)
     {
+        e = e && project != null;
         createBuses.setEnabled(e);
         clearBuses.setEnabled(e);
         super.setEnabled(e);

@@ -25,6 +25,7 @@ import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
 
 /**
@@ -39,7 +40,7 @@ public class ImportNetworkPanel extends GUIPanel
     private JFileField linkdetails, nodes, elevation, phases, signals, linkpoints;
     
     private JButton import1;
-    private JButton import2;
+    private JButton import2, convert;
     private JButton sqlImport, sqlExport;
     
     
@@ -48,9 +49,9 @@ public class ImportNetworkPanel extends GUIPanel
         super(parent);
         
         import1 = new JButton("Import");
-        import1.setEnabled(false);
         import2 = new JButton("Import");
-        import2.setEnabled(false);
+        
+        convert = new JButton("Remove VISTA duplicate centroids");
         
         sqlImport = new JButton("Import");
         sqlExport = new JButton("Export");
@@ -191,6 +192,15 @@ public class ImportNetworkPanel extends GUIPanel
             }
         });
         
+        convert.addActionListener(new ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                removeDuplicateCentroids();
+            }
+        });
+        
+        
         setLayout(new GridBagLayout());
         
         
@@ -220,6 +230,7 @@ public class ImportNetworkPanel extends GUIPanel
         constrain(p2, new JLabel("elevation: "), 0, 6, 1, 1);
         constrain(p2, elevation, 1, 6, 1, 1);
         constrain(p2, import2, 2, 1, 1, 7);
+        constrain(p2, convert, 0, 7, 3, 1);
         
         constrain(this, p2, 0, 2, 1, 1);
         
@@ -237,6 +248,29 @@ public class ImportNetworkPanel extends GUIPanel
         setEnabled(false);
     }
 
+    public void removeDuplicateCentroids()
+    {
+        int origin_offset, dest_offset;
+                
+        try
+        {
+            origin_offset = Integer.parseInt(JOptionPane.showInputDialog(this, "Enter the origin offset:", "Remove duplicate centroids", JOptionPane.QUESTION_MESSAGE));
+            dest_offset = Integer.parseInt(JOptionPane.showInputDialog(this, "Enter the destination offset:", "Remove duplicate centroids", JOptionPane.QUESTION_MESSAGE));
+        }
+        catch(Exception ex)
+        {
+            return;
+        }
+
+        try
+        {
+            ImportFromVISTA.removeDuplicateCentroids(project, origin_offset, dest_offset);
+        }
+        catch(Exception ex)
+        {
+            GUI.handleException(ex);
+        }
+    }
     
     public void checkForOtherFiles(File f)
     {
@@ -388,6 +422,7 @@ public class ImportNetworkPanel extends GUIPanel
     
     public void setEnabled(boolean e)
     {
+        e = e && project != null;
         import1.setEnabled(e && importFromProject.getFile() != null);
         import2.setEnabled(e && nodes.getFile() != null && linkdetails.getFile() != null && phases.getFile() != null && signals.getFile() != null);
         elevation.setEnabled(e);
@@ -397,6 +432,7 @@ public class ImportNetworkPanel extends GUIPanel
         signals.setEnabled(e);
         linkpoints.setEnabled(e);
         importFromProject.setEnabled(e);
+        convert.setEnabled(e);
         
         boolean sqlCheck = SQLLogin.hasSQL();
         sqlImport.setEnabled(e && sqlCheck);

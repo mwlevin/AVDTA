@@ -235,6 +235,7 @@ public class LinksPanel extends GUIPanel
     
     public void setEnabled(boolean e)
     {
+        e = e && project != null;
         ctm.setEnabled(e);
         ltm.setEnabled(e);
         save.setEnabled(e);

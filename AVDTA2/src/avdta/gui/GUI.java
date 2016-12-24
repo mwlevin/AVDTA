@@ -250,7 +250,7 @@ public abstract class GUI extends JFrame
             {
                 setupSQL();
                 
-                createDatabase.setEnabled(SQLLogin.hasSQL());
+                createDatabase.setEnabled(project != null && SQLLogin.hasSQL());
             }
         });
         
@@ -498,7 +498,7 @@ public abstract class GUI extends JFrame
             openEditor = null;
         }
         this.project = p;
-        createDatabase.setEnabled(SQLLogin.hasSQL());
+        createDatabase.setEnabled(project != null && SQLLogin.hasSQL());
         
         cloneMI.setEnabled(project != null);
         closeMI.setEnabled(project != null);

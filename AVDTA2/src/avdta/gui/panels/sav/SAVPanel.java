@@ -28,6 +28,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import static avdta.gui.util.GraphicUtils.constrain;
 import avdta.network.Simulator;
+import avdta.sav.ReadSAVNetwork;
 import avdta.sav.SAVSimulator;
 import avdta.sav.Taxi;
 import avdta.sav.Traveler;
@@ -53,6 +54,7 @@ public class SAVPanel extends GUIPanel
     private JTextArea results;
     
     private JRadioButton pct, num;
+    private JRadioButton equal, proportional;
     private JTextField pctTxt, numTxt;
     private JButton createFleet;
     
@@ -79,26 +81,10 @@ public class SAVPanel extends GUIPanel
         dispatch.setSelectedIndex(Dispatch.DEFAULT);
         save = new JButton("Save");
         
-        save.addActionListener(new ActionListener()
-        {
-            public void actionPerformed(ActionEvent e)
-            {
-                project.setOption("relocate", ""+preemptiveRelocate.isSelected());
-                project.setOption("ride-sharing", ""+drs.isSelected());
-                project.setOption("dispatcher", Dispatch.DISPATCHERS[dispatch.getSelectedIndex()]);
-                
-                try
-                {
-                    project.writeOptions();
-                }
-                catch(IOException ex)
-                {
-                    GUI.handleException(ex);
-                }
-            }
-        });
         
         
+        equal = new JRadioButton("Uniform");
+        proportional = new JRadioButton("Proportional to productions");
         
         pct = new JRadioButton();
         num = new JRadioButton();
@@ -125,10 +111,44 @@ public class SAVPanel extends GUIPanel
         pct.addChangeListener(change);
         num.addChangeListener(change);
         
+        pct.setSelected(true);
+        proportional.setSelected(true);
+        
+        
         ButtonGroup buttonGroup = new ButtonGroup();
         buttonGroup.add(pct);
         buttonGroup.add(num);
         
+        buttonGroup = new ButtonGroup();
+        buttonGroup.add(equal);
+        buttonGroup.add(proportional);
+        
+        save.addActionListener(new ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                project.setOption("relocate", ""+preemptiveRelocate.isSelected());
+                project.setOption("ride-sharing", ""+drs.isSelected());
+                project.setOption("dispatcher", Dispatch.DISPATCHERS[dispatch.getSelectedIndex()]);
+                
+                try
+                {
+                    project.writeOptions();
+                }
+                catch(IOException ex)
+                {
+                    GUI.handleException(ex);
+                }
+            }
+        });
+        
+        createFleet.addActionListener(new ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                createFleet();
+            }
+        });
         
         simulate.addActionListener(new ActionListener()
         {
@@ -183,15 +203,24 @@ public class SAVPanel extends GUIPanel
         constrain(p1, new JLabel("SAVs"), 2, 0, 1, 1);
         
         constrain(p, p1, 0, 1, 1, 1);    
-        constrain(p, createFleet, 0, 2, 1, 1, GridBagConstraints.CENTER);
+        
+        p1 = new JPanel();
+        p1.setLayout(new GridBagLayout());
+        p1.setBorder(BorderFactory.createTitledBorder("Distribution"));
+        
+        constrain(p1, proportional, 0, 0, 1, 1);
+        constrain(p1, equal, 0, 1, 1, 1);
+        
+        constrain(p, p1, 0, 2, 1, 1);
+        
+        constrain(p, createFleet, 0, 3, 1, 1, GridBagConstraints.CENTER);
         
         p.setBorder(BorderFactory.createTitledBorder("Fleet"));
         
-        p.setPreferredSize(new Dimension((int)p2.getPreferredSize().getWidth(), (int)p.getPreferredSize().getHeight()));
         
         constrain(left, p, 0, 1, 1, 1);
         
-        
+        p2.setPreferredSize(new Dimension((int)p.getPreferredSize().getWidth(), (int)p2.getPreferredSize().getHeight()));
         
         
         constrain(right, new JScrollPane(results), 0, 0, 1, 1);
@@ -201,10 +230,75 @@ public class SAVPanel extends GUIPanel
         
         
         constrain(panel, left, 0, 0, 1, 1);
-        constrain(panel, right, 1, 0, 1, 1);
+        constrain(panel, right, 2, 0, 1, 1);
         
         add(panel);
         setEnabled(false);
+    }
+    
+    public void createFleet()
+    {
+        parentSetEnabled(false);
+        
+        Thread t = new Thread()
+        {
+            public void run()
+            {
+                int taxis = 0;
+        
+                if(pct.isSelected())
+                {
+                    try
+                    {
+                        taxis = (int)Math.round(Double.parseDouble(pctTxt.getText()) * project.getSimulator().getNumTrips());
+                    }
+                    catch(Exception ex)
+                    {
+                        pctTxt.setText("");
+                        pctTxt.requestFocus();
+                        parentSetEnabled(true);
+                        return;
+                    }
+                }
+                else
+                {
+                    try
+                    {
+                        taxis = Integer.parseInt(numTxt.getText());
+                    }
+                    catch(Exception ex)
+                    {
+                        numTxt.setText("");
+                        numTxt.requestFocus();
+                        parentSetEnabled(true);
+                        return;
+                    }
+                }
+        
+            
+                ReadSAVNetwork read = new ReadSAVNetwork();
+        
+                try
+                {
+                    if(equal.isSelected())
+                    {
+                        read.createFleetEq(project, taxis);
+                    }
+                    else
+                    {
+                        read.createFleet(project, taxis);
+                    }
+                }
+                catch(Exception ex)
+                {
+                    GUI.handleException(ex);
+                }
+                
+                parentSetEnabled(true);
+            }
+        };
+        t.start();
+        
     }
     
     public void simulate()
@@ -351,5 +445,7 @@ public class SAVPanel extends GUIPanel
         drs.setEnabled(enable);
         preemptiveRelocate.setEnabled(enable);
         save.setEnabled(enable);
+        equal.setEnabled(enable);
+        proportional.setEnabled(enable);
     }
 }

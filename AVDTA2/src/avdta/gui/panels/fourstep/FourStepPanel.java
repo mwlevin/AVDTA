@@ -16,6 +16,7 @@ import avdta.gui.util.StatusBar;
 import avdta.project.DTAProject;
 import avdta.project.FourStepProject;
 import avdta.vehicle.DriverType;
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
@@ -100,6 +101,9 @@ public class FourStepPanel extends GUIPanel
         
         constrain(p, status, 0, 3, 2, 1, GridBagConstraints.CENTER);
         
+        
+        p2.setPreferredSize(new Dimension((int)p.getPreferredSize().getWidth(), (int)p2.getPreferredSize().getHeight()));
+        
         constrain(panel, p, 1, 0, 1, 1);
         
         
@@ -114,6 +118,7 @@ public class FourStepPanel extends GUIPanel
         dta_min_gap.setEditable(e);
         dta_max_iter.setEditable(e);
         fs_max_iter.setEditable(e);
+        partial_demand.setEditable(e);
         super.setEnabled(e);
     }
     

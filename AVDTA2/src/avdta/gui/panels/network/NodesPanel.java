@@ -487,6 +487,7 @@ public class NodesPanel extends GUIPanel
     
     public void setEnabled(boolean e)
     {
+        e = e && project != null;
         save.setEnabled(e);
         reset.setEnabled(e);
         signal.setEnabled(e);

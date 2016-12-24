@@ -5,6 +5,15 @@
  */
 package avdta.network;
 
+import avdta.demand.DynamicODRecord;
+import avdta.demand.ReadDemandNetwork;
+import avdta.demand.StaticODRecord;
+import avdta.dta.DTASimulator;
+import avdta.network.link.Link;
+import avdta.network.link.LinkRecord;
+import avdta.network.node.NodeRecord;
+import avdta.project.DTAProject;
+import avdta.project.DemandProject;
 import avdta.project.Project;
 import avdta.vehicle.Vehicle;
 import java.io.File;
@@ -258,5 +267,155 @@ public class ImportFromVISTA
         }
         filein.close();
         fileout.close();
+    }
+    
+    /**
+     * This method undoes the origin/destination centroid separation in VISTA.
+     * VISTA typically has centroids separated by origin and destination. 
+     * For example, centroid 1 might be split into origin centroid 10001 and destination centroid 20001.
+     * Some functions in AVDTA need centroids to be combined. 
+     * This method combines them, given that the origin and destination offsets are known.
+     * The files modified are nodes, links, static_od, and dynamic_od.
+     * Files are initially created in the results folder, then renamed appropriately.
+     * 
+     * @param origin_offset the offset for origin centroids
+     * @param dest_offset the offset for destination centroids
+     * @throws IOException if a file cannot be accessed
+     */
+    public static void removeDuplicateCentroids(Project project, int origin_offset, int dest_offset) throws IOException
+    {
+        if(origin_offset > dest_offset)
+        {
+            int temp = origin_offset;
+            origin_offset = dest_offset;
+            dest_offset = origin_offset;
+        }
+        
+        Simulator sim = project.getSimulator();
+        Map<Integer, Link> linksmap = sim.createLinkIdsMap();
+        
+        Scanner filein = new Scanner(project.getNodesFile());
+        
+        File tempFile = new File(project.getResultsFolder()+"/nodes.txt");
+        
+        PrintStream fileout = new PrintStream(new FileOutputStream(tempFile), true);
+        
+        filein.nextLine();
+        fileout.println(ReadNetwork.getNodesFileHeader());
+        
+        int diff = dest_offset - origin_offset;
+        
+        while(filein.hasNextInt())
+        {
+            NodeRecord node = new NodeRecord(filein.nextLine());
+            
+            if(node.getId() > dest_offset)
+            {
+                if(linksmap.containsKey(node.getId() - diff))
+                {
+                    
+                }
+                else
+                {
+                    node.setId(node.getId() - diff);
+                    fileout.println(node);
+                }
+            }
+            else
+            {
+                fileout.println(node);
+            }
+        }
+        filein.close();
+        fileout.close(); 
+        tempFile.renameTo(project.getNodesFile());
+        
+        
+        tempFile = new File(project.getResultsFolder()+"/links.txt");
+        
+        filein = new Scanner(project.getLinksFile());
+        
+        fileout = new PrintStream(new FileOutputStream(tempFile), true);
+        
+        filein.nextLine();
+        fileout.println(ReadNetwork.getLinksFileHeader());
+        
+        while(filein.hasNextInt())
+        {
+            LinkRecord link = new LinkRecord(filein.nextLine());
+            
+            if(link.getSource() > dest_offset)
+            {
+                link.setSource(link.getSource() - diff);
+            }
+            if(link.getDest() > dest_offset)
+            {
+                link.setDest(link.getDest() - diff);
+            }
+            
+            fileout.println(link);
+        }
+        filein.close();
+        fileout.close();
+        
+        tempFile.renameTo(project.getLinksFile());
+        
+        
+        if(project instanceof DemandProject)
+        {
+            DemandProject demProject = (DemandProject)project;
+
+            tempFile = new File(project.getResultsFolder()+"/dynamic_od.txt");
+            filein = new Scanner(demProject.getDynamicODFile());
+
+            fileout = new PrintStream(new FileOutputStream(tempFile), true);
+
+            filein.nextLine();
+            fileout.println(ReadDemandNetwork.getDynamicODFileHeader());
+
+            while(filein.hasNextInt())
+            {
+                DynamicODRecord od = new DynamicODRecord(filein.nextLine());
+
+                if(od.getDest() > dest_offset)
+                {
+                    od.setDest(od.getDest() - diff);
+                }
+
+                fileout.println(od);
+            }
+            filein.close();
+            fileout.close();
+
+            tempFile.renameTo(demProject.getDynamicODFile());
+            
+            
+            
+            tempFile = new File(project.getResultsFolder()+"/static_od.txt");
+            
+            filein = new Scanner(demProject.getStaticODFile());
+
+            fileout = new PrintStream(new FileOutputStream(tempFile), true);
+
+            filein.nextLine();
+            fileout.println(ReadDemandNetwork.getStaticODFileHeader());
+
+            while(filein.hasNextInt())
+            {
+                StaticODRecord od = new StaticODRecord(filein.nextLine());
+
+                if(od.getDest() > dest_offset)
+                {
+                    od.setDest(od.getDest() - diff);
+                }
+
+                fileout.println(od);
+            }
+            filein.close();
+            fileout.close();
+            
+            tempFile.renameTo(demProject.getStaticODFile());
+        }
+        
     }
 }
