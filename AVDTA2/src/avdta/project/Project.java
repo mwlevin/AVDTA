@@ -589,6 +589,7 @@ public abstract class Project
         file = new File(dirStr+"/results");
         file.mkdirs();
         
+        
         createIndicatorFile(getTypeIndicator());
         
     }
