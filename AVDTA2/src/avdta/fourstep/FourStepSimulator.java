@@ -8,6 +8,7 @@ import avdta.demand.AST;
 import avdta.demand.DemandProfile;
 import avdta.demand.DynamicODTable;
 import avdta.demand.ReadDemandNetwork;
+import avdta.dta.Assignment;
 import avdta.dta.DTAResults;
 import avdta.dta.DTASimulator;
 import avdta.network.Path;
@@ -21,6 +22,7 @@ import avdta.network.node.Node;
 import avdta.network.node.Zone;
 import avdta.project.DTAProject;
 import avdta.project.FourStepProject;
+import avdta.util.FileTransfer;
 import avdta.vehicle.DriverType;
 import avdta.vehicle.PersonalVehicle;
 import java.io.File;
@@ -55,6 +57,8 @@ public class FourStepSimulator extends DTASimulator
     
     private int demand_asts;
     
+    private FourStepAssignment assign;
+    
     
     public FourStepSimulator(FourStepProject project)
     {
@@ -72,6 +76,12 @@ public class FourStepSimulator extends DTASimulator
         setOptions(project);
         
         costs = new HashMap<Zone, Map<Zone, CostTuple[]>>();
+    }
+    
+    
+    public Assignment createAssignment(int start_iter)
+    {
+        return assign;
     }
     
     /**
@@ -219,6 +229,8 @@ public class FourStepSimulator extends DTASimulator
     }
     public DTAResults four_step(int max_iter, int ta_iter, int pd_iter, double ta_min_gap, File output) throws IOException
     {
+        assign = new FourStepAssignment(getProject(), null, 1, 1);
+        
         int AV_type = ReadNetwork.DA_VEHICLE + ReadNetwork.AV + ReadNetwork.ICV;
         int HV_type = ReadNetwork.DA_VEHICLE + ReadNetwork.HV + ReadNetwork.ICV;
         int type = allAVs? AV_type : HV_type;
@@ -313,6 +325,8 @@ public class FourStepSimulator extends DTASimulator
             System.out.print("Traffic assignment...");
             time = System.nanoTime();
             results = traffic_assign(pd_iter, ta_iter, ta_min_gap);
+            assign.setFourStepIter(iter);
+            
             System.out.println("done. "+String.format("%.1f", (System.nanoTime() - time)/1.0e9));
             
             System.out.println("ITERATION "+iter+"\t"+String.format("%.2f", results.getGapPercent()));
@@ -328,6 +342,24 @@ public class FourStepSimulator extends DTASimulator
         return results;
     }
     
+    /**
+     * Saves the assignment in the given {@link Assignment} object.
+     * This calls {@link Assignment#writeToFile(java.util.List, avdta.project.DTAProject)}.
+     * @param assign the {@link Assignment} wrapper object
+     * @throws IOException if a file cannot be accessed
+     */
+    public void saveAssignment(Assignment assign) throws IOException
+    {        
+        super.saveAssignment(assign);
+        
+        FourStepAssignment matrix = (FourStepAssignment)assign;
+        FourStepProject project = getProject();
+        
+        FileTransfer.copy(project.getStaticODFile(), matrix.getStaticODFile());
+        FileTransfer.copy(project.getZonesFile(), matrix.getZonesFile());
+        FileTransfer.copy(project.getDynamicODFile(), matrix.getDynamicODFile());
+        FileTransfer.copy(project.getDemandProfileFile(), matrix.getDemandProfileFile());
+    }
     
     
     public static final int MAX_ITERATIONS = 10;

@@ -542,6 +542,11 @@ public class DTASimulator extends Simulator
         return msa_cont(start_iter, max_iter, -1);
     }
     
+    public Assignment createAssignment(int start_iter)
+    {
+        return new MSAAssignment(getProject(), null, start_iter);
+    }
+    
     /**
      * Runs the method of successive averages starting at the specified iteration.
      * @param start_iter the starting iteration. Note that this should be the 1 more than the stopping iteration of the previous assignment.
@@ -552,7 +557,7 @@ public class DTASimulator extends Simulator
      */
     public DTAResults msa_cont(int start_iter, int max_iter, double min_gap) throws IOException
     {
-        currAssign = new MSAAssignment(getProject(), null, start_iter);
+        currAssign = createAssignment(start_iter);
         
         if(statusUpdate != null)
         {

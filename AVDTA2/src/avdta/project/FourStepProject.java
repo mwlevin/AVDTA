@@ -49,6 +49,15 @@ public class FourStepProject extends DTAProject
     }
     
     /**
+     * Returns the assignments folder
+     * @return {@link Project#getProjectDirectory()}/assignments/
+     */
+    public String getAssignmentsFolder()
+    {
+        return getProjectDirectory()+"/assignments_fourstep";
+    }
+    
+    /**
      * Creates project subfolders inside the specified directory
      * @param dir the project directory
      * @throws IOException if a file cannot be created
@@ -62,6 +71,9 @@ public class FourStepProject extends DTAProject
      
         
         File file = new File(dirStr+"/fourstep");
+        file.mkdirs();
+        
+        file = new File(dirStr+"/assignments_fourstep");
         file.mkdirs();
         
         createIndicatorFile(super.getTypeIndicator());

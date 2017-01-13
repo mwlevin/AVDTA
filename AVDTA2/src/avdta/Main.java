@@ -102,19 +102,11 @@ public class Main
         DTASimulator sim = project.getSimulator();
         sim.msa(10);
 */
-        //GUI.main(args);
+        GUI.main(args);
         
         //new DTAGUI();
         
         
-        FourStepProject project = new FourStepProject(new File("projects/SiouxFalls"));
-        FourStepSimulator sim = project.getSimulator();
-        
-        
-        sim.four_step(1, 10, new File(project.getResultsFolder()+"/fourstep_log.txt"));
-        
-        
-        //new FourStepGUI();
         
         //removeDuplicateCentroids();
 
