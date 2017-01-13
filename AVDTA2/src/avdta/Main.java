@@ -17,6 +17,7 @@ import avdta.dta.DTAResults;
 import avdta.dta.DTASimulator;
 import avdta.dta.ReadDTANetwork;
 import avdta.dta.VehicleRecord;
+import avdta.fourstep.ReadFourStepNetwork;
 import avdta.gui.DTAGUI;
 import avdta.gui.FourStepGUI;
 import avdta.gui.GUI;
@@ -40,6 +41,7 @@ import avdta.network.node.*;
 import avdta.network.link.*;
 import avdta.network.link.cell.Cell;
 import avdta.network.node.policy.TransitFirst;
+import avdta.project.FourStepProject;
 import avdta.project.SAVProject;
 import avdta.sav.ReadSAVNetwork;
 import avdta.sav.SAVOrigin;
@@ -101,7 +103,15 @@ public class Main
 */
         //GUI.main(args);
         
-        new DTAGUI();
+        //new DTAGUI();
+        
+        /*
+        FourStepProject project = new FourStepProject(new File("projects/SiouxFalls"));
+        project.loadSimulator();
+        ReadFourStepNetwork read = new ReadFourStepNetwork();
+        read.createZonesFile(project);
+        */
+        new FourStepGUI();
         
         //removeDuplicateCentroids();
 

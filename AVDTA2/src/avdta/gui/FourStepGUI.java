@@ -56,7 +56,7 @@ public class FourStepGUI extends GUI implements AbstractGUIPanel
         JTabbedPane tabs = new JTabbedPane();
         
         networkPane = new NetworkPanel(this);
-        demandPane = new DemandPanel(this);
+        demandPane = new DemandPanel(this, true);
         transitPane = new TransitPanel(this);
         fourstepPane = new FourStepPanel(this);
         analysisPane = new AnalysisPanel(this);

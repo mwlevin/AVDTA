@@ -5,6 +5,9 @@
  */
 package avdta.fourstep;
 
+import avdta.demand.DemandProfile;
+import avdta.demand.DynamicODRecord;
+import avdta.demand.ReadDemandNetwork;
 import avdta.dta.DTASimulator;
 import avdta.dta.ReadDTANetwork;
 import avdta.network.Network;
@@ -18,8 +21,14 @@ import avdta.project.FourStepProject;
 import avdta.project.Project;
 import avdta.vehicle.DriverType;
 import avdta.vehicle.Vehicle;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Random;
 import java.util.Scanner;
 import java.util.Set;
 
@@ -128,10 +137,10 @@ public class ReadFourStepNetwork extends ReadDTANetwork
             
             while(filein.hasNext())
             {
+                
                 String key = filein.next().toLowerCase();
                 String val = filein.next().toLowerCase();
-                
-                project.setOption(key, val);
+                project.setFourStepOption(key, val);
                 
                 
             }
@@ -148,6 +157,73 @@ public class ReadFourStepNetwork extends ReadDTANetwork
     public static String getZonesFileHeader()
     {
         return "node\tproductions\tattractions\tarrival_time\tparking_fee";
+    }
+    
+    public void createZonesFile(FourStepProject project) throws IOException
+    {
+        createZonesFile(project, 1.0);
+    }
+    
+    public void createZonesFile(FourStepProject project, double scale) throws IOException
+    {
+        ReadDemandNetwork read = new ReadDemandNetwork();
+        
+        DemandProfile profile = read.readDemandProfile(project);
+        
+        
+        Map<Integer, Double[]> productions = new HashMap<Integer, Double[]>();
+        
+        int max_time = 0;
+        int ast_duration = Integer.parseInt(project.getOption("ast-duration"));
+        
+        Scanner filein = new Scanner(project.getDynamicODFile());
+        
+        filein.nextLine();
+        
+        while(filein.hasNextInt())
+        {
+            DynamicODRecord od = new DynamicODRecord(filein.nextLine());
+            
+
+            max_time = (int)Math.max(max_time, profile.get(od.getAST()).getEnd());
+            
+            if(productions.containsKey(od.getOrigin()))
+            {
+                Double[] temp = productions.get(od.getOrigin());
+                temp[0] += od.getDemand();
+            }
+            else
+            {
+                productions.put(od.getOrigin(), new Double[]{od.getDemand(), 0.0});
+            }
+            
+            if(productions.containsKey(od.getDest()))
+            {
+                Double[] temp = productions.get(od.getDest());
+                temp[1] += od.getDemand();
+            }
+            else
+            {
+                productions.put(od.getDest(), new Double[]{0.0, od.getDemand()});
+            }
+        }
+        filein.close();
+        
+        project.setOption("demand-asts", ""+(int)Math.ceil(max_time / ast_duration));
+        project.writeOptions();
+        
+        PrintStream fileout = new PrintStream(new FileOutputStream(project.getZonesFile()), true);
+        fileout.println(ReadFourStepNetwork.getZonesFileHeader());
+        
+        Random rand = new Random();
+        
+        for(int o : productions.keySet())
+        {
+            Double[] temp = productions.get(o);
+            double pat = rand.nextGaussian() * 7200;
+            fileout.println(o+"\t"+(temp[0]*scale)+"\t"+(temp[1]*scale)+"\t"+pat+"\t"+5);
+        }
+        fileout.close();
     }
     
 }

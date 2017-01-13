@@ -7,6 +7,7 @@ package avdta.project;
 
 import avdta.demand.ReadDemandNetwork;
 import avdta.dta.DTASimulator;
+import avdta.dta.ReadDTANetwork;
 import avdta.fourstep.FourStepSimulator;
 import avdta.fourstep.ReadFourStepNetwork;
 import avdta.network.ReadNetwork;
@@ -66,6 +67,36 @@ public class FourStepProject extends DTAProject
         createIndicatorFile(super.getTypeIndicator());
     }
     
+    /**
+     * Loads the {@link DTASimulator} using {@link ReadDTANetwork}
+     * @throws IOException if a file is not found
+     */
+    public void loadSimulator() throws IOException
+    {
+        try
+        {
+            ReadFourStepNetwork read = new ReadFourStepNetwork();  
+            
+            FourStepSimulator output = read.readNetwork(this);
+        
+            setSimulator(output);
+        }
+        catch(Exception ex)
+        {
+            ex.printStackTrace(System.err);
+            setSimulator(createEmptySimulator());
+        }
+
+    }
+    
+    /**
+     * Creates an empty {@link DTASimulator}
+     * @return an empty {@link DTASimulator}
+     */
+    public FourStepSimulator createEmptySimulator()
+    {
+        return new FourStepSimulator(this);
+    }
     
     /**
      * Writes empty FourStep files. Also calls {@link DTAProject#writeEmptyFiles()}

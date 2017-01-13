@@ -7,6 +7,7 @@ package avdta.gui.panels.demand;
 
 import avdta.demand.DynamicODTable;
 import avdta.dta.ReadDTANetwork;
+import avdta.fourstep.ReadFourStepNetwork;
 import avdta.gui.GUI;
 import avdta.gui.panels.AbstractGUIPanel;
 import avdta.gui.panels.GUIPanel;
@@ -14,6 +15,7 @@ import javax.swing.JPanel;
 import avdta.project.DemandProject;
 import java.awt.GridBagLayout;
 import static avdta.gui.util.GraphicUtils.*;
+import avdta.project.FourStepProject;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -32,12 +34,17 @@ import javax.swing.JTextField;
 public class PrepareDemandPanel extends GUIPanel
 {
     protected DemandProject project;
-    private JButton createDynamicOD, createStaticOD;
+    private JButton createDynamicOD, createStaticOD, createZones;
     
-    private JTextField AVs;
+    private JTextField AVs, demPct;
     private JButton changeType;
     
     public PrepareDemandPanel(AbstractGUIPanel parent)
+    {
+        this(parent, false);
+    }
+    
+    public PrepareDemandPanel(AbstractGUIPanel parent, boolean fourstep)
     {
        super(parent);
         setLayout(new GridBagLayout());
@@ -45,6 +52,8 @@ public class PrepareDemandPanel extends GUIPanel
         changeType = new JButton("Change type");
         createDynamicOD = new JButton("Create dynamic OD");
         createStaticOD = new JButton("Create static OD");
+        
+        
         
         AVs = new JTextField(5);
         AVs.setText("0");
@@ -75,6 +84,35 @@ public class PrepareDemandPanel extends GUIPanel
         
         constrain(this, p2, 0, 1, 1, 1);
         
+        
+        
+        
+        if(fourstep)
+        {
+            createZones = new JButton("Create zones");
+            demPct = new JTextField(5);
+            demPct.setText("100");
+            
+            p2 = new JPanel();
+            p2.setLayout(new GridBagLayout());
+            p2.setBorder(BorderFactory.createTitledBorder("Zones"));
+
+            constrain(p2, new JLabel("Percent of demand:"), 0, 0, 1, 1);
+            constrain(p2, demPct, 1, 0, 1, 1);
+            constrain(p2, createZones, 0, 1, 2, 1);
+
+            constrain(this, p2, 0, 2, 1, 1);
+            
+            createZones.addActionListener(new ActionListener()
+            {
+                public void actionPerformed(ActionEvent e)
+                {
+                    createZones();
+                }
+            });
+        }
+        
+        
         p.setPreferredSize(new Dimension((int)p2.getPreferredSize().getWidth(), (int)p.getPreferredSize().getHeight()));
         
         createDynamicOD.addActionListener(new ActionListener()
@@ -102,6 +140,44 @@ public class PrepareDemandPanel extends GUIPanel
         });
 
         reset();
+    }
+    
+    public void createZones()
+    {
+        try
+        {
+            Double.parseDouble(demPct.getText().trim());
+        }
+        catch(NumberFormatException ex)
+        {
+            demPct.setText("");
+            demPct.requestFocus();
+            return;
+        }
+        
+        parentSetEnabled(false);
+        
+        Thread t = new Thread()
+        {
+            public void run()
+            {
+                try
+                {
+                    double dem = Double.parseDouble(demPct.getText().trim());
+                    
+                    ReadFourStepNetwork read = new ReadFourStepNetwork();
+                    read.createZonesFile((FourStepProject)project, dem/100.0);
+                }
+                catch(Exception ex)
+                {
+                    GUI.handleException(ex);
+                }
+                
+                parentReset();
+                parentSetEnabled(true);
+            }
+        };
+        t.start();
     }
     
     public void createStaticOD()
@@ -217,6 +293,8 @@ public class PrepareDemandPanel extends GUIPanel
         createStaticOD.setEnabled(e);
         AVs.setEditable(e);
         changeType.setEnabled(e);
+        demPct.setEditable(e);
+        createZones.setEnabled(e);
         super.setEnabled(e);
     }
     

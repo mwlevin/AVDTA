@@ -24,11 +24,16 @@ public class DemandPanel extends GUIPanel
 
     public DemandPanel(AbstractGUIPanel parent)
     {
+        this(parent, false);
+    }
+    
+    public DemandPanel(AbstractGUIPanel parent, boolean fourstep)
+    {
         super(parent);
         setLayout(new GridBagLayout());
         
         importDemandPane = new ImportDemandPanel(this);
-        prepareDemandPane = new PrepareDemandPanel(this);
+        prepareDemandPane = new PrepareDemandPanel(this, fourstep);
         vehiclesPane = new VehiclesPanel(this);
         
         constrain(this, importDemandPane, 0, 0, 1, 1);
