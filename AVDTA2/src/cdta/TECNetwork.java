@@ -3,9 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package avdta.cdta;
+package cdta;
 
-import avdta.cdta.cell.Cell;
+import cdta.cell.Cell;
 import avdta.network.Simulator;
 import java.util.Set;
 

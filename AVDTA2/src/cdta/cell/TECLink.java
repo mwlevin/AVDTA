@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package avdta.cdta.cell;
+package cdta.cell;
 
 import avdta.network.Simulator;
 import avdta.network.link.Link;

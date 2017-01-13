@@ -5,7 +5,7 @@
  */
 package avdta.project;
 
-import avdta.cdta.TECNetwork;
+import cdta.TECNetwork;
 import java.io.File;
 import java.io.IOException;
 
