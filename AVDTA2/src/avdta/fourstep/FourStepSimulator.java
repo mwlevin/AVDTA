@@ -7,6 +7,7 @@ package avdta.fourstep;
 import avdta.demand.AST;
 import avdta.demand.DemandProfile;
 import avdta.demand.DynamicODTable;
+import avdta.demand.ReadDemandNetwork;
 import avdta.dta.DTAResults;
 import avdta.dta.DTASimulator;
 import avdta.network.Path;
@@ -61,7 +62,7 @@ public class FourStepSimulator extends DTASimulator
         
         setOptions(project);
         
-        
+        costs = new HashMap<Zone, Map<Zone, CostTuple[]>>();
     }
     
     public FourStepSimulator(FourStepProject project, Set<Node> nodes, Set<Link> links)
@@ -69,6 +70,8 @@ public class FourStepSimulator extends DTASimulator
         super(project, nodes, links);
         
         setOptions(project);
+        
+        costs = new HashMap<Zone, Map<Zone, CostTuple[]>>();
     }
     
     /**
@@ -224,6 +227,7 @@ public class FourStepSimulator extends DTASimulator
         
         FourStepProject project = getProject();
         ReadFourStepNetwork read = new ReadFourStepNetwork();
+        read.setNodesMap(createNodeIdsMap());
         
         // write demand profile
         DemandProfile profile = new DemandProfile();
@@ -294,6 +298,8 @@ public class FourStepSimulator extends DTASimulator
                     
             odtable.printDynamicOD(project);
             odtable.printStaticOD(project);
+            createDemandProfile(project, odtable);
+            
             read.prepareDemand(project, 1);
             
             read.readVehicles(project, this);
@@ -326,6 +332,22 @@ public class FourStepSimulator extends DTASimulator
     
     public static final int MAX_ITERATIONS = 10;
     public static final double MAX_ERROR = 0.0001;
+    
+    
+    public void createDemandProfile(FourStepProject project, DynamicODTable table) throws IOException
+    {
+        int max_ast = table.getMaxAST();
+        
+        PrintStream fileout = new PrintStream(new FileOutputStream(project.getDemandProfileFile()), true);
+        fileout.println(ReadDemandNetwork.getDemandProfileFileHeader());
+        
+        int ast_duration = Integer.parseInt(project.getOption("ast-duration"));
+        
+        for(int ast = 0; ast <= max_ast; ast++)
+        {
+            fileout.println(ast+"\t"+1+"\t"+(ast*ast_duration)+"\t"+ast_duration);
+        }
+    }
     
     public double trip_distribution(double step)
     {
@@ -463,6 +485,7 @@ public class FourStepSimulator extends DTASimulator
     
     public void initCosts()
     {
+
         for(Zone o : zones)
         {
             Map<Zone, CostTuple[]> temp;

@@ -167,6 +167,11 @@ public class ReadNetwork
         mesodelta = 0.5;
     }
     
+    public void setNodesMap(Map<Integer, Node> map)
+    {
+        nodesmap = map;
+    }
+    
     /**
      * Creates a {@link Simulator} corresponding to the data contained with the specified project.
      * If the project is a {@link TransitProject}, transit vehicles will be added.
@@ -585,6 +590,7 @@ public class ReadNetwork
                 {
                     nodesmap.put(z.getId(), z);
                     nodes.add(z);
+
                 }
             }
             else
@@ -592,12 +598,13 @@ public class ReadNetwork
                 node = new Intersection(id, new Location(x, y), null);
                 nodesmap.put(id, node);
                 nodes.add(node);
+
             }
             
             
         }
         filein.close();
-        
+
         return nodes;
     }
     

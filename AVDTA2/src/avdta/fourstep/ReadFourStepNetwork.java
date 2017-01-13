@@ -65,7 +65,7 @@ public class ReadFourStepNetwork extends ReadDTANetwork
         readIntersections(project);
         readPhases(project);
         
-        readZones(project);
+        
         
         
         FourStepSimulator sim = new FourStepSimulator(project, nodes, links);
@@ -75,6 +75,8 @@ public class ReadFourStepNetwork extends ReadDTANetwork
         sim.initialize();
         
         
+        readZones(project);
+
         
         return sim;
     }
@@ -106,6 +108,7 @@ public class ReadFourStepNetwork extends ReadDTANetwork
                     dest.setAttractions(a);
                     dest.setPreferredArrivalTime(pat);
                     dest.setParkingFee(parkFee);
+
                 }
                 else
                 {
@@ -209,7 +212,8 @@ public class ReadFourStepNetwork extends ReadDTANetwork
         }
         filein.close();
         
-        project.setOption("demand-asts", ""+(int)Math.ceil(max_time / ast_duration));
+        int dem_asts = (int)Math.ceil(max_time / ast_duration);
+        project.setOption("demand-asts", ""+dem_asts);
         project.writeOptions();
         
         PrintStream fileout = new PrintStream(new FileOutputStream(project.getZonesFile()), true);
@@ -217,10 +221,12 @@ public class ReadFourStepNetwork extends ReadDTANetwork
         
         Random rand = new Random();
         
+        double dem_duration = dem_asts * ast_duration;
+        
         for(int o : productions.keySet())
         {
             Double[] temp = productions.get(o);
-            double pat = rand.nextGaussian() * 7200;
+            double pat = rand.nextGaussian() * dem_duration;
             fileout.println(o+"\t"+(temp[0]*scale)+"\t"+(temp[1]*scale)+"\t"+pat+"\t"+5);
         }
         fileout.close();

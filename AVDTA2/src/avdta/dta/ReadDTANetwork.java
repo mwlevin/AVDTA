@@ -144,8 +144,8 @@ public class ReadDTANetwork extends ReadDemandNetwork
                     throw new RuntimeException("Dest is null: "+dest_id);
                 }
                 
-                origin.addProductions(1);
-                dest.addAttractions(1);
+                //origin.addProductions(1);
+                //dest.addAttractions(1);
                 
                 VehicleClass vehClass = null;
                 DriverType driver = null;

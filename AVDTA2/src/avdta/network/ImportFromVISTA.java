@@ -11,6 +11,7 @@ import avdta.demand.StaticODRecord;
 import avdta.dta.DTASimulator;
 import avdta.network.link.Link;
 import avdta.network.link.LinkRecord;
+import avdta.network.node.Node;
 import avdta.network.node.NodeRecord;
 import avdta.project.DTAProject;
 import avdta.project.DemandProject;
@@ -292,7 +293,7 @@ public class ImportFromVISTA
         }
         
         Simulator sim = project.getSimulator();
-        Map<Integer, Link> linksmap = sim.createLinkIdsMap();
+        Map<Integer, Node> nodesmap = sim.createNodeIdsMap();
         
         Scanner filein = new Scanner(project.getNodesFile());
         
@@ -311,7 +312,7 @@ public class ImportFromVISTA
             
             if(node.getId() > dest_offset)
             {
-                if(linksmap.containsKey(node.getId() - diff))
+                if(nodesmap.containsKey(node.getId() - diff))
                 {
                     
                 }

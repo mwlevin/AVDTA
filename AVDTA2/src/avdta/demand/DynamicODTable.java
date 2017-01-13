@@ -76,6 +76,36 @@ public class DynamicODTable implements Iterable<DynamicODRecord>
         filein.close();
     }
     
+    public int getMaxAST()
+    {
+        int output = 0;
+        
+        for(int o : table.keySet())
+        {
+            Map<Integer, Map<Integer, Map<Integer, Double>>> temp = table.get(o);
+            
+            for(int d : temp.keySet())
+            {
+                Map<Integer, Map<Integer, Double>> temp2 = temp.get(d);
+                
+                for(int type : temp2.keySet())
+                {
+                    Map<Integer, Double> temp3 = temp2.get(type);
+                    
+                    for(int ast : temp3.keySet())
+                    {
+                        if(ast > output)
+                        {
+                            output = ast;
+                        }
+                    }
+                }
+            }
+        }
+        
+        return output;
+    }
+    
     /**
      * Adds the specified {@link DynamicODRecord} to the table.
      * @param odt the {@link DynamicODRecord} to be added
