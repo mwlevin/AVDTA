@@ -9,10 +9,8 @@ package cdta.cell;
  *
  * @author micha
  */
-public class OrdinaryConnector extends Connector
+public class OrdinaryConnector extends SameCellConnector
 {
-    private boolean reservation, congestion;
-    
     private int y;
     
     public OrdinaryConnector()
@@ -20,10 +18,6 @@ public class OrdinaryConnector extends Connector
         
     }
     
-    public boolean isConnected(Cell i, Cell j)
-    {
-        return reservation && congestion;
-    }
     
     public int getY(Cell i, Cell j)
     {
@@ -33,15 +27,5 @@ public class OrdinaryConnector extends Connector
     public void addY(Cell i, Cell j)
     {
         y ++;
-    }
-    
-    public void setReservationConnectivity(Cell i, Cell j, boolean connect)
-    {
-        reservation = connect;
-    }
-    
-    public void setCongestionConnectivity(Cell i, Cell j, boolean connect)
-    {
-        congestion = connect;
     }
 }

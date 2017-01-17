@@ -11,10 +11,12 @@ package cdta.cell;
  */
 public class SourceCell extends Cell
 {
-    public SourceCell(int t)
+    public SourceCell(int id, int t)
     {
         super(null, t);
+        setId(id);
     }
+    
     
     public int getJamDensity()
     {

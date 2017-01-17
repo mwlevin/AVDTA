@@ -6,7 +6,7 @@
 package cdta.cell;
 
 import avdta.network.Simulator;
-import cdta.cell.TECLink;
+import cdta.TECLink;
 
 /**
  *
@@ -14,7 +14,6 @@ import cdta.cell.TECLink;
  */
 public class Cell 
 {
-    private static int next_id = 0;
     private int id;
     
     private Connector[] out;
@@ -34,7 +33,32 @@ public class Cell
     {
         this.t = t;
         
-        id = ++next_id;
+        out = new Connector[0];
+    }
+    
+    public void setN(int n)
+    {
+        this.n = n;
+    }
+    
+    public int getN()
+    {
+        return n;
+    }
+    
+    public void addN(int n)
+    {
+        this.n += n;
+    }
+    
+    public void setId(int id)
+    {
+        this.id = id;
+    }
+    
+    public int getId()
+    {
+        return id;
     }
     
     public int hashCode()
@@ -47,6 +71,28 @@ public class Cell
         return out;
     }
     
+    public void setOutgoing(Connector[] out)
+    {
+        this.out = out;
+    }
+    
+    public void setOutgoing(Connector out)
+    {
+        setOutgoing(new Connector[]{out});
+    }
+    
+    public void addOutgoing(Connector c)
+    {
+        Connector[] output = new Connector[out.length+1];
+        
+        for(int i = 0; i < out.length; i++)
+        {
+            output[i] = out[i];
+        }
+        
+        output[output.length-1] = c;
+        setOutgoing(output);
+    }
     
     /**
      * Returns the length associated with this cell.

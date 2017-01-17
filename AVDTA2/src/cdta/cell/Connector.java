@@ -19,4 +19,5 @@ public abstract class Connector
     
     public abstract void setReservationConnectivity(Cell i, Cell j, boolean connect);
     public abstract void setCongestionConnectivity(Cell i, Cell j, boolean connect);
+    public abstract void initConnectivity();
 }

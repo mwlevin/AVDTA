@@ -11,9 +11,11 @@ package cdta.cell;
  */
 public class SinkCell extends Cell
 {
-    public SinkCell(int t)
+    public SinkCell(int id, int t)
     {
         super(null, t);
+        
+        setId(id);
     }
     
     public int getJamDensity()

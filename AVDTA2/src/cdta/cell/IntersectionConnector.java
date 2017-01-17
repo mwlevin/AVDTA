@@ -5,6 +5,9 @@
  */
 package cdta.cell;
 
+
+import avdta.network.node.TBR;
+import cdta.TECLink;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -16,11 +19,7 @@ public class IntersectionConnector extends Connector
 {
     private Map<Cell, Map<Cell, Tuple>> connected;
     
-   
-    
-    
-    
-    public IntersectionConnector()
+    public IntersectionConnector(TBR inter)
     {
         connected = new HashMap<Cell, Map<Cell, Tuple>>();
     }
@@ -83,6 +82,11 @@ public class IntersectionConnector extends Connector
         return output;
     }
     
+    public void addConnection(TECLink i, TECLink j, int t)
+    {
+        makeTuple(i.getLastCell(t), j.getFirstCell(t+1));
+    }
+    
     public void setReservationConnectivity(Cell i, Cell j, boolean connect)
     {
         Tuple tuple = makeTuple(i, j);
@@ -95,10 +99,32 @@ public class IntersectionConnector extends Connector
         tuple.congested = connect;
     }
     
+    public void initConnectivity()
+    {
+        for(Cell i : connected.keySet())
+        {
+            Map<Cell, Tuple> temp = connected.get(i);
+            
+            for(Cell j : temp.keySet())
+            {
+                Tuple tuple = temp.get(j);
+                tuple.reservation = true;
+                tuple.congested = false;
+            }
+        }
+    }
+    
     private static class Tuple
     {
         public int y;
         public boolean reservation;
         public boolean congested;
+        
+        //private ConflictRegion[] conflicts;
+        
+        public Tuple()
+        {
+            
+        }
     }
 }
