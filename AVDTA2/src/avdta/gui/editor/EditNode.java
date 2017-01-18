@@ -88,7 +88,7 @@ public class EditNode extends JPanel
     
     public EditNode(Editor editor_)
     {
-        this.editor = editor;
+        this.editor = editor_;
         id = new JTextField(6);
         
         type = new JComboBox(TYPES);
@@ -327,7 +327,9 @@ public class EditNode extends JPanel
             }
         }
         
+
         selected.setSelected(prev.isSelected());
+      
         selected.setEnabled(true);
         
         
