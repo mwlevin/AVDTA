@@ -111,6 +111,15 @@ public abstract class TBR extends IntersectionControl
     }
     
     /**
+     * Returns a set containing all {@link ConflictRegion}s associated with this intersection.
+     * @return a set containing all {@link ConflictRegion}s
+     */
+    public Set<ConflictRegion> getConflicts()
+    {
+        return allConflicts;
+    }
+    
+    /**
      * Returns whether the specified turning movement is valid. 
      * A turning movement is valid if there is a set of associated {@link ConflictRegion}s. U-turns are not valid, but all other turns are.
      * The {@link DriverType} is not checked here. It is checked in the {@link Link} class.

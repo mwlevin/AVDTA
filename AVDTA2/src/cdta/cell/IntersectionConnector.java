@@ -6,9 +6,13 @@
 package cdta.cell;
 
 
+import avdta.network.link.Link;
+import avdta.network.node.ConflictRegion;
 import avdta.network.node.TBR;
 import cdta.TECLink;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -19,9 +23,13 @@ public class IntersectionConnector extends Connector
 {
     private Map<Cell, Map<Cell, Tuple>> connected;
     
+
+    
     public IntersectionConnector(TBR inter)
     {
         connected = new HashMap<Cell, Map<Cell, Tuple>>();
+        
+        
     }
     
     public boolean isConnected(Cell i, Cell j)
@@ -82,9 +90,30 @@ public class IntersectionConnector extends Connector
         return output;
     }
     
-    public void addConnection(TECLink i, TECLink j, int t)
+    public void addConnection(TECLink i, TECLink j, Link i_real, Link j_real, int t, TBR inter, List<TECConflictRegion> allConflicts)
     {
-        makeTuple(i.getLastCell(t), j.getFirstCell(t+1));
+        List<TECConflictRegion> conflicts = new ArrayList<TECConflictRegion>();
+        
+        for(ConflictRegion cr : inter.getConflicts(i_real, j_real))
+        {
+            conflicts.add(findCR(allConflicts, cr.getId()));
+        }
+        
+        Tuple tuple = makeTuple(i.getLastCell(t), j.getFirstCell(t+1));
+        tuple.setConflicts(conflicts);
+    }
+    
+    private TECConflictRegion findCR(List<TECConflictRegion> allConflicts, int id)
+    {
+        for(TECConflictRegion c : allConflicts)
+        {
+            if(c.getId() == id)
+            {
+                return c;
+            }
+        }
+        
+        return null;
     }
     
     public void setReservationConnectivity(Cell i, Cell j, boolean connect)
@@ -119,12 +148,23 @@ public class IntersectionConnector extends Connector
         public int y;
         public boolean reservation;
         public boolean congested;
+
         
-        //private ConflictRegion[] conflicts;
+        public TECConflictRegion[] conflicts;
         
         public Tuple()
         {
             
+        }
+        
+        public void setConflicts(List<TECConflictRegion> list)
+        {
+            conflicts = new TECConflictRegion[list.size()];
+            
+            for(int i = 0; i < conflicts.length; i++)
+            {
+                conflicts[i] = list.get(i);
+            }
         }
     }
 }

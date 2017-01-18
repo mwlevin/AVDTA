@@ -48,6 +48,7 @@ public class ConflictRegion implements Serializable
         
     }
     
+    
     /**
      * 
      * @return the remaining flow for this time step

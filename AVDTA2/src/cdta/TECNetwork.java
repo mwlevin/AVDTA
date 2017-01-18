@@ -9,13 +9,17 @@ import cdta.cell.Cell;
 import avdta.network.Simulator;
 import avdta.network.link.CentroidConnector;
 import avdta.network.link.Link;
+import avdta.network.node.ConflictRegion;
 import avdta.network.node.Intersection;
 import avdta.network.node.PriorityTBR;
 import cdta.cell.Connector;
 import cdta.cell.IntersectionConnector;
 import cdta.cell.SameCellConnector;
+import cdta.cell.TECConflictRegion;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -56,7 +60,8 @@ public class TECNetwork
             }
         }
         
-        T = Simulator.duration / Simulator.dt;
+        //T = Simulator.duration / Simulator.dt;
+        T = 3600*4/Simulator.dt;
         
         for(TECLink link : links)
         {
@@ -85,13 +90,21 @@ public class TECNetwork
                 {
                     IntersectionConnector inter = new IntersectionConnector(tbr);
                     
+                    // construct this outside to avoid storing a list inside
+                    List<TECConflictRegion> conflicts = new ArrayList<TECConflictRegion>();
+        
+                    for(ConflictRegion cr : tbr.getConflicts())
+                    {
+                        conflicts.add(new TECConflictRegion(cr.getId()));
+                    }
+                    
                     tec.getLastCell(t).addOutgoing(inter);
                 
                     for(Link o : link.getDest().getOutgoing())
                     {
                         TECLink tec2 = tecmap.get(o.getId());
 
-                        inter.addConnection(tec, tec2, t); 
+                        inter.addConnection(tec, tec2, link, o, t, tbr, conflicts); 
                     }
                 }
             }
