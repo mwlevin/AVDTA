@@ -12,8 +12,9 @@ package cdta.cell;
 public class SameCellConnector extends Connector
 {
     private boolean reservation, congestion;
+
     
-    public SameCellConnector()
+    public SameCellConnector(Cell i, Cell j)
     {
         
     }
@@ -24,6 +25,16 @@ public class SameCellConnector extends Connector
     }
     
     public int sumY()
+    {
+        return 0;
+    }
+    
+    public int sumYIn(Cell i)
+    {
+        return 0;
+    }
+    
+    public int sumYOut(Cell j)
     {
         return 0;
     }
@@ -54,9 +65,21 @@ public class SameCellConnector extends Connector
         reservation = connect;
     }
     
+    public void setReservationConnectivity(boolean connect)
+    {
+        reservation = connect;
+    }
+    
     public void setCongestionConnectivity(Cell i, Cell j, boolean connect)
     {
         congestion = connect;
     }
+    
+    public void setCongestionConnectivity(boolean connect)
+    {
+        congestion = connect;
+    }
+    
+
 
 }

@@ -67,11 +67,11 @@ public class TECConnector extends TECLink
     {
         if(source)
         {
-            return new SourceCell(id, t);
+            return new SourceCell(0, id, t);
         }
         else
         {
-            return new SinkCell(id, t);
+            return new SinkCell(0, id, t);
         }
     }
 }

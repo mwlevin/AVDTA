@@ -15,6 +15,8 @@ import avdta.network.node.PriorityTBR;
 import cdta.cell.Connector;
 import cdta.cell.IntersectionConnector;
 import cdta.cell.SameCellConnector;
+import cdta.cell.SourceCell;
+import cdta.cell.StartCell;
 import cdta.cell.TECConflictRegion;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -60,8 +62,9 @@ public class TECNetwork
             }
         }
         
+        
         //T = Simulator.duration / Simulator.dt;
-        T = 3600*4/Simulator.dt;
+        T = 3600/Simulator.dt;
         
         for(TECLink link : links)
         {
@@ -98,7 +101,8 @@ public class TECNetwork
                         conflicts.add(new TECConflictRegion(cr.getId()));
                     }
                     
-                    tec.getLastCell(t).addOutgoing(inter);
+                    
+                    tec.getLastCell(t).setNextCellConnector(inter);
                 
                     for(Link o : link.getDest().getOutgoing())
                     {
@@ -127,17 +131,21 @@ public class TECNetwork
                         return false;
                     }
                     
-                    double y_tot = 0;
+                    double y_tot = cell.getNextCellConnector().sumY();;
                     
-                    for(Connector e : cell.getOutgoing())
+                    if(!cell.getSameCellConnector().validate())
                     {
-                        if(!e.validate())
-                        {
-                            System.err.println("Connector issue");
-                            return false;
-                        }
-                        y_tot += e.sumY();
+                        System.err.println("Connector issue");
+                        return false;
                     }
+                    
+                    if(!cell.getNextCellConnector().validate())
+                    {
+                        System.err.println("Connector issue");
+                        return false;
+                    }
+                    
+  
                     
                     if(y_tot > cell.getSendingFlow())
                     {
@@ -164,18 +172,82 @@ public class TECNetwork
                     Cell cell = l.getCell(c, t);
                     cell.setN(0);
                     
-                    for(Connector edge : cell.getOutgoing())
+                    cell.getSameCellConnector().initConnectivity();
+                    cell.getNextCellConnector().initConnectivity();
+                    
+                    if(c == l.getNumCells()-1)
                     {
-                        edge.initConnectivity();
-                        
-                        if((edge instanceof SameCellConnector) && c == l.getNumCells()-1)
-                        {
-                            edge.setCongestionConnectivity(cell, cell, false);
-                        }
+                        cell.getSameCellConnector().setCongestionConnectivity(cell, cell, true);
                     }
+                    
                 }
             }
         }
+    }
+    
+    public void reserve(Trajectory path)
+    {
+        // update n and y
+        for(int x = 0; x < path.size()-1; x++)
+        {
+            Cell i = path.get(x);
+            Cell j = path.get(x+1);
+            
+            i.addN();
+            
+            if(i.getId() != j.getId())
+            {
+                i.getNextCellConnector().addY(i, j);
+            }
+        }
+        path.get(path.size()-1).addN();
+        
+        // break reservation connectivity
+        
+        // capacity constraint
+        for(Cell c : path)
+        {
+            int t = c.getT();
+            
+            if(c.getN() +1 > c.getCapacity())
+            {
+
+                if(t > 0)
+                {
+                    c.getLink().getCell(c.getId(), t-1).getSameCellConnector().setReservationConnectivity(false);
+                }
+                c.getSameCellConnector().setCongestionConnectivity(true);
+            }
+            
+            // receiving flow check
+            if(c.getId() > 0)
+            {
+                Cell inc = c.getLink().getCell(c.getId()-1, t-1);
+                
+                if(inc.getNextCellConnector().getY(inc, c) > c.getReceivingFlow())
+                {
+                    c.getSameCellConnector().setCongestionConnectivity(true);
+                }
+            }
+            /*
+            else if(!(c instanceof SourceCell))
+            {
+                StartCell cell = (StartCell)c;
+                IntersectionConnector edge = cell.getIncConnector();
+                
+                if(edge.sumYOut(cell) > cell.getReceivingFlow())
+                {
+                    for(Cell i : edge.getIncoming())
+                    {
+                        i.getSameCellConnector().setCongestionConnectivity(true);
+                    }
+                }
+            }
+            */
+        }
+        
+        // congestion connectivity
+        
     }
     
 }

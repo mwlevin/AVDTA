@@ -16,7 +16,9 @@ public class Cell
 {
     private int id;
     
-    private Connector[] out;
+    private SameCellConnector sameCell;
+    private Connector nextCell;
+    
     private int t;
     
     private TECLink link;
@@ -29,13 +31,21 @@ public class Cell
     public Cell prev;
     public double label;
     
-    public Cell(TECLink link, int t)
+    public Cell(TECLink link, int id, int t)
     {
         this.t = t;
         this.link = link;
-        
-        out = new Connector[0];
-        
+        this.id = id;
+    }
+    
+    public TECLink getLink()
+    {
+        return link;
+    }
+    
+    public int getT()
+    {
+        return t;
     }
     
     public int getSendingFlow()
@@ -53,9 +63,9 @@ public class Cell
         return n;
     }
     
-    public void addN(int n)
+    public void addN()
     {
-        this.n += n;
+        this.n ++;
     }
     
     public void setId(int id)
@@ -72,33 +82,25 @@ public class Cell
     {
         return id;
     }
-    
-    public Connector[] getOutgoing()
+
+    public SameCellConnector getSameCellConnector()
     {
-        return out;
+        return sameCell;
     }
     
-    public void setOutgoing(Connector[] out)
+    public void setSameCellConnector(SameCellConnector c)
     {
-        this.out = out;
+        sameCell = c;
     }
     
-    public void setOutgoing(Connector out)
+    public Connector getNextCellConnector()
     {
-        setOutgoing(new Connector[]{out});
+        return nextCell;
     }
     
-    public void addOutgoing(Connector c)
+    public void setNextCellConnector(Connector c)
     {
-        Connector[] output = new Connector[out.length+1];
-        
-        for(int i = 0; i < out.length; i++)
-        {
-            output[i] = out[i];
-        }
-        
-        output[output.length-1] = c;
-        setOutgoing(output);
+        nextCell = c;
     }
     
     /**

@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  *
@@ -30,6 +31,16 @@ public class IntersectionConnector extends Connector
         connected = new HashMap<Cell, Map<Cell, Tuple>>();
         
         
+    }
+    
+    public Set<Cell> getIncoming()
+    {
+        return connected.keySet();
+    }
+    
+    public boolean connects(Cell i, Cell j)
+    {
+        return connected.containsKey(i) && connected.get(i).containsKey(j);
     }
     
     public boolean validate()
@@ -122,6 +133,8 @@ public class IntersectionConnector extends Connector
         
         Tuple tuple = makeTuple(i.getLastCell(t), j.getFirstCell(t+1));
         tuple.setConflicts(conflicts);
+        
+        ((StartCell)j.getFirstCell(t+1)).setIncConnector(this);
     }
     
     private TECConflictRegion findCR(List<TECConflictRegion> allConflicts, int id)
@@ -151,6 +164,41 @@ public class IntersectionConnector extends Connector
             }
         }
        
+        return output;
+    }
+    
+    public int sumYIn(Cell i)
+    {
+        if(!connected.containsKey(i))
+        {
+            return 0;
+        }
+        
+        int output = 0;
+        
+        Map<Cell, Tuple> temp = connected.get(i);
+        
+        for(Cell j : temp.keySet())
+        {
+            output += temp.get(j).y;
+        }
+        
+        return output;
+    }
+    
+    public int sumYOut(Cell j)
+    {
+        int output = 0;
+        
+        for(Cell i : connected.keySet())
+        {
+            Map<Cell, Tuple> temp = connected.get(i);
+            
+            if(temp.containsKey(j))
+            {
+                output += temp.get(j).y;
+            }
+        }
         return output;
     }
     

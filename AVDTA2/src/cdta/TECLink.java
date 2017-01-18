@@ -7,10 +7,12 @@ package cdta;
 
 import avdta.network.Simulator;
 import avdta.network.link.Link;
+import cdta.cell.StartCell;
 import cdta.cell.Cell;
 import cdta.cell.Connector;
 import cdta.cell.OrdinaryConnector;
 import cdta.cell.SameCellConnector;
+import java.util.Map;
 
 /**
  *
@@ -24,6 +26,7 @@ public class TECLink
     private int numCells;
     
     private Cell[][] cells;
+
     
     public TECLink(Link link)
     {
@@ -35,7 +38,10 @@ public class TECLink
         meso_delta = link.getWaveSpeed() / link.getFFSpeed();
         
         this.id = link.getId();
+        
+        
     }
+
     
     public Cell getFirstCell(int t)
     {
@@ -70,7 +76,7 @@ public class TECLink
         {
             for(int t = 0; t < T; t++)
             {
-                cells[c][t] = createCell(t);
+                cells[c][t] = createCell(c, t);
             }
         }
         
@@ -78,19 +84,27 @@ public class TECLink
         {
             for(int t = 0; t < T-1; t++)
             {
-                cells[c][t].setOutgoing(new Connector[]{new SameCellConnector(), new OrdinaryConnector()});
+                cells[c][t].setSameCellConnector(new SameCellConnector(cells[c][t], cells[c][t+1]));
+                cells[c][t].setNextCellConnector(new OrdinaryConnector(cells[c][t], cells[c+1][t+1]));
             }
         }
         
         for(int t = 0; t < T-1; t++)
         {
-            cells[numCells-1][t].setOutgoing(new SameCellConnector());
+            cells[numCells-1][t].setSameCellConnector(new SameCellConnector(cells[numCells-1][t], cells[numCells-1][t+1]));
         }
     }
     
-    public Cell createCell(int t)
+    public Cell createCell(int c, int t)
     {
-        return new Cell(this, t);
+        if(c == 0)
+        {
+            return new StartCell(this, c, t);
+        }
+        else
+        {
+            return new Cell(this, c, t);
+        }
     }
     
     public int getId()

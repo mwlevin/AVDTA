@@ -14,6 +14,7 @@ public abstract class Connector
     
     
     public abstract int getY(Cell i, Cell j);
+    public abstract void addY(Cell i, Cell j);
     
     public abstract boolean isConnected(Cell i, Cell j);
     
@@ -22,5 +23,7 @@ public abstract class Connector
     public abstract void initConnectivity();
     
     public abstract int sumY();
+    public abstract int sumYIn(Cell i);
+    public abstract int sumYOut(Cell j);
     public abstract boolean validate();
 }

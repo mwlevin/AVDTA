@@ -9,13 +9,19 @@ package cdta.cell;
  *
  * @author micha
  */
-public class SinkCell extends Cell
+public class SinkCell extends StartCell
 {
-    public SinkCell(int id, int t)
+    private int zoneId;
+    
+    public SinkCell(int id, int zoneId, int t)
     {
-        super(null, t);
-        
-        setId(id);
+        super(null, id, t);
+        this.zoneId = zoneId;
+    }
+    
+    public int getZoneId()
+    {
+        return zoneId;
     }
     
     public int getJamD()

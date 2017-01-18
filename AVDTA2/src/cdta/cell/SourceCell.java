@@ -11,12 +11,18 @@ package cdta.cell;
  */
 public class SourceCell extends Cell
 {
-    public SourceCell(int id, int t)
+    private int zoneId;
+    
+    public SourceCell(int id, int zoneId, int t)
     {
-        super(null, t);
-        setId(id);
+        super(null, id,  t);
+        this.zoneId = zoneId;
     }
     
+    public int getZoneId()
+    {
+        return zoneId;
+    }
     
     public int getJamD()
     {

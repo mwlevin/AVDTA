@@ -13,9 +13,9 @@ public class OrdinaryConnector extends SameCellConnector
 {
     private int y;
     
-    public OrdinaryConnector()
+    public OrdinaryConnector(Cell i, Cell j)
     {
-        
+        super(i, j);
     }
     
     public boolean validate()
@@ -24,6 +24,16 @@ public class OrdinaryConnector extends SameCellConnector
     }
     
     public int sumY()
+    {
+        return y;
+    }
+    
+    public int sumYIn(Cell i)
+    {
+        return y;
+    }
+    
+    public int sumYOut(Cell j)
     {
         return y;
     }
