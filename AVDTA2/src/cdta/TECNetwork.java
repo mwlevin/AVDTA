@@ -111,6 +111,48 @@ public class TECNetwork
         }
     }
     
+    public boolean validate()
+    {
+        for(TECLink link : links)
+        {
+            for(int c = 0; c < link.getNumCells(); c++)
+            {
+                for(int t = 0; t < T; t++)
+                {
+                    Cell cell = link.getCell(c, t);
+                    
+                    if(cell.getN() > cell.getJamD())
+                    {
+                        System.err.println("n > jam density");
+                        return false;
+                    }
+                    
+                    double y_tot = 0;
+                    
+                    for(Connector e : cell.getOutgoing())
+                    {
+                        if(!e.validate())
+                        {
+                            System.err.println("Connector issue");
+                            return false;
+                        }
+                        y_tot += e.sumY();
+                    }
+                    
+                    if(y_tot > cell.getSendingFlow())
+                    {
+                        System.err.println("y > sending flow");
+                        return false;
+                    }
+                }
+            }
+        }
+        
+        
+        
+        return true;
+    }
+    
     public void initializeConnectivity()
     {
         for(TECLink l : links)

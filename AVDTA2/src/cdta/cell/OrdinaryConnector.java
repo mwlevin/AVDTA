@@ -18,6 +18,15 @@ public class OrdinaryConnector extends SameCellConnector
         
     }
     
+    public boolean validate()
+    {
+        return true;
+    }
+    
+    public int sumY()
+    {
+        return y;
+    }
     
     public int getY(Cell i, Cell j)
     {

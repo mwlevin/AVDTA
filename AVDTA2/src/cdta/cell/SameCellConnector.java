@@ -17,6 +17,16 @@ public class SameCellConnector extends Connector
     {
         
     }
+
+    public boolean validate()
+    {
+        return true;
+    }
+    
+    public int sumY()
+    {
+        return 0;
+    }
     
     public void initConnectivity()
     {

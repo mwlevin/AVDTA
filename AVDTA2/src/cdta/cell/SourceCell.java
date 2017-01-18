@@ -18,7 +18,7 @@ public class SourceCell extends Cell
     }
     
     
-    public int getJamDensity()
+    public int getJamD()
     {
         return Integer.MAX_VALUE;
     }

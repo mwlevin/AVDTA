@@ -32,8 +32,15 @@ public class Cell
     public Cell(TECLink link, int t)
     {
         this.t = t;
+        this.link = link;
         
         out = new Connector[0];
+        
+    }
+    
+    public int getSendingFlow()
+    {
+        return (int)Math.min(getCapacity(), n);
     }
     
     public void setN(int n)

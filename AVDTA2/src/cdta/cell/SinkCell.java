@@ -18,7 +18,7 @@ public class SinkCell extends Cell
         setId(id);
     }
     
-    public int getJamDensity()
+    public int getJamD()
     {
         return Integer.MAX_VALUE;
     }

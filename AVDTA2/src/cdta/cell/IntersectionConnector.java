@@ -32,6 +32,27 @@ public class IntersectionConnector extends Connector
         
     }
     
+    public boolean validate()
+    {
+        for(Cell i : connected.keySet())
+        {
+            Map<Cell, Tuple> temp = connected.get(i);
+            
+            for(Cell j : temp.keySet())
+            {
+                for(TECConflictRegion cr : temp.get(j).conflicts)
+                {
+                    if(!cr.validate())
+                    {
+                        return false;
+                    }
+                }
+            }
+        }
+        
+        return true;
+    }
+    
     public boolean isConnected(Cell i, Cell j)
     {
         if(!connected.containsKey(i))
@@ -114,6 +135,23 @@ public class IntersectionConnector extends Connector
         }
         
         return null;
+    }
+    
+    public int sumY()
+    {
+        int output = 0;
+        
+        for(Cell i : connected.keySet())
+        {
+            Map<Cell, Tuple> temp = connected.get(i);
+            
+            for(Cell j : temp.keySet())
+            {
+                output += temp.get(j).y;
+            }
+        }
+       
+        return output;
     }
     
     public void setReservationConnectivity(Cell i, Cell j, boolean connect)

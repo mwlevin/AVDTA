@@ -21,6 +21,11 @@ public class TECConflictRegion
        this.id = id;
     }
     
+    public boolean validate()
+    {
+        return y <= 1;
+    }
+    
     public int getId()
     {
         return id;
