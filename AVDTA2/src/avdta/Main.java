@@ -68,6 +68,8 @@ import java.util.Scanner;
 import java.util.TreeMap;
 import org.openstreetmap.gui.jmapviewer.Demo;
 import cdta.CDTA;
+import java.sql.Connection;
+import java.sql.DriverManager;
 
 
 /**
@@ -78,7 +80,10 @@ public class Main
 {
     public static void main(String[] args) throws Exception
     {
+        
         //CDTA.main(args);
+        
+        
         
         //caccTest1("scenario_2_PM", "scenario_2_PM_CACC");
         //caccTest2("scenario_2_PM_2_CACC");
@@ -104,9 +109,9 @@ public class Main
         DTASimulator sim = project.getSimulator();
         sim.msa(10);
 */
-        //GUI.main(args);
+        GUI.main(args);
         
-        new DTAGUI();
+        //new DTAGUI();
         
         
         

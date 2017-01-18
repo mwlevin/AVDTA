@@ -202,9 +202,9 @@ public class TECNetwork
         }
         path.get(path.size()-1).addN();
         
-        // break reservation connectivity
+        // update connectivity
         
-        // capacity constraint
+        // congestion connectivity
         for(Cell c : path)
         {
             int t = c.getT();
@@ -246,7 +246,7 @@ public class TECNetwork
             */
         }
         
-        // congestion connectivity
+        // reservation connectivity
         
     }
     
