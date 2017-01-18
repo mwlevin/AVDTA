@@ -281,6 +281,7 @@ public class ImportFromVISTA
      * 
      * @param origin_offset the offset for origin centroids
      * @param dest_offset the offset for destination centroids
+     * @param project the project
      * @throws IOException if a file cannot be accessed
      */
     public static void removeDuplicateCentroids(Project project, int origin_offset, int dest_offset) throws IOException

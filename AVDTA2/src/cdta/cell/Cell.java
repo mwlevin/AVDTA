@@ -103,28 +103,19 @@ public class Cell
         nextCell = c;
     }
     
-    /**
-     * Returns the length associated with this cell.
-     * @return {@link CTMLink#getCellLength()}
-     */
+
     public double getLength()
     {
         return link.getCellLength();
     }
     
-    /**
-     * Returns the jam density of this {@link Cell}. The jam density depends on the current number of lanes.
-     * @return {@link CTMLink#getCellJamdPerLane()}*{@link Cell#getNumLanes()}
-     */
+
     public int getJamD()
     {
         return link.getCellJamD();
     }
     
-    /**
-     * Returns the capacity of this {@link Cell}. The capacity depends on the current number of lanes.
-     * @return {@link CTMLink#getCapacityPerLane()}*{@link Cell#getNumLanes()}
-     */
+
     public int getCapacity()
     {
         return link.getCellCapacity();

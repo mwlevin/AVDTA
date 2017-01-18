@@ -7,6 +7,7 @@ package avdta.project;
 
 import cdta.TECNetwork;
 import java.io.File;
+import avdta.dta.DTASimulator;
 import java.io.IOException;
 
 /**
@@ -26,7 +27,7 @@ public class CDTAProject extends DTAProject
     /**
      * Constructs the project from the specified directory.
      * This reads the project and constructs the associated {@link DTASimulator}.
-     * @param directory the project directory
+     * @param dir the project directory
      * @throws IOException if a file is not found
      */
     public CDTAProject(File dir) throws IOException
