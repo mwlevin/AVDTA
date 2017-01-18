@@ -78,7 +78,7 @@ public class Main
 {
     public static void main(String[] args) throws Exception
     {
-        CDTA.main(args);
+        //CDTA.main(args);
         
         //caccTest1("scenario_2_PM", "scenario_2_PM_CACC");
         //caccTest2("scenario_2_PM_2_CACC");
@@ -106,7 +106,7 @@ public class Main
 */
         //GUI.main(args);
         
-        //new DTAGUI();
+        new DTAGUI();
         
         
         

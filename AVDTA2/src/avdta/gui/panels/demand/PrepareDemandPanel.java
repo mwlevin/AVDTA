@@ -293,8 +293,11 @@ public class PrepareDemandPanel extends GUIPanel
         createStaticOD.setEnabled(e);
         AVs.setEditable(e);
         changeType.setEnabled(e);
-        demPct.setEditable(e);
-        createZones.setEnabled(e);
+        if(demPct != null)
+        {
+            demPct.setEditable(e);
+            createZones.setEnabled(e);
+        }
         super.setEnabled(e);
     }
     
