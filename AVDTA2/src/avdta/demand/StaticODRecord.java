@@ -141,7 +141,7 @@ public class StaticODRecord implements Serializable
      */
     public void setDest(int dest)
     {
-        this.destination = destination;
+        this.destination = dest;
     }
     
     /**

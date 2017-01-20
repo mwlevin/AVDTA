@@ -405,7 +405,8 @@ public class ImportFromVISTA
 
             filein.nextLine();
             fileout.println(ReadDemandNetwork.getStaticODFileHeader());
-
+            
+            
             while(filein.hasNextInt())
             {
                 StaticODRecord od = new StaticODRecord(filein.nextLine());
