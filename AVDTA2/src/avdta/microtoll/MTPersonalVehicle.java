@@ -52,7 +52,7 @@ public class MTPersonalVehicle extends PersonalVehicle
         total_toll += l.getToll(Simulator.time);
         
         Simulator sim = Simulator.active;
-        sim.dijkstras(l, sim.time, getVOT(), getDriver(), MTSimulator.costFunc);
+        sim.dijkstras(l, getDest(), sim.time, getVOT(), getDriver(), MTSimulator.costFunc);
         
         traveled.add(l);
         

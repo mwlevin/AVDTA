@@ -73,7 +73,7 @@ public class MTSimulator extends Simulator
 
                 if(v.getDepTime() <= time)
                 {
-                    dijkstras(v.getOrigin(), Simulator.time, v.getVOT(), v.getDriver(), MTSimulator.costFunc);
+                    dijkstras(v.getOrigin(), v.getDest(), Simulator.time, v.getVOT(), v.getDriver(), MTSimulator.costFunc);
                     v.setPath(trace(v.getOrigin(), v.getDest()));
 
                     v.entered();

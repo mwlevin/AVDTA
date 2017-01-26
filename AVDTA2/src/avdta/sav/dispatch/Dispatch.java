@@ -220,7 +220,7 @@ public abstract class Dispatch
             //System.out.println("\t"+o);
             Map<SAVDest, Path> temp = paths.get(o);
             
-            simulator.link_dijkstras(o, Simulator.time, 1.0, DriverType.AV, costFunc);
+            simulator.link_dijkstras(o, null, Simulator.time, 1.0, DriverType.AV, costFunc);
             
             for(SAVDest d : temp.keySet())
             {

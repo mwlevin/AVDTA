@@ -83,7 +83,7 @@ public class Main
         //DTAProject project = new DTAProject(new File("projects/coacongress2"));
         //DTASimulator sim = project.getSimulator();
         /////project.get
-        //CDTA.main(args);
+        CDTA.main(args);
         
         
         
@@ -113,7 +113,7 @@ public class Main
 */
         //GUI.main(args);
         
-        new DTAGUI();
+        //new DTAGUI();
         
         
         

@@ -330,12 +330,12 @@ public class Network
         
         if(link_dijkstras)
         {
-            link_dijkstras(o, dep_time, vot, driver, costFunc);
+            link_dijkstras(o, d, dep_time, vot, driver, costFunc);
             output = link_trace(o, d);
         }
         else
         {
-            node_dijkstras(o, dep_time, vot, driver, costFunc);
+            node_dijkstras(o, d, dep_time, vot, driver, costFunc);
 
 
             output = node_trace(o, d);
@@ -343,7 +343,7 @@ public class Network
 
             if(output.size() == 0)
             {
-                link_dijkstras(o, dep_time, vot, driver, costFunc);
+                link_dijkstras(o, d, dep_time, vot, driver, costFunc);
                 output = link_trace(o, d);
             }
         }
@@ -371,9 +371,9 @@ public class Network
      * @see DriverType
      * @see TravelCost
      */
-    public void dijkstras(Node o, int dep_time, double vot, DriverType driver, TravelCost costFunc)
+    public void dijkstras(Node o, Node d, int dep_time, double vot, DriverType driver, TravelCost costFunc)
     {
-        dijkstras(o, dep_time, vot, driver, costFunc, link_dijkstras);
+        dijkstras(o, d, dep_time, vot, driver, costFunc, link_dijkstras);
     }
     
     /**
@@ -389,15 +389,15 @@ public class Network
      * @see DriverType
      * @see TravelCost
      */
-    public void dijkstras(Node o, int dep_time, double vot, DriverType driver, TravelCost costFunc, boolean link_dijkstras)
+    public void dijkstras(Node o, Node d, int dep_time, double vot, DriverType driver, TravelCost costFunc, boolean link_dijkstras)
     {
         if(link_dijkstras)
         {
-            link_dijkstras(o, dep_time, vot, driver, costFunc);
+            link_dijkstras(o, d, dep_time, vot, driver, costFunc);
         }
         else
         {
-            node_dijkstras(o, dep_time, vot, driver, costFunc);
+            node_dijkstras(o, d, dep_time, vot, driver, costFunc);
         }
     }
     
@@ -413,7 +413,7 @@ public class Network
      * @see DriverType
      * @see TravelCost
      */
-    public void link_dijkstras(Node o, int dep_time, double vot, DriverType driver, TravelCost costFunc)
+    public void link_dijkstras(Node o, Node dest, int dep_time, double vot, DriverType driver, TravelCost costFunc)
     {
         for(Link l : links)
         {
@@ -509,7 +509,7 @@ public class Network
      * @see DriverType
      * @see TravelCost
      */
-    public void dijkstras(Link starting, int dep_time, double vot, DriverType driver, TravelCost costFunc)
+    public void dijkstras(Link starting, Node dest, int dep_time, double vot, DriverType driver, TravelCost costFunc)
     {
         for(Link l : links)
         {
@@ -588,7 +588,7 @@ public class Network
      * @see DriverType
      * @see TravelCost
      */
-    public void node_dijkstras(Node o, int dep_time, double vot, DriverType driver, TravelCost costFunc)
+    public void node_dijkstras(Node o, Node d, int dep_time, double vot, DriverType driver, TravelCost costFunc)
     {
         for(Node n : nodes)
         {
@@ -621,6 +621,11 @@ public class Network
             u.added = false;
             
             u.settled = true;
+            
+            if(u == d)
+            {
+                return;
+            }
 
 
             for(Link l : u.getOutgoing())

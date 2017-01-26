@@ -5,6 +5,8 @@
  */
 package cdta.cell;
 
+import java.util.Iterator;
+
 /**
  *
  * @author micha
@@ -13,10 +15,16 @@ public class SameCellConnector extends Connector
 {
     private boolean reservation, congestion;
 
+    private Cell j;
     
     public SameCellConnector(Cell i, Cell j)
     {
-        
+        this.j = j;
+    }
+    
+    public Iterator<Cell> iterator(Cell inc)
+    {
+        return new SingleIterator();
     }
 
     public boolean validate()
@@ -80,6 +88,35 @@ public class SameCellConnector extends Connector
         congestion = connect;
     }
     
-
+    class SingleIterator implements Iterator<Cell>
+    {
+        private boolean hasNext;
+        
+        public SingleIterator()
+        {
+            hasNext = true;
+        }
+        
+        public boolean hasNext()
+        {
+            return hasNext;
+        }
+        
+        public void remove(){}
+        
+        public Cell next()
+        {
+            if(hasNext)
+            {
+                hasNext = false;
+                return j;
+            }
+            else
+            {
+                return null;
+            }
+        }
+        
+    }
 
 }

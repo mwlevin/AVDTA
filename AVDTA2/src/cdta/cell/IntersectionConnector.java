@@ -12,6 +12,7 @@ import avdta.network.node.TBR;
 import cdta.TECLink;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -31,6 +32,11 @@ public class IntersectionConnector extends Connector
         connected = new HashMap<Cell, Map<Cell, Tuple>>();
         
         
+    }
+    
+    public Iterator<Cell> iterator(Cell inc)
+    {
+        return connected.get(inc).keySet().iterator();
     }
     
     public Set<Cell> getIncoming()

@@ -12,7 +12,7 @@ import cdta.TECLink;
  *
  * @author micha
  */
-public class Cell 
+public class Cell implements Comparable<Cell>
 {
     private int id;
     
@@ -29,13 +29,35 @@ public class Cell
     
     
     public Cell prev;
-    public double label;
+    public boolean label;
+    public boolean added;
     
     public Cell(TECLink link, int id, int t)
     {
         this.t = t;
         this.link = link;
         this.id = id;
+    }
+    
+    public int compareTo(Cell rhs)
+    {
+        if(t != rhs.t)
+        {
+            return t - rhs.t;
+        }
+        else if(link.getId() != rhs.link.getId())
+        {
+            return link.getId() - rhs.link.getId();
+        }
+        else
+        {
+            return id - rhs.id;
+        }
+    }
+    
+    public int getZoneId()
+    {
+        return 0;
     }
     
     public TECLink getLink()

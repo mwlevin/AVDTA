@@ -15,14 +15,17 @@ import avdta.network.node.PriorityTBR;
 import cdta.cell.Connector;
 import cdta.cell.IntersectionConnector;
 import cdta.cell.SameCellConnector;
+import cdta.cell.SinkCell;
 import cdta.cell.SourceCell;
 import cdta.cell.StartCell;
 import cdta.cell.TECConflictRegion;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.PriorityQueue;
 import java.util.Set;
 
 /**
@@ -31,7 +34,7 @@ import java.util.Set;
  */
 public class TECNetwork 
 {
-    private Map<Integer, TECConnector> origins;
+    private Map<Integer, TECConnector> zones;
     private Set<TECLink> links;
     private int T;
     
@@ -43,7 +46,7 @@ public class TECNetwork
     {
         // construct TECLinks
         links = new HashSet<TECLink>();
-        origins = new HashMap<Integer, TECConnector>();
+        zones = new HashMap<Integer, TECConnector>();
         
         for(Link l : sim.getLinks())
         {
@@ -53,7 +56,7 @@ public class TECNetwork
                 links.add(link);
                 if(link.isOrigin())
                 {
-                    origins.put(link.getZoneId(), link);
+                    zones.put(link.getZoneId(), link);
                 }
             }
             else
@@ -131,7 +134,24 @@ public class TECNetwork
                         return false;
                     }
                     
-                    double y_tot = cell.getNextCellConnector().sumY();;
+                }
+                
+                for(int t = 0; t < T-1; t++)
+                {
+                    Cell cell = link.getCell(c, t);
+                    
+                    double y_tot = 0;
+                    
+                    if(!(cell instanceof SinkCell))
+                    {
+                        y_tot = cell.getNextCellConnector().sumY();
+                        
+                        if(!cell.getNextCellConnector().validate())
+                        {
+                            System.err.println("Connector issue");
+                            return false;
+                        }
+                    }
                     
                     if(!cell.getSameCellConnector().validate())
                     {
@@ -139,11 +159,7 @@ public class TECNetwork
                         return false;
                     }
                     
-                    if(!cell.getNextCellConnector().validate())
-                    {
-                        System.err.println("Connector issue");
-                        return false;
-                    }
+                    
                     
   
                     
@@ -167,13 +183,19 @@ public class TECNetwork
         {
             for(int c = 0; c < l.getNumCells(); c++)
             {
-                for(int t = 0; t < T; t++)
+                for(int t = 0; t < T-1; t++)
                 {
                     Cell cell = l.getCell(c, t);
                     cell.setN(0);
                     
                     cell.getSameCellConnector().initConnectivity();
-                    cell.getNextCellConnector().initConnectivity();
+                    
+                    if(!(cell instanceof SinkCell))
+                    {
+                        cell.getNextCellConnector().initConnectivity();
+                    }
+                    
+                    
                     
                     if(c == l.getNumCells()-1)
                     {
@@ -248,6 +270,105 @@ public class TECNetwork
         
         // reservation connectivity
         
+    }
+    
+    public Trajectory shortestPath(int origin, int dest, int dtime)
+    {
+        Cell end = dijkstras(origin, dest, dtime);
+        return trace(origin, end, dtime);
+    }
+    
+    public Cell dijkstras(int origin, int dest, int dtime)
+    {
+        for(TECLink l : links)
+        {
+            for(int c = 0; c < l.getNumCells(); c++)
+            {
+                for(int t = 0; t < T; t++)
+                {
+                    Cell cell = l.getCell(c, t);
+                    
+                    cell.label = false;
+                    cell.prev = null;
+                    cell.added = false;
+                }
+            }
+        }
+        
+        PriorityQueue<Cell> Q = new PriorityQueue<Cell>();
+        
+        Q.add(zones.get(origin).getCell(dtime));
+        
+        while(!Q.isEmpty())
+        {
+            Cell u = Q.remove();
+            
+            if(u.getZoneId() == dest)
+            {
+                return u;
+            }
+            
+            if(u.getNextCellConnector() != null)
+            {
+                Iterator<Cell> iter = u.getNextCellConnector().iterator(u);
+                
+                while(iter.hasNext())
+                {
+                    Cell v = iter.next();
+                    if(!v.added)
+                    {
+                        v.added = true;
+                        Q.add(v);
+                        v.label = true;
+                        v.prev = u;
+                    }
+                }
+            }
+            
+            if(u.getSameCellConnector() != null)
+            {
+                Iterator<Cell> iter = u.getSameCellConnector().iterator(u);
+                
+                while(iter.hasNext())
+                {
+                    Cell v = iter.next();
+                    
+                    if(!v.added)
+                    {
+                        v.added = true;
+                        Q.add(v);
+                        v.prev = u;
+                        v.label = true;
+                    }
+                }
+            }
+        }
+        
+        return null;
+    }
+    
+    public Trajectory trace(int origin, Cell dest, int dtime)
+    {
+        ArrayList<Cell> path = new ArrayList<Cell>();
+        
+        Cell curr = dest;
+
+        while(curr.getZoneId() != origin)
+        {
+            path.add(curr);
+            curr = curr.prev;
+        }
+        
+        path.add(curr);
+        
+        Trajectory output = new Trajectory();
+        
+        for(int i = path.size()-1; i >= 0; i--)
+        {
+            output.add(path.get(i));
+        }
+        
+        return output;
     }
     
 }

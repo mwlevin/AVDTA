@@ -5,11 +5,13 @@
  */
 package cdta.cell;
 
+import java.util.Iterator;
+
 /**
  *
  * @author micha
  */
-public abstract class Connector 
+public abstract class Connector
 {
     
     
@@ -26,4 +28,6 @@ public abstract class Connector
     public abstract int sumYIn(Cell i);
     public abstract int sumYOut(Cell j);
     public abstract boolean validate();
+    
+    public abstract Iterator<Cell> iterator(Cell inc);
 }

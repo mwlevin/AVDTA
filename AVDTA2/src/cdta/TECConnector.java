@@ -63,9 +63,9 @@ public class TECConnector extends TECLink
         return 1;
     }
     
-    public Cell createCell(int t)
+    public Cell createCell(int c, int t)
     {
-        if(source)
+        if(isOrigin())
         {
             return new SourceCell(0, id, t);
         }

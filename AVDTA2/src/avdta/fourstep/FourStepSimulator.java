@@ -569,7 +569,7 @@ public class FourStepSimulator extends DTASimulator
                     
                 }
                 
-                dijkstras(o, dtime, 1.0, DriverType.AV, TravelCost.ttCost);
+                dijkstras(o, null, dtime, 1.0, DriverType.AV, TravelCost.ttCost);
                 
                 for(Zone d : zones)
                 {
@@ -616,7 +616,7 @@ public class FourStepSimulator extends DTASimulator
                     
                 }
                 
-                dijkstras(o, dtime, 1.0, DriverType.AV, TravelCost.ttCost);
+                dijkstras(o, null, dtime, 1.0, DriverType.AV, TravelCost.ttCost);
                 
                 for(Zone d : zones)
                 {
