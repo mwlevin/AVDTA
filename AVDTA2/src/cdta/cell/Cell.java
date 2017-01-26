@@ -39,8 +39,13 @@ public class Cell implements Comparable<Cell>
         this.id = id;
     }
     
+    public String toString()
+    {
+        return "("+link.getId()+","+t+")";
+    }
     public int compareTo(Cell rhs)
     {
+
         if(t != rhs.t)
         {
             return t - rhs.t;
@@ -65,7 +70,7 @@ public class Cell implements Comparable<Cell>
         return link;
     }
     
-    public int getT()
+    public int getTime()
     {
         return t;
     }

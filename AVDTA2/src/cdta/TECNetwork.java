@@ -12,6 +12,9 @@ import avdta.network.link.Link;
 import avdta.network.node.ConflictRegion;
 import avdta.network.node.Intersection;
 import avdta.network.node.PriorityTBR;
+import avdta.project.CDTAProject;
+import avdta.vehicle.PersonalVehicle;
+import avdta.vehicle.Vehicle;
 import cdta.cell.Connector;
 import cdta.cell.IntersectionConnector;
 import cdta.cell.SameCellConnector;
@@ -19,7 +22,13 @@ import cdta.cell.SinkCell;
 import cdta.cell.SourceCell;
 import cdta.cell.StartCell;
 import cdta.cell.TECConflictRegion;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -38,12 +47,20 @@ public class TECNetwork
     private Set<TECLink> links;
     private int T;
     
+    private List<Vehicle> vehicles;
+    
+    private CDTAProject project;
+    
     /**
      * Note that links that are not CTMLinks or CentroidConnectors will be ignored.
      * @param sim the {@link Simulator}
      */
-    public TECNetwork(Simulator sim)
+    public TECNetwork(CDTAProject project)
     {
+        this.project = project;
+        
+        Simulator sim = project.getSimulator();
+        
         // construct TECLinks
         links = new HashSet<TECLink>();
         zones = new HashMap<Integer, TECConnector>();
@@ -67,8 +84,9 @@ public class TECNetwork
         
         
         //T = Simulator.duration / Simulator.dt;
-        T = 3600/Simulator.dt;
-        
+        T = 3600*6/Simulator.dt;
+
+
         for(TECLink link : links)
         {
             link.createCells(T);
@@ -116,6 +134,38 @@ public class TECNetwork
                 }
             }
         }
+        
+        vehicles = sim.getVehicles();
+    }
+    
+    public boolean reserveAll() throws IOException
+    {
+        Collections.sort(vehicles, new Comparator<Vehicle>()
+        {
+            public int compare(Vehicle v1, Vehicle v2)
+            {
+                return (int)Math.ceil(10000*(v2.getVOT() - v1.getVOT()));
+            }
+        });
+        
+        PrintStream fileout = new PrintStream(new FileOutputStream(new File(project.getResultsFolder()+"/log.txt")), true);
+        
+        fileout.println("id\torigin\tdest\tdep_time\tvot\ttt");
+        
+        for(Vehicle v : vehicles)
+        {
+            PersonalVehicle veh = (PersonalVehicle)v;
+            Trajectory traj = shortestPath(veh.getOrigin().getId(), veh.getDest().getId(), veh.getDepTime());
+            reserve(traj);
+            
+            int tt = traj.getExitTime() - veh.getDepTime();
+            
+            fileout.println(veh.getId()+"\t"+veh.getOrigin()+"\t"+veh.getDest()+"\t"+veh.getDepTime()+"\t"+veh.getVOT()+"\t"+tt);
+        }
+        
+        fileout.close();
+        
+        return validate();
     }
     
     public boolean validate()
@@ -229,7 +279,7 @@ public class TECNetwork
         // congestion connectivity
         for(Cell c : path)
         {
-            int t = c.getT();
+            int t = c.getTime();
             
             if(c.getN() +1 > c.getCapacity())
             {
@@ -297,10 +347,12 @@ public class TECNetwork
         
         PriorityQueue<Cell> Q = new PriorityQueue<Cell>();
         
-        Q.add(zones.get(origin).getCell(dtime));
+        Q.add(zones.get(origin).getCell(dtime/Simulator.dt));
         
         while(!Q.isEmpty())
         {
+
+            
             Cell u = Q.remove();
             
             if(u.getZoneId() == dest)
@@ -315,6 +367,7 @@ public class TECNetwork
                 while(iter.hasNext())
                 {
                     Cell v = iter.next();
+                    
                     if(!v.added)
                     {
                         v.added = true;
@@ -333,6 +386,7 @@ public class TECNetwork
                 {
                     Cell v = iter.next();
                     
+                    
                     if(!v.added)
                     {
                         v.added = true;
@@ -349,6 +403,7 @@ public class TECNetwork
     
     public Trajectory trace(int origin, Cell dest, int dtime)
     {
+        int start_time = dtime/Simulator.dt;
         ArrayList<Cell> path = new ArrayList<Cell>();
         
         Cell curr = dest;

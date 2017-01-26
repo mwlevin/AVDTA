@@ -20,6 +20,8 @@ public class CDTA
         
         TECNetwork net = project.createTECNetwork();
         net.initializeConnectivity();
-        System.out.println(net.validate());
+        
+
+        net.reserveAll();
     }
 }

@@ -5,6 +5,8 @@
  */
 package cdta.cell;
 
+import cdta.TECConnector;
+
 /**
  *
  * @author micha
@@ -13,9 +15,9 @@ public class SinkCell extends StartCell
 {
     private int zoneId;
     
-    public SinkCell(int id, int zoneId, int t)
+    public SinkCell(TECConnector link, int id, int zoneId, int t)
     {
-        super(null, id, t);
+        super(link, id, t);
         this.zoneId = zoneId;
     }
     

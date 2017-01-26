@@ -5,6 +5,8 @@
  */
 package cdta.cell;
 
+import cdta.TECConnector;
+
 /**
  *
  * @author micha
@@ -13,9 +15,9 @@ public class SourceCell extends Cell
 {
     private int zoneId;
     
-    public SourceCell(int id, int zoneId, int t)
+    public SourceCell(TECConnector link, int id, int zoneId, int t)
     {
-        super(null, id,  t);
+        super(link, id,  t);
         this.zoneId = zoneId;
     }
     

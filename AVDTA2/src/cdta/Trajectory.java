@@ -4,6 +4,7 @@
  */
 package cdta;
 
+import avdta.network.Simulator;
 import cdta.cell.Cell;
 import java.util.ArrayList;
 
@@ -13,5 +14,18 @@ import java.util.ArrayList;
  */
 public class Trajectory extends ArrayList<Cell>
 {
-        
+    public int getTT()
+    {
+        return (get(size()-1).getTime() - get(0).getTime()) * Simulator.dt;
+    }
+    
+    public int getExitTime()
+    {
+        return get(size()-1).getTime() * Simulator.dt;
+    }
+    
+    public int getEnterTime()
+    {
+        return get(0).getTime() * Simulator.dt;
+    }
 }

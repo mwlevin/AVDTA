@@ -67,11 +67,11 @@ public class TECConnector extends TECLink
     {
         if(isOrigin())
         {
-            return new SourceCell(0, id, t);
+            return new SourceCell(this, 0, id, t);
         }
         else
         {
-            return new SinkCell(0, id, t);
+            return new SinkCell(this, 0, id, t);
         }
     }
 }

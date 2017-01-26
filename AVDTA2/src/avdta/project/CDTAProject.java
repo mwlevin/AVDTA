@@ -61,6 +61,6 @@ public class CDTAProject extends DTAProject
      */
     public TECNetwork createTECNetwork()
     {
-        return new TECNetwork(getSimulator());
+        return new TECNetwork(this);
     }
 }
