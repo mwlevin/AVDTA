@@ -64,6 +64,16 @@ public class Zone extends Node
         parkingFee = 5;
     }
     
+    public boolean isOrigin()
+    {
+        return getId() > 0;
+    }
+    
+    public boolean isDest()
+    {
+        return getId() < 0;
+    }
+    
     /**
      * Returns null because a {@link Zone} is never a {@link Signalized}
      * @return null

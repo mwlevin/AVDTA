@@ -102,6 +102,12 @@ public class DTAGUI extends GUI implements AbstractGUIPanel
         setVisible(true);
     }
     
+    public DTAGUI(DTAProject project) throws IOException
+    {
+        this();
+        openProject(project);
+    }
+    
     public void parentReset()
     {
         dtaPane.reset();

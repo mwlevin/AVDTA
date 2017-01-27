@@ -212,6 +212,7 @@ public class ReadFourStepNetwork extends ReadDTANetwork
         }
         filein.close();
         
+
         int dem_asts = (int)Math.ceil(max_time / ast_duration);
         project.setOption("demand-asts", ""+dem_asts);
         project.writeOptions();
@@ -226,7 +227,8 @@ public class ReadFourStepNetwork extends ReadDTANetwork
         for(int o : productions.keySet())
         {
             Double[] temp = productions.get(o);
-            double pat = rand.nextGaussian() * dem_duration;
+            double pat = rand.nextGaussian() * dem_duration/4 + dem_duration/2;
+            pat = Math.min(Math.max(0, pat), dem_duration);
             fileout.println(o+"\t"+(temp[0]*scale)+"\t"+(temp[1]*scale)+"\t"+pat+"\t"+5);
         }
         fileout.close();

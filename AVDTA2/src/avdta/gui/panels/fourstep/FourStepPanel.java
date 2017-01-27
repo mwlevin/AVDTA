@@ -5,6 +5,7 @@
  */
 package avdta.gui.panels.fourstep;
 
+import avdta.dta.Assignment;
 import avdta.dta.DTAResults;
 import avdta.dta.DTASimulator;
 import avdta.fourstep.FourStepSimulator;
@@ -22,8 +23,10 @@ import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.IOException;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -46,6 +49,8 @@ public class FourStepPanel extends GUIPanel
     private JTextField dta_max_iter, dta_min_gap, partial_demand;
     private JTextField fs_max_iter;
     private JTextArea data;
+    private JCheckBox repos, allAVs;
+    private JButton update;
     
     private StatusBar status;
     
@@ -72,15 +77,55 @@ public class FourStepPanel extends GUIPanel
             }
         });
         
+        repos = new JCheckBox("Allow repositioning?");
+        allAVs = new JCheckBox("100% AVs");
+        update = new JButton("Update");
+        
+        update.addActionListener(new ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                project.setFourStepOption("all-avs", ""+allAVs.isSelected());
+                project.setFourStepOption("allow-repositioning", ""+repos.isSelected());
+                
+                FourStepSimulator sim = project.getSimulator();
+                
+                sim.setAllAVs(allAVs.isSelected());
+                sim.setAllowRepositioning(repos.isSelected());
+                
+                try
+                {
+                    project.writeOptions();
+                }
+                catch(IOException ex)
+                {
+                    GUI.handleException(ex);
+                }
+                
+                
+            }
+        });
+
+        
         JPanel panel = new JPanel();
         panel.setLayout(new GridBagLayout());
         
-        JPanel p = new JPanel();
-        p.setLayout(new GridBagLayout());
+        
         JScrollPane scroll = new JScrollPane(data);
         scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         
         constrain(panel, scroll, 0, 0, 1, 1);
+        
+        JPanel p3 = new JPanel();
+        p3.setLayout(new GridBagLayout());
+        p3.setBorder(BorderFactory.createTitledBorder("Options"));
+        
+        constrain(p3, repos, 0, 0, 1, 1);
+        constrain(p3, allAVs, 0, 1, 1, 1);
+        constrain(p3, update, 0, 2, 0, 1);
+        
+        JPanel p = new JPanel();
+        p.setLayout(new GridBagLayout());
         
         JPanel p2 = new JPanel();
         p2.setLayout(new GridBagLayout());
@@ -93,16 +138,23 @@ public class FourStepPanel extends GUIPanel
         constrain(p2, new JLabel("Min. gap:"), 0, 2, 1, 1);
         constrain(p2, dta_min_gap, 1, 2, 1, 1);
         
-        constrain(p, p2, 0, 0, 2, 1);
+        constrain(p, p3, 0, 0, 1, 1);
+        constrain(p, p2, 0, 1, 1, 1);
         
-        constrain(p, new JLabel("Four-step iterations: "), 0, 1, 1, 1);
-        constrain(p, fs_max_iter, 1, 1, 1, 1);
-        constrain(p, run, 0, 2, 2, 1, GridBagConstraints.CENTER);
+        JPanel p1 = new JPanel();
+        p1.setLayout(new GridBagLayout());
         
-        constrain(p, status, 0, 3, 2, 1, GridBagConstraints.CENTER);
+        constrain(p1, new JLabel("Four-step iterations: "), 0, 0, 1, 1);
+        constrain(p1, fs_max_iter, 1, 0, 1, 1);
+        constrain(p1, run, 0, 1, 2, 1, GridBagConstraints.CENTER);
+        
+        constrain(p1, status, 0, 2, 2, 1, GridBagConstraints.CENTER);
+        
+        constrain(p, p1, 0, 2, 1, 1);
         
         
         p2.setPreferredSize(new Dimension((int)p.getPreferredSize().getWidth(), (int)p2.getPreferredSize().getHeight()));
+        p3.setPreferredSize(new Dimension((int)p.getPreferredSize().getWidth(), (int)p3.getPreferredSize().getHeight()));
         
         constrain(panel, p, 1, 0, 1, 1);
         
@@ -119,6 +171,9 @@ public class FourStepPanel extends GUIPanel
         dta_max_iter.setEditable(e);
         fs_max_iter.setEditable(e);
         partial_demand.setEditable(e);
+        repos.setEnabled(e);
+        allAVs.setEnabled(e);
+        update.setEnabled(e);
         super.setEnabled(e);
     }
     
@@ -193,7 +248,7 @@ public class FourStepPanel extends GUIPanel
                     int fs_max = Integer.parseInt(fs_max_iter.getText().trim());
                     
                     
-                    results = sim.four_step(fs_max, max, pd, gap, new File(project.getResultsFolder()+"/fourstep_log.txt"));
+                    results = sim.four_step(fs_max, max, pd, gap);
                    
                     
                     double tstt = sim.getTSTT() / 3600.0;
@@ -206,11 +261,19 @@ public class FourStepPanel extends GUIPanel
                             "AV TT: "+String.format("%.2f", sim.getAvgTT(DriverType.AV)/60)+" min",
                             "DTA complete", JOptionPane.PLAIN_MESSAGE);
 
-                    showResults(results);
+                    
+
+                    Assignment assign = sim.getAssignment();
+                    sim.printCosts(new File(assign.getAssignmentDirectory()+"/od_costs.txt"));
+                    sim.printDemand(new File(assign.getAssignmentDirectory()+"/od_demand.txt"));
+                    System.out.println(assign.getAssignmentDirectory());
                     
                     status.update(0, 0, "");
                     status.resetTime();
-
+                    
+                    showResults(results);
+                    
+                    
                 
                 }
                 catch(Exception ex)
@@ -233,6 +296,8 @@ public class FourStepPanel extends GUIPanel
             dta_max_iter.setText("30");
             dta_min_gap.setText("1");
             partial_demand.setText("0");
+            allAVs.setSelected(project.getFourStepOption("all-avs").equalsIgnoreCase("true"));
+            repos.setSelected(project.getFourStepOption("allow-repositioning").equalsIgnoreCase("true"));
             setEnabled(true);
         }
         else
@@ -262,7 +327,8 @@ public class FourStepPanel extends GUIPanel
         data.append("Gap:\t"+String.format("%.2f", results.getGapPercent())+"%\n");
         data.append("TSTT:\t"+String.format("%.1f", results.getTSTT())+" hr\n");
         data.append("Avg. TT:\t"+String.format("%.2f", results.getAvgTT())+" min\n");
-        data.append("Non-exit:\t"+results.getNonExiting());
+        data.append("Non-exit:\t"+results.getNonExiting()+"\n");
+        data.append("Num. vehicles:\t"+results.getTrips());
         
     }
 }

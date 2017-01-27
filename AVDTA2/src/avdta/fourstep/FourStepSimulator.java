@@ -78,6 +78,79 @@ public class FourStepSimulator extends DTASimulator
         costs = new HashMap<Zone, Map<Zone, CostTuple[]>>();
     }
     
+    public void setAllAVs(boolean a)
+    {
+        allAVs = a;
+    }
+    
+    public void setAllowRepositioning(boolean a)
+    {
+        allowRepos= a;
+    }
+    
+    
+    public void printCosts(File output) throws IOException
+    {
+        PrintStream fileout = new PrintStream(new FileOutputStream(output), true);
+        
+        fileout.println("Origin\tDest\tDep_time\tPark\tRepositioning\tTransit\tMinimum");
+        
+        for(Zone o : costs.keySet())
+        {
+            for(Zone d : costs.get(o).keySet())
+            {
+                CostTuple[] tuples = costs.get(o).get(d);
+                
+                if(tuples == null)
+                {
+                    continue;
+                }
+                for(int t = 0; t < demand_asts; t++)
+                {
+                    CostTuple tuple = tuples[t];
+                    
+                    double min_cost = Math.min(Math.min(tuple.DA_cost, tuple.AV_cost), tuple.TR_cost);
+                    fileout.println(o+"\t"+(-d.getId())+"\t"+(t*ast_duration)+"\t"+tuple.DA_cost+"\t"+tuple.AV_cost+"\t"+tuple.TR_cost+"\t"+min_cost);
+                }
+            }
+        }
+        fileout.close();
+    }
+    
+    public void printDemand(File output) throws IOException
+    {
+        PrintStream fileout = new PrintStream(new FileOutputStream(output), true);
+        
+        fileout.println("Origin\tDest\tDep_time\tPark\tRepositioning\tTransit\tTotal");
+        
+        for(Zone o : costs.keySet())
+        {
+            for(Zone d : costs.get(o).keySet())
+            {
+                CostTuple[] tuples = costs.get(o).get(d);
+                
+                if(tuples == null)
+                {
+                    continue;
+                }
+                
+                for(int t = 0; t < demand_asts; t++)
+                {
+                    CostTuple tuple = tuples[t];
+                    
+
+                    double TR_flow = tuple.TR_prop * tuple.total_flow;
+                    double remaining = tuple.total_flow - TR_flow;
+                    
+                    double RP_flow = remaining * tuple.AV_prop;
+                    double DA_flow = remaining - RP_flow;
+                    
+                    fileout.println(o+"\t"+(-d.getId())+"\t"+(t*ast_duration)+"\t"+DA_flow+"\t"+RP_flow+"\t"+TR_flow+"\t"+tuple.total_flow);
+                }
+            }
+        }
+        fileout.close();
+    }
     
     public Assignment createAssignment(int start_iter)
     {
@@ -218,16 +291,16 @@ public class FourStepSimulator extends DTASimulator
     }
     
     
-    public DTAResults four_step(int max_iter, int ta_iter, File output) throws IOException
+    public DTAResults four_step(int max_iter, int ta_iter) throws IOException
     {
-        return four_step(max_iter, ta_iter, 0, output);
+        return four_step(max_iter, ta_iter, 0);
     }
     
-    public DTAResults four_step(int max_iter, int ta_iter, double ta_min_gap, File output) throws IOException
+    public DTAResults four_step(int max_iter, int ta_iter, double ta_min_gap) throws IOException
     {
-        return four_step(max_iter, ta_iter, 0, ta_min_gap, output);
+        return four_step(max_iter, ta_iter, 0, ta_min_gap);
     }
-    public DTAResults four_step(int max_iter, int ta_iter, int pd_iter, double ta_min_gap, File output) throws IOException
+    public DTAResults four_step(int max_iter, int ta_iter, int pd_iter, double ta_min_gap) throws IOException
     {
         assign = new FourStepAssignment(getProject(), null, 1, 1);
         
@@ -266,7 +339,7 @@ public class FourStepSimulator extends DTASimulator
         
         int iter = 0;
         
-        PrintStream fileout = new PrintStream(new FileOutputStream(output), true);
+        PrintStream fileout = new PrintStream(new FileOutputStream(assign.getAssignmentDirectory()+"/fourstep_log.txt"), true);
         
         fileout.println("Iter\tRMSE\tDA\tAV\tTR\tveh trips\tgap\ttime");
 	
@@ -402,11 +475,15 @@ public class FourStepSimulator extends DTASimulator
             // a. calibrate origin weighting factors to ensure productions are consistent
             for(Zone r : zones)
             {
+                if(!r.isOrigin())
+                {
+                    continue;
+                }
                 double c = 0.0;
                 
                 for(Zone s : zones)
                 {
-                    if(r != s && r.getProductions() > 0)
+                    if(s.isDest() && r.getId() != -s.getId() && r.getProductions() > 0)
                     {
                         for(int t = 0; t < demand_asts; t++)
                         {
@@ -422,6 +499,11 @@ public class FourStepSimulator extends DTASimulator
             // b. generate empty trip table
             for(Zone r : zones)
             {
+                if(!r.isOrigin())
+                {
+                    continue;
+                }
+                
                 if(r.C == 0)
                 {
                     continue;
@@ -429,7 +511,7 @@ public class FourStepSimulator extends DTASimulator
                 
                 for(Zone s : zones)
                 {
-                    if(r != s)
+                    if(s.isDest() && r.getId() != -s.getId())
                     {
                         for(int t = 0; t < demand_asts; t++)
                         {
@@ -445,11 +527,16 @@ public class FourStepSimulator extends DTASimulator
             // c. change adjustment factors so attractions are consistent
             for(Zone s : zones)
             {
+                if(!s.isDest())
+                {
+                    continue;
+                }
+                
                 double destSum = 0.0;
                 
                 for(Zone r : zones)
                 {
-                    if(r != s)
+                    if(r.isOrigin() && r.getId() != -s.getId())
                     {
                         for(int t = 0; t < demand_asts; t++)
                         {
@@ -520,6 +607,11 @@ public class FourStepSimulator extends DTASimulator
 
         for(Zone o : zones)
         {
+            if(!o.isOrigin())
+            {
+                continue;
+            }
+            
             Map<Zone, CostTuple[]> temp;
             
             if(!costs.containsKey(o))
@@ -539,7 +631,7 @@ public class FourStepSimulator extends DTASimulator
                 
                 for(Zone d : zones)
                 {
-                    if(o == d)
+                    if(!d.isDest() || o.getId() == -d.getId())
                     {
                         continue;
                     }
@@ -573,7 +665,7 @@ public class FourStepSimulator extends DTASimulator
                 
                 for(Zone d : zones)
                 {
-                    if(o == d)
+                    if(!d.isDest() || o.getId() == -d.getId())
                     {
                         continue;
                     }
@@ -620,7 +712,7 @@ public class FourStepSimulator extends DTASimulator
                 
                 for(Zone d : zones)
                 {
-                    if(o == d)
+                    if(!d.isDest() || o.getId() == -d.getId())
                     {
                         continue;
                     }
@@ -638,9 +730,14 @@ public class FourStepSimulator extends DTASimulator
         {
             for(Zone o : zones)
             {
+                if(!o.isOrigin())
+                {
+                    continue;
+                }
+                
                 for(Zone d : zones)
                 {
-                    if(o == d)
+                    if(!d.isDest() || o.getId() == -d.getId())
                     {
                         continue;
                     }
@@ -665,9 +762,14 @@ public class FourStepSimulator extends DTASimulator
 
         for(Zone o : zones)
         {
+            if(!o.isOrigin())
+            {
+                continue;
+            }
+            
             for(Zone d : zones)
             {
-                if(o == d)
+                if(!d.isDest() || o.getId() == -d.getId())
                 {
                     continue;
                 }
@@ -691,9 +793,14 @@ public class FourStepSimulator extends DTASimulator
         
         for(Zone o : zones)
         {
+            if(!o.isOrigin())
+            {
+                continue;
+            }
+            
             for(Zone d : zones)
             {
-                if(o == d)
+                if(!d.isDest() || o.getId() == -d.getId())
                 {
                     continue;
                 }

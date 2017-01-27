@@ -82,6 +82,12 @@ public class FourStepGUI extends GUI implements AbstractGUIPanel
         setVisible(true);
     }
     
+    public FourStepGUI(FourStepProject project) throws IOException
+    {
+        this();
+        openProject(project);
+    }
+    
     public JMenuBar createMenuBar()
     {
         final JFrame frame = this;
