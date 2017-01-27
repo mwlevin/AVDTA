@@ -83,8 +83,8 @@ public class TECNetwork
         }
         
         
-        //T = Simulator.duration / Simulator.dt;
-        T = 3600*6/Simulator.dt;
+        T = Simulator.duration / Simulator.dt;
+        //T = 3600*6/Simulator.dt;
 
 
         for(TECLink link : links)
@@ -140,6 +140,8 @@ public class TECNetwork
     
     public boolean reserveAll() throws IOException
     {
+        long time = System.nanoTime();
+        
         Collections.sort(vehicles, new Comparator<Vehicle>()
         {
             public int compare(Vehicle v1, Vehicle v2)
@@ -148,9 +150,13 @@ public class TECNetwork
             }
         });
         
+        initializeConnectivity();
+        
         PrintStream fileout = new PrintStream(new FileOutputStream(new File(project.getResultsFolder()+"/log.txt")), true);
         
         fileout.println("id\torigin\tdest\tdep_time\tvot\ttt");
+        
+        int count = 0;
         
         for(Vehicle v : vehicles)
         {
@@ -161,7 +167,18 @@ public class TECNetwork
             int tt = traj.getExitTime() - veh.getDepTime();
             
             fileout.println(veh.getId()+"\t"+veh.getOrigin()+"\t"+veh.getDest()+"\t"+veh.getDepTime()+"\t"+veh.getVOT()+"\t"+tt);
+            
+            count++;
+            
+            if(count%100 == 0)
+            {
+                System.out.println(count);
+            }
         }
+        
+        time = System.nanoTime() - time;
+        
+        fileout.println("Time:\t"+(time/1.0e9)+"\ts");
         
         fileout.close();
         
