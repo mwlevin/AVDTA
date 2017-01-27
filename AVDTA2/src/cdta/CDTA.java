@@ -19,15 +19,13 @@ public class CDTA
 {
     public static void main(String[] args) throws IOException
     {
-        CDTAProject project = new CDTAProject(new File("projects/coacongress2"));
+        CDTAProject project = new CDTAProject(new File("projects/SiouxFalls"));
 
         
         
         TECNetwork net = project.createTECNetwork();
 
-        Trajectory traj = net.shortestPath(100383, -200381, 0);
-        System.out.println(traj);
-        //net.reserveAll();
+        net.reserveAll();
 
     }
 }

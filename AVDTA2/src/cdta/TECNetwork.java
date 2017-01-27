@@ -94,8 +94,8 @@ public class TECNetwork
         }
         
         
-        //T = Simulator.duration / Simulator.dt;
-        T = 3600*1/Simulator.dt;
+        T = Simulator.duration / Simulator.dt;
+        //T = 3600*1/Simulator.dt;
 
 
         for(TECLink link : links)
@@ -222,7 +222,7 @@ public class TECNetwork
                     
                     if(!(cell instanceof SinkCell))
                     {
-                        y_tot = cell.getNextCellConnector().sumY();
+                        y_tot = cell.getNextCellConnector().sumYOut(cell);
                         
                         if(!cell.getNextCellConnector().validate())
                         {
@@ -353,7 +353,7 @@ public class TECNetwork
     public Trajectory shortestPath(int origin, int dest, int dtime)
     {
         Cell end = dijkstras(origin, dest, dtime);
-        System.out.println(origin+" "+dest+" "+dtime+" "+end);
+        //System.out.println(origin+" "+dest+" "+dtime+" "+end);
         return trace(origin, end, dtime);
     }
     
