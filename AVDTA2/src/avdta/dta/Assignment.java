@@ -64,6 +64,11 @@ public class Assignment implements Comparable<Assignment>
 
     }
     
+    public String getResultsDirectory()
+    {
+        return getAssignmentDirectory()+"/results";
+    }
+    
     /**
      * Returns the time this assignment was created
      * @return Returns the time this assignment was created (s)
@@ -209,6 +214,9 @@ public class Assignment implements Comparable<Assignment>
         directory = project.getAssignmentsFolder()+"/"+folderName;
         
         File file = new File(directory);
+        file.mkdirs();
+        
+        file = new File(directory+"/results");
         file.mkdirs();
         
         time = (int)(System.currentTimeMillis()/1000.0);
