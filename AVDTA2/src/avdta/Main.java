@@ -100,7 +100,7 @@ public class Main
         //caccTest2();
         
         //new DTAGUI();
-        new FourStepGUI();
+        //new FourStepGUI();
         
         //SAVtest();
         
@@ -112,7 +112,7 @@ public class Main
         DTASimulator sim = project.getSimulator();
         sim.msa(10);
 */
-        //GUI.main(args);
+        GUI.main(args);
         
         
         
