@@ -43,7 +43,7 @@ import java.util.Set;
  */
 public class TECNetwork 
 {
-    private Map<Integer, TECConnector> zones;
+    private Map<Integer, Set<TECConnector>> zones;
     private Set<TECLink> links;
     private int T;
     
@@ -63,7 +63,7 @@ public class TECNetwork
         
         // construct TECLinks
         links = new HashSet<TECLink>();
-        zones = new HashMap<Integer, TECConnector>();
+        zones = new HashMap<Integer, Set<TECConnector>>();
         
         for(Link l : sim.getLinks())
         {
@@ -71,9 +71,20 @@ public class TECNetwork
             {
                 TECConnector link = new TECConnector((CentroidConnector)l);
                 links.add(link);
+                
                 if(link.isOrigin())
                 {
-                    zones.put(link.getZoneId(), link);
+                    Set<TECConnector> temp;
+                    
+                    if(zones.containsKey(link.getZoneId()))
+                    {
+                        temp = zones.get(link.getZoneId());
+                    }
+                    else
+                    {
+                        zones.put(link.getZoneId(), temp = new HashSet<TECConnector>());
+                    }
+                    temp.add(link);
                 }
             }
             else
@@ -83,8 +94,8 @@ public class TECNetwork
         }
         
         
-        T = Simulator.duration / Simulator.dt;
-        //T = 3600*6/Simulator.dt;
+        //T = Simulator.duration / Simulator.dt;
+        T = 3600*1/Simulator.dt;
 
 
         for(TECLink link : links)
@@ -342,6 +353,7 @@ public class TECNetwork
     public Trajectory shortestPath(int origin, int dest, int dtime)
     {
         Cell end = dijkstras(origin, dest, dtime);
+        System.out.println(origin+" "+dest+" "+dtime+" "+end);
         return trace(origin, end, dtime);
     }
     
@@ -364,8 +376,11 @@ public class TECNetwork
         
         PriorityQueue<Cell> Q = new PriorityQueue<Cell>();
         
-        Q.add(zones.get(origin).getCell(dtime/Simulator.dt));
-        
+        for(TECConnector link : zones.get(origin))
+        {
+            Q.add(link.getCell(dtime/Simulator.dt));
+        }
+
         while(!Q.isEmpty())
         {
 
@@ -376,7 +391,7 @@ public class TECNetwork
             {
                 return u;
             }
-            
+
             if(u.getNextCellConnector() != null)
             {
                 Iterator<Cell> iter = u.getNextCellConnector().iterator(u);
@@ -420,6 +435,8 @@ public class TECNetwork
     
     public Trajectory trace(int origin, Cell dest, int dtime)
     {
+        
+        
         int start_time = dtime/Simulator.dt;
         ArrayList<Cell> path = new ArrayList<Cell>();
         

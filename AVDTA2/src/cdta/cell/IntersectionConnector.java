@@ -76,6 +76,7 @@ public class IntersectionConnector extends Connector
         {
             return false;
         }
+        
         Map<Cell, Tuple> temp = connected.get(i);
         
         if(!temp.containsKey(j))
