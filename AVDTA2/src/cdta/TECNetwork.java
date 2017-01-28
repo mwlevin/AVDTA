@@ -151,6 +151,11 @@ public class TECNetwork
         vehicles = sim.getVehicles();
     }
     
+    public int getT()
+    {
+        return T;
+    }
+    
     public boolean reserveAll() throws IOException
     {
         long time = System.nanoTime();
@@ -246,7 +251,11 @@ public class TECNetwork
                     if(y_tot > cell.getSendingFlow())
                     {
                         System.err.println("y > sending flow");
-                        System.err.println(y_tot+" "+cell.getSendingFlow()+" "+cell.getCapacity()+" "+cell.getN()+" "+c+" "+t);
+                        System.err.println("y: "+y_tot);
+                        System.err.println("S: "+cell.getSendingFlow());
+                        System.err.println("Q: "+cell.getCapacity());
+                        System.err.println("n: "+cell.getN());
+                        System.err.println("Cell: "+c+" "+t);
                         cell.getNextCellConnector().printConnectivity(cell);
                         
                         return false;
@@ -308,8 +317,7 @@ public class TECNetwork
         path.get(path.size()-1).addN();
         
         // update connectivity
-        
-        // congestion connectivity
+
         for(int x = 0; x < path.size()-1; x++)
         {
             Cell j = path.get(x);
@@ -327,20 +335,24 @@ public class TECNetwork
                 
                 for(Cell kp : j.getNextCellConnector().getOutgoing(j))
                 {
-                    j.getNextCellConnector().setReservationConnectivity(j, kp, false);
+                    j.getNextCellConnector().setCongestionConnectivity(j, kp, false);
                 }
                 
             }
             
             // receiving flow check
-            Connector connect = j.getPrevCellConnector();
             
-            if(connect.sumYIn(j) > j.getReceivingFlow())
+            if(!(j instanceof SourceCell))
             {
-                for(Cell i : connect.getIncoming(j))
+                Connector connect = j.getPrevCellConnector();
+
+                if(connect.sumYIn(j) > j.getReceivingFlow())
                 {
-                    connect.setReservationConnectivity(i, j, false);
-                    connect.setCongestionConnectivity(i, i, true);
+                    for(Cell i : connect.getIncoming(j))
+                    {
+                        connect.setCongestionConnectivity(i, j, false);
+                        connect.setCongestionConnectivity(i, i, true);
+                    }
                 }
             }
             
@@ -350,14 +362,23 @@ public class TECNetwork
             }
             
             // add conflict region check
+            if(j.getLink() != k.getLink())
+            {
+                IntersectionConnector inter = (IntersectionConnector)j.getNextCellConnector();
+                
+                inter.checkConnectivity(j, k);
+            }
         }
-        
-        // reservation connectivity
+
         
     }
     
     public Trajectory shortestPath(int origin, int dest, int dtime)
     {
+        if(dest > 0)
+        {
+            dest = -dest;
+        }
         Cell end = dijkstras(origin, dest, dtime);
         //System.out.println(origin+" "+dest+" "+dtime+" "+end);
         return trace(origin, end, dtime);
@@ -402,7 +423,7 @@ public class TECNetwork
             {
                 for(Cell v : u.getNextCellConnector().getOutgoing(u))
                 {
-                    if(!v.added)
+                    if(!v.added && u.getNextCellConnector().isConnected(u, v))
                     {
                         v.added = true;
                         Q.add(v);
@@ -416,7 +437,7 @@ public class TECNetwork
             {
                 for(Cell v : u.getSameCellConnector().getOutgoing(u))
                 {
-                    if(!v.added)
+                    if(!v.added && u.getSameCellConnector().isConnected(u, v))
                     {
                         v.added = true;
                         Q.add(v);

@@ -28,6 +28,12 @@ public class OrdinaryConnector extends SameCellConnector
         return y;
     }
     
+    public void initConnectivity()
+    {
+        super.initConnectivity();
+        setCongestionConnectivity(true);
+    }
+    
     public int sumYIn(Cell i)
     {
         return y;

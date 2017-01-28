@@ -41,7 +41,7 @@ public class Cell implements Comparable<Cell>
     
     public String toString()
     {
-        return "("+link.getId()+","+t+")";
+        return "("+link.getId()+"-"+getId()+","+t+")";
     }
     public int compareTo(Cell rhs)
     {

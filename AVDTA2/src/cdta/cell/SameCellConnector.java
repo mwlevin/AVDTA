@@ -29,7 +29,7 @@ public class SameCellConnector extends Connector
     
     public void printConnectivity(Cell inc)
     {
-        System.out.println(j+"\t"+reservation+"\t"+congestion);
+        System.out.println(i+"\t"+j+"\t"+reservation+"\t"+congestion);
     }
     
     public Set<Cell> getOutgoing(Cell inc)

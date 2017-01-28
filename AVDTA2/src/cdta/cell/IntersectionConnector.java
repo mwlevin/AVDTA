@@ -110,7 +110,7 @@ public class IntersectionConnector extends Connector
         for(Cell j : connected.get(inc).keySet())
         {
             Tuple tuple = connected.get(inc).get(j);
-            System.out.println(j+"\t"+tuple.reservation+"\t"+tuple.congested);
+            System.out.println(inc+"\t"+j+"\t"+tuple.reservation+"\t"+tuple.congested);
         }
     }
     
@@ -121,10 +121,56 @@ public class IntersectionConnector extends Connector
         return tuple.y;
     }
     
+    public void checkConnectivity(Cell i, Cell j)
+    {
+        Tuple tuple = makeTuple(i, j);
+        
+        for(TECConflictRegion cr : tuple.conflicts)
+        {
+            removeConnectivity(cr);
+        }
+    }
+    
+    public void removeConnectivity(TECConflictRegion cr)
+    {
+        for(Cell i : connected.keySet())
+        {
+            Map<Cell, Tuple> temp = connected.get(i);
+            
+            for(Cell j : temp.keySet())
+            {
+                Tuple tuple = temp.get(j);
+                
+                if(contains(tuple.conflicts, cr) && !cr.canAddY(i, j))
+                {
+                    tuple.congested = false;
+                }
+            }
+        }
+    }
+    
+    private boolean contains(TECConflictRegion[] conflicts, TECConflictRegion cr)
+    {
+        for(TECConflictRegion c : conflicts)
+        {
+            if(c == cr)
+            {
+                return true;
+            }
+        }
+        
+        return false;
+    }
+    
     public void addY(Cell i, Cell j)
     {
         Tuple tuple = makeTuple(i, j);
-        tuple.y++;
+        tuple.y ++;
+        
+        for(TECConflictRegion cr : tuple.conflicts)
+        {
+            cr.addY(i, j);
+        }
     }
     
     private Tuple makeTuple(Cell i, Cell j)
@@ -256,7 +302,7 @@ public class IntersectionConnector extends Connector
             {
                 Tuple tuple = temp.get(j);
                 tuple.reservation = true;
-                tuple.congested = false;
+                tuple.congested = true;
             }
         }
     }
