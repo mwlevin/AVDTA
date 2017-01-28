@@ -5,7 +5,7 @@
  */
 package cdta.cell;
 
-import java.util.Iterator;
+import java.util.Set;
 
 /**
  *
@@ -29,5 +29,8 @@ public abstract class Connector
     public abstract int sumYOut(Cell j);
     public abstract boolean validate();
     
-    public abstract Iterator<Cell> iterator(Cell inc);
+    public abstract Set<Cell> getOutgoing(Cell inc);
+    public abstract Set<Cell> getIncoming(Cell inc);
+    
+    public abstract void printConnectivity(Cell inc);
 }

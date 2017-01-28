@@ -139,6 +139,8 @@ public class TECNetwork
                     for(Link o : link.getDest().getOutgoing())
                     {
                         TECLink tec2 = tecmap.get(o.getId());
+                        
+                        tec2.getFirstCell(t+1).setPrevCellConnector(inter);
 
                         inter.addConnection(tec, tec2, link, o, t, tbr, conflicts); 
                     }
@@ -244,6 +246,9 @@ public class TECNetwork
                     if(y_tot > cell.getSendingFlow())
                     {
                         System.err.println("y > sending flow");
+                        System.err.println(y_tot+" "+cell.getSendingFlow()+" "+cell.getCapacity()+" "+cell.getN()+" "+c+" "+t);
+                        cell.getNextCellConnector().printConnectivity(cell);
+                        
                         return false;
                     }
                 }
@@ -305,45 +310,46 @@ public class TECNetwork
         // update connectivity
         
         // congestion connectivity
-        for(Cell c : path)
+        for(int x = 0; x < path.size()-1; x++)
         {
-            int t = c.getTime();
+            Cell j = path.get(x);
+            Cell k = path.get(x+1);
             
-            if(c.getN() +1 > c.getCapacity())
+            int t = j.getTime();
+            
+            if(j.getN() +1 > j.getCapacity())
             {
-
                 if(t > 0)
                 {
-                    c.getLink().getCell(c.getId(), t-1).getSameCellConnector().setReservationConnectivity(false);
+                    j.getLink().getCell(j.getId(), t-1).getSameCellConnector().setReservationConnectivity(false);
                 }
-                c.getSameCellConnector().setCongestionConnectivity(true);
+                j.getSameCellConnector().setCongestionConnectivity(true);
+                
+                for(Cell kp : j.getNextCellConnector().getOutgoing(j))
+                {
+                    j.getNextCellConnector().setReservationConnectivity(j, kp, false);
+                }
+                
             }
             
             // receiving flow check
-            if(c.getId() > 0)
+            Connector connect = j.getPrevCellConnector();
+            
+            if(connect.sumYIn(j) > j.getReceivingFlow())
             {
-                Cell inc = c.getLink().getCell(c.getId()-1, t-1);
-                
-                if(inc.getNextCellConnector().getY(inc, c) > c.getReceivingFlow())
+                for(Cell i : connect.getIncoming(j))
                 {
-                    c.getSameCellConnector().setCongestionConnectivity(true);
+                    connect.setReservationConnectivity(i, j, false);
+                    connect.setCongestionConnectivity(i, i, true);
                 }
             }
-            /*
-            else if(!(c instanceof SourceCell))
+            
+            if(k.getJamD() - 1.0/k.getMesoDelta() * k.getPrevCellConnector().sumYIn(k) < k.getN()-1)
             {
-                StartCell cell = (StartCell)c;
-                IntersectionConnector edge = cell.getIncConnector();
-                
-                if(edge.sumYOut(cell) > cell.getReceivingFlow())
-                {
-                    for(Cell i : edge.getIncoming())
-                    {
-                        i.getSameCellConnector().setCongestionConnectivity(true);
-                    }
-                }
+                k.getLink().getCell(k.getId(), k.getTime()-1).getSameCellConnector().setReservationConnectivity(false);
             }
-            */
+            
+            // add conflict region check
         }
         
         // reservation connectivity
@@ -394,12 +400,8 @@ public class TECNetwork
 
             if(u.getNextCellConnector() != null)
             {
-                Iterator<Cell> iter = u.getNextCellConnector().iterator(u);
-                
-                while(iter.hasNext())
+                for(Cell v : u.getNextCellConnector().getOutgoing(u))
                 {
-                    Cell v = iter.next();
-                    
                     if(!v.added)
                     {
                         v.added = true;
@@ -412,19 +414,14 @@ public class TECNetwork
             
             if(u.getSameCellConnector() != null)
             {
-                Iterator<Cell> iter = u.getSameCellConnector().iterator(u);
-                
-                while(iter.hasNext())
+                for(Cell v : u.getSameCellConnector().getOutgoing(u))
                 {
-                    Cell v = iter.next();
-                    
-                    
                     if(!v.added)
                     {
                         v.added = true;
                         Q.add(v);
-                        v.prev = u;
                         v.label = true;
+                        v.prev = u;
                     }
                 }
             }

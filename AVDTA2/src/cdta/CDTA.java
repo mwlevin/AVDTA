@@ -25,7 +25,7 @@ public class CDTA
         
         TECNetwork net = project.createTECNetwork();
 
-        net.reserveAll();
+        //net.reserveAll();
 
     }
 }

@@ -17,7 +17,7 @@ public class Cell implements Comparable<Cell>
     private int id;
     
     private SameCellConnector sameCell;
-    private Connector nextCell;
+    private Connector nextCell, prevCell;
     
     private int t;
     
@@ -130,6 +130,15 @@ public class Cell implements Comparable<Cell>
         nextCell = c;
     }
     
+    public Connector getPrevCellConnector()
+    {
+        return prevCell;
+    }
+    
+    public void setPrevCellConnector(Connector c)
+    {
+        prevCell = c;
+    }
 
     public double getLength()
     {

@@ -12,6 +12,7 @@ import avdta.network.node.TBR;
 import cdta.TECLink;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -34,9 +35,24 @@ public class IntersectionConnector extends Connector
         
     }
     
-    public Iterator<Cell> iterator(Cell inc)
+    public Set<Cell> getOutgoing(Cell inc)
     {
-        return connected.get(inc).keySet().iterator();
+        return connected.get(inc).keySet();
+    }
+    
+    public Set<Cell> getIncoming(Cell out)
+    {
+        Set<Cell> output = new HashSet<Cell>();
+        
+        for(Cell inc : connected.keySet())
+        {
+            if(connected.get(inc).containsKey(out))
+            {
+                output.add(inc);
+            }
+        }
+        
+        return output;
     }
     
     public Set<Cell> getIncoming()
@@ -87,6 +103,15 @@ public class IntersectionConnector extends Connector
         Tuple tuple = temp.get(j);
         
         return tuple.reservation && tuple.congested;
+    }
+    
+    public void printConnectivity(Cell inc)
+    {
+        for(Cell j : connected.get(inc).keySet())
+        {
+            Tuple tuple = connected.get(inc).get(j);
+            System.out.println(j+"\t"+tuple.reservation+"\t"+tuple.congested);
+        }
     }
     
     public int getY(Cell i, Cell j)

@@ -5,7 +5,11 @@
  */
 package cdta.cell;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
 /**
  *
@@ -15,16 +19,33 @@ public class SameCellConnector extends Connector
 {
     private boolean reservation, congestion;
 
-    private Cell j;
+    private Cell i, j;
     
     public SameCellConnector(Cell i, Cell j)
     {
         this.j = j;
+        this.i = i;
     }
     
-    public Iterator<Cell> iterator(Cell inc)
+    public void printConnectivity(Cell inc)
     {
-        return new SingleIterator();
+        System.out.println(j+"\t"+reservation+"\t"+congestion);
+    }
+    
+    public Set<Cell> getOutgoing(Cell inc)
+    {
+        Set<Cell> output = new HashSet<Cell>();
+        output.add(j);
+        
+        return output;
+    }
+    
+    public Set<Cell> getIncoming(Cell out)
+    {
+        Set<Cell> output = new HashSet<Cell>();
+        output.add(i);
+        
+        return output;
     }
 
     public boolean validate()
@@ -88,35 +109,6 @@ public class SameCellConnector extends Connector
         congestion = connect;
     }
     
-    class SingleIterator implements Iterator<Cell>
-    {
-        private boolean hasNext;
-        
-        public SingleIterator()
-        {
-            hasNext = true;
-        }
-        
-        public boolean hasNext()
-        {
-            return hasNext;
-        }
-        
-        public void remove(){}
-        
-        public Cell next()
-        {
-            if(hasNext)
-            {
-                hasNext = false;
-                return j;
-            }
-            else
-            {
-                return null;
-            }
-        }
-        
-    }
+    
 
 }

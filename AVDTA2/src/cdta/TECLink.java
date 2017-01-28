@@ -85,7 +85,9 @@ public class TECLink
             for(int t = 0; t < T-1; t++)
             {
                 cells[c][t].setSameCellConnector(new SameCellConnector(cells[c][t], cells[c][t+1]));
-                cells[c][t].setNextCellConnector(new OrdinaryConnector(cells[c][t], cells[c+1][t+1]));
+                Connector connect = new OrdinaryConnector(cells[c][t], cells[c+1][t+1]);
+                cells[c][t].setNextCellConnector(connect);
+                cells[c+1][t+1].setPrevCellConnector(connect);
             }
         }
         
