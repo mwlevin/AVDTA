@@ -27,6 +27,7 @@ public class CDTA
         TECNetwork net = project.createTECNetwork();
 
         net.initializeConnectivity();
+        net.setCalcFFtime(false);
         
         System.out.println("Loaded network.");
         

@@ -49,6 +49,8 @@ public class TECNetwork
     
     private List<Vehicle> vehicles;
     
+    private boolean calcFFtime;
+    
     private CDTAProject project;
     
     /**
@@ -151,6 +153,11 @@ public class TECNetwork
         vehicles = sim.getVehicles();
     }
     
+    public void setCalcFFtime(boolean c)
+    {
+        calcFFtime = c;
+    }
+    
     public int getT()
     {
         return T;
@@ -184,7 +191,16 @@ public class TECNetwork
             
             int tt = traj.getExitTime() - veh.getDepTime();
             
-            int fftime = calcFFTime(veh.getOrigin().getId(), -veh.getDest().getId(), veh.getDepTime());
+            int fftime;
+            
+            if(calcFFtime)
+            {
+                fftime = calcFFTime(veh.getOrigin().getId(), -veh.getDest().getId(), veh.getDepTime());
+            }
+            else
+            {
+                fftime = 0;
+            }
             
             fileout.println(veh.getId()+"\t"+veh.getOrigin()+"\t"+(-veh.getDest().getId())+"\t"+veh.getDepTime()+"\t"+veh.getVOT()+"\t"+tt+"\t"+fftime);
             
@@ -200,9 +216,14 @@ public class TECNetwork
         
         fileout.println("Time:\t"+(time/1.0e9)+"\ts");
         
+        boolean output = validate();
+        fileout.println("Validate:\t"+output);
+        
         fileout.close();
         
-        return validate();
+        
+        
+        return output;
     }
     
     public int calcFFTime(int origin, int dest, int dtime)
