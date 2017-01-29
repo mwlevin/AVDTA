@@ -170,9 +170,9 @@ public class TECNetwork
         
         initializeConnectivity();
         
-        PrintStream fileout = new PrintStream(new FileOutputStream(new File(project.getResultsFolder()+"/log.txt")), true);
+        PrintStream fileout = new PrintStream(new FileOutputStream(new File(project.getResultsFolder()+"/cdta_vehicles.txt")), true);
         
-        fileout.println("id\torigin\tdest\tdep_time\tvot\ttt");
+        fileout.println("id\torigin\tdest\tdep_time\tvot\ttt\tfftime");
         
         int count = 0;
         
@@ -184,7 +184,9 @@ public class TECNetwork
             
             int tt = traj.getExitTime() - veh.getDepTime();
             
-            fileout.println(veh.getId()+"\t"+veh.getOrigin()+"\t"+veh.getDest()+"\t"+veh.getDepTime()+"\t"+veh.getVOT()+"\t"+tt);
+            int fftime = calcFFTime(veh.getOrigin().getId(), -veh.getDest().getId(), veh.getDepTime());
+            
+            fileout.println(veh.getId()+"\t"+veh.getOrigin()+"\t"+(-veh.getDest().getId())+"\t"+veh.getDepTime()+"\t"+veh.getVOT()+"\t"+tt+"\t"+fftime);
             
             count++;
             
@@ -201,6 +203,79 @@ public class TECNetwork
         fileout.close();
         
         return validate();
+    }
+    
+    public int calcFFTime(int origin, int dest, int dtime)
+    {
+        if(dest > 0)
+        {
+            dest = -dest;
+        }
+        
+        for(TECLink l : links)
+        {
+            for(int c = 0; c < l.getNumCells(); c++)
+            {
+                for(int t = 0; t < T; t++)
+                {
+                    Cell cell = l.getCell(c, t);
+                    
+                    cell.label = false;
+                    cell.prev = null;
+                    cell.added = false;
+                }
+            }
+        }
+        
+        PriorityQueue<Cell> Q = new PriorityQueue<Cell>();
+        
+        for(TECConnector link : zones.get(origin))
+        {
+            Q.add(link.getCell(dtime/Simulator.dt));
+        }
+
+        while(!Q.isEmpty())
+        {
+
+            
+            Cell u = Q.remove();
+            
+            if(u.getZoneId() == dest)
+            {
+                return u.getTime()* Simulator.dt - dtime;
+            }
+
+            if(u.getNextCellConnector() != null)
+            {
+                for(Cell v : u.getNextCellConnector().getOutgoing(u))
+                {
+                    if(!v.added)
+                    {
+                        v.added = true;
+                        Q.add(v);
+                        v.label = true;
+                        v.prev = u;
+                    }
+                }
+            }
+            
+            if(u.getSameCellConnector() != null)
+            {
+                for(Cell v : u.getSameCellConnector().getOutgoing(u))
+                {
+                    if(!v.added)
+                    {
+                        v.added = true;
+                        Q.add(v);
+                        v.label = true;
+                        v.prev = u;
+                    }
+                }
+            }
+            
+        }
+        
+        return Integer.MAX_VALUE;
     }
     
     public boolean validate()

@@ -31,6 +31,7 @@ public class CDTA
         System.out.println("Loaded network.");
         
         System.out.println("T: "+net.getT());
+
         net.reserveAll();
         
         /*
