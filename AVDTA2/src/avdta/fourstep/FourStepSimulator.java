@@ -110,7 +110,11 @@ public class FourStepSimulator extends DTASimulator
                     CostTuple tuple = tuples[t];
                     
                     double min_cost = Math.min(Math.min(tuple.DA_cost, tuple.AV_cost), tuple.TR_cost);
-                    fileout.println(o+"\t"+(-d.getId())+"\t"+(t*ast_duration)+"\t"+tuple.DA_cost+"\t"+tuple.AV_cost+"\t"+tuple.TR_cost+"\t"+min_cost);
+                    fileout.println(o+"\t"+(-d.getId())+"\t"+(t*ast_duration)+"\t"+
+                            String.format("%.3f", tuple.DA_cost)+"\t"+
+                            String.format("%.3f", tuple.AV_cost)+"\t"+
+                            String.format("%.3f", tuple.TR_cost)+"\t"+
+                            String.format("%.3f", min_cost));
                 }
             }
         }
@@ -145,7 +149,11 @@ public class FourStepSimulator extends DTASimulator
                     double RP_flow = remaining * tuple.AV_prop;
                     double DA_flow = remaining - RP_flow;
                     
-                    fileout.println(o+"\t"+(-d.getId())+"\t"+(t*ast_duration)+"\t"+DA_flow+"\t"+RP_flow+"\t"+TR_flow+"\t"+tuple.total_flow);
+                    fileout.println(o+"\t"+(-d.getId())+"\t"+(t*ast_duration)+"\t"+
+                            String.format("%.1f", DA_flow)+"\t"+
+                            String.format("%.1f", RP_flow)+"\t"+
+                            String.format("%.1f", TR_flow)+"\t"+
+                            String.format("%.1f", tuple.total_flow));
                 }
             }
         }
