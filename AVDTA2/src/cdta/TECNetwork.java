@@ -189,11 +189,15 @@ public class TECNetwork
         
         initializeConnectivity();
         
+        System.out.println("Vehicles: "+vehicles.size());
+        
         PrintStream fileout = new PrintStream(new FileOutputStream(new File(project.getResultsFolder()+"/cdta_vehicles.txt")), true);
         
         fileout.println("id\torigin\tdest\tdep_time\tvot\ttt\tfftime");
         
         int count = 0;
+        
+        int tstt = 0;
         
         for(Vehicle v : vehicles)
         {
@@ -202,6 +206,8 @@ public class TECNetwork
             reserve(traj);
             
             int tt = traj.getExitTime() - veh.getDepTime();
+            
+            tstt += tt;
             
             int fftime;
             
@@ -230,7 +236,8 @@ public class TECNetwork
         
         boolean output = validate();
         fileout.println("Validate:\t"+output);
-        
+        fileout.println("TSTT:\t"+String.format("%.1f", tstt/3600.0)+"\thr");
+        fileout.println("Avg. TT\t"+String.format("%.1f", tstt/60.0/vehicles.size())+"\tmin");
         fileout.close();
         
         

@@ -4,6 +4,7 @@
  */
 package cdta;
 
+import avdta.dta.ReadDTANetwork;
 import avdta.network.Simulator;
 import avdta.network.node.Node;
 import avdta.project.CDTAProject;
@@ -20,15 +21,23 @@ public class CDTA
 {
     public static void main(String[] args) throws IOException
     {
-        CDTAProject project = new CDTAProject(new File("projects/coacongress2"));
+        test("SiouxFalls", 1.0);
+        //test("coacongress2", 1.0);
+    }
+    
+    public static void test(String name, double prop) throws IOException
+    {
+        CDTAProject project = new CDTAProject(new File("projects/"+name));
 
+        ReadDTANetwork read = new ReadDTANetwork();
+        read.prepareDemand(project, 1);
+        project.loadSimulator();
         
         System.out.println(project.getName());
         
         TECNetwork net = project.createTECNetwork();
 
-        net.initializeConnectivity();
-        net.setCalcFFtime(true);
+        //net.setCalcFFtime(true);
         
         System.out.println("Loaded network.");
         
@@ -37,40 +46,7 @@ public class CDTA
 
         net.reserveAll();
         
-        /*
-        
-        Trajectory traj = net.shortestPath(101, -102, 0);
-        net.reserve(traj);
-        
-        System.out.println(traj);
-        
-        
-        for(int c = 0; c < traj.size()-1; c++)
-        {
-            Cell i = traj.get(c);
-            Cell j = traj.get(c+1);
-            System.out.println(i.getNextCellConnector().isConnected(i, j));
-            i.getNextCellConnector().printConnectivity(i);
-        }
-        
-        //net.reserveAll();
-        
-        Trajectory traj2 = net.shortestPath(101, -102, 0);
-        
-        System.out.println(traj2);
-        
-        for(int c = 0; c < traj2.size()-1; c++)
-        {
-            Cell i = traj2.get(c);
-            Cell j = traj2.get(c+1);
-            System.out.println(i.getNextCellConnector().isConnected(i, j));
-            i.getNextCellConnector().printConnectivity(i);
-        }
-        
-        net.reserve(traj2);
-        */
-        
-        System.out.println(net.validate());
-
+        File file = new File(project.getResultsFolder()+"/cdta_vehicles.txt");
+        file.renameTo(new File(project.getResultsFolder()+"/cdta_vehicles_"+((int)(prop*100))+".txt"));
     }
 }
