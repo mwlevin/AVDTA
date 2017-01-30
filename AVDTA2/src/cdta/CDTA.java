@@ -20,17 +20,19 @@ public class CDTA
 {
     public static void main(String[] args) throws IOException
     {
-        CDTAProject project = new CDTAProject(new File("projects/SiouxFalls"));
+        CDTAProject project = new CDTAProject(new File("projects/coacongress2"));
 
         
+        System.out.println(project.getName());
         
         TECNetwork net = project.createTECNetwork();
 
         net.initializeConnectivity();
-        net.setCalcFFtime(false);
+        net.setCalcFFtime(true);
         
         System.out.println("Loaded network.");
         
+        System.out.println("Cells: "+net.getNumCells());
         System.out.println("T: "+net.getT());
 
         net.reserveAll();

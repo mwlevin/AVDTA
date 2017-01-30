@@ -96,8 +96,8 @@ public class TECNetwork
         }
         
         
-        T = Simulator.duration / Simulator.dt;
-        //T = 3600*1/Simulator.dt;
+        //T = Simulator.duration / Simulator.dt;
+        T = 3600*4/Simulator.dt;
 
 
         for(TECLink link : links)
@@ -151,6 +151,18 @@ public class TECNetwork
         }
         
         vehicles = sim.getVehicles();
+    }
+    
+    public int getNumCells()
+    {
+        int output = 0;
+        
+        for(TECLink link : links)
+        {
+            output += link.getNumCells();
+        }
+        
+        return output;
     }
     
     public void setCalcFFtime(boolean c)
