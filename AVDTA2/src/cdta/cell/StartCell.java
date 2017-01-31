@@ -14,9 +14,9 @@ public class StartCell extends Cell
 {
     private IntersectionConnector inc;
     
-    public StartCell(TECLink link, int id, int t)
+    public StartCell(TECLink link, int id, int t, int capacity, int jamd)
     {
-        super(link, id, t);
+        super(link, id, t, capacity, jamd);
     }
     
     public void setIncConnector(IntersectionConnector e)

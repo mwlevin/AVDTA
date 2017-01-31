@@ -63,7 +63,7 @@ public class TECConnector extends TECLink
         return 1;
     }
     
-    public Cell createCell(int c, int t)
+    public Cell createCell(int c, int t, int capacity, int jamd)
     {
         if(isOrigin())
         {

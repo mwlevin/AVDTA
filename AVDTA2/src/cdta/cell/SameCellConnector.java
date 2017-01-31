@@ -27,6 +27,16 @@ public class SameCellConnector extends Connector
         this.i = i;
     }
     
+    public Cell getI()
+    {
+        return i;
+    }
+    
+    public Cell getJ()
+    {
+        return j;
+    }
+    
     public void printConnectivity(Cell inc)
     {
         System.out.println(i+"\t"+j+"\t"+reservation+"\t"+congestion);

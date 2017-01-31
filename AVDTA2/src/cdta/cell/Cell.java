@@ -25,6 +25,8 @@ public class Cell implements Comparable<Cell>
     
     private int n;
     
+    private int capacity, jamd;
+    
     
     
     
@@ -32,11 +34,13 @@ public class Cell implements Comparable<Cell>
     public boolean label;
     public boolean added;
     
-    public Cell(TECLink link, int id, int t)
+    public Cell(TECLink link, int id, int t, int capacity, int jamd)
     {
         this.t = t;
         this.link = link;
         this.id = id;
+        this.capacity = capacity;
+        this.jamd = jamd;
     }
     
     public String toString()
@@ -148,13 +152,13 @@ public class Cell implements Comparable<Cell>
 
     public int getJamD()
     {
-        return link.getCellJamD();
+        return jamd;
     }
     
 
     public int getCapacity()
     {
-        return link.getCellCapacity();
+        return capacity;
     }
     
     public double getReceivingFlow()

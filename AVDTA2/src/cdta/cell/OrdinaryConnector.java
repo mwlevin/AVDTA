@@ -31,7 +31,7 @@ public class OrdinaryConnector extends SameCellConnector
     public void initConnectivity()
     {
         super.initConnectivity();
-        setCongestionConnectivity(true);
+        setCongestionConnectivity(getI().getCapacity() > 0 && getJ().getCapacity() > 0);
     }
     
     public int sumYIn(Cell i)

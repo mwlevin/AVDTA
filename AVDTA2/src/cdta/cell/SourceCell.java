@@ -17,7 +17,7 @@ public class SourceCell extends Cell
     
     public SourceCell(TECConnector link, int id, int zoneId, int t)
     {
-        super(link, id,  t);
+        super(link, id,  t, Integer.MAX_VALUE, Integer.MAX_VALUE);
         this.zoneId = zoneId;
     }
     

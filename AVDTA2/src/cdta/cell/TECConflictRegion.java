@@ -23,7 +23,7 @@ public class TECConflictRegion
     
     public boolean validate()
     {
-        return y <= 1;
+        return y <= 1.0;
     }
     
     public int getId()

@@ -307,7 +307,7 @@ public class IntersectionConnector extends Connector
             {
                 Tuple tuple = temp.get(j);
                 tuple.reservation = true;
-                tuple.congested = true;
+                tuple.congested = i.getCapacity() > 0 && j.getCapacity() > 0;
             }
         }
     }

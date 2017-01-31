@@ -20,7 +20,8 @@ import java.util.Map;
  */
 public class TECLink 
 {
-    private int capacity, jamd, id; 
+    private int id; 
+    private double capacity, jamd;
     private double meso_delta, length;
     
     private int numCells;
@@ -32,10 +33,10 @@ public class TECLink
     {
         length = link.getFFSpeed() * Simulator.dt / 3600.0;
         numCells = getNumCells(link);
-        capacity =(int)Math.round(link.getCapacity() * Simulator.dt/3600.0);
+        capacity = link.getCapacity() * Simulator.dt/3600.0;
         
         
-        jamd = (int)Math.round(link.getJamDensity() * length);
+        jamd = link.getJamDensity() * length;
         
         meso_delta = link.getWaveSpeed() / link.getFFSpeed();
         
@@ -71,14 +72,21 @@ public class TECLink
     
     public void createCells(int T)
     {
+        double Q = capacity;
+        double N = jamd;
+        
         cells = new Cell[numCells][T];
         
         for(int c = 0; c < numCells; c++)
         {
+            Q = capacity;
             for(int t = 0; t < T; t++)
             {
-                cells[c][t] = createCell(c, t);
+                cells[c][t] = createCell(c, t, (int)Math.floor(Q), (int)Math.floor(N));
+                
+                Q = Q - Math.floor(Q) + capacity;
             }
+            N = N - Math.floor(N) + jamd;
         }
         
         for(int c = 0; c < numCells-1; c++)
@@ -98,15 +106,15 @@ public class TECLink
         }
     }
     
-    public Cell createCell(int c, int t)
+    public Cell createCell(int c, int t, int capacity, int jamd)
     {
         if(c == 0)
         {
-            return new StartCell(this, c, t);
+            return new StartCell(this, c, t, capacity, jamd);
         }
         else
         {
-            return new Cell(this, c, t);
+            return new Cell(this, c, t, capacity, jamd);
         }
     }
     
@@ -120,12 +128,12 @@ public class TECLink
         return id;
     }
     
-    public int getCellCapacity()
+    public double getCellCapacity()
     {
         return capacity;
     }
     
-    public int getCellJamD()
+    public double getCellJamD()
     {
         return jamd;
     }
