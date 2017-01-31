@@ -33,13 +33,14 @@ public class TECLink
         length = link.getFFSpeed() * Simulator.dt / 3600.0;
         numCells = getNumCells(link);
         capacity =(int)Math.round(link.getCapacity() * Simulator.dt/3600.0);
+        
+        
         jamd = (int)Math.round(link.getJamDensity() * length);
         
         meso_delta = link.getWaveSpeed() / link.getFFSpeed();
         
         this.id = link.getId();
-        
-        
+
     }
 
     

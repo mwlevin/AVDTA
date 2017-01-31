@@ -140,6 +140,10 @@ public class TECNetwork
                 
                     for(Link o : link.getDest().getOutgoing())
                     {
+                        if(link.getSource() == o.getDest())
+                        {
+                            continue;
+                        }
                         TECLink tec2 = tecmap.get(o.getId());
                         
                         tec2.getFirstCell(t+1).setPrevCellConnector(inter);

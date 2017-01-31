@@ -37,6 +37,10 @@ public class IntersectionConnector extends Connector
     
     public Set<Cell> getOutgoing(Cell inc)
     {
+        if(!connected.containsKey(inc))
+        {
+            return new HashSet<Cell>();
+        }
         return connected.get(inc).keySet();
     }
     
@@ -213,6 +217,7 @@ public class IntersectionConnector extends Connector
         tuple.setConflicts(conflicts);
         
         ((StartCell)j.getFirstCell(t+1)).setIncConnector(this);
+        
     }
     
     private TECConflictRegion findCR(List<TECConflictRegion> allConflicts, int id)

@@ -21,23 +21,27 @@ public class CDTA
 {
     public static void main(String[] args) throws IOException
     {
-        test("SiouxFalls", 1.0);
-        //test("coacongress2", 1.0);
+        for(int x = 150; x <= 150; x += 5)
+        {
+            //test("SiouxFalls", x);
+            test("coacongress2", x);
+        }
+        
     }
     
-    public static void test(String name, double prop) throws IOException
+    public static void test(String name, int prop) throws IOException
     {
         CDTAProject project = new CDTAProject(new File("projects/"+name));
 
         ReadDTANetwork read = new ReadDTANetwork();
-        read.prepareDemand(project, 1);
+        read.prepareDemand(project, prop/100.0);
         project.loadSimulator();
         
         System.out.println(project.getName());
         
         TECNetwork net = project.createTECNetwork();
 
-        //net.setCalcFFtime(true);
+        net.setCalcFFtime(true);
         
         System.out.println("Loaded network.");
         
@@ -47,6 +51,11 @@ public class CDTA
         net.reserveAll();
         
         File file = new File(project.getResultsFolder()+"/cdta_vehicles.txt");
-        file.renameTo(new File(project.getResultsFolder()+"/cdta_vehicles_"+((int)(prop*100))+".txt"));
+        File target = new File(project.getResultsFolder()+"/cdta_vehicles_"+prop+".txt");
+        if(target.exists())
+        {
+            target.delete();
+        }
+        file.renameTo(target);
     }
 }
