@@ -50,7 +50,7 @@ public class FourStepProject extends DTAProject
     
     /**
      * Returns the assignments folder
-     * @return {@link Project#getProjectDirectory()}/assignments/
+     * @return {@link Project#getProjectDirectory()}/assignments_fourstep/
      */
     public String getAssignmentsFolder()
     {

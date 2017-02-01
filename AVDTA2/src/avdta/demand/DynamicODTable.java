@@ -136,6 +136,78 @@ public class DynamicODTable implements Iterable<DynamicODRecord>
      * @param type the type code of the vehicle
      * @param dem the amount of demand
      */
+    public void setDemand(Zone origin, Zone dest, int ast, int type, double dem)
+    {
+        setDemand(origin.getId(), dest.getId(), ast, type, dem);
+    }
+    
+    /**
+     * Adds the specified amount of demand.
+     * @param origin the origin
+     * @param dest the destination
+     * @param ast the assignment interval
+     * @param type the type code of the vehicle
+     * @param dem the amount of demand
+     */
+    public void setDemand(int origin, int dest, int ast, int type, double dem)
+    {
+        if(dem <= 0.0)
+        {
+            return;
+        }
+        
+        dest = (int)Math.abs(dest);
+        if(ast < 0)
+        {
+            throw new RuntimeException("AST is "+ast);
+        }
+        
+        Map<Integer, Map<Integer, Map<Integer, Double>>> temp1;
+        
+        if(table.containsKey(origin))
+        {
+            temp1 = table.get(origin);
+        }
+        else
+        {
+            table.put(origin, temp1 = new HashMap<Integer, Map<Integer, Map<Integer, Double>>>());
+        }
+        
+        Map<Integer, Map<Integer, Double>> temp2;
+        
+        if(temp1.containsKey(dest))
+        {
+            temp2 = temp1.get(dest);
+        }
+        else
+        {
+            temp1.put(dest, temp2 = new HashMap<Integer, Map<Integer, Double>>());
+        }
+        
+        Map<Integer, Double> temp3;
+        
+        if(temp2.containsKey(type))
+        {
+            temp3 = temp2.get(type);
+        }
+        else
+        {
+            temp2.put(type, temp3 = new HashMap<Integer, Double>());
+        }
+        
+
+        temp3.put(ast, dem);
+        
+    }
+    
+    /**
+     * Adds the specified amount of demand.
+     * @param origin the origin
+     * @param dest the destination
+     * @param ast the assignment interval
+     * @param type the type code of the vehicle
+     * @param dem the amount of demand
+     */
     public void addDemand(int origin, int dest, int ast, int type, double dem)
     {
         if(dem <= 0.0)

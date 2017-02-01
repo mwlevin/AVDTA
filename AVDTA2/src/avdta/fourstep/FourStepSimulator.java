@@ -383,8 +383,17 @@ public class FourStepSimulator extends DTASimulator
                 {
                     for(int t = 0; t < Simulator.num_asts; t++)
                     {
-                        odtable.addDemand(o, d, t, type, costs.get(o).get(d)[t].HV_flow);
-                        odtable.addDemand(o, d, t, AV_type, costs.get(o).get(d)[t].AV_flow);
+                        
+                        odtable.setDemand(o, d, t, type, costs.get(o).get(d)[t].HV_flow);
+                        
+                        if(type == AV_type)
+                        {
+                            odtable.addDemand(o, d, t, AV_type, costs.get(o).get(d)[t].AV_flow);
+                        }
+                        else
+                        {
+                            odtable.setDemand(o, d, t, AV_type, costs.get(o).get(d)[t].AV_flow);
+                        }
                     }
                 }
             }
