@@ -4,6 +4,8 @@
  */
 package cdta.cell;
 
+import avdta.network.Simulator;
+
 /**
  *
  * @author ml26893
@@ -38,11 +40,11 @@ public class TECConflictRegion
     
     public void addY(Cell i, Cell j)
     {
-        y += 1.0/i.getCapacity();
+        y += 1.0/ (i.getCapacity() / Simulator.dt);
     }
     
     public boolean canAddY(Cell i, Cell j)
     {
-        return y + 1.0/i.getCapacity() <= 1;
+        return y + 1.0/(i.getCapacity() / Simulator.dt) <= 1;
     }
 }
