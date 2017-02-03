@@ -16,9 +16,9 @@ public class IncomingLink extends Link
 {
     private Map<OutgoingLink, TurningMovement> turns;
     
-    public IncomingLink(Node node, double capacity, OutgoingLink... out)
+    public IncomingLink(Node node, double capacity, double width, OutgoingLink... out)
     {
-        super(node, capacity);
+        super(node, capacity, width);
         turns = new HashMap<OutgoingLink, TurningMovement>();
         
         
@@ -29,8 +29,8 @@ public class IncomingLink extends Link
         turns.put(turn.getJ(), turn);
     }
     
-    public Queue getQueue(Link out)
+    public TurningMovement getQueue(Link out)
     {
-        return turns.get(out).getQueue();
+        return turns.get(out);
     }
 }

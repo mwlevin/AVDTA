@@ -11,15 +11,35 @@ package pedestrian;
 public class Queue 
 {
     private int size;
+    private int max;
     
-    public Queue()
+    private int index;
+    
+    public int y;
+    
+    public Queue(int max)
     {
         size = 0;
     }
     
+    public int getMax()
+    {
+        return max;
+    }
+    
+    public void setIndex(int idx)
+    {
+        this.index = idx;
+    }
+    
+    public int getIndex()
+    {
+        return index;
+    }
+    
     public void add(int x)
     {
-        size += x;
+        setSize(size+x);
     }
     
     public int getSize()
@@ -29,6 +49,6 @@ public class Queue
     
     public void setSize(int x)
     {
-        size = x;
+        size = (int)Math.min(max, x);
     }
 }

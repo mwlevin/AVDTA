@@ -12,6 +12,9 @@ public class State
 {
     private int[] queueLen;
     
+    public double J;
+    public Action mu;
+    
     public State(Node n)
     {
         queueLen = new int[n.getNumQueues()];
@@ -27,6 +30,21 @@ public class State
         }
     }
     
+    public State(int[] copy)
+    {
+        this.queueLen = new int[copy.length];
+        
+        for(int i = 0; i < copy.length; i++)
+        {
+            queueLen[i] = copy[i];
+        }
+    }
+    
+    public int[] getQueueLengths()
+    {
+        return queueLen;
+    }
+    
     public void apply(Queue[] queues)
     {
         for(int i = 0; i < queues.length; i++)
@@ -35,5 +53,30 @@ public class State
         }
     }
     
+    public boolean equals(State rhs)
+    {
+        for(int i = 0; i < queueLen.length; i++)
+        {
+            if(queueLen[i] != rhs.queueLen[i])
+            {
+                return false;
+            }
+        }
+        
+        return true;
+    }
     
+    public int hashCode()
+    {
+        int output = 0;
+        int mult = 1;
+        
+        for(int i : queueLen)
+        {
+            output += i * mult;
+            mult *= 10;
+        }
+        
+        return output;
+    }
 }

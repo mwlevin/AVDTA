@@ -16,15 +16,22 @@ public abstract class Link
     private static int next_id = 1;
     
     private double capacity;
+    private double width;
     
-    public Link(Node n, double capacity)
+    public Link(Node n, double capacity, double width)
     {
         id = next_id++;
         
         node = n;
         this.capacity = capacity;
+        this.width = width;
         
         n.addLink(this);
+    }
+    
+    public double getWidth()
+    {
+        return width;
     }
     
     public Node getNode()

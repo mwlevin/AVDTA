@@ -10,26 +10,40 @@ import java.util.Set;
  *
  * @author ml26893
  */
-public class TurningMovement 
+public class TurningMovement extends Queue implements Comparable<TurningMovement>
 {
     private IncomingLink i;
     private OutgoingLink j;
     private Set<ConflictRegion> cr;
-    private Queue queue;
     
-    public TurningMovement(IncomingLink i, OutgoingLink j, Set<ConflictRegion> cr)
+    public double efficiency;
+    
+    public TurningMovement(IncomingLink i, OutgoingLink j, Set<ConflictRegion> cr, int max)
     {
+        super(max);
         this.i = i;
         this.j = j;
         this.cr = cr;
-        queue = new Queue();
+        
     }
     
-    public Queue getQueue()
+    public int compareTo(TurningMovement rhs)
     {
-        return queue;
+        if(efficiency > rhs.efficiency)
+        {
+            return -1;
+        }
+        else if(efficiency < rhs.efficiency)
+        {
+            return 1;
+        }
+        else
+        {
+            return 0;
+        }
     }
     
+
     public IncomingLink getI()
     {
         return i;
@@ -40,7 +54,7 @@ public class TurningMovement
         return j;
     }
     
-    public Set<ConflictRegion> getCR()
+    public Set<ConflictRegion> getConflictRegions()
     {
         return cr;
     }

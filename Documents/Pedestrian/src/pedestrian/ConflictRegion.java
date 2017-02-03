@@ -10,6 +10,9 @@ package pedestrian;
  */
 public class ConflictRegion 
 {
+    
+    public double y;
+    
     public void initialize()
     {
         

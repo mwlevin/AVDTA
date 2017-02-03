@@ -10,8 +10,16 @@ package pedestrian;
  */
 public class OutgoingLink extends Link
 {
-    public OutgoingLink(Node n, double capacity)
+    public double R;
+    public int y;
+    
+    public OutgoingLink(Node n, double capacity, double width)
     {
-        super(n, capacity);
+        super(n, capacity, width);
+    }
+    
+    public double getReceivingFlow(double dt)
+    {
+        return getCapacity() * dt;
     }
 }

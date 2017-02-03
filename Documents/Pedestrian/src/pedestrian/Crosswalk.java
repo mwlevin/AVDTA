@@ -11,29 +11,53 @@ import java.util.Set;
  *
  * @author ml26893
  */
-public class Crosswalk 
+public class Crosswalk extends Queue
 {
-    private Set<Link> crossed;
-    private Queue queue;
+    private double MIN_WALK_SPEED = 1.5 * 5280 / 3600;
     
-    public Crosswalk(Link... c)
+    private Set<Link> crossed;
+    
+    public boolean active;
+    
+    private double min_duration;
+
+    public Crosswalk(int max, Link... c)
     {
-        queue = new Queue();
+        super(max);
         crossed = new HashSet<Link>();
         
         for(Link l : c)
         {
             crossed.add(l);
         }
+        
+        min_duration = getWidth() / MIN_WALK_SPEED + 5;
     }
     
-    public Queue getQueue()
+    public double getWidth()
     {
-        return queue;
+        double output = 0.0;
+        
+        for(Link l : crossed)
+        {
+            output += l.getWidth();
+        }
+        
+        return output;
+    }
+    
+    public double getMinDuration()
+    {
+        return min_duration;
     }
         
     public Set<Link> getCrossed()
     {
         return crossed;
+    }
+    
+    public boolean crosses(Link l)
+    {
+        return crossed.contains(l);
     }
 }
