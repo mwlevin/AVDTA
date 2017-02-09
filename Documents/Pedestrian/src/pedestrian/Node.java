@@ -28,7 +28,7 @@ public class Node
     
     private Set<ConflictRegion> conflictRegions;
     
-    public Node(int max_queue)
+    public Node()
     {
 
         incoming = new HashSet<IncomingLink>();
@@ -37,6 +37,21 @@ public class Node
         crosswalks = new HashSet<Crosswalk>();
         
         queues = new Queue[0];
+    }
+    
+    public void addCrosswalk(Crosswalk c)
+    {
+        crosswalks.add(c);
+    }
+    
+    public void addLink(IncomingLink l)
+    {
+        incoming.add(l);
+    }
+    
+    public void addLink(OutgoingLink l)
+    {
+        outgoing.add(l);
     }
     
     public void setConflictRegions(Set<ConflictRegion> cr)
@@ -108,8 +123,6 @@ public class Node
             {
                 active[c.getIndex()] = c.active;
             }
-            
-            
 
             Action action = new Action(active, y, duration);
 

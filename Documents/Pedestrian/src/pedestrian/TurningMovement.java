@@ -18,9 +18,9 @@ public class TurningMovement extends Queue implements Comparable<TurningMovement
     
     public double efficiency;
     
-    public TurningMovement(IncomingLink i, OutgoingLink j, Set<ConflictRegion> cr, int max)
+    public TurningMovement(IncomingLink i, OutgoingLink j, Set<ConflictRegion> cr, int max, double rate)
     {
-        super(max);
+        super(max, rate);
         this.i = i;
         this.j = j;
         this.cr = cr;

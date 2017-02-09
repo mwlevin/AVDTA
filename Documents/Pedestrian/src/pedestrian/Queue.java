@@ -14,12 +14,20 @@ public class Queue
     private int max;
     
     private int index;
+    private Poisson dist;
     
     public int y;
     
-    public Queue(int max)
+    public Queue(int max, double rate)
     {
         size = 0;
+        this.max = max;
+        dist = new Poisson(rate);
+    }
+    
+    public Poisson getDemand()
+    {
+        return dist;
     }
     
     public int getMax()

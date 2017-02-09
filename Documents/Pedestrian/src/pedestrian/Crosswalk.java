@@ -21,9 +21,9 @@ public class Crosswalk extends Queue
     
     private double min_duration;
 
-    public Crosswalk(int max, Link... c)
+    public Crosswalk(int max, double rate, Link... c)
     {
-        super(max);
+        super(max, rate);
         crossed = new HashSet<Link>();
         
         for(Link l : c)

@@ -45,6 +45,18 @@ public class State
         return queueLen;
     }
     
+    public int[] copyQueueLengths()
+    {
+        int[] copy = new int[queueLen.length];
+        
+        for(int i = 0; i < copy.length; i++)
+        {
+            copy[i] = queueLen[i];
+        }
+        
+        return copy;
+    }
+    
     public void apply(Queue[] queues)
     {
         for(int i = 0; i < queues.length; i++)
