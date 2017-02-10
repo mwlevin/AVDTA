@@ -93,6 +93,8 @@ public class ReadDTANetwork extends ReadDemandNetwork
         readVehicles(project);
         
         sim.setVehicles(vehicles);
+
+
     }
     
     

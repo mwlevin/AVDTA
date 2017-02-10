@@ -23,8 +23,10 @@ import avdta.network.node.Zone;
 import avdta.project.DTAProject;
 import avdta.project.FourStepProject;
 import avdta.util.FileTransfer;
+import avdta.vehicle.Bus;
 import avdta.vehicle.DriverType;
 import avdta.vehicle.PersonalVehicle;
+import avdta.vehicle.Vehicle;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -310,6 +312,9 @@ public class FourStepSimulator extends DTASimulator
     }
     public DTAResults four_step(int max_iter, int ta_iter, int pd_iter, double ta_min_gap) throws IOException
     {
+        
+        
+        
         assign = new FourStepAssignment(getProject(), null, 1, 1);
         
         int AV_type = ReadNetwork.DA_VEHICLE + ReadNetwork.AV + ReadNetwork.ICV;
@@ -322,6 +327,8 @@ public class FourStepSimulator extends DTASimulator
         ReadFourStepNetwork read = new ReadFourStepNetwork();
         read.setNodesMap(createNodeIdsMap());
         
+
+
         // write demand profile
         DemandProfile profile = new DemandProfile();
         
@@ -342,6 +349,7 @@ public class FourStepSimulator extends DTASimulator
         
         
         read.readVehicles(project, this);
+
         
         simulate();
         

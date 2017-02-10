@@ -196,7 +196,7 @@ public class ReadNetwork
         
         sim.initialize();
         
-        
+
         
         if(project instanceof TransitProject)
         {
@@ -292,6 +292,11 @@ public class ReadNetwork
         Map<Integer, ArrayList<BusLink>> routeStops = new HashMap<Integer, ArrayList<BusLink>>();
         Map<Integer, Path> routes = new HashMap<Integer, Path>();
         
+        if(linksmap.size() == 0)
+        {
+            linksmap = project.getSimulator().createLinkIdsMap();
+        }
+        
         Scanner filein = new Scanner(project.getBusRouteLinkFile());
         
         filein.nextLine();
@@ -338,6 +343,12 @@ public class ReadNetwork
             {
                 Object[] data = temp.get(seq);
                 Link link = linksmap.get((Integer)data[0]);
+                
+                if(link == null)
+                {
+                     System.out.println(data[0]+" "+linksmap.size());
+                }
+                
                 boolean stop = (Boolean)data[1];
                 int dwelltime = (Integer)data[2];
                 
@@ -397,13 +408,16 @@ public class ReadNetwork
         filein = new Scanner(project.getBusFile());
         filein.nextLine();
         
+        int count = 0;
+        
         while(filein.hasNextInt())
         {
             int id = filein.nextInt();
             int type = filein.nextInt();
             int routeid = filein.nextInt();
             int dtime = filein.nextInt();
-            
+
+            count++;
             if(filein.hasNextLine())
             {
                 filein.nextLine();
@@ -441,6 +455,8 @@ public class ReadNetwork
             vehicles.add(bus);
         }
         filein.close();
+        
+
         
     }
     
