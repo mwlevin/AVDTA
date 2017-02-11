@@ -99,8 +99,8 @@ public class Main
 
         //caccTest2();
         
-        //new DTAGUI();
-        new FourStepGUI();
+        new DTAGUI();
+        //new FourStepGUI();
         
         //SAVtest();
         

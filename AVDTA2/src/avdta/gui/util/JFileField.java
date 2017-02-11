@@ -64,8 +64,9 @@ public class JFileField extends JTextField
     }
     
     
-    private File chooseFile()
+    public File chooseFile()
     {
+        
         JFileChooser chooser;
         if(file == null)
         {

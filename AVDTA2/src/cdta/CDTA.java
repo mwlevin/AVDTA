@@ -23,10 +23,13 @@ public class CDTA
     {
         for(int x = 100; x <= 150; x += 5)
         {
-            test("coacongress2", x);
             test("SiouxFalls", x);
         }
         
+        for(int x = 100; x <= 150; x += 5)
+        {
+            test("coacongress2", x);
+        }
     }
     
     public static void test(String name, int prop) throws IOException

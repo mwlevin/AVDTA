@@ -116,6 +116,7 @@ public class ImportNetworkPanel extends GUIPanel
             }
             public File chooseFile()
             {
+                
                 ProjectChooser chooser = new ProjectChooser(new File(GUI.getDefaultDirectory()), "DTA");
                 chooser.setAcceptAll(true);
 
