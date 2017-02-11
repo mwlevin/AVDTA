@@ -16,7 +16,7 @@ public class IncomingLink extends Link
 {
     private Map<OutgoingLink, TurningMovement> turns;
     
-    public IncomingLink(Node node, double capacity, double width, OutgoingLink... out)
+    public IncomingLink(Node node, double capacity, double width)
     {
         super(node, capacity, width);
         turns = new HashMap<OutgoingLink, TurningMovement>();
