@@ -43,7 +43,7 @@ public class Poisson
     // lambda^k e^-lambda / k!
     public double poisson(int x, double time)
     {
-        double lambda = rate * time;
+        double lambda = rate * time / 3600.0;
         return Math.pow(lambda, x) * Math.exp(-lambda) / factorial(x);
     }
     

@@ -16,7 +16,7 @@ import java.util.Set;
  */
 public class Node 
 {
-    public static final int MAX_QUEUE = 20;
+    public static final int MAX_QUEUE = 5;
     public static final int V_DT = 10;
     
     private Set<IncomingLink> incoming;
@@ -245,7 +245,14 @@ public class Node
             cr.initialize();
         }
         
-        queues = new Queue[crosswalks.size() + incoming.size() * outgoing.size()];
+        int count = crosswalks.size();
+        
+        for(IncomingLink l : incoming)
+        {
+            count += l.getNumQueues();
+        }
+        
+        queues = new Queue[count];
         
         int idx = 0;
         
@@ -260,9 +267,14 @@ public class Node
         {
             for(OutgoingLink v : outgoing)
             {
-                queues[idx] = l.getQueue(v);
-                queues[idx].setIndex(idx);
-                idx++;
+                Queue temp = l.getQueue(v);
+                
+                if(temp != null)
+                {
+                    queues[idx] = l.getQueue(v);
+                    queues[idx].setIndex(idx);
+                    idx++;
+                }
             }
         }
     }

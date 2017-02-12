@@ -16,10 +16,9 @@ public class Main
      */
     public static void main(String[] args) 
     {
-        Node node = new Node();
+        SimpleNode node = new SimpleNode(1200, 1200, 500, 500, 200, 200);
         
-        
-        
+        MDP test = new MDP(node);
         
     }
 }

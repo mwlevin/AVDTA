@@ -40,6 +40,23 @@ public class State
         }
     }
     
+    public String toString()
+    {
+        String output = "(";
+        
+        for(int i = 0; i < queueLen.length; i++)
+        {
+            output += queueLen[i];
+            
+            if(i < queueLen.length-1)
+            {
+                output += ",";
+            }
+        }
+        
+        output += ")";
+        return output;
+    }
     public int[] getQueueLengths()
     {
         return queueLen;

@@ -38,5 +38,13 @@ public class SimpleNode extends Node
         l1.addTurningMovement(new TurningMovement(l1, l3, conflicts, Node.MAX_QUEUE, dem1));
         l2.addTurningMovement(new TurningMovement(l2, l4, conflicts, Node.MAX_QUEUE, dem2));
         
+        addLink(l1);
+        addLink(l2);
+        addLink(l3);
+        addLink(l4);
+        addCrosswalk(c1);
+        addCrosswalk(c2);
+        
+        initialize();
     }
 }

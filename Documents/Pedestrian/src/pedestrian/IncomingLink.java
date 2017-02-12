@@ -24,6 +24,11 @@ public class IncomingLink extends Link
         
     }
     
+    public int getNumQueues()
+    {
+        return turns.size();
+    }
+    
     public void addTurningMovement(TurningMovement turn)
     {
         turns.put(turn.getJ(), turn);

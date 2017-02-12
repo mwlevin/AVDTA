@@ -26,6 +26,15 @@ public class MDP
         states = new HashMap<Integer, List<State>>();
         
         createStates();
+        
+        int count = 0;
+        
+        for(int i : states.keySet())
+        {
+            count += states.get(i).size();
+        }
+        
+        System.out.println("States: "+count);
     }
     
     public void createStates()
