@@ -4,6 +4,8 @@
  */
 package pedestrian;
 
+import java.util.List;
+
 /**
  *
  * @author ml26893
@@ -20,7 +22,18 @@ public class Main
         
         MDP test = new MDP(node);
         
-        State state = new State(new int[]{3, 3, 1, 4});
-        System.out.println(node.createActions(state));
+        test.valueIteration(0.0001);
+        
+        /*
+        State x = new State(new int[]{1, 1, 1, 1});
+        
+        List<Action> U = node.createActions(x);
+        
+        for(Action u : U)
+        {
+            System.out.println(u);
+            System.out.println(test.expJ(x, u));
+        }
+        */
     }
 }

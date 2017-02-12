@@ -16,7 +16,7 @@ import java.util.Set;
  */
 public class Node 
 {
-    public static final int MAX_QUEUE = 5;
+    public static final int MAX_QUEUE = 2;
     public static final int V_DT = 10;
     
     private Set<IncomingLink> incoming;
@@ -229,6 +229,10 @@ public class Node
         }
     }
     
+    public Set<Crosswalk> getCrosswalks()
+    {
+        return crosswalks;
+    }
     
     public Set<IncomingLink> getIncoming()
     {

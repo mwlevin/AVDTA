@@ -6,6 +6,7 @@
 package pedestrian;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -63,9 +64,8 @@ public class MDP
         }
     }
     
-    private static final double epsilon = 0.001;
     
-    public void valueIteration()
+    public void valueIteration(double epsilon)
     {
         for(int i : states.keySet())
         {
@@ -78,8 +78,11 @@ public class MDP
         
         double error = 0;
         
+        int iteration = 1;
+        
         do
         {
+            error = 0;
             for(int i : states.keySet())
             {
                 for(State x : states.get(i))
@@ -105,9 +108,31 @@ public class MDP
                     double newJ = min;
                     
                     error = Math.max(error, Math.abs(newJ -x.J));
+                    
+                    /*
+                    if(newJ != x.J)
+                    {
+                        System.out.println(x+" "+x.J+" "+newJ);
+                    }
+                    
+                    System.out.println(x+" "+expJ);
+                    */
                     x.J = newJ;
                 }
             }
+            System.out.println(iteration+"\t"+error);
+            
+            /*
+            for(int i : states.keySet())
+            {
+                for(State s : states.get(i))
+                {
+                    System.out.println(s+" "+s.J);
+                }
+            }
+            */
+            
+            iteration++;
         }
         while(error > epsilon);
         
@@ -148,7 +173,9 @@ public class MDP
     private double expJ(State state, Action action, int idx, int[] dem)
     {
         if(idx == dem.length)
-        {
+        {   
+            //System.out.println("p="+prob(state, action, dem));
+            //System.out.println("f(x,u)="+transition(state, action, dem));
             return prob(state, action, dem) * transition(state, action, dem).J;
         }
         
