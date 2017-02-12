@@ -79,12 +79,20 @@ public class Node
         List<Action> output = new ArrayList<Action>();
         
         // crosswalk combinations
-        for(int com = 0; com < Math.pow(2, crosswalks.size()); com++)
+        outer: for(int com = 0; com < Math.pow(2, crosswalks.size()); com++)
         {
             // update crosswalk activation
             for(int i = 0; i < crosswalks.size(); i++)
             {
                 ((Crosswalk)queues[i]).active = ((com >> i) & 1) == 1;
+            }
+            
+            for(Crosswalk c : crosswalks)
+            {
+                if(c.active && state.getQueueLengths()[c.getIndex()] == 0)
+                {
+                    continue outer;
+                }
             }
             
             double duration = V_DT;
@@ -146,6 +154,7 @@ public class Node
         {
             cr.y = 0;
         }
+
         
         for(OutgoingLink j : outgoing)
         {
@@ -166,21 +175,27 @@ public class Node
                     continue;
                 }
 
-                double weight = len[mvt.getIndex()] * Math.min(i.getCapacity(), j.getCapacity());
+                double weight = len[mvt.getIndex()] * Math.min(i.getCapacity(), j.getCapacity()) / 3600.0;
+                
+                
                 
                 double denom = 1.0 / j.getReceivingFlow(duration);
                 
                 for(ConflictRegion cr : mvt.getConflictRegions())
                 {
-                    denom += 1.0 / (i.getCapacity() / 3600.0);
+                    denom += 1.0 / (duration * i.getCapacity() / 3600.0);
                 }
+
                 
                 mvt.efficiency = weight / denom;
+                
+                turns.add(mvt);
             }
         }
         
         Collections.sort(turns);
         
+
         outer:for(TurningMovement mvt : turns)
         {
             OutgoingLink j = mvt.getJ();
@@ -196,19 +211,20 @@ public class Node
                 
             int newY = len[mvt.getIndex()] - mvt.y;
             newY = (int)Math.min(newY, Math.floor(j.R - j.y));
+
             
             for(ConflictRegion cr : mvt.getConflictRegions())
             {
-                newY = (int)Math.min(newY, (1.0 - cr.y) * (i.getCapacity() / 3600.0) );
+                newY = (int)Math.min(newY, (1.0 - cr.y) * (duration * i.getCapacity() / 3600.0) );
             }
-            
+
             mvt.y = newY;
                 
             j.y += newY;
             
             for(ConflictRegion cr : mvt.getConflictRegions())
             {
-                cr.y += newY/(i.getCapacity()/3600.0);
+                cr.y += newY/(duration * i.getCapacity()/3600.0);
             }
         }
     }

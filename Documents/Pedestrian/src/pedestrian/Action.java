@@ -22,6 +22,30 @@ public class Action
         this.duration = duration;
     }
     
+    public String toString()
+    {
+        String output = "(";
+        
+        for(boolean b : crosswalk)
+        {
+            output += b+",";
+        }
+        
+        for(int i = 0; i < queueLen.length; i++)
+        {
+            output += queueLen[i];
+            
+            if(i < queueLen.length -1)
+            {
+                output += ",";
+            }
+        }
+        
+        output += "): "+duration;
+        
+        return output;
+    }
+    
     public double getDuration()
     {
         return duration;

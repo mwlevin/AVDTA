@@ -35,6 +35,9 @@ public class SimpleNode extends Node
         ConflictRegion cr = new ConflictRegion();
         Set<ConflictRegion> conflicts = new HashSet<ConflictRegion>();
         conflicts.add(cr);
+        
+        setConflictRegions(conflicts);
+        
         l1.addTurningMovement(new TurningMovement(l1, l3, conflicts, Node.MAX_QUEUE, dem1));
         l2.addTurningMovement(new TurningMovement(l2, l4, conflicts, Node.MAX_QUEUE, dem2));
         

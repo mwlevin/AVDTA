@@ -27,6 +27,11 @@ public class TurningMovement extends Queue implements Comparable<TurningMovement
         
     }
     
+    public String toString()
+    {
+        return "("+i+","+j+")";
+    }
+    
     public int compareTo(TurningMovement rhs)
     {
         if(efficiency > rhs.efficiency)

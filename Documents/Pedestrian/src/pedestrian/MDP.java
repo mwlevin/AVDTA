@@ -100,7 +100,7 @@ public class MDP
                         }
                     }
                     
-                    int[] nextX = x.copyQueueLengths();
+                    //int[] nextX = x.copyQueueLengths();
                     
                     double newJ = min;
                     

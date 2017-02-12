@@ -20,5 +20,7 @@ public class Main
         
         MDP test = new MDP(node);
         
+        State state = new State(new int[]{3, 3, 1, 4});
+        System.out.println(node.createActions(state));
     }
 }
