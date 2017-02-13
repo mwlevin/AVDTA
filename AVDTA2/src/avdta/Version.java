@@ -5,6 +5,9 @@
  */
 package avdta;
 
+import java.io.File;
+import java.io.IOException;
+
 /**
  *
  * @author Michael
@@ -13,7 +16,10 @@ public class Version
 {
     public static final String getVersion()
     {
+        
+        
         return "2.0 beta";
+        
     }
     
     public static final String getAuthor()
