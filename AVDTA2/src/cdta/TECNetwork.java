@@ -352,14 +352,21 @@ public class TECNetwork
                         
                         if(!cell.getNextCellConnector().validate())
                         {
-                            System.err.println("Connector issue");
+                            if(cell.getNextCellConnector() instanceof IntersectionConnector)
+                            {
+                                System.err.println("Intersection connector issue");
+                            }
+                            else
+                            {
+                                System.err.println("Ordinary connector issue");
+                            }
                             return false;
                         }
                     }
                     
                     if(!cell.getSameCellConnector().validate())
                     {
-                        System.err.println("Connector issue");
+                        System.err.println("Same-cell connector issue");
                         return false;
                     }
                     

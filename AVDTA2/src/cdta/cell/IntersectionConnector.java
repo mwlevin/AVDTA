@@ -81,6 +81,7 @@ public class IntersectionConnector extends Connector
                 {
                     if(!cr.validate())
                     {
+                        System.err.println("Conflict region validate false");
                         return false;
                     }
                 }
