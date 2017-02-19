@@ -21,8 +21,8 @@ public class CDTA
 {
     public static void main(String[] args) throws IOException
     {
-        test("SiouxFalls", 10);
-        /*
+        test("SiouxFalls", 100);
+        
         test("coacongress2", 100);
         
         for(int x = 105; x <= 150; x += 5)
@@ -34,7 +34,7 @@ public class CDTA
         {
             test("coacongress2", x);
         }
-*/
+
     }
     
     public static void test(String name, int prop) throws IOException

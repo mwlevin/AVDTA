@@ -385,6 +385,10 @@ public class FourStepSimulator extends DTASimulator
             fileout.print(iter+"\t"+rmse+"\t"+String.format("%.0f\t%.0f\t%.0f", mode_flow[0], mode_flow[1], mode_flow[2])+"\t");
             
             // write dynamic OD table and prepare demand
+            
+            odtable.clear();
+            
+            
             for(Zone o : costs.keySet())
             {
                 for(Zone d : costs.get(o).keySet())
@@ -392,7 +396,7 @@ public class FourStepSimulator extends DTASimulator
                     for(int t = 0; t < Simulator.num_asts; t++)
                     {
                         
-                        odtable.setDemand(o, d, t, type, costs.get(o).get(d)[t].HV_flow);
+                        odtable.addDemand(o, d, t, type, costs.get(o).get(d)[t].HV_flow);
                         
                         if(type == AV_type)
                         {
@@ -400,7 +404,7 @@ public class FourStepSimulator extends DTASimulator
                         }
                         else
                         {
-                            odtable.setDemand(o, d, t, AV_type, costs.get(o).get(d)[t].AV_flow);
+                            odtable.addDemand(o, d, t, AV_type, costs.get(o).get(d)[t].AV_flow);
                         }
                     }
                 }
