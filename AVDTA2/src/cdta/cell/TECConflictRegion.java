@@ -45,6 +45,6 @@ public class TECConflictRegion
     
     public boolean canAddY(Cell i, Cell j)
     {
-        return y + 1.0/(i.getCapacity() / Simulator.dt) <= 1;
+        return y + 1.0/(i.getCapacity() / Simulator.dt) <= 1.0;
     }
 }
