@@ -79,6 +79,7 @@ public class TECLink
         
         for(int c = 0; c < numCells; c++)
         {
+            /*
             Q = capacity;
             for(int t = 0; t < T; t++)
             {
@@ -87,6 +88,13 @@ public class TECLink
                 Q = Q - Math.floor(Q) + capacity;
             }
             N = N - Math.floor(N) + jamd;
+            */
+            for(int t = 0; t < T; t++)
+            {
+                cells[c][t] = createCell(c, t, (int)Math.ceil(Q), (int)Math.ceil(N));
+                
+                Q = Q - Math.floor(Q) + capacity;
+            }
         }
         
         for(int c = 0; c < numCells-1; c++)
@@ -130,12 +138,12 @@ public class TECLink
     
     public double getCellCapacity()
     {
-        return capacity;
+        return Math.ceil(capacity);
     }
     
     public double getCellJamD()
     {
-        return jamd;
+        return Math.ceil(jamd);
     }
     
     public double getCellLength()

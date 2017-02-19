@@ -21,12 +21,15 @@ public class CDTA
 {
     public static void main(String[] args) throws IOException
     {
-        for(int x = 100; x <= 150; x += 5)
+        test("SiouxFalls", 100);
+        test("coacongress2", 100);
+        
+        for(int x = 105; x <= 150; x += 5)
         {
             test("SiouxFalls", x);
         }
         
-        for(int x = 100; x <= 150; x += 5)
+        for(int x = 105; x <= 150; x += 5)
         {
             test("coacongress2", x);
         }
