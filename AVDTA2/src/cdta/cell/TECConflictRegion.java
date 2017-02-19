@@ -40,11 +40,11 @@ public class TECConflictRegion
     
     public void addY(Cell i, Cell j)
     {
-        y += 1.0/ (i.getCapacity() / Simulator.dt);
+        y += 1.0/ (i.getLink().getCellCapacity() / Simulator.dt);
     }
     
     public boolean canAddY(Cell i, Cell j)
     {
-        return y + 1.0/(i.getCapacity() / Simulator.dt) <= 1.0;
+        return y + 1.0/(i.getLink().getCellCapacity() / Simulator.dt) <= 1.0;
     }
 }
