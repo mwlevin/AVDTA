@@ -21,28 +21,51 @@ public class MDP
     
     private Map<Integer, List<State>> states;
     
+    private Map<Integer, List<Action>> actions;
+    
     public MDP(Node node)
     {
         this.node = node;
-        states = new HashMap<Integer, List<State>>();
         
         createStates();
         
         int count = 0;
         
-        for(int i : states.keySet())
-        {
-            count += states.get(i).size();
-        }
         
-        System.out.println("States: "+count);
     }
     
     public void createStates()
     {
+        states = new HashMap<Integer, List<State>>();
+        actions = new HashMap<Integer, List<Action>>();
+        
         int[] queueLen = new int[node.getNumQueues()];
         
         createStates(0, queueLen);
+        
+        int count = 0;
+        
+        for(int i : states.keySet())
+        {
+            for(State s : states.get(i))
+            {
+                List<Action> tempU = node.createActions(s);
+                
+                for(Action tempu : tempU)
+                {
+                    Action u = addAction(tempu);
+                    s.addAction(u);
+                    
+                    createTransitions(s, u);
+                }
+            }
+            
+            count += states.get(i).size();
+        }
+        
+        actions = null;
+        
+        System.out.println("States: "+count);
     }
     
     private void createStates(int idx, int[] queueLen)
@@ -87,15 +110,13 @@ public class MDP
             {
                 for(State x : states.get(i))
                 {  
-                    List<Action> U = node.createActions(x);
-                    
                     double min = Integer.MAX_VALUE;
                     Action best = null;
                     
                     
-                    for(Action u : U)
+                    for(Action u : x.getActions())
                     {
-                        double temp = node.oneStepCost(x, u) + expJ(x, u);
+                        double temp = node.oneStepCost(x, u) + x.expJ(u);
                         if(temp < min)
                         {
                             min = temp;
@@ -147,7 +168,7 @@ public class MDP
                 
                 for(Action u : actions)
                 {
-                    double temp = node.oneStepCost(x, u) + expJ(x, u);
+                    double temp = node.oneStepCost(x, u) + x.expJ(u);
                     
                     if(temp < min)
                     {
@@ -161,36 +182,36 @@ public class MDP
         }
     }
     
-    public double expJ(State state, Action action)
+    public void createTransitions(State state, Action action)
     {
-        // iterate through possible demands
-        double output = 0;
         int[] dem = new int[node.getNumQueues()];
         
-        return expJ(state, action, 0, dem);
+        createTransitions(state, action, 0, dem);
     }
     
-    private double expJ(State state, Action action, int idx, int[] dem)
+    private void createTransitions(State state, Action action, int idx, int[] dem)
     {
         if(idx == dem.length)
-        {   
-            //System.out.println("p="+prob(state, action, dem));
-            //System.out.println("f(x,u)="+transition(state, action, dem));
-            return prob(state, action, dem) * transition(state, action, dem).J;
-        }
-        
-        double output = 0.0;
-        
-        int max = node.getQueues()[idx].getMax() - (state.getQueueLengths()[idx] - action.getQueueChanges()[idx]);
-        
-        for(int i = 0; i < max; i++)
         {
-            dem[idx] = i;
-            output += expJ(state, action, idx+1, dem);
+            double prob = prob(state, action, dem);
+            State next = findState(new State(dem));
+            state.addTransition(action, next, prob);
         }
+        else
+        {
+            int max = node.getQueues()[idx].getMax() - (state.getQueueLengths()[idx] - action.getQueueChanges()[idx]);
 
-        return output;
+            for(int i = 0; i < max; i++)
+            {
+                dem[idx] = i;
+                createTransitions(state, action, idx+1, dem);
+            }
+        }
     }
+    
+
+    
+    
     
     public double prob(State state, Action action, int[] dem)
     {
@@ -240,19 +261,72 @@ public class MDP
         return null;
     }
     
-    public void addState(State s)
+    public Action findAction(Action copy)
+    {
+        int hash = copy.hashCode();
+        
+        for(Action u : actions.get(hash))
+        {
+            if(u.equals(copy))
+            {
+                return u;
+            }
+        }
+        
+        return null;
+    }
+    
+    public State addState(State s)
     {
         int hash = s.hashCode();
         
         if(states.containsKey(hash))
         {
-            states.get(hash).add(s);
+            List<State> list = states.get(hash);
+            
+            for(State x : list)
+            {
+                if(x.equals(s))
+                {
+                    return x;
+                }
+            }
+            list.add(s);
+            return s;
         }
         else
         {
             List<State> temp = new ArrayList<State>();
             temp.add(s);
             states.put(hash, temp);
+            return s;
+        }
+    }
+    
+    public Action addAction(Action u)
+    {
+        int hash = u.hashCode();
+        
+        if(actions.containsKey(hash))
+        {
+            List<Action> list = actions.get(hash);
+            
+            for(Action v : list)
+            {
+                if(u.equals(v))
+                {
+                    return v;
+                }
+            }
+            list.add(u);
+            return u;
+        }
+        else
+        {
+            List<Action> temp = new ArrayList<Action>();
+            temp.add(u);
+            actions.put(hash, temp);
+            return u;
         }
     }
 }

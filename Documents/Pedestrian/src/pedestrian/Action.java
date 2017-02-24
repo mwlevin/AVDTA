@@ -22,6 +22,45 @@ public class Action
         this.duration = duration;
     }
     
+    public int hashCode()
+    {
+        int output = 0;
+        int mult = 1;
+        
+        for(int i : queueLen)
+        {
+            output += i * mult;
+            mult *= 10;
+        }
+        
+        return output;
+    }
+    
+    public boolean equals(Object o)
+    {
+        Action rhs = (Action)o;
+        
+        
+        for(int i = 0; i < queueLen.length; i++)
+        {
+            if(queueLen[i] != rhs.queueLen[i])
+            {
+                return false;
+            }
+        }
+        
+        for(int i = 0; i < crosswalk.length; i++)
+        {
+            if(crosswalk[i] != rhs.crosswalk[i])
+            {
+                return false;
+            }
+        }
+        
+        return true;
+    }
+    
+    
     public String toString()
     {
         String output = "(";

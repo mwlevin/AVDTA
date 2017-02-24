@@ -18,6 +18,8 @@ public class Main
      */
     public static void main(String[] args) 
     {
+        Node.MAX_QUEUE = 5;
+        
         SimpleNode node = new SimpleNode(1200, 1200, 500, 500, 200, 200);
         
         MDP test = new MDP(node);
