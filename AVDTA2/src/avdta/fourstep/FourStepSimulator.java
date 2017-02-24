@@ -123,6 +123,39 @@ public class FourStepSimulator extends DTASimulator
         fileout.close();
     }
     
+    public void printTT(File output) throws IOException
+    {
+        PrintStream fileout = new PrintStream(new FileOutputStream(output), true);
+        
+        fileout.println("Origin\tDest\tDep_time\tPark\tTransit\tMinimum");
+        
+        for(Zone o : costs.keySet())
+        {
+            for(Zone d : costs.get(o).keySet())
+            {
+                CostTuple[] tuples = costs.get(o).get(d);
+                
+                if(tuples == null)
+                {
+                    continue;
+                }
+                for(int t = 0; t < demand_asts; t++)
+                {
+                    CostTuple tuple = tuples[t];
+                    
+                    
+                    double min_cost = Math.min(tuple.DA_time, tuple.TR_time);
+                    fileout.println(o+"\t"+(-d.getId())+"\t"+(t*ast_duration)+"\t"+
+                            String.format("%.3f", tuple.DA_time)+"\t"+
+                            String.format("%.3f", tuple.TR_time)+"\t"+
+                            String.format("%.3f", min_cost));
+                }
+            }
+        }
+        fileout.close();
+    }
+    
+    
     public void printDemand(File output) throws IOException
     {
         PrintStream fileout = new PrintStream(new FileOutputStream(output), true);
@@ -686,6 +719,7 @@ public class FourStepSimulator extends DTASimulator
                         System.out.println(d.label);
                     }
 
+                    temp2[t].TR_time = d.label - dtime;
                     temp2[t].TR_cost = arrivalTimePenalty(d.label, dtime, d.getPreferredArrivalTime()) + transitFee;
                     
                 }
@@ -704,6 +738,7 @@ public class FourStepSimulator extends DTASimulator
                     //Path path1 = sim.findPath(o, d, dtime, 1);
                     Path path1 = trace(o, d);
                     
+                    temp2.DA_time = path1.getAvgTT(dtime);
                     temp2.DA_arr_time = dtime + (int)Math.round(path1.getAvgTT(dtime));
                     
                     
@@ -789,25 +824,28 @@ public class FourStepSimulator extends DTASimulator
             }
         }
 
-        for(Zone o : zones)
+        if(getProject().getFourStepOption("parking-cost").equalsIgnoreCase("true"))
         {
-            if(!o.isOrigin())
+            for(Zone o : zones)
             {
-                continue;
-            }
-            
-            for(Zone d : zones)
-            {
-                if(!d.isDest() || o.getId() == -d.getId())
+                if(!o.isOrigin())
                 {
                     continue;
                 }
-                
-                for(int t = 0; t < demand_asts; t++)
+
+                for(Zone d : zones)
                 {
-                    CostTuple temp1 = costs.get(o).get(d)[t];
-                    
-                    temp1.DA_cost += d.getParkingCost();
+                    if(!d.isDest() || o.getId() == -d.getId())
+                    {
+                        continue;
+                    }
+
+                    for(int t = 0; t < demand_asts; t++)
+                    {
+                        CostTuple temp1 = costs.get(o).get(d)[t];
+
+                        temp1.DA_cost += d.getParkingCost();
+                    }
                 }
             }
         }
@@ -1006,7 +1044,9 @@ public class FourStepSimulator extends DTASimulator
     
     static class CostTuple
     {
-
+        public double DA_time;
+        public double TR_time;
+        
         public double DA_cost;
         public double TR_cost;
         public double AV_cost;

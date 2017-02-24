@@ -35,7 +35,7 @@ public class LinkFileRule extends LinkRule
         name = file.getName();
         data = new HashMap<Integer, Tuple>();
         
-        Scanner filein = new Scanner(name);
+        Scanner filein = new Scanner(file);
         while(!filein.hasNextInt())
         {
             filein.nextLine();

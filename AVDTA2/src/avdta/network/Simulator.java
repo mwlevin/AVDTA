@@ -49,7 +49,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import avdta.network.cost.FFTime;
 import avdta.network.link.LTMLink;
-
+import avdta.util.RunningAvg;
 /**
  * A {@link Simulator} extends {@link Network} in adding {@link Vehicle}s and dynamic network loading. 
  * Where the {@link Network} works with {@link Node}s and {@link Link}s, {@link Simulator} methods are focused on {@link Vehicle}s.
@@ -1327,6 +1327,9 @@ public class Simulator extends Network
         }
         fileout.close();
     }
+    
+    
+    
     
     /**
      * Returns a mapping of ids to vehicles.

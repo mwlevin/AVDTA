@@ -266,6 +266,8 @@ public class FourStepPanel extends GUIPanel
                     Assignment assign = sim.getAssignment();
                     sim.printCosts(new File(assign.getResultsDirectory()+"/od_costs.txt"));
                     sim.printDemand(new File(assign.getResultsDirectory()+"/od_demand.txt"));
+                    sim.printTT(new File(assign.getResultsDirectory()+"/od_tt.txt"));
+                    
                     System.out.println(assign.getAssignmentDirectory());
                     
                     status.update(0, 0, "");

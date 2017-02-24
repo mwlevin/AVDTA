@@ -4,6 +4,7 @@
  */
 package avdta.gui.panels.analysis;
 
+import avdta.dta.DTASimulator;
 import avdta.gui.DTAGUI;
 import avdta.gui.GUI;
 import avdta.gui.panels.AbstractGUIPanel;
@@ -33,7 +34,7 @@ import javax.swing.JOptionPane;
 public class AnalysisPanel extends GUIPanel
 {
     private JFileField linkids;
-    private JButton tt, volume;
+    private JButton tt, volume, busTT, importResults;
     
     private Project project;
     
@@ -45,9 +46,15 @@ public class AnalysisPanel extends GUIPanel
         
         tt = new JButton("Travel times");
         volume = new JButton("Link volume");
+        busTT = new JButton("Bus TT");
+        importResults = new JButton("Import results");
 
         tt.setEnabled(false);
         volume.setEnabled(false);
+        busTT.setEnabled(false);
+        importResults.setEnabled(false);
+        
+        
         
        
         
@@ -60,6 +67,27 @@ public class AnalysisPanel extends GUIPanel
                 volume.setEnabled(enable);
             }
         };
+        
+        
+        busTT.addActionListener(new ActionListener()
+        {
+           public void actionPerformed(ActionEvent e)
+           {
+               Simulator sim = project.getSimulator();
+               String filename = project.getResultsFolder()+"/link_tt_"+getFilename()+".txt";
+               
+               try
+               {
+                    sim.printBusTime(new File(filename));
+               
+                    JOptionPane.showMessageDialog(panel, "Bus travel time data printed to "+filename, "Complete", JOptionPane.INFORMATION_MESSAGE);
+               }
+               catch(IOException ex)
+               {
+                   GUI.handleException(ex);
+               }
+           }
+        });
         
         tt.addActionListener(new ActionListener()
         {
@@ -104,6 +132,23 @@ public class AnalysisPanel extends GUIPanel
                 t.start();
                 
             }
+        });
+        
+        importResults.addActionListener(new ActionListener()
+        {
+           public void actionPerformed(ActionEvent e)
+           {
+               DTASimulator sim = (DTASimulator)project.getSimulator();
+               
+               try
+               {
+                    sim.importResults();
+               }
+               catch(IOException ex)
+               {
+                   GUI.handleException(ex);
+               }
+           }
         });
         
         volume.addActionListener(new ActionListener()
@@ -171,6 +216,8 @@ public class AnalysisPanel extends GUIPanel
         
         constrain(p2, tt, 0, 0, 1, 1);
         constrain(p2, volume, 0, 1, 1, 1);
+        constrain(p2, busTT, 0, 2, 1, 1);
+        constrain(p2, importResults, 0, 3, 1, 1);
         
         p2.setPreferredSize(new Dimension((int)p.getPreferredSize().getWidth(), (int)p2.getPreferredSize().getHeight()));
         
@@ -239,7 +286,8 @@ public class AnalysisPanel extends GUIPanel
         linkids.setEnabled(enable);
         tt.setEnabled(enable);
         volume.setEnabled(enable);
-        
+        busTT.setEnabled(enable);
+        importResults.setEnabled(enable);
         
         super.setEnabled(e);
     }

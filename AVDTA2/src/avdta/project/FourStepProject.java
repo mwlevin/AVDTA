@@ -170,6 +170,7 @@ public class FourStepProject extends DTAProject
         setFourStepOption("all-avs", "true");
         setFourStepOption("fuel-cost", "2");
         setFourStepOption("demand-asts", "8");
+        setFourStepOption("parking-cost", "true");
     }
     
     /**
