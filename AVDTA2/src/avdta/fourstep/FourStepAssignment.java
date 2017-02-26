@@ -9,6 +9,7 @@ import avdta.dta.MSAAssignment;
 import avdta.project.FourStepProject;
 import java.io.File;
 import java.io.IOException;
+import java.util.Calendar;
 
 /**
  *
@@ -22,12 +23,10 @@ public class FourStepAssignment extends MSAAssignment
     {
         super(input);
     }
-    
+
     public FourStepAssignment(FourStepProject project, DTAResults results, int fs_iter, int ta_iter)
     {
-        super(project, results, ta_iter);
-        
-        this.fs_iter = fs_iter;
+        this(project, results, Calendar.getInstance().getTime().toString()+" 4step", fs_iter, ta_iter);
     }
     
     public FourStepAssignment(FourStepProject project, DTAResults results, String name, int fs_iter, int ta_iter)
