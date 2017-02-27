@@ -154,14 +154,15 @@ public class VehiclesPanel extends GUIPanel
                     BEV++;
                 }
                 
-                if(v instanceof PersonalVehicle)
+                if(v instanceof Bus)
+                {
+                    bus++;
+                }   
+                else if(v instanceof PersonalVehicle)
                 {
                     personal++;
                 }
-                else if(v instanceof Bus)
-                {
-                    bus++;
-                }        
+                     
                 
             }
             data.append(project.getSimulator().getVehicles().size()+"\ttotal vehicles\n\n");

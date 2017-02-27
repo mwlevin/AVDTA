@@ -857,7 +857,8 @@ public class Simulator extends Network
 
             for(int i = 0; i < route.size(); i++)
             {
-                fileout.print(" "+route.get(i).getId()+" "+times.get(i)+".00");
+                fileout.print(" "+route.get(i).getId()+" "+
+                        times.get(i)+".00");
             }
             fileout.println();
         }

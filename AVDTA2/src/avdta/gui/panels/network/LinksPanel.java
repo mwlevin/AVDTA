@@ -273,6 +273,7 @@ public class LinksPanel extends GUIPanel
                 catch(Exception ex)
                 {
                 }
+                
                 try
                 {
                     project.setOption("simulation-mesoscopic-step", ""+Integer.parseInt(timestep.getText().trim()));
@@ -280,6 +281,7 @@ public class LinksPanel extends GUIPanel
                 catch(Exception ex)
                 {
                 }
+                
                 try
                 {
                     project.setOption("hv-reaction-time", ""+Double.parseDouble(HVtau.getText().trim()));
@@ -287,6 +289,7 @@ public class LinksPanel extends GUIPanel
                 catch(Exception ex)
                 {
                 }
+                
                 try
                 {
                     project.setOption("av-reaction-time", ""+Double.parseDouble(AVtau.getText().trim()));

@@ -74,7 +74,7 @@ public class AnalysisPanel extends GUIPanel
            public void actionPerformed(ActionEvent e)
            {
                Simulator sim = project.getSimulator();
-               String filename = project.getResultsFolder()+"/link_tt_"+getFilename()+".txt";
+               String filename = project.getResultsFolder()+"/bus_tt_"+project.getName()+".txt";
                
                try
                {

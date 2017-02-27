@@ -33,6 +33,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 /**
  *
@@ -50,7 +52,6 @@ public class FourStepPanel extends GUIPanel
     private JTextField fs_max_iter;
     private JTextArea data;
     private JCheckBox repos, allAVs;
-    private JButton update;
     
     private StatusBar status;
     
@@ -79,18 +80,19 @@ public class FourStepPanel extends GUIPanel
         
         repos = new JCheckBox("Allow repositioning?");
         allAVs = new JCheckBox("100% AVs");
-        update = new JButton("Update");
         
-        update.addActionListener(new ActionListener()
+        repos.addChangeListener(new ChangeListener()
         {
-            public void actionPerformed(ActionEvent e)
+            public void stateChanged(ChangeEvent e)
             {
-                project.setFourStepOption("all-avs", ""+allAVs.isSelected());
+                if(project == null)
+                {
+                    return;
+                }
                 project.setFourStepOption("allow-repositioning", ""+repos.isSelected());
                 
                 FourStepSimulator sim = project.getSimulator();
                 
-                sim.setAllAVs(allAVs.isSelected());
                 sim.setAllowRepositioning(repos.isSelected());
                 
                 try
@@ -101,10 +103,34 @@ public class FourStepPanel extends GUIPanel
                 {
                     GUI.handleException(ex);
                 }
-                
-                
             }
         });
+        
+        allAVs.addChangeListener(new ChangeListener()
+        {
+            public void stateChanged(ChangeEvent e)
+            {
+                if(project == null)
+                {
+                    return;
+                }
+                project.setFourStepOption("all-avs", ""+allAVs.isSelected());
+                
+                FourStepSimulator sim = project.getSimulator();
+                
+                sim.setAllAVs(allAVs.isSelected());
+                
+                try
+                {
+                    project.writeOptions();
+                }
+                catch(IOException ex)
+                {
+                    GUI.handleException(ex);
+                }
+            }
+        });
+        
 
         
         JPanel panel = new JPanel();
@@ -122,7 +148,6 @@ public class FourStepPanel extends GUIPanel
         
         constrain(p3, repos, 0, 0, 1, 1);
         constrain(p3, allAVs, 0, 1, 1, 1);
-        constrain(p3, update, 0, 2, 0, 1);
         
         JPanel p = new JPanel();
         p.setLayout(new GridBagLayout());
@@ -173,7 +198,6 @@ public class FourStepPanel extends GUIPanel
         partial_demand.setEditable(e);
         repos.setEnabled(e);
         allAVs.setEnabled(e);
-        update.setEnabled(e);
         super.setEnabled(e);
     }
     

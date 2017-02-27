@@ -71,6 +71,7 @@ public class ReadFourStepNetwork extends ReadDTANetwork
         FourStepSimulator sim = new FourStepSimulator(project, nodes, links);
 
         readTransit(project);
+        sim.setVehicles(vehicles);
         
         sim.initialize();
         

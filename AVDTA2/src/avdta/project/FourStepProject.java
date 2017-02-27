@@ -11,6 +11,7 @@ import avdta.dta.ReadDTANetwork;
 import avdta.fourstep.FourStepSimulator;
 import avdta.fourstep.ReadFourStepNetwork;
 import avdta.network.ReadNetwork;
+import avdta.util.FileTransfer;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -36,6 +37,33 @@ public class FourStepProject extends DTAProject
         super(dir);
         
         networkOptions = new TreeMap<String, String>();
+    }
+    
+    /**
+     * Clones the project files from another project. 
+     * Note that this will overwrite the files in this project
+     * @param rhs the project to be cloned
+     * @throws IOException if a file is not found
+     */
+    public void cloneFromProject(Project rhs) throws IOException
+    {
+        super.cloneFromProject(rhs);
+        
+        if(rhs instanceof FourStepProject)
+        {
+            importFourStepFromProject((FourStepProject)rhs);
+        }
+    }
+    
+    /**
+     * Copies demand files from the specified project
+     * @param rhs the project to copy files from
+     * @throws IOException if a file is not found
+     */
+    public void importFourStepFromProject(FourStepProject rhs) throws IOException
+    {
+        FileTransfer.copy(rhs.getFourStepOptionsFile(), getFourStepOptionsFile());
+        FileTransfer.copy(rhs.getZonesFile(), getZonesFile());
     }
     
     /**
