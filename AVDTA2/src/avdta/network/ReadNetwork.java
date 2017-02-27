@@ -357,6 +357,7 @@ public class ReadNetwork
                     throw new RuntimeException("Route "+routeid+" is not connected around links "+route.get(route.size()-1).getId()+" and "+link.getId());
                 }
                 
+
                 if(link.hasTransitLane())
                 {
                     AbstractSplitLink mainLink = (AbstractSplitLink)link;

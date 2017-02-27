@@ -17,7 +17,7 @@ import avdta.network.node.Node;
  * This is a {@link CTMLink} with a dynamic transit lane, which adds lanes to cells when transit is not present.
  * @author Michael
  */
-public class SharedTransitCTMLink extends CTMLink
+public class SharedTransitCTMLink extends CTMLink implements AbstractSplitLink
 {
     private TransitLane transitLane;
     
@@ -40,6 +40,8 @@ public class SharedTransitCTMLink extends CTMLink
         super(id, source, dest, capacity, ffspd, wavespd, jamd, length, numLanes);  
         this.transitLane = transitLane;
     }
+    
+
     
     /**
      * Returns the transit lane

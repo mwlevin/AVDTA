@@ -100,7 +100,7 @@ public class Main
         //caccTest2();
         
         //new DTAGUI();
-        //new FourStepGUI();
+        new FourStepGUI();
         
         //SAVtest();
         
@@ -112,24 +112,11 @@ public class Main
         DTASimulator sim = project.getSimulator();
         sim.msa(10);
 */
-        GUI.main(args);
+        //GUI.main(args);
         
         
+        //transitTest2();
         
-        
-        //removeDuplicateCentroids();
-
-        /*
-        DTAProject project = new DTAProject(new File("projects/coacongress2_CACC"));
-        CACCConvert.convertAll(project);
-    */
-        //caccVisualize("coacongress2");
-        
-        //createCACCNetwork();
-        
-        //fixConnectivity();
-        //fixConnectivity2();
-        //connectivityTest();
         
         
         
@@ -885,7 +872,7 @@ public class Main
         
         PrintStream fileout = new PrintStream(new FileOutputStream(new File("shared_transit3.txt")), true);
         fileout.println("DA rate\tDA TT\tBus TT");
-        for(int rate = 100; rate <= 1600; rate += 10)
+        for(int rate = 1600; rate <= 1600; rate += 10)
         {
             double[] temp = transitTest2(rate, 20);
             fileout.println(rate+"\t"+temp[0]+"\t"+temp[1]);
@@ -1038,7 +1025,7 @@ public class Main
 
         PrintStream fileout = new PrintStream(new FileOutputStream(new File("shared_transit1.txt")));
         fileout.println("DA rate\tDA TT\tBus TT");
-        for(int rate = 1000; rate <= 2200; rate+=10)
+        for(int rate = 2200; rate <= 2200; rate+=10)
         {
             double[] temp = transitTest1(rate, 200);
             fileout.println(rate+"\t"+temp[0]+"\t"+temp[1]);
@@ -1048,7 +1035,7 @@ public class Main
         
         fileout = new PrintStream(new FileOutputStream(new File("shared_transit2.txt")));
         fileout.println("bus rate\tDA TT\tBus TT");
-        for(int rate = 0; rate <= 600; rate+=10)
+        for(int rate = 600; rate <= 600; rate+=10)
         {
             double[] temp = transitTest1(1800, rate);
             fileout.println(rate+"\t"+temp[0]+"\t"+temp[1]);

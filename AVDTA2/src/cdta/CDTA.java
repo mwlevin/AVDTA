@@ -21,6 +21,7 @@ public class CDTA
 {
     public static void main(String[] args) throws IOException
     {
+        /*
         test("SiouxFalls", 100);
         
         test("coacongress2", 100);
@@ -34,7 +35,8 @@ public class CDTA
         {
             test("coacongress2", x);
         }
-
+        */
+        test("coacongress2", 150);
     }
     
     public static void test(String name, int prop) throws IOException

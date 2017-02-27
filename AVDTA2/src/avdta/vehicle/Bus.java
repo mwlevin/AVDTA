@@ -126,7 +126,7 @@ public class Bus extends PersonalVehicle
                 
         if(l instanceof SharedTransitCTMLink)
         {
-            throw new RuntimeException("Ignoring transit lane "+getPath()+" "+l);
+            throw new RuntimeException("Ignoring transit lane on "+l.getId()+" of "+getPath()+" "+l);
         }
                 
     }

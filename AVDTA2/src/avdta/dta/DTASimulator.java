@@ -622,8 +622,9 @@ public class DTASimulator extends Simulator
             statusUpdate.update(1, 0, "");
         }
 
-        out.println(String.format("TSTT\t%.1f", getTSTT()/3600.0)+"\thr\nAvg. TT\t"+String.format("%.2f", getTSTT() / 60 / vehicles.size())+"\tmin/veh"+
-                "\nExiting: "+getNumExited());
+        out.println(String.format("TSTT\t%.1f", getTSTT()/3600.0)+"\thr");
+        out.println("Avg. TT\t"+String.format("%.2f", getTSTT() / 60 / vehicles.size())+"\tmin/veh");
+        out.println("Exiting: "+getNumExited());
         out.println("Energy:\t"+getTotalEnergy());
         out.println("VMT:\t"+getTotalVMT());
         out.println("MPG:\t"+(getTotalVMT() / (getTotalEnergy() / VehicleClass.E_PER_GALLON)));
@@ -646,6 +647,7 @@ public class DTASimulator extends Simulator
         fileout.println();
         fileout.println("DA TT:\t"+(getAvgBusTT(false)/60)+"\tmin");
         fileout.println("Bus TT:\t"+(getAvgBusTT(true)/60)+"\tmin");
+        fileout.println("Bus TT ratio:\t"+calcAvgBusTimeRatio());
         
         fileout.close();
         
