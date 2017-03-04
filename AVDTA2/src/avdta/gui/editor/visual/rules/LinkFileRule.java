@@ -44,10 +44,10 @@ public class LinkFileRule extends LinkRule
         while(filein.hasNextInt())
         {
             int id = filein.nextInt();
-            int width = filein.nextInt();
-            int r = filein.nextInt();
-            int g = filein.nextInt();
-            int b = filein.nextInt();
+            int width = (int)Math.max(0, Math.round(filein.nextDouble()));
+            int r = (int)Math.min(255, Math.max(0, Math.round(filein.nextInt())));
+            int g = (int)Math.min(255, Math.max(0, Math.round(filein.nextInt())));
+            int b = (int)Math.min(255, Math.max(0, Math.round(filein.nextInt())));
             
             data.put(id, new Tuple(width, new Color(r, g, b)));
         }
