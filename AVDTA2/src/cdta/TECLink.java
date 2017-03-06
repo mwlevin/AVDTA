@@ -7,6 +7,7 @@ package cdta;
 
 import avdta.network.Simulator;
 import avdta.network.link.Link;
+import cdta.cell.EndCell;
 import cdta.cell.StartCell;
 import cdta.cell.Cell;
 import cdta.cell.Connector;
@@ -20,6 +21,7 @@ import java.util.Map;
  */
 public class TECLink 
 {
+    private int numLanes;
     private int id; 
     private double capacity, jamd;
     private double meso_delta, length;
@@ -34,6 +36,7 @@ public class TECLink
         length = link.getFFSpeed() * Simulator.dt / 3600.0;
         numCells = getNumCells(link);
         capacity = link.getCapacity() * Simulator.dt/3600.0;
+        numLanes = link.getNumLanes();
         
         
         jamd = link.getJamDensity() * length;
@@ -42,6 +45,11 @@ public class TECLink
         
         this.id = link.getId();
 
+    }
+    
+    public int getNumLanes()
+    {
+        return numLanes;
     }
 
     
@@ -119,6 +127,10 @@ public class TECLink
         if(c == 0)
         {
             return new StartCell(this, c, t, capacity, jamd);
+        }
+        else if(c == numCells-1)
+        {
+            return new EndCell(this, c, t, capacity, jamd);
         }
         else
         {

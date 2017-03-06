@@ -16,6 +16,7 @@ import avdta.project.CDTAProject;
 import avdta.vehicle.PersonalVehicle;
 import avdta.vehicle.Vehicle;
 import cdta.cell.Connector;
+import cdta.cell.EndCell;
 import cdta.cell.IntersectionConnector;
 import cdta.cell.SameCellConnector;
 import cdta.cell.SinkCell;
@@ -466,6 +467,7 @@ public class TECNetwork
                 
             }
             
+            
             // receiving flow check
             
             if(!(j instanceof SourceCell))
@@ -493,6 +495,11 @@ public class TECNetwork
                 IntersectionConnector inter = (IntersectionConnector)j.getNextCellConnector();
                 
                 inter.checkConnectivity(j, k);
+                
+                if(j.getN() > j.getCapacity() * j.getLaneRatio())
+                {
+                    j.getSameCellConnector().setReservationConnectivity(false);
+                }
             }
         }
 
