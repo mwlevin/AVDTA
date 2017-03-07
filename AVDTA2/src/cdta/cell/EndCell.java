@@ -22,7 +22,7 @@ public class EndCell extends Cell
     }
     
     
-    public void laneBlocked()
+    public void addLaneBlocked()
     {
         L = (int)Math.max(0, L-1);
     }

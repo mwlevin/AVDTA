@@ -440,6 +440,10 @@ public class TECNetwork
             {
                 i.getNextCellConnector().addY(i, j);
             }
+            else if(i instanceof EndCell)
+            {
+                ((EndCell)i).addLaneBlocked();
+            }
         }
         path.get(path.size()-1).addN();
         
