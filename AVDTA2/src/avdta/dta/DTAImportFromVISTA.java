@@ -64,6 +64,12 @@ public class DTAImportFromVISTA
         
         Scanner filein = new Scanner(vehicle_path);
         
+        // remove header data
+        while(!filein.hasNextInt())
+        {
+            filein.nextLine();
+        }
+        
         while(filein.hasNextInt())
         {
             int id = filein.nextInt();
