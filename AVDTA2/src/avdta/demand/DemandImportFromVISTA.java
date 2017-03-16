@@ -74,6 +74,12 @@ public class DemandImportFromVISTA
         
         Random rand = project.getRandom();
         
+        // remove header data
+        while(!filein.hasNextInt())
+        {
+            filein.nextLine();
+        }
+        
         while(filein.hasNextInt())
         {
             int id = filein.nextInt();
@@ -122,6 +128,12 @@ public class DemandImportFromVISTA
         
         fileout.println(ReadDTANetwork.getDynamicODFileHeader());
         
+        // remove header data
+        while(!filein.hasNextInt())
+        {
+            filein.nextLine();
+        }
+        
         while(filein.hasNextInt())
         {
             int id = filein.nextInt();
@@ -158,6 +170,12 @@ public class DemandImportFromVISTA
         
         fileout.println(ReadDTANetwork.getStaticODFileHeader());
         
+        // remove header data
+        while(!filein.hasNextInt())
+        {
+            filein.nextLine();
+        }
+        
         while(filein.hasNextInt())
         {
             int id = filein.nextInt();
@@ -192,6 +210,13 @@ public class DemandImportFromVISTA
         Scanner filein = new Scanner(demand_profile);
         
         fileout.println(ReadDTANetwork.getDemandProfileFileHeader());
+        
+        // remove header data
+        while(!filein.hasNextInt())
+        {
+            filein.nextLine();
+        }
+        
         while(filein.hasNext())
         {
             fileout.println(filein.nextLine());

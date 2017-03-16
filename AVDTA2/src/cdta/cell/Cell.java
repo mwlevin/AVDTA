@@ -81,12 +81,17 @@ public class Cell implements Comparable<Cell>
     
     public int getSendingFlow()
     {
-        return (int)Math.min(getCapacity(), n);
+        return (int)Math.min(getCapacity() * getLaneRatio(), n);
     }
     
     public void setN(int n)
     {
         this.n = n;
+    }
+    
+    public double getLaneRatio()
+    {
+        return 1.0;
     }
     
     public int getN()

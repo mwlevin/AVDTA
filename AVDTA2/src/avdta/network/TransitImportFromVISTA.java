@@ -51,6 +51,12 @@ public class TransitImportFromVISTA
         
         fileout.println(ReadNetwork.getBusFileHeader());
         
+        // remove header data
+        while(!filein.hasNextInt())
+        {
+            filein.nextLine();
+        }
+        
         while(filein.hasNextInt())
         {
             int id = filein.nextInt();
@@ -80,6 +86,12 @@ public class TransitImportFromVISTA
         
         fileout.println(ReadNetwork.getBusPeriodFileHeader());
         
+        // remove header data
+        while(!filein.hasNextInt())
+        {
+            filein.nextLine();
+        }
+        
         while(filein.hasNextInt())
         {
             int id = filein.nextInt();
@@ -104,6 +116,12 @@ public class TransitImportFromVISTA
         Scanner filein = new Scanner(input);
         
         fileout.println(ReadNetwork.getBusFrequencyFileHeader());
+        
+        // remove header data
+        while(!filein.hasNextInt())
+        {
+            filein.nextLine();
+        }
         
         while(filein.hasNextInt())
         {
@@ -132,6 +150,12 @@ public class TransitImportFromVISTA
         Scanner filein = new Scanner(input);
         
         fileout.println(ReadNetwork.getBusRouteLinkFileHeader());
+        
+        // remove header data
+        while(!filein.hasNextInt())
+        {
+            filein.nextLine();
+        }
         
         while(filein.hasNextInt())
         {

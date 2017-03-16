@@ -90,6 +90,12 @@ public class ImportFromVISTA
         {
             Scanner filein = new Scanner(input);
 
+            // remove header data
+            while(!filein.hasNextInt())
+            {
+                filein.nextLine();
+            }
+            
             while(filein.hasNextInt())
             {
                 int id = filein.nextInt();
@@ -115,6 +121,12 @@ public class ImportFromVISTA
         
         fileout.println(ReadNetwork.getSignalsFileHeader());
         
+        // remove header data
+        while(!filein.hasNextInt())
+        {
+            filein.nextLine();
+        }
+        
         while(filein.hasNext())
         {
             int id = filein.nextInt();
@@ -139,6 +151,12 @@ public class ImportFromVISTA
         Scanner filein = new Scanner(phases);
         
         fileout.println(ReadNetwork.getPhasesFileHeader());
+        
+        // remove header data
+        while(!filein.hasNextInt())
+        {
+            filein.nextLine();
+        }
         
         while(filein.hasNextInt())
         {
@@ -170,6 +188,13 @@ public class ImportFromVISTA
         PrintStream fileout = new PrintStream(new FileOutputStream(project.getLinksFile()), true);
         
         fileout.println(ReadNetwork.getLinksFileHeader());
+        
+        // remove header data
+        while(!filein.hasNextInt())
+        {
+            filein.nextLine();
+        }
+            
         
         while(filein.hasNextInt())
         {
@@ -229,7 +254,13 @@ public class ImportFromVISTA
         if(elevation != null && elevation.exists())
         {
             filein = new Scanner(elevation);
-
+            
+            // remove header data
+            while(!filein.hasNextInt())
+            {
+                filein.nextLine();
+            }
+        
             while(filein.hasNextInt())
             {
                 emap.put(filein.nextInt(), filein.nextDouble());
@@ -244,7 +275,12 @@ public class ImportFromVISTA
         
         fileout.println(ReadNetwork.getNodesFileHeader());
         
-
+        // remove header data
+        while(!filein.hasNextInt())
+        {
+            filein.nextLine();
+        }
+        
         while(filein.hasNextInt())
         {
             int id = filein.nextInt();
