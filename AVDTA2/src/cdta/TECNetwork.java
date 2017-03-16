@@ -22,6 +22,7 @@ import cdta.cell.SinkCell;
 import cdta.cell.SourceCell;
 import cdta.cell.StartCell;
 import cdta.cell.TECConflictRegion;
+import cdta.priority.Priority;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -52,6 +53,8 @@ public class TECNetwork
     private boolean calcFFtime;
     
     private CDTAProject project;
+    
+    private Priority priority;
     
     /**
      * Note that links that are not CTMLinks or CentroidConnectors will be ignored.
@@ -157,6 +160,11 @@ public class TECNetwork
         vehicles = sim.getVehicles();
     }
     
+    public void setPriority(Priority p)
+    {
+        priority = p;
+    }
+    
     public int getNumCells()
     {
         int output = 0;
@@ -183,13 +191,7 @@ public class TECNetwork
     {
         long time = System.nanoTime();
         
-        Collections.sort(vehicles, new Comparator<Vehicle>()
-        {
-            public int compare(Vehicle v1, Vehicle v2)
-            {
-                return (int)Math.ceil(10000*(v2.getVOT() - v1.getVOT()));
-            }
-        });
+        Collections.sort(vehicles, priority);
         
         initializeConnectivity();
         

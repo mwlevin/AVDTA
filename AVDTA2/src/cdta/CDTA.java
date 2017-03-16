@@ -9,6 +9,8 @@ import avdta.network.Simulator;
 import avdta.network.node.Node;
 import avdta.project.CDTAProject;
 import cdta.cell.Cell;
+import cdta.priority.Auction;
+import cdta.priority.DepTime;
 import java.io.File;
 import java.io.IOException;
 import java.util.Map;
@@ -21,22 +23,19 @@ public class CDTA
 {
     public static void main(String[] args) throws IOException
     {
-        /*
-        test("SiouxFalls", 100);
+
         
-        test("coacongress2", 100);
-        
-        for(int x = 105; x <= 150; x += 5)
+        for(int x = 100; x <= 150; x += 5)
         {
             test("SiouxFalls", x);
         }
         
-        for(int x = 105; x <= 150; x += 5)
+        /*
+        for(int x = 100; x <= 150; x += 5)
         {
             test("coacongress2", x);
         }
         */
-        test("coacongress2", 150);
     }
     
     public static void test(String name, int prop) throws IOException
@@ -50,6 +49,9 @@ public class CDTA
         System.out.println(project.getName());
         
         TECNetwork net = project.createTECNetwork();
+        
+        //net.setPriority(new Auction());
+        net.setPriority(new DepTime());
 
         net.setCalcFFtime(true);
         
@@ -61,7 +63,7 @@ public class CDTA
         net.reserveAll();
         
         File file = new File(project.getResultsFolder()+"/cdta_vehicles.txt");
-        File target = new File(project.getResultsFolder()+"/cdta_vehicles_"+prop+".txt");
+        File target = new File(project.getResultsFolder()+"/cdta_fcfs_vehicles_"+prop+".txt");
         if(target.exists())
         {
             target.delete();

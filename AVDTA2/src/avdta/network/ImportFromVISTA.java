@@ -244,6 +244,7 @@ public class ImportFromVISTA
         
         fileout.println(ReadNetwork.getNodesFileHeader());
         
+
         while(filein.hasNextInt())
         {
             int id = filein.nextInt();
