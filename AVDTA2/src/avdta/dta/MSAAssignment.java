@@ -33,6 +33,16 @@ public class MSAAssignment extends Assignment
         super(input);
     }
     
+    protected MSAAssignment(MSAAssignment rhs) throws IOException
+    {
+        super(rhs);
+        
+        this.iter = rhs.iter;
+        
+        PrintStream fileout = new PrintStream(new FileOutputStream(getIndicatorFile()), true);
+        fileout.close();
+    }
+    
     /**
      * Constructs the assignment for the specified project and results with the last iteration number.
      * The name is set to the current date

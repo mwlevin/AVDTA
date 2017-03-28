@@ -23,6 +23,12 @@ public class FourStepAssignment extends MSAAssignment
     {
         super(input);
     }
+    
+    protected FourStepAssignment(FourStepAssignment rhs) throws IOException
+    {
+        super(rhs);
+        this.fs_iter = rhs.fs_iter;
+    }
 
     public FourStepAssignment(FourStepProject project, DTAResults results, int fs_iter, int ta_iter)
     {
