@@ -30,6 +30,8 @@ import java.util.Set;
  */
 public class TBRGA extends GeneticAlgorithm<TBROrg>
 {
+    private int type;
+    
     private Map<Integer, Integer> intersections;
     private DTAProject project;
     
@@ -45,6 +47,8 @@ public class TBRGA extends GeneticAlgorithm<TBROrg>
         this.project = project;
         this.max_tbrs = max_tbrs;
         this.checkHV = checkHV;
+        
+        type =  ReadNetwork.RESERVATION + ReadNetwork.MCKS + ReadNetwork.PRESSURE;
         
         if(checkHV)
         {
@@ -67,6 +71,30 @@ public class TBRGA extends GeneticAlgorithm<TBROrg>
                 }
             }
         }
+    }
+    
+    public TBROrg createRandom() throws IOException
+    {
+        TBROrg org;
+        
+        do
+        {
+            int[] controls = new int[intersections.size()];
+            
+            for(int i = 0; i < controls.length; i++)
+            {
+                controls[i] = ReadNetwork.SIGNAL;
+            }
+            
+            for(int i = 0; i < max_tbrs; i++)
+            {
+                controls[(int)(Math.random() * controls.length)] = type;
+            }
+            
+            org = new TBROrg(controls);
+        }
+        while(!isFeasible(org));
+        return org;
     }
     
     public TBROrg cross(TBROrg parent1, TBROrg parent2) throws IOException
@@ -132,7 +160,7 @@ public class TBRGA extends GeneticAlgorithm<TBROrg>
         return true;
     }
     
-    public void evaluate(TBROrg parent1, TBROrg parent2, TBROrg child) throws IOException
+    public void evaluate(TBROrg child) throws IOException
     {
         changeNodes(child);
         

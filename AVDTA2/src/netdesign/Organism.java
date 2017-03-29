@@ -18,13 +18,19 @@ import java.util.Scanner;
  */
 public abstract class Organism<T extends Organism> implements Comparable<Organism>
 {
-
+    private static int org_count = 0;
+    
+    public static int getNumOrganisms()
+    {
+        return org_count;
+    }
     
     private Assignment assign;
     private double obj;
     
     public Organism()
     {
+        org_count++;
     }
     
     // assume minimize
