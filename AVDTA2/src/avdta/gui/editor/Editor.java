@@ -1826,5 +1826,12 @@ public class Editor extends JFrame implements MouseListener
             GUI.handleException(ex);
         }
     }
+    
+    public void setDisplaySelected(boolean s)
+    {
+        display.setDisplaySelected(s);
+        selectedSelect.setSelected(s);
+        
+    }
 }
 

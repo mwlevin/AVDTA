@@ -26,6 +26,8 @@ import avdta.gui.SAVGUI;
 import avdta.gui.editor.Editor;
 import avdta.gui.editor.visual.rules.LinkBusRule;
 import avdta.gui.editor.visual.rules.LinkDataRule;
+import avdta.gui.editor.visual.rules.LinkFileRule;
+import avdta.gui.editor.visual.rules.NodeFileRule;
 import avdta.gui.editor.visual.rules.data.LinkFileSource;
 import avdta.gui.editor.visual.rules.data.VolumeLinkData;
 import avdta.network.Path;
@@ -83,7 +85,7 @@ public class Main
         //DTAProject project = new DTAProject(new File("projects/coacongress2"));
         //DTASimulator sim = project.getSimulator();
         /////project.get
-        CDTA.main(args);
+        //CDTA.main(args);
         
         
         
@@ -99,6 +101,7 @@ public class Main
 
         //caccTest2();
         
+        new LinkFileRule(new File("test1.txt"));
         //new DTAGUI();
         //new FourStepGUI();
         

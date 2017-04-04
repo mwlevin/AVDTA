@@ -50,6 +50,8 @@ public class LinkFileRule extends LinkRule
             int b = (int)Math.min(255, Math.max(0, Math.round(filein.nextDouble())));
             
             data.put(id, new Tuple(width, new Color(r, g, b)));
+            
+            filein.nextLine();
         }
         filein.close();
     }

@@ -35,7 +35,7 @@ public class NodeFileRule extends NodeRule
         name = file.getName();
         data = new HashMap<Integer, Tuple>();
         
-        Scanner filein = new Scanner(name);
+        Scanner filein = new Scanner(file);
         while(!filein.hasNextInt())
         {
             filein.nextLine();
@@ -50,6 +50,8 @@ public class NodeFileRule extends NodeRule
             int b = (int)Math.min(255, Math.max(0, Math.round(filein.nextDouble())));
             
             data.put(id, new Tuple(width, new Color(r, g, b)));
+            
+            filein.nextLine();
         }
         filein.close();
     }
