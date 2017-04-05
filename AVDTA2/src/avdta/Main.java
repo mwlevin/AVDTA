@@ -101,8 +101,7 @@ public class Main
 
         //caccTest2();
         
-        new LinkFileRule(new File("test1.txt"));
-        //new DTAGUI();
+        new DTAGUI();
         //new FourStepGUI();
         
         //SAVtest();

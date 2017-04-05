@@ -1183,11 +1183,50 @@ public class Editor extends JFrame implements MouseListener
         map.setZoomControlsVisible(false);
         Graphics g = image.getGraphics();
         map.paint(g);
-        g.setColor(Color.black);
-        g.drawRect(0, 0, image.getWidth()-1, image.getHeight()-1);
+        
         map.setZoomControlsVisible(true);
+        
+        
+        int minx = image.getWidth();
+        int miny = image.getHeight();
+        int maxx = 0;
+        int maxy = 0;
+        
+        for(int id : nodes.keySet())
+        {
+            Node n = nodes.get(id);
+            
+            if(n.isZone() && !display.isDisplayCentroids())
+            {
+                continue;
+            }
+            
+            Point p = map.getMapPosition(n, false);
+            
+            minx = (int)Math.min(minx, p.x-10);
+            miny = (int)Math.min(miny, p.y-10);
+            maxx = (int)Math.max(maxx, p.x+10);
+            maxy = (int)Math.max(maxy, p.y+10);
 
-        ImageIO.write(image, "png", file);
+        }
+
+        
+        maxx = (int)Math.min(maxx, image.getWidth());
+        maxy = (int)Math.min(maxy, image.getHeight());
+        minx = (int)Math.max(minx, 0);
+        miny = (int)Math.max(miny, 0);
+        
+        
+        int xdiff = maxx - minx;
+        int ydiff = maxy - miny;
+
+        
+        BufferedImage actual = new BufferedImage(xdiff, ydiff, BufferedImage.TYPE_INT_ARGB);
+        g = actual.getGraphics();
+        g.drawImage(image, -minx, -miny, image.getWidth(), image.getHeight(), null);
+        g.setColor(Color.black);
+        g.drawRect(0, 0, xdiff-1, ydiff-1);
+        ImageIO.write(actual, "png", file);
     }
     
     public void saveHighResScreenshot(File file) throws Exception
@@ -1213,10 +1252,49 @@ public class Editor extends JFrame implements MouseListener
         }
 
         map2.print(g);
-        g.setColor(Color.black);
-        g.drawRect(0, 0, image.getWidth()-1, image.getHeight()-1);
+        //g.setColor(Color.black);
+        //g.drawRect(0, 0, image.getWidth()-1, image.getHeight()-1);
+        
+        int minx = image.getWidth();
+        int miny = image.getHeight();
+        int maxx = 0;
+        int maxy = 0;
+        
+        for(int id : nodes.keySet())
+        {
+            Node n = nodes.get(id);
+            
+            if(n.isZone() && !display.isDisplayCentroids())
+            {
+                continue;
+            }
+            
+            Point p = map2.getMapPosition(n, false);
+            
+            minx = (int)Math.min(minx, p.x-10);
+            miny = (int)Math.min(miny, p.y-10);
+            maxx = (int)Math.max(maxx, p.x+10);
+            maxy = (int)Math.max(maxy, p.y+10);
 
-        ImageIO.write(image, "png", file);
+        }
+
+        
+        maxx = (int)Math.min(maxx, image.getWidth());
+        maxy = (int)Math.min(maxy, image.getHeight());
+        minx = (int)Math.max(minx, 0);
+        miny = (int)Math.max(miny, 0);
+        
+        
+        int xdiff = maxx - minx;
+        int ydiff = maxy - miny;
+
+        
+        BufferedImage actual = new BufferedImage(xdiff, ydiff, BufferedImage.TYPE_INT_ARGB);
+        g = actual.getGraphics();
+        g.drawImage(image, -minx, -miny, image.getWidth(), image.getHeight(), null);
+        g.setColor(Color.black);
+        g.drawRect(0, 0, xdiff-1, ydiff-1);
+        ImageIO.write(actual, "png", file);
     }
     
     public void newProject()
