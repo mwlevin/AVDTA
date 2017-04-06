@@ -1180,7 +1180,6 @@ public class Editor extends JFrame implements MouseListener
                 
                 saveHighResScreenshot(file);
                 
-                JOptionPane.showMessageDialog(this, "Screenshot saved in "+file.getName(), "Screenshot saved", JOptionPane.INFORMATION_MESSAGE);
             }
             catch(Exception ex)
             {
@@ -1241,72 +1240,94 @@ public class Editor extends JFrame implements MouseListener
         ImageIO.write(actual, "png", file);
     }
     
-    public void saveHighResScreenshot(File file) throws Exception
+    public void saveHighResScreenshot(final File file) throws Exception
     {
-        int width = map.getWidth()*2;
-        int height = map.getHeight()*2;
-        MapViewer map2 = new MapViewer(display.clone(), width, height, project.getSimulator());
-        map2.setSize(new Dimension(width, height));
-
-        map2.setTime(map.getTime());
-        map2.setZoom(map.getZoom());
-        map2.setCenter(map.getCenter());
-        map2.setZoom(map.getZoom()+1);
-        map2.setScale(2);
-        BufferedImage image = new BufferedImage(map2.getWidth(), map2.getHeight(), BufferedImage.TYPE_INT_ARGB);
-        map2.setZoomControlsVisible(false);
-        Graphics g = image.getGraphics();
-
-        for(int i = 0; i < 60; i++)
+        final JFrame frame = this;
+        Thread t = new Thread()
         {
-            map2.print(g);
-            Thread.sleep(1000);
-        }
-
-        map2.print(g);
-        //g.setColor(Color.black);
-        //g.drawRect(0, 0, image.getWidth()-1, image.getHeight()-1);
-        
-        int minx = image.getWidth();
-        int miny = image.getHeight();
-        int maxx = 0;
-        int maxy = 0;
-        
-        for(int id : nodes.keySet())
-        {
-            Node n = nodes.get(id);
-            
-            if(n.isZone() && !display.isDisplayCentroids())
+            public void run()
             {
-                continue;
+                int width = map.getWidth()*2;
+                int height = map.getHeight()*2;
+                MapViewer map2 = new MapViewer(display.clone(), width, height, project.getSimulator());
+                map2.setSize(new Dimension(width, height));
+
+                map2.setTime(map.getTime());
+                map2.setZoom(map.getZoom());
+                map2.setCenter(map.getCenter());
+                map2.setZoom(map.getZoom()+1);
+                map2.setScale(2);
+                BufferedImage image = new BufferedImage(map2.getWidth(), map2.getHeight(), BufferedImage.TYPE_INT_ARGB);
+                map2.setZoomControlsVisible(false);
+                Graphics g = image.getGraphics();
+
+                for(int i = 0; i < 60; i++)
+                {
+                    map2.print(g);
+                    try
+                    {
+                        Thread.sleep(1000);
+                    }
+                    catch(Exception ex){}
+                }
+
+                map2.print(g);
+                //g.setColor(Color.black);
+                //g.drawRect(0, 0, image.getWidth()-1, image.getHeight()-1);
+
+                int minx = image.getWidth();
+                int miny = image.getHeight();
+                int maxx = 0;
+                int maxy = 0;
+
+                for(int id : nodes.keySet())
+                {
+                    Node n = nodes.get(id);
+
+                    if(n.isZone() && !display.isDisplayCentroids())
+                    {
+                        continue;
+                    }
+
+                    Point p = map2.getMapPosition(n, false);
+
+                    minx = (int)Math.min(minx, p.x-10);
+                    miny = (int)Math.min(miny, p.y-10);
+                    maxx = (int)Math.max(maxx, p.x+10);
+                    maxy = (int)Math.max(maxy, p.y+10);
+
+                }
+
+
+                maxx = (int)Math.min(maxx, image.getWidth());
+                maxy = (int)Math.min(maxy, image.getHeight());
+                minx = (int)Math.max(minx, 0);
+                miny = (int)Math.max(miny, 0);
+
+
+                int xdiff = maxx - minx;
+                int ydiff = maxy - miny;
+
+
+                BufferedImage actual = new BufferedImage(xdiff, ydiff, BufferedImage.TYPE_INT_ARGB);
+                g = actual.getGraphics();
+                g.drawImage(image, -minx, -miny, image.getWidth(), image.getHeight(), null);
+                g.setColor(Color.black);
+                g.drawRect(0, 0, xdiff-1, ydiff-1);
+                try
+                {
+                    ImageIO.write(actual, "png", file);
+                }
+                catch(Exception ex)
+                {
+                    GUI.handleException(ex);
+                }
+                
+                JOptionPane.showMessageDialog(frame, "Screenshot saved in "+file.getName(), "Screenshot saved", JOptionPane.INFORMATION_MESSAGE);
+            
             }
-            
-            Point p = map2.getMapPosition(n, false);
-            
-            minx = (int)Math.min(minx, p.x-10);
-            miny = (int)Math.min(miny, p.y-10);
-            maxx = (int)Math.max(maxx, p.x+10);
-            maxy = (int)Math.max(maxy, p.y+10);
-
-        }
-
-        
-        maxx = (int)Math.min(maxx, image.getWidth());
-        maxy = (int)Math.min(maxy, image.getHeight());
-        minx = (int)Math.max(minx, 0);
-        miny = (int)Math.max(miny, 0);
-        
-        
-        int xdiff = maxx - minx;
-        int ydiff = maxy - miny;
-
-        
-        BufferedImage actual = new BufferedImage(xdiff, ydiff, BufferedImage.TYPE_INT_ARGB);
-        g = actual.getGraphics();
-        g.drawImage(image, -minx, -miny, image.getWidth(), image.getHeight(), null);
-        g.setColor(Color.black);
-        g.drawRect(0, 0, xdiff-1, ydiff-1);
-        ImageIO.write(actual, "png", file);
+        };
+        t.start();
     }
     
     public void newProject()
