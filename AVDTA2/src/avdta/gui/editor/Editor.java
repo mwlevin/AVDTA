@@ -94,7 +94,7 @@ public class Editor extends JFrame implements MouseListener
     private Set<Link> selectedLinks;
     
     
-    private JCheckBox linksSelect, nodesSelect, osmSelect, centroidSelect, nonCentroidSelect, selectedSelect;
+    private JCheckBox linksSelect, nodesSelect, osmSelect, centroidSelect, nonCentroidSelect, selectedSelect, labelsSelect;
     private JMenuItem save, close, createSubnetwork;
     
     private Project project;
@@ -185,6 +185,7 @@ public class Editor extends JFrame implements MouseListener
         centroidSelect = new JCheckBox("Centroids");
         nonCentroidSelect = new JCheckBox("Non-centroids");
         selectedSelect = new JCheckBox("Selected");
+        labelsSelect = new JCheckBox("Labels");
         
         linksSelect.setSelected(display.isDisplayLinks());
         nodesSelect.setSelected(display.isDisplayNodes());
@@ -192,6 +193,7 @@ public class Editor extends JFrame implements MouseListener
         centroidSelect.setSelected(display.isDisplayCentroids());
         nonCentroidSelect.setSelected(display.isDisplayNonCentroids());
         selectedSelect.setSelected(display.isDisplaySelected());
+        labelsSelect.setSelected(display.isDisplayLabels());
         
         linksSelect.addActionListener(new ActionListener()
         {
@@ -207,6 +209,15 @@ public class Editor extends JFrame implements MouseListener
             public void actionPerformed(ActionEvent e)
             {
                 display.setDisplayNodes(nodesSelect.isSelected());
+                map.repaint();
+            }
+        });
+        
+        labelsSelect.addActionListener(new ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                display.setDisplayLabels(labelsSelect.isSelected());
                 map.repaint();
             }
         });
@@ -264,6 +275,7 @@ public class Editor extends JFrame implements MouseListener
         constrain(layers, centroidSelect, 0, 2, 1, 1);
         constrain(layers, nonCentroidSelect, 0, 3, 1, 1);
         constrain(layers, selectedSelect, 1, 0, 1, 1);
+        constrain(layers, labelsSelect, 1, 1, 1, 1);
         
         layers.setBorder(BorderFactory.createTitledBorder("Layers"));
         
