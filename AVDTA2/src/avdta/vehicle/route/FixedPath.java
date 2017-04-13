@@ -30,6 +30,11 @@ public class FixedPath implements RouteChoice
         this.path = path;
     }
     
+    public void activate()
+    {
+        
+    }
+    
     /**
      * Returns the fixed {@link Path}.
      * @return the path that was traversed

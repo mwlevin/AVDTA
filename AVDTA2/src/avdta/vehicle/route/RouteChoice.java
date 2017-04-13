@@ -68,4 +68,9 @@ public interface RouteChoice
      * @return the destination {@link Node}
      */
     public abstract Node getDest();
+    
+    /**
+     * Called when the vehicle is ready to enter the network
+     */
+    public abstract void activate();
 }

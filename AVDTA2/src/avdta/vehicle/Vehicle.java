@@ -342,11 +342,11 @@ public abstract class Vehicle implements Serializable, Comparable<Vehicle>
     }
     
     /**
-     * Called when this {@link Vehicle} enters the network
+     * Called when this {@link Vehicle} is ready to enter the network
      */
     public void entered()
     {
-
+        routeChoice.activate();
     }
     
     /**
