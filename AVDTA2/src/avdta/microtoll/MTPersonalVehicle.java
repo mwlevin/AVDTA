@@ -21,24 +21,20 @@ import avdta.network.link.Link;
 public class MTPersonalVehicle extends PersonalVehicle
 {
     private int net_enter_time;
-    
-    private Path traveled;
-    
+
     private double total_toll;
     
     public MTPersonalVehicle(int id, Node origin, Node dest, int dtime, double vot)
     {
         super(id, origin, dest, dtime, vot, Wallet.EMPTY, VehicleClass.icv, DriverType.AV);
-        
-        traveled = new Path();
+
         total_toll = 0;
     }
     
     public MTPersonalVehicle(int id, Node origin, Node dest, int dtime, double vot, VehicleClass vehClass, DriverType driver)
     {
         super(id, origin, dest, dtime, vot, Wallet.EMPTY, vehClass, driver);
-        
-        traveled = new Path();
+
         total_toll = 0;
     }
     
@@ -47,28 +43,10 @@ public class MTPersonalVehicle extends PersonalVehicle
         return total_toll;
     }
     
-    public void enteredLink(Link l)
-    {
-        total_toll += l.getToll(Simulator.time);
-        
-        Simulator sim = Simulator.active;
-        sim.dijkstras(l, getDest(), sim.time, getVOT(), getDriver(), MTSimulator.costFunc);
-        
-        traveled.add(l);
-        
-        Path newPath = sim.trace(l.getDest(), getDest());
-        newPath.add(0, l);
-        setPath(newPath);
-        super.enteredLink(l);
-
-    }
     
     public void exited()
     {
         super.exited();
-        
-        setPath(traveled);
-        traveled = null;
     }
     
     // override because enteredLink will reset net_enter_time
@@ -80,6 +58,7 @@ public class MTPersonalVehicle extends PersonalVehicle
     public void entered()
     {
         net_enter_time = Simulator.time;
+        super.entered();
     }
     
     public boolean checkInvalidPath(Path p)
