@@ -75,18 +75,17 @@ public class AdaptiveRoute implements RouteChoice
     
     public void activate()
     {
-
+        // nothing to do here
     }
     
     public void exited()
     {
-        
+        // nothing to do here
     }
     
     public void enteredLink(Link link)
     {
         actual.add(link);
-
     }
     
     public double getLength()
