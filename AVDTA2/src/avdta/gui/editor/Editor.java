@@ -94,7 +94,7 @@ public class Editor extends JFrame implements MouseListener
     private Set<Link> selectedLinks;
     
     
-    private JCheckBox linksSelect, nodesSelect, osmSelect, centroidSelect, nonCentroidSelect, selectedSelect;
+    private JCheckBox linksSelect, nodesSelect, osmSelect, centroidSelect, nonCentroidSelect, selectedSelect, labelsSelect;
     private JMenuItem save, close, createSubnetwork;
     
     private Project project;
@@ -185,6 +185,7 @@ public class Editor extends JFrame implements MouseListener
         centroidSelect = new JCheckBox("Centroids");
         nonCentroidSelect = new JCheckBox("Non-centroids");
         selectedSelect = new JCheckBox("Selected");
+        labelsSelect = new JCheckBox("Labels");
         
         linksSelect.setSelected(display.isDisplayLinks());
         nodesSelect.setSelected(display.isDisplayNodes());
@@ -192,6 +193,7 @@ public class Editor extends JFrame implements MouseListener
         centroidSelect.setSelected(display.isDisplayCentroids());
         nonCentroidSelect.setSelected(display.isDisplayNonCentroids());
         selectedSelect.setSelected(display.isDisplaySelected());
+        labelsSelect.setSelected(display.isDisplayLabels());
         
         linksSelect.addActionListener(new ActionListener()
         {
@@ -207,6 +209,15 @@ public class Editor extends JFrame implements MouseListener
             public void actionPerformed(ActionEvent e)
             {
                 display.setDisplayNodes(nodesSelect.isSelected());
+                map.repaint();
+            }
+        });
+        
+        labelsSelect.addActionListener(new ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                display.setDisplayLabels(labelsSelect.isSelected());
                 map.repaint();
             }
         });
@@ -264,6 +275,7 @@ public class Editor extends JFrame implements MouseListener
         constrain(layers, centroidSelect, 0, 2, 1, 1);
         constrain(layers, nonCentroidSelect, 0, 3, 1, 1);
         constrain(layers, selectedSelect, 1, 0, 1, 1);
+        constrain(layers, labelsSelect, 1, 1, 1, 1);
         
         layers.setBorder(BorderFactory.createTitledBorder("Layers"));
         
@@ -1168,7 +1180,6 @@ public class Editor extends JFrame implements MouseListener
                 
                 saveHighResScreenshot(file);
                 
-                JOptionPane.showMessageDialog(this, "Screenshot saved in "+file.getName(), "Screenshot saved", JOptionPane.INFORMATION_MESSAGE);
             }
             catch(Exception ex)
             {
@@ -1183,40 +1194,140 @@ public class Editor extends JFrame implements MouseListener
         map.setZoomControlsVisible(false);
         Graphics g = image.getGraphics();
         map.paint(g);
-        g.setColor(Color.black);
-        g.drawRect(0, 0, image.getWidth()-1, image.getHeight()-1);
+        
         map.setZoomControlsVisible(true);
-
-        ImageIO.write(image, "png", file);
-    }
-    
-    public void saveHighResScreenshot(File file) throws Exception
-    {
-        int width = map.getWidth()*2;
-        int height = map.getHeight()*2;
-        MapViewer map2 = new MapViewer(display.clone(), width, height, project.getSimulator());
-        map2.setSize(new Dimension(width, height));
-
-        map2.setTime(map.getTime());
-        map2.setZoom(map.getZoom());
-        map2.setCenter(map.getCenter());
-        map2.setZoom(map.getZoom()+1);
-        map2.setScale(2);
-        BufferedImage image = new BufferedImage(map2.getWidth(), map2.getHeight(), BufferedImage.TYPE_INT_ARGB);
-        map2.setZoomControlsVisible(false);
-        Graphics g = image.getGraphics();
-
-        for(int i = 0; i < 60; i++)
+        
+        
+        int minx = image.getWidth();
+        int miny = image.getHeight();
+        int maxx = 0;
+        int maxy = 0;
+        
+        for(int id : nodes.keySet())
         {
-            map2.print(g);
-            Thread.sleep(1000);
+            Node n = nodes.get(id);
+            
+            if(n.isZone() && !display.isDisplayCentroids())
+            {
+                continue;
+            }
+            
+            Point p = map.getMapPosition(n, false);
+            
+            minx = (int)Math.min(minx, p.x-10);
+            miny = (int)Math.min(miny, p.y-10);
+            maxx = (int)Math.max(maxx, p.x+10);
+            maxy = (int)Math.max(maxy, p.y+10);
+
         }
 
-        map2.print(g);
-        g.setColor(Color.black);
-        g.drawRect(0, 0, image.getWidth()-1, image.getHeight()-1);
+        
+        maxx = (int)Math.min(maxx, image.getWidth());
+        maxy = (int)Math.min(maxy, image.getHeight());
+        minx = (int)Math.max(minx, 0);
+        miny = (int)Math.max(miny, 0);
+        
+        
+        int xdiff = maxx - minx;
+        int ydiff = maxy - miny;
 
-        ImageIO.write(image, "png", file);
+        
+        BufferedImage actual = new BufferedImage(xdiff, ydiff, BufferedImage.TYPE_INT_ARGB);
+        g = actual.getGraphics();
+        g.drawImage(image, -minx, -miny, image.getWidth(), image.getHeight(), null);
+        g.setColor(Color.black);
+        g.drawRect(0, 0, xdiff-1, ydiff-1);
+        ImageIO.write(actual, "png", file);
+    }
+    
+    public void saveHighResScreenshot(final File file) throws Exception
+    {
+        final JFrame frame = this;
+        Thread t = new Thread()
+        {
+            public void run()
+            {
+                int width = map.getWidth()*2;
+                int height = map.getHeight()*2;
+                MapViewer map2 = new MapViewer(display.clone(), width, height, project.getSimulator());
+                map2.setSize(new Dimension(width, height));
+
+                map2.setTime(map.getTime());
+                map2.setZoom(map.getZoom());
+                map2.setCenter(map.getCenter());
+                map2.setZoom(map.getZoom()+1);
+                map2.setScale(2);
+                BufferedImage image = new BufferedImage(map2.getWidth(), map2.getHeight(), BufferedImage.TYPE_INT_ARGB);
+                map2.setZoomControlsVisible(false);
+                Graphics g = image.getGraphics();
+
+                for(int i = 0; i < 60; i++)
+                {
+                    map2.print(g);
+                    try
+                    {
+                        Thread.sleep(1000);
+                    }
+                    catch(Exception ex){}
+                }
+
+                map2.print(g);
+                //g.setColor(Color.black);
+                //g.drawRect(0, 0, image.getWidth()-1, image.getHeight()-1);
+
+                int minx = image.getWidth();
+                int miny = image.getHeight();
+                int maxx = 0;
+                int maxy = 0;
+
+                for(int id : nodes.keySet())
+                {
+                    Node n = nodes.get(id);
+
+                    if(n.isZone() && !display.isDisplayCentroids())
+                    {
+                        continue;
+                    }
+
+                    Point p = map2.getMapPosition(n, false);
+
+                    minx = (int)Math.min(minx, p.x-10);
+                    miny = (int)Math.min(miny, p.y-10);
+                    maxx = (int)Math.max(maxx, p.x+10);
+                    maxy = (int)Math.max(maxy, p.y+10);
+
+                }
+
+
+                maxx = (int)Math.min(maxx, image.getWidth());
+                maxy = (int)Math.min(maxy, image.getHeight());
+                minx = (int)Math.max(minx, 0);
+                miny = (int)Math.max(miny, 0);
+
+
+                int xdiff = maxx - minx;
+                int ydiff = maxy - miny;
+
+
+                BufferedImage actual = new BufferedImage(xdiff, ydiff, BufferedImage.TYPE_INT_ARGB);
+                g = actual.getGraphics();
+                g.drawImage(image, -minx, -miny, image.getWidth(), image.getHeight(), null);
+                g.setColor(Color.black);
+                g.drawRect(0, 0, xdiff-1, ydiff-1);
+                try
+                {
+                    ImageIO.write(actual, "png", file);
+                }
+                catch(Exception ex)
+                {
+                    GUI.handleException(ex);
+                }
+                
+                JOptionPane.showMessageDialog(frame, "Screenshot saved in "+file.getName(), "Screenshot saved", JOptionPane.INFORMATION_MESSAGE);
+            
+            }
+        };
+        t.start();
     }
     
     public void newProject()
@@ -1825,6 +1936,13 @@ public class Editor extends JFrame implements MouseListener
         {
             GUI.handleException(ex);
         }
+    }
+    
+    public void setDisplaySelected(boolean s)
+    {
+        display.setDisplaySelected(s);
+        selectedSelect.setSelected(s);
+        
     }
 }
 

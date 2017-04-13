@@ -39,6 +39,11 @@ public class DTAResults
         this.exiting = exiting;
     }
     
+    public DTAResults clone()
+    {
+        return new DTAResults(mintt, tstt, num_veh, exiting);
+    }
+    
     /**
      * Returns the average travel time
      * @return the average travel time (min)

@@ -346,6 +346,7 @@ public class MapViewer extends avdta.gui.editor.JMapViewer implements MouseListe
 
         g.setColor(display.getColor(l, time));
         
+        
         g.setStroke(new BasicStroke(display.getWidth(l, time) * scale));
 
         double angle = l.getDirection() - Math.PI/2;
@@ -394,8 +395,10 @@ public class MapViewer extends avdta.gui.editor.JMapViewer implements MouseListe
         g.setColor(display.getColor(n, time));
         g.drawOval(position.x - sizeH, position.y - sizeH, size, size);
 
-        paintText(g, n.getName(), position, sizeH);
-    
+        if(display.isDisplayLabels())
+        {
+            paintText(g, n.getName(), position, sizeH);
+        }
     }
     
     public void paintText(Graphics g, String name, Point position, int radius) {

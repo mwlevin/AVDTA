@@ -376,6 +376,13 @@ public class Network
         dijkstras(o, d, dep_time, vot, driver, costFunc, link_dijkstras);
     }
     
+    public void dijkstras(Node o, int dep_time, double vot, DriverType driver, TravelCost costFunc)
+    {
+        dijkstras(o, null, dep_time, vot, driver, costFunc);
+    }
+    
+   
+    
     /**
      * Finds the one-to-all shortest paths with the specified parameters. 
      * This calls {@link Network#dijkstras(avdta.network.node.Node, int, double, avdta.vehicle.DriverType, avdta.network.cost.TravelCost, boolean)}.
@@ -399,6 +406,11 @@ public class Network
         {
             node_dijkstras(o, d, dep_time, vot, driver, costFunc);
         }
+    }
+    
+    public void dijkstras(Node o, int dep_time, double vot, DriverType driver, TravelCost costFunc, boolean link_dijkstras)
+    {
+        dijkstras(o, null, dep_time, vot, driver, costFunc, link_dijkstras);
     }
     
     /**

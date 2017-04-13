@@ -7,6 +7,8 @@ package avdta.network;
 import avdta.network.link.Link;
 import avdta.network.node.Node;
 import avdta.network.cost.TravelCost;
+import avdta.vehicle.DriverType;
+import avdta.vehicle.Vehicle;
 import java.io.Serializable;
 import java.util.ArrayList;
 
@@ -98,6 +100,36 @@ public class Path extends ArrayList<Link> implements Serializable
     {
         this.cost = cost;
     }
+    
+    /**
+     * Checks whether the given vehicle can use this path
+     * @param v the vehicle
+     * @return whether the vehicle can use this path
+     */
+    public boolean isValid(Vehicle v)
+    {
+        if(size() == 0)
+        {
+            return true;
+        }
+        
+        
+        DriverType driver = v.getDriver();
+        
+        Link i = get(0);
+        for(int idx = 1; idx < size(); idx++)
+        {
+            Link j = get(idx);
+            
+            if(!i.getDest().canMove(i, j, driver))
+            {
+                return false;
+            }
+        }
+        
+        return true;
+    }
+    
     
     /**
      * Returns the cost of this {@link Path}

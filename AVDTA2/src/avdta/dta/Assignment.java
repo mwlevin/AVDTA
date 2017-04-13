@@ -10,6 +10,7 @@ import avdta.network.PathList;
 import avdta.network.Simulator;
 import avdta.network.link.Link;
 import avdta.project.DTAProject;
+import avdta.util.FileTransfer;
 import avdta.util.RunningAvg;
 import avdta.vehicle.Vehicle;
 import java.io.File;
@@ -175,6 +176,29 @@ public class Assignment implements Comparable<Assignment>
     }
     
     
+    protected Assignment(Assignment rhs) throws IOException
+    {
+        this.results = rhs.results.clone();
+        this.name = Calendar.getInstance().getTime().toString();
+        
+        directory = rhs.directory;
+        
+        File file = new File(directory);
+        file.mkdirs();
+        
+        file = new File(directory+"/results");
+        file.mkdirs();
+        
+        time = (int)(System.currentTimeMillis()/1000.0);
+        
+        FileTransfer.copy(rhs.getDemandFile(), getDemandFile());
+        FileTransfer.copy(rhs.getPathsFile(), getPathsFile());
+        FileTransfer.copy(rhs.getSimVatFile(), getSimVatFile());
+        FileTransfer.copy(rhs.getTimesFile(), getTimesFile());
+        FileTransfer.copy(rhs.getVehiclesFile(), getVehiclesFile());
+        FileTransfer.copy(rhs.getLogFile(), getLogFile());
+    }
+    
     /**
      * Constructs a new {@link Assignment} for the given project and results.
      * The name is set to the current date.
@@ -277,12 +301,9 @@ public class Assignment implements Comparable<Assignment>
      */
     public void writeToFile(List<Vehicle> vehicles, DTAProject project) throws IOException
     {
-        PrintStream fileout = new PrintStream(new FileOutputStream(getPropertiesFile()), true);
-        fileout.println(getName());
-        fileout.println(getResultsData());
-        fileout.close();
+        writePropertiesFile();
         
-        fileout = new PrintStream(new FileOutputStream(getVehiclesFile()), true);
+        PrintStream fileout = new PrintStream(new FileOutputStream(getVehiclesFile()), true);
         
         for(Vehicle v : vehicles)
         {
@@ -311,6 +332,15 @@ public class Assignment implements Comparable<Assignment>
         fileout.close();
         
     }
+    
+    public void writePropertiesFile() throws IOException
+    {
+        PrintStream fileout = new PrintStream(new FileOutputStream(getPropertiesFile()), true);
+        fileout.println(getName());
+        fileout.println(getResultsData());
+        fileout.close();
+    }
+    
     
     /**
      * Returns the results data in {@link String} form to be written to file.
@@ -354,10 +384,14 @@ public class Assignment implements Comparable<Assignment>
             
             if(p == null)
             {
-                throw new RuntimeException("Missing path when reading assignment - "+path_id);
+                //throw new RuntimeException("Missing path when reading assignment - "+path_id);
             }
             
-            v.setPath(p);
+            if(p.isValid(v))
+            {
+                v.setPath(p);
+            }
+            
         }
         filein.close();
         
@@ -398,5 +432,19 @@ public class Assignment implements Comparable<Assignment>
         filein.close();
     }
     
+    public Assignment clone()
+    {
+        try
+        {
+            Assignment clone = new Assignment(this);
+            clone.writePropertiesFile();
+            return clone;
+        }
+        catch(IOException ex)
+        {
+            ex.printStackTrace(System.err);
+            return null;
+        }
+    }
     
 }

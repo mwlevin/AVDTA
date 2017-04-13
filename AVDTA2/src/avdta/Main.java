@@ -26,6 +26,8 @@ import avdta.gui.SAVGUI;
 import avdta.gui.editor.Editor;
 import avdta.gui.editor.visual.rules.LinkBusRule;
 import avdta.gui.editor.visual.rules.LinkDataRule;
+import avdta.gui.editor.visual.rules.LinkFileRule;
+import avdta.gui.editor.visual.rules.NodeFileRule;
 import avdta.gui.editor.visual.rules.data.LinkFileSource;
 import avdta.gui.editor.visual.rules.data.VolumeLinkData;
 import avdta.network.Path;
@@ -99,8 +101,8 @@ public class Main
 
         //caccTest2();
         
-        //new DTAGUI();
-        new FourStepGUI();
+        new DTAGUI();
+        //new FourStepGUI();
         
         //SAVtest();
         

@@ -45,11 +45,13 @@ public class LinkFileRule extends LinkRule
         {
             int id = filein.nextInt();
             int width = (int)Math.max(0, Math.round(filein.nextDouble()));
-            int r = (int)Math.min(255, Math.max(0, Math.round(filein.nextInt())));
-            int g = (int)Math.min(255, Math.max(0, Math.round(filein.nextInt())));
-            int b = (int)Math.min(255, Math.max(0, Math.round(filein.nextInt())));
+            int r = (int)Math.min(255, Math.max(0, Math.round(filein.nextDouble())));
+            int g = (int)Math.min(255, Math.max(0, Math.round(filein.nextDouble())));
+            int b = (int)Math.min(255, Math.max(0, Math.round(filein.nextDouble())));
             
             data.put(id, new Tuple(width, new Color(r, g, b)));
+            
+            filein.nextLine();
         }
         filein.close();
     }

@@ -19,7 +19,7 @@ import java.io.IOException;
  */
 public class DefaultDisplay implements DisplayManager
 {
-    private boolean displayLinks, displayNodes, displayCentroids, displayNonCentroids, displaySelected;
+    private boolean displayLinks, displayNodes, displayCentroids, displayNonCentroids, displaySelected, displayLabels;
     private boolean enabled;
     
     public DefaultDisplay()
@@ -29,6 +29,7 @@ public class DefaultDisplay implements DisplayManager
         displayCentroids = false;
         displayNonCentroids = true;
         displaySelected = true;
+        displayLabels = false;
         enabled = true;
     }
     
@@ -49,6 +50,7 @@ public class DefaultDisplay implements DisplayManager
         disp.displayNonCentroids = displayNonCentroids;
         disp.enabled = enabled;
         disp.displaySelected = displaySelected;
+        disp.displayLabels = displayLabels;
     }
     
     public void setEnabled(boolean e)
@@ -69,6 +71,16 @@ public class DefaultDisplay implements DisplayManager
     public boolean isDisplaySelected()
     {
         return displaySelected;
+    }
+    
+    public boolean isDisplayLabels()
+    {
+        return displayLabels;
+    }
+    
+    public void setDisplayLabels(boolean d)
+    {
+        displayLabels = d;
     }
     
     public void setDisplayCentroids(boolean c)

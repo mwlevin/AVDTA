@@ -53,6 +53,8 @@ public class DTASimulator extends Simulator
     
     private boolean continueUntilExit = true;
     
+    
+    
     /**
      * Constructs this {@link DTASimulator} empty with the given project.
      * @param project the project
@@ -244,7 +246,7 @@ public class DTASimulator extends Simulator
 
                 if(v.getTT() < 0)
                 {
-                	out.println("TT < 0 "+v.getDepTime()+" "+v.getExitTime());
+                    out.println("TT < 0 "+v.getDepTime()+" "+v.getExitTime());
                 }
             }
             min += temp2[ast][v.getDriver().typeIndex()].getAvgCost(dep_time, v.getVOT(), costFunc);

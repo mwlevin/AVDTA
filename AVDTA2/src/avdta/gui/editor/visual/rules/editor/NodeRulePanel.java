@@ -364,7 +364,7 @@ public class NodeRulePanel extends JPanel
     public void newRule(NodeRule r)
     {
         rules.add(r);
-        editor.getDisplay().setDisplaySelected(false);
+        editor.setDisplaySelected(false);
         refresh();
         editor.getMap().repaint();
     }
