@@ -429,6 +429,11 @@ public abstract class Vehicle implements Serializable, Comparable<Vehicle>
         
     }
     
+    public void setRouteChoice(RouteChoice r)
+    {
+        routeChoice = r;
+    }
+    
 
     /**
      * Compare to another vehicle: order by ids.

@@ -13,6 +13,7 @@ import avdta.vehicle.wallet.Wallet;
 import avdta.network.node.Node;
 import avdta.vehicle.fuel.VehicleClass;
 import avdta.network.link.Link;
+import avdta.vehicle.route.AdaptiveRoute;
 
 /**
  *
@@ -29,6 +30,7 @@ public class MTPersonalVehicle extends PersonalVehicle
         super(id, origin, dest, dtime, vot, Wallet.EMPTY, VehicleClass.icv, DriverType.AV);
 
         total_toll = 0;
+        setRouteChoice(new AdaptiveRoute(this, origin, dest));
     }
     
     public MTPersonalVehicle(int id, Node origin, Node dest, int dtime, double vot, VehicleClass vehClass, DriverType driver)
@@ -36,6 +38,7 @@ public class MTPersonalVehicle extends PersonalVehicle
         super(id, origin, dest, dtime, vot, Wallet.EMPTY, vehClass, driver);
 
         total_toll = 0;
+        setRouteChoice(new AdaptiveRoute(this, origin, dest));
     }
     
     public double getTotalToll()
