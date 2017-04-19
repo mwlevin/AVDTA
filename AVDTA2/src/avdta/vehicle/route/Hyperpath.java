@@ -1,40 +1,51 @@
 /*
- * To change this template, choose Tools | Templates
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
 package avdta.vehicle.route;
 
-import avdta.microtoll.MTSimulator;
+import avdta.duer.Incident;
+import avdta.vehicle.Vehicle;
 import avdta.network.Path;
 import avdta.network.Simulator;
-import avdta.network.cost.TravelCost;
 import avdta.network.link.Link;
 import avdta.network.node.Node;
-import avdta.vehicle.Vehicle;
+import static avdta.vehicle.route.AdaptiveRoute.costFunc;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  *
- * @author ml26893
+ * @author hdx
  */
-public class AdaptiveRoute implements RouteChoice
+public abstract class Hyperpath implements RouteChoice
 {
-    public static final TravelCost costFunc = TravelCost.dnlGenCost;
-    
-    private Path actual;
+    Map<Node,Map<Incident,Link>> Withinfo = new LinkedHashMap<>();
     
     private Node origin, dest;
     
+    private final int Incident;
+    
+    private Path actual;
+    
+    private final Link Link;
     
     private Vehicle vehicle;
-    
-    public AdaptiveRoute(Vehicle v, Node origin, Node dest)
+                   
+    public int setInformation(){
+         return Incident;
+    }
+
+    public Hyperpath(Node origin,Node dest, int Incident, Link Link)
     {
-        this.vehicle = v;
         this.origin = origin;
         this.dest = dest;
+        this.Incident = Incident;
+        this.Link = Link;
     }
     
-    public Path getPath()
+        public Path getPath()
     {
         return actual;
     }
@@ -92,4 +103,13 @@ public class AdaptiveRoute implements RouteChoice
     {
         return actual.getLength();
     }
+    
+    public void setNextLink(Node origin, Node dest, int Incident, Link Link)
+    {
+       origin = this.origin;
+       dest = this.dest;
+       Incident = this.Incident;
+       Link = this.Link;
+    }
+   
 }
