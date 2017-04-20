@@ -16,7 +16,7 @@ import java.util.Scanner;
  *
  * @author micha
  */
-public abstract class Organism<T extends Organism> implements Comparable<Organism>
+public abstract class Individual<T extends Individual> implements Comparable<Individual>
 {
     private static int org_count = 0;
     
@@ -28,13 +28,13 @@ public abstract class Organism<T extends Organism> implements Comparable<Organis
     private Assignment assign;
     private double obj;
     
-    public Organism()
+    public Individual()
     {
         org_count++;
     }
     
     // assume minimize
-    public int compareTo(Organism o)
+    public int compareTo(Individual o)
     {
         if(obj > o.obj)
         {
@@ -90,7 +90,7 @@ public abstract class Organism<T extends Organism> implements Comparable<Organis
         in.close();
     }
     
-    public abstract Organism cross(T rhs);
+    public abstract Individual cross(T rhs);
     
     
     protected void readFromFile(Scanner in) throws IOException

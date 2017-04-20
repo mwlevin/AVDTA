@@ -1358,7 +1358,9 @@ public class Simulator extends Network
             {
                 continue;
             }
-            String od = v.getOrigin()+"\t"+(int)Math.abs(v.getDest().getId());
+            
+            PersonalVehicle veh = (PersonalVehicle)v;
+            String od = veh.getOrigin()+"\t"+(int)Math.abs(veh.getDest().getId());
             
             if(unconnected.contains(od))
             {

@@ -13,6 +13,7 @@ import avdta.network.node.NodeRecord;
 import avdta.network.node.Zone;
 import avdta.project.DTAProject;
 import avdta.vehicle.DriverType;
+import avdta.vehicle.PersonalVehicle;
 import avdta.vehicle.Vehicle;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -28,7 +29,7 @@ import java.util.Set;
  *
  * @author micha
  */
-public class TBRGA extends GeneticAlgorithm<TBROrg>
+public class TBRGA extends GeneticAlgorithm<TBRIndividual>
 {
     private int type;
     
@@ -58,10 +59,11 @@ public class TBRGA extends GeneticAlgorithm<TBROrg>
             
             for(Vehicle v : sim.getVehicles())
             {
+                PersonalVehicle veh = (PersonalVehicle)v;
                 if(!v.getDriver().isTransit())
                 {
-                    int r = v.getOrigin().getId();
-                    int s = v.getDest().getId();
+                    int r = veh.getOrigin().getId();
+                    int s = veh.getDest().getId();
                     
                     if(!odpairs.containsKey(r))
                     {
@@ -73,9 +75,9 @@ public class TBRGA extends GeneticAlgorithm<TBROrg>
         }
     }
     
-    public TBROrg createRandom() throws IOException
+    public TBRIndividual createRandom() throws IOException
     {
-        TBROrg org;
+        TBRIndividual org;
         
         do
         {
@@ -91,15 +93,15 @@ public class TBRGA extends GeneticAlgorithm<TBROrg>
                 controls[(int)(Math.random() * controls.length)] = type;
             }
             
-            org = new TBROrg(controls);
+            org = new TBRIndividual(controls);
         }
         while(!isFeasible(org));
         return org;
     }
     
-    public TBROrg cross(TBROrg parent1, TBROrg parent2) throws IOException
+    public TBRIndividual cross(TBRIndividual parent1, TBRIndividual parent2) throws IOException
     {
-        TBROrg child;
+        TBRIndividual child;
         
         do
         {
@@ -110,12 +112,12 @@ public class TBRGA extends GeneticAlgorithm<TBROrg>
         return child;
     }
     
-    public void mutate(TBROrg org) throws IOException
+    public void mutate(TBRIndividual org) throws IOException
     {
         
     }
     
-    public boolean isFeasible(TBROrg org) throws IOException
+    public boolean isFeasible(TBRIndividual org) throws IOException
     {
         int tbrs = 0;
         
@@ -160,7 +162,7 @@ public class TBRGA extends GeneticAlgorithm<TBROrg>
         return true;
     }
     
-    public void evaluate(TBROrg child) throws IOException
+    public void evaluate(TBRIndividual child) throws IOException
     {
         changeNodes(child);
         
@@ -173,7 +175,7 @@ public class TBRGA extends GeneticAlgorithm<TBROrg>
         child.setAssignment(sim.getAssignment());
     }
     
-    public void changeNodes(TBROrg org) throws IOException
+    public void changeNodes(TBRIndividual org) throws IOException
     {
         Scanner filein = new Scanner(project.getNodesFile());
         File newFile = new File(project.getProjectDirectory()+"/new_nodes.txt");

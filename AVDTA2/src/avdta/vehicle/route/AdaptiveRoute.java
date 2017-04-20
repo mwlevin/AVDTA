@@ -20,8 +20,6 @@ public class AdaptiveRoute implements RouteChoice
 {
     public static final TravelCost costFunc = TravelCost.dnlGenCost;
     
-    private Path actual;
-    
     private Node origin, dest;
 
     
@@ -33,25 +31,11 @@ public class AdaptiveRoute implements RouteChoice
         this.origin = origin;
         this.dest = dest;
     }
-    
-    public Path getPath()
-    {
-        return actual;
-    }
-    
-    public Node getOrigin()
-    {
-        return origin;
-    }
-    
-    public Node getDest()
-    {
-        return dest;
-    }
+
     
     public void reset()
     {
-        actual = new Path();
+
     }
     
     public Link getNextLink(Link link)
@@ -60,11 +44,11 @@ public class AdaptiveRoute implements RouteChoice
         
         if(link == null)
         {
-            sim.dijkstras(origin, getDest(), sim.time, vehicle.getVOT(), vehicle.getDriver(), costFunc);    
+            sim.dijkstras(origin, dest, sim.time, vehicle.getVOT(), vehicle.getDriver(), costFunc);    
         }
         else
         {
-            sim.dijkstras(link, getDest(), sim.time, vehicle.getVOT(), vehicle.getDriver(), costFunc);    
+            sim.dijkstras(link, dest, sim.time, vehicle.getVOT(), vehicle.getDriver(), costFunc);    
         }
         Path newPath = sim.trace(origin, dest);
         
@@ -85,11 +69,8 @@ public class AdaptiveRoute implements RouteChoice
     
     public void enteredLink(Link link)
     {
-        actual.add(link);
+       
     }
     
-    public double getLength()
-    {
-        return actual.getLength();
-    }
+
 }

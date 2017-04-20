@@ -53,6 +53,8 @@ public abstract class Vehicle implements Serializable, Comparable<Vehicle>
     
     private int exit_time, net_enter_time;
     
+    private Path path;
+    
     // energy
     private int prev_cell_time;
     private Cell prev_cell;
@@ -107,6 +109,7 @@ public abstract class Vehicle implements Serializable, Comparable<Vehicle>
         
         effFactor = .5 + Math.round(Simulator.rand.nextDouble());
         curr = null;
+        path = new Path();
     }
     
     /**
@@ -338,7 +341,7 @@ public abstract class Vehicle implements Serializable, Comparable<Vehicle>
      */
     public double getMPG()
     {
-        return routeChoice.getLength() / (total_energy / VehicleClass.E_PER_GALLON);
+        return path.getLength() / (total_energy / VehicleClass.E_PER_GALLON);
     }
     
     /**
@@ -426,7 +429,7 @@ public abstract class Vehicle implements Serializable, Comparable<Vehicle>
     public void setPath(Path p)
     {
         routeChoice = new FixedPath(p);
-        
+        path = p;
     }
     
     public void setRouteChoice(RouteChoice r)
@@ -490,14 +493,12 @@ public abstract class Vehicle implements Serializable, Comparable<Vehicle>
      * Return the path.
      * @return the path
      */
+    
     public Path getPath()
     {
-        if(routeChoice == null)
-        {
-            return null;
-        }
-        return routeChoice.getPath();
+        return path;
     }
+    
     
     /**
      * Gets the next link in the route of the vehicle.
@@ -535,6 +536,7 @@ public abstract class Vehicle implements Serializable, Comparable<Vehicle>
     public void enteredLink(Link l)
     {
         curr = l;
+        path.add(l);
         
         
         Link i = getPrevLink();
@@ -599,23 +601,5 @@ public abstract class Vehicle implements Serializable, Comparable<Vehicle>
         return wallet;
     }
     
-    /**
-     * Returns the origin {@link Node} for this {@link Vehicle} based on the path. 
-     * Note that this {@link Node} may not be a {@link Zone}, such as for buses.
-     * @return the origin {@link Node} for this {@link Vehicle}
-     */
-    public Node getOrigin()
-    {
-        return routeChoice.getOrigin();
-    }
     
-    /**
-     * Returns the destination {@link Node} for this {@link Vehicle} based on the path. 
-     * Note that this {@link Node} may not be a {@link Zone}, such as for buses.
-     * @return the destination {@link Node} for this {@link Vehicle}
-     */
-    public Node getDest()
-    {
-    return routeChoice.getDest();
-    }
 }

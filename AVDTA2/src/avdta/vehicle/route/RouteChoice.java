@@ -23,14 +23,14 @@ public interface RouteChoice
      * Returns the total length of the links traversed.
      * @return the length traversed (mi)
      */
-    public abstract double getLength();
+    //public abstract double getLength();
     
     /**
      * Returns the path that was traversed.
      * If the route choice is not fixed, the path traversed should be stored for postprocessing.
      * @return the path that was traversed
      */
-    public abstract Path getPath();
+    //public abstract Path getPath();
     
     /**
      * Called when the associated {@link Vehicle} enters the given {@link Link}.
@@ -61,13 +61,13 @@ public interface RouteChoice
      * Returns the origin {@link Node}.
      * @return the origin {@link Node}
      */
-    public abstract Node getOrigin();
+    //public abstract Node getOrigin();
     
     /**
      * Returns the destination {@link Node}.
      * @return the destination {@link Node}
      */
-    public abstract Node getDest();
+    //public abstract Node getDest();
     
     /**
      * Called when the vehicle is ready to enter the network
