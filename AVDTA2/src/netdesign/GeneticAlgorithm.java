@@ -18,7 +18,7 @@ import java.util.Map;
  *
  * @author micha
  */
-public abstract class GeneticAlgorithm<T extends Organism>
+public abstract class GeneticAlgorithm<T extends Individual>
 {
     private int population_size;
     private double proportion_kept;

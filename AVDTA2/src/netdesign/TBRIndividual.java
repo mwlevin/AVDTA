@@ -14,12 +14,12 @@ import java.util.Scanner;
  *
  * @author micha
  */
-public class TBROrg extends Organism<TBROrg>
+public class TBRIndividual extends Individual<TBRIndividual>
 {
     private int[] controls;
     private int hash;
     
-    public TBROrg(int num_inter, int fillType)
+    public TBRIndividual(int num_inter, int fillType)
     {
         controls = new int[num_inter];
         
@@ -30,7 +30,7 @@ public class TBROrg extends Organism<TBROrg>
         computeHash();
     }
     
-    public TBROrg(int[] controls)
+    public TBRIndividual(int[] controls)
     {
         this.controls = controls;
         computeHash();
@@ -52,7 +52,7 @@ public class TBROrg extends Organism<TBROrg>
         }
     }
     
-    public TBROrg cross(TBROrg rhs)
+    public TBRIndividual cross(TBRIndividual rhs)
     {
         int[] newControls = new int[controls.length];
         
@@ -69,10 +69,10 @@ public class TBROrg extends Organism<TBROrg>
         }
         
         
-        return new TBROrg(newControls);
+        return new TBRIndividual(newControls);
     }
     
-    public boolean equals(TBROrg rhs)
+    public boolean equals(TBRIndividual rhs)
     {
         if(rhs.controls.length != controls.length)
         {
