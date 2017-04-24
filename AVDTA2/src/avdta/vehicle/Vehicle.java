@@ -61,8 +61,10 @@ public abstract class Vehicle implements Serializable, Comparable<Vehicle>
     public int cell_enter;
     private Cell curr_cell;
     private double total_energy;
+    private double total_distance;
     private VehicleClass vehClass;
     private DriverType driver;
+    private double effFactor;
     
     // IP
     public IloIntVar x;
@@ -107,7 +109,9 @@ public abstract class Vehicle implements Serializable, Comparable<Vehicle>
         
         arr_time = 0;
         
-        effFactor = .5 + Math.round(Simulator.rand.nextDouble());
+        //effFactor = .5 + Math.round(Simulator.rand.nextDouble());
+        effFactor = 1.0;
+        
         curr = null;
         path = new Path();
     }
@@ -225,6 +229,12 @@ public abstract class Vehicle implements Serializable, Comparable<Vehicle>
     {
         return driver;
     }
+    
+    public double getVMT()
+    {
+        return total_distance;
+    }
+    
     /**
      * Updates the position of the vehicle by setting the current cell as the 
      * previous cell.
@@ -235,6 +245,7 @@ public abstract class Vehicle implements Serializable, Comparable<Vehicle>
         if(!curr.getLink().isCentroidConnector())
         {
             total_energy += calcEnergy();
+            total_distance += curr.getLength();
         }
         
         if(cell_enter >= 0 && Simulator.fileout != null)
@@ -262,7 +273,7 @@ public abstract class Vehicle implements Serializable, Comparable<Vehicle>
         Simulator.fileout.println(getId()+"\t"+curr.getLink().getId()+"\t"+enter+"\t"+exit);
     }
     
-    double effFactor;
+    
     
     /**
      * Calculates energy consumption
@@ -275,9 +286,19 @@ public abstract class Vehicle implements Serializable, Comparable<Vehicle>
         double speed = curr_cell != null? curr_cell.getLength() / (curr_cell_time / 3600.0) : 0;
         double accel = (speed - prev_speed) / curr_cell_time;
         double grade = curr_cell != null? curr_cell.getLink().getGrade() : 0;
+        
+        
+        
+        double energy = effFactor * vehClass.calcEnergy(curr_cell_time, speed, accel, grade);
+        
+        double dist = speed * (curr_cell_time/3600.0);
+        
 
-        return effFactor * vehClass.calcEnergy(curr_cell_time, speed, accel, grade);
+
+        return energy;
     }
+    
+    
     
     /**
      * Returns difference in energy if vehicle moves this timestep versus moving next timestep
@@ -341,7 +362,7 @@ public abstract class Vehicle implements Serializable, Comparable<Vehicle>
      */
     public double getMPG()
     {
-        return path.getLength() / (total_energy / VehicleClass.E_PER_GALLON);
+        return total_distance / (total_energy / VehicleClass.E_PER_GALLON);
     }
     
     /**
@@ -536,7 +557,11 @@ public abstract class Vehicle implements Serializable, Comparable<Vehicle>
     public void enteredLink(Link l)
     {
         curr = l;
-        path.add(l);
+        
+        if(!(routeChoice instanceof FixedPath))
+        {
+            path.add(l);
+        }
         
         
         Link i = getPrevLink();

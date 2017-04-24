@@ -58,6 +58,8 @@ import avdta.vehicle.Bus;
 import avdta.vehicle.DriverType;
 import avdta.vehicle.PersonalVehicle;
 import avdta.vehicle.Vehicle;
+import avdta.vehicle.fuel.ICV;
+import avdta.vehicle.fuel.VehicleClass;
 import java.awt.Color;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
@@ -107,13 +109,16 @@ public class Main
         //SAVtest();
         
         /*
-        DTAProject project = new DTAProject(new File("projects/coacongress2_LTM"));
-        ReadDTANetwork read = new ReadDTANetwork();
-        read.prepareDemand(project, 0.8);
-        project.loadSimulator();
-        DTASimulator sim = project.getSimulator();
-        sim.msa(10);
-*/
+        ICV test = new ICV();
+        System.out.println(test.testMPG(30, 2, 0));
+        System.out.println(test.testMPG(45, 2, 0));
+        System.out.println(test.testMPG(60, 2, 0));
+        */
+        
+
+
+        
+
         //GUI.main(args);
         
         

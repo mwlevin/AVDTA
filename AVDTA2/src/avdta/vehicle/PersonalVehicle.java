@@ -124,8 +124,7 @@ public class PersonalVehicle extends Vehicle
 
         arr_time = 0;
         setVOT(vot);
-        
-        effFactor = .5 + Math.round(Math.random());
+
     }
     
     /**

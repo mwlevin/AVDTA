@@ -445,8 +445,10 @@ public class Simulator extends Network
 
     	for(Vehicle v : vehicles)
     	{
-    		if(v.getExitTime() < Simulator.duration)
-    			output += v.getPath().getLength();
+            if(v.getExitTime() < Simulator.duration)
+            {
+                    output += v.getVMT();
+            }
     	}
 
     	return output;
@@ -479,8 +481,8 @@ public class Simulator extends Network
         {
             if(v.getExitTime() < Simulator.duration && v.getTotalEnergy() > 0)
             {
-                total += v.getMPG();
-                count++;
+                total += v.getMPG() * v.getVMT();
+                count += v.getVMT();
             }
         }
         

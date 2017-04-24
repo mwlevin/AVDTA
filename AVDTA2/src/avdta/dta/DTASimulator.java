@@ -185,7 +185,7 @@ public class DTASimulator extends Simulator
         int exiting = 0;
 
         int count = 0;
-        
+        int moved_count = 0;
 
         for(Vehicle x : vehicles)
         {
@@ -252,12 +252,16 @@ public class DTASimulator extends Simulator
             min += temp2[ast][v.getDriver().typeIndex()].getAvgCost(dep_time, v.getVOT(), costFunc);
 
 
+            
+            
             // move vehicle random chance
-            if(v.getPath() == null || rand.nextDouble() < stepsize)
+            if(v.getPath() == null || v.getPath().isEmpty() || rand.nextDouble() < stepsize)
             {
+
                 try
                 {
                     v.setPath(temp2[ast][v.getDriver().typeIndex()]);
+                    moved_count++;
                 }
                 catch(Exception ex)
                 {
@@ -272,12 +276,15 @@ public class DTASimulator extends Simulator
             
 
             count ++;
+            
+            
 
         }
+
         
         if(error_count > 0)
         {
-        	System.err.println("Unable: "+error_count);
+            System.err.println("Unable: "+error_count);
         }
 
         simulate();
@@ -629,7 +636,7 @@ public class DTASimulator extends Simulator
         out.println("Exiting: "+getNumExited());
         out.println("Energy:\t"+getTotalEnergy());
         out.println("VMT:\t"+getTotalVMT());
-        out.println("MPG:\t"+(getTotalVMT() / (getTotalEnergy() / VehicleClass.E_PER_GALLON)));
+        out.println("MPG:\t"+getAvgMPG());
         out.println();
         out.println("HV TT:\t"+(getAvgTT(DriverType.HV)/60)+"\tmin");
         out.println("AV TT:\t"+(getAvgTT(DriverType.AV)/60)+"\tmin");

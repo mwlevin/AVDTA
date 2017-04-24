@@ -50,6 +50,30 @@ public abstract class VehicleClass
     }
     
     /**
+     * Calculates the MPG for the given duration with the given speed, acceleration, and road grade. 
+     * This appeals to {@link VehicleClass#calcPower(double, double, double)}.
+     * @param time the duration (s)
+     * @param speed speed (mi/hr)
+     * @param accel acceleration (mi/hr/s)
+     * @param grade road grade (radians)
+     * @return energy consumption
+     */
+    public double calcMPG(double time, double speed, double accel, double grade)
+    {
+
+        double dist = speed * time / 3600.0;
+
+        double energy = calcEnergy(time, speed, accel, grade);
+        
+        return dist / (energy / E_PER_GALLON);
+    }
+    
+    public double testMPG(double speed, double accel, double grade)
+    {
+        return calcMPG(1.0 / speed * 3600.0, speed, accel, grade);
+    }
+    
+    /**
      * Returns the power required for the given speed, acceleration, and grade
      * @param speed speed (mi/hr)
      * @param accel acceleration (mi/hr/s)

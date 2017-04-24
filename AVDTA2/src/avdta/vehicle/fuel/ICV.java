@@ -22,13 +22,13 @@ public class ICV extends VehicleClass
     
     private double rho = 1.2;						// density of air
     private double C_D = 0.32;						// drag area
-    private double A = 2.5;						// frontal area
+    private double A = 0.8;						// frontal area
     private double C_RR = 0.01;						// rolling resistance coefficient
-    private double m_total = 2687;					// mass of vehicle
+    private double m_total = 1640;					// mass of vehicle
     public static final double g = 9.81;	// acceleration from gravity
     private double k_m = 1.1; 						// rotational inertia
-    private double eta_engine = 0.225; 						// engine efficiency
-    private double eta_trans = 0.87;				// transmission efficiency
+    private double eta_engine = 0.18; 						// engine efficiency
+    private double eta_trans = 0.9;				// transmission efficiency
     private double k_regen = 0;
         
     /**
@@ -48,6 +48,7 @@ public class ICV extends VehicleClass
         speed /= 2.237;
         rmc_speed /= 2.237;
         char_accel /= 2.237;
+
 
 
         double P_aero = 0.5* rho * C_D * A * rmc_speed * rmc_speed * rmc_speed;
