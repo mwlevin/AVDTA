@@ -117,10 +117,11 @@ public class ReadNetwork
     public static final int PHASED = SIGNALIZED_RESERVATION+1;
     public static final int WEIGHTED = SIGNALIZED_RESERVATION+2;
     
-    // vehicles
+    // travelers
     public static final int HV = 10;
     public static final int AV = 20;
     public static final int CV = 30;
+    
     
     
     public static final int ICV = 1;
@@ -129,8 +130,7 @@ public class ReadNetwork
     public static final int DA_VEHICLE = 100;
     public static final int BUS = 500;  
     
-    // a traveler
-    public static final int TRANSIT = 600; 
+
     
     // used for sanity check
     public static final int MALFORMED_DATA = 1;
