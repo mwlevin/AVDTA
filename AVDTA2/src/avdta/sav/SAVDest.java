@@ -106,11 +106,11 @@ public class SAVDest extends SAVZone
         int output = 0;
         
         // remove travelers for this destination
-        ListIterator<Traveler> passengers = t.getPassengers().listIterator();
+        ListIterator<SAVTraveler> passengers = t.getPassengers().listIterator();
         
         while(passengers.hasNext())
         {
-            Traveler person = passengers.next();
+            SAVTraveler person = passengers.next();
             
             if(person.getDest() == this)
             {

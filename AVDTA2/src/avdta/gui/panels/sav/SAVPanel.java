@@ -31,7 +31,7 @@ import avdta.network.Simulator;
 import avdta.sav.ReadSAVNetwork;
 import avdta.sav.SAVSimulator;
 import avdta.sav.Taxi;
-import avdta.sav.Traveler;
+import avdta.sav.SAVTraveler;
 import avdta.sav.dispatch.Dispatch;
 import java.awt.Dimension;
 import java.io.IOException;
@@ -40,6 +40,7 @@ import java.util.TreeMap;
 import javax.swing.ButtonGroup;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import static avdta.gui.util.GraphicUtils.constrain;
 
 
 /**
@@ -353,7 +354,7 @@ public class SAVPanel extends GUIPanel
 
                     Map<Integer, Integer> errors = new TreeMap<Integer, Integer>();
 
-                    for(Traveler t : test.getTravelers())
+                    for(SAVTraveler t : test.getTravelers())
                     {
                         if(t.isExited())
                         {

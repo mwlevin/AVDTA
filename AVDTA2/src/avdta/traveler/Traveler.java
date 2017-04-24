@@ -1,35 +1,31 @@
 /*
- * To change this template, choose Tools | Templates
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package avdta.sav;
+package avdta.traveler;
 
 import avdta.network.Simulator;
-import avdta.sav.Taxi;
+import avdta.network.node.Zone;
 import avdta.sav.SAVDest;
 import avdta.sav.SAVOrigin;
+import avdta.sav.SAVTraveler;
 import java.io.Serializable;
 
 /**
  *
- * @author Michael
+ * @author micha
  */
-public class Traveler implements Serializable, Comparable<Traveler>
+public class Traveler implements Comparable<Traveler>, Serializable
 {
     private int id;
-    private SAVOrigin origin;
-    private SAVDest dest;
+    private Zone origin;
+    private Zone dest;
     private int dtime;
     
-    private int enter_time, exit_time, etd;
+    private int enter_time, exit_time;
+    private double vot;
     
-    
-    private Taxi assigned;
-    
-    public static final int ALLOWED_DELAY = 300;
-    
-    public boolean unable;
-   
     /**
      * Constructs the traveler with the specified parameters.
      * @param id the id
@@ -37,42 +33,42 @@ public class Traveler implements Serializable, Comparable<Traveler>
      * @param dest the destination
      * @param dtime the departure time
      */
-    public Traveler(int id, SAVOrigin origin, SAVDest dest, int dtime)
+    public Traveler(int id, Zone origin, Zone dest, int dtime, double vot)
     {
         this.id = id;
         this.origin = origin;
         this.dest = dest;
         this.dtime = dtime;
-        
-        etd = Integer.MAX_VALUE;
+        this.vot = vot;
+    }
+    
+    public double getVOT()
+    {
+        return vot;
+    }
+    
+    public void setVOT(double vot)
+    {
+        this.vot = vot;
+    }
+    
+    public void setEnterTime(int enter)
+    {
+        enter_time = enter;
+    }
+    
+    public int getEnterTime()
+    {
+        return enter_time;
     }
     
     /**
-     * Inform the traveler that a taxi has been assigned to him.
-     * @param t the taxi
+     * Returns the traveler's departure time.
+     * @return the traveler's departure time
      */
-    public void setAssignedTaxi(Taxi t)
+    public int getDepTime()
     {
-        assigned = t;
-    }
-    
-    /**
-     * Returns the taxi assigned to this traveler.
-     * @return the assigned taxi, or null if none exists
-     */
-    public Taxi getAssignedTaxi()
-    {
-        return assigned;
-    }
-    
-    public int getEtd()
-    {
-        return etd;
-    }
-    
-    public void setEtd(int e)
-    {
-        etd = e;
+        return dtime;
     }
     
     /**
@@ -99,35 +95,6 @@ public class Traveler implements Serializable, Comparable<Traveler>
     {
         enter_time = -1;
         exit_time = -1;
-        etd = Integer.MAX_VALUE;
-        unable = false;
-    }
-    
-    /**
-     * Returns the traveler's departure time.
-     * @return the traveler's departure time
-     */
-    public int getDepTime()
-    {
-        return dtime;
-    }
-    
-    /**
-     * Returns the origin.
-     * @return the origin
-     */
-    public SAVOrigin getOrigin()
-    {
-        return origin;
-    }
-    
-    /**
-     * Returns the destination.
-     * @return the destination
-     */
-    public SAVDest getDest()
-    {
-        return dest;
     }
     
     /**
@@ -144,6 +111,16 @@ public class Traveler implements Serializable, Comparable<Traveler>
         return id;
     }
     
+    public Zone getOrigin()
+    {
+        return origin;
+    }
+    
+    public Zone getDest()
+    {
+        return dest;
+    }
+    
     /**
      * Checks whether this traveler has exited.
      * @return if this traveler has exited
@@ -151,15 +128,6 @@ public class Traveler implements Serializable, Comparable<Traveler>
     public boolean isExited()
     {
         return exit_time > 0;
-    }
-    
-    /**
-     * This method is called when the traveler enters a taxi.
-     * The current time is saved as the taxi enter time.
-     */
-    public void enteredTaxi()
-    {
-        enter_time = Simulator.time;
     }
     
     /**

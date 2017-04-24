@@ -18,7 +18,7 @@ import avdta.network.node.Location;
 import avdta.network.node.Node;
 import avdta.network.node.Zone;
 import avdta.project.DTAProject;
-import avdta.sav.Traveler;
+import avdta.sav.SAVTraveler;
 import avdta.sav.SAVSimulator;
 import avdta.sav.SAVDest;
 import avdta.sav.SAVOrigin;
@@ -111,9 +111,9 @@ public class ReadSAVNetwork extends ReadDemandNetwork
      * @return a list of travelers
      * @throws IOException if a file is not found
      */
-    public List<Traveler> readTravelers(SAVProject project) throws IOException
+    public List<SAVTraveler> readTravelers(SAVProject project) throws IOException
     {
-        List<Traveler> travelers = new ArrayList<Traveler>();
+        List<SAVTraveler> travelers = new ArrayList<SAVTraveler>();
         
         Scanner filein = new Scanner(project.getDemandFile());
         
@@ -140,7 +140,7 @@ public class ReadSAVNetwork extends ReadDemandNetwork
                     origin.addProductions(1);
                     dest.addAttractions(1);
 
-                    travelers.add(new Traveler(id, origin, dest, dtime));
+                    travelers.add(new SAVTraveler(id, origin, dest, dtime, vot));
                 }
                 catch(Exception ex)
                 {

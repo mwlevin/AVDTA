@@ -21,7 +21,7 @@ import java.util.List;
  */
 public class Taxi extends Vehicle
 {
-    private List<Traveler> passengers;
+    private List<SAVTraveler> passengers;
     
     private SAVOrigin startLocation, location;
     
@@ -48,7 +48,7 @@ public class Taxi extends Vehicle
     {
         super(id);
         setDriver(DriverType.AV);
-        passengers = new ArrayList<Traveler>();
+        passengers = new ArrayList<SAVTraveler>();
         this.startLocation = startLocation;
         this.location = startLocation;
        
@@ -118,7 +118,7 @@ public class Taxi extends Vehicle
     }
     
     
-    public void addPassenger(Traveler person)
+    public void addPassenger(SAVTraveler person)
     {
         if(!passengers.contains(person))
         {
@@ -145,7 +145,7 @@ public class Taxi extends Vehicle
         }
     }
     
-    public List<Traveler> getPassengers()
+    public List<SAVTraveler> getPassengers()
     {
         return passengers;
     }

@@ -14,7 +14,7 @@ import avdta.sav.SAVDest;
 import avdta.sav.SAVOrigin;
 import avdta.sav.SAVSimulator;
 import avdta.sav.Taxi;
-import avdta.sav.Traveler;
+import avdta.sav.SAVTraveler;
 import avdta.vehicle.DriverType;
 import java.util.HashMap;
 import java.util.Map;
@@ -114,7 +114,7 @@ public abstract class Dispatch
      * This method is called by {@link SAVOrigin} when a traveler departs and requests a taxi.
      * @param person the departing traveler
      */
-    public abstract void newTraveler(Traveler person);
+    public abstract void newTraveler(SAVTraveler person);
     
     /**
      * This method is called by {@link SAVSimulator} after data has been read.
@@ -164,7 +164,7 @@ public abstract class Dispatch
      * @param taxi the taxi the traveler departed on
      * @param person the departing traveler
      */
-    public abstract void travelerDeparted(Taxi taxi, Traveler person);
+    public abstract void travelerDeparted(Taxi taxi, SAVTraveler person);
     
     /**
      * Adds a taxi to the list of free taxis.

@@ -25,7 +25,7 @@ import java.util.TreeSet;
  */
 public class SAVOrigin extends SAVZone
 {
-    private TreeSet<Traveler> waitingTravelers;
+    private TreeSet<SAVTraveler> waitingTravelers;
     
     private TreeSet<Taxi> enrouteTaxis;
     private TreeSet<Taxi> freeTaxis;
@@ -51,7 +51,7 @@ public class SAVOrigin extends SAVZone
     {
         super(id, loc);
         
-        waitingTravelers = new TreeSet<Traveler>();
+        waitingTravelers = new TreeSet<SAVTraveler>();
         enrouteTaxis = new TreeSet<Taxi>(new Comparator<Taxi>()
         {
             public int compare(Taxi lhs, Taxi rhs)
@@ -114,13 +114,13 @@ public class SAVOrigin extends SAVZone
      * Returns a set of waiting travelers, sorted by departure times.
      * @return a set of waiting travelers
      */
-    public TreeSet<Traveler> getWaitingTravelers()
+    public TreeSet<SAVTraveler> getWaitingTravelers()
     {
         return waitingTravelers;
     }
     
     
-    public void addTraveler(Traveler p)
+    public void addTraveler(SAVTraveler p)
     {
         waitingTravelers.add(p);
         
@@ -151,7 +151,7 @@ public class SAVOrigin extends SAVZone
      * Removes a traveler from the list of waiting travelers.
      * @param person the traveler to be removed
      */
-    public void removeTraveler(Traveler person)
+    public void removeTraveler(SAVTraveler person)
     {
         waitingTravelers.remove(person);  
     }
@@ -193,7 +193,7 @@ public class SAVOrigin extends SAVZone
         enrouteTaxis.add(t);
         
         // check if all passengers in t are destined here
-        for(Traveler p : t.getPassengers())
+        for(SAVTraveler p : t.getPassengers())
         {
             if(p.getDest() != getLinkedZone())
             {
@@ -220,7 +220,7 @@ public class SAVOrigin extends SAVZone
      */
     public void updateEtds(int eta)
     {
-        for(Traveler p : waitingTravelers)
+        for(SAVTraveler p : waitingTravelers)
         {
             if(p.getEtd() < eta)
             {

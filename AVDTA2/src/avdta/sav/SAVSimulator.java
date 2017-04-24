@@ -30,7 +30,7 @@ import avdta.sav.dispatch.DefaultDispatch;
 
 /**
  * This class extends {@link Simulator} to handle the simulation of travelers and taxis.
- * Along with {@link SAVOrigin}, {@link SAVDest}, and {@link Traveler}, the movement of travelers out of taxis, and the movement of taxis through the network, is fully defined.
+ * Along with {@link SAVOrigin}, {@link SAVDest}, and {@link SAVTraveler}, the movement of travelers out of taxis, and the movement of taxis through the network, is fully defined.
  * The matching of SAVs to travelers is decided by the {@link Dispatch}. 
  * This class facilitates the dispatch by implementing traveler and vehicle behavior once their matchings and paths have been assigned.
  * 
@@ -41,7 +41,7 @@ public class SAVSimulator extends Simulator
 { 
     
     private List<Taxi> taxis;
-    private List<Traveler> travelers;
+    private List<SAVTraveler> travelers;
     
     public static Dispatch dispatch;
     
@@ -102,7 +102,7 @@ public class SAVSimulator extends Simulator
      * Returns the list of all travelers.
      * @return the list of all travelers
      */
-    public List<Traveler> getTravelers()
+    public List<SAVTraveler> getTravelers()
     {
         return travelers;
     }
@@ -220,7 +220,7 @@ public class SAVSimulator extends Simulator
      * Updates the list of travelers, and sorts them by departure time.
      * @param travelers the new list of travelers
      */
-    public void setTravelers(List<Traveler> travelers)
+    public void setTravelers(List<SAVTraveler> travelers)
     {
         this.travelers = travelers;
         
@@ -230,7 +230,7 @@ public class SAVSimulator extends Simulator
     /**
      * Resets the simulator to restart the simulation.
      * This moves taxis to their start location (see {@link Taxi#getStartLocation()}) and registers them as a free taxi in the {@link Dispatch}.
-     * This also calls {@link Traveler#reset()}.
+     * This also calls {@link SAVTraveler#reset()}.
      */
     public void resetSim()
     {
@@ -249,7 +249,7 @@ public class SAVSimulator extends Simulator
         }
 
         
-        for(Traveler t: travelers)
+        for(SAVTraveler t: travelers)
         {
             t.reset();
         }
@@ -295,7 +295,7 @@ public class SAVSimulator extends Simulator
         // add travelers
         while(traveler_idx < travelers.size())
         {
-            Traveler t = travelers.get(traveler_idx);
+            SAVTraveler t = travelers.get(traveler_idx);
 
             if(t.getDepTime() <= Simulator.time)
             {
@@ -343,7 +343,7 @@ public class SAVSimulator extends Simulator
         
         int count = 0;
         
-        for(Traveler t : travelers)
+        for(SAVTraveler t : travelers)
         {
             if(t.isExited())
             {
@@ -367,7 +367,7 @@ public class SAVSimulator extends Simulator
         
         int count = 0;
         
-        for(Traveler t : travelers)
+        for(SAVTraveler t : travelers)
         {
             if(t.isExited())
             {
@@ -390,7 +390,7 @@ public class SAVSimulator extends Simulator
         
         int count = 0;
         
-        for(Traveler t : travelers)
+        for(SAVTraveler t : travelers)
         {
             if(t.isExited())
             {
@@ -405,12 +405,12 @@ public class SAVSimulator extends Simulator
     /**
      * This adds the traveler to the taxi, and should be called by the {@link Dispatch} to handle all simulator updates associated with a traveler entering a taxi.
      * This should only be called when the taxi and the traveler are at the same location (the same {@link SAVOrigin}).
-     * This calls {@link Dispatch#travelerDeparted(avdta.sav.Taxi, avdta.sav.Traveler)} to notify the {@link Dispatch} and {@link Traveler#enteredTaxi()}.
+     * This calls {@link Dispatch#travelerDeparted(avdta.sav.Taxi, avdta.sav.Traveler)} to notify the {@link Dispatch} and {@link SAVTraveler#enteredTaxi()}.
      * This also causes the taxi to dwell at its location for {@link Taxi#DELAY_ENTER} seconds.
      * @param taxi the taxi
      * @param person the traveler
      */
-    public void addTravelerToTaxi(Taxi taxi, Traveler person)
+    public void addTravelerToTaxi(Taxi taxi, SAVTraveler person)
     {
         dispatch.travelerDeparted(taxi, person);
         

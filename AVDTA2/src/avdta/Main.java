@@ -51,8 +51,9 @@ import avdta.sav.SAVOrigin;
 import avdta.sav.SAVSimulator;
 import avdta.sav.SAVZone;
 import avdta.sav.Taxi;
-import avdta.sav.Traveler;
+import avdta.sav.SAVTraveler;
 import avdta.sav.dispatch.DefaultDispatch;
+import avdta.traveler.Traveler;
 import avdta.util.RunningAvg;
 import avdta.vehicle.Bus;
 import avdta.vehicle.DriverType;
@@ -103,7 +104,7 @@ public class Main
 
         //caccTest2();
         
-        new DTAGUI();
+        //new DTAGUI();
         //new FourStepGUI();
         
         //SAVtest();
@@ -116,7 +117,9 @@ public class Main
         */
         
 
-
+        DTAProject project = new DTAProject(new File("projects/SiouxFalls"));
+        DTASimulator sim = project.getSimulator();
+        sim.msa(3);
         
 
         //GUI.main(args);
@@ -209,7 +212,7 @@ public class Main
         
         Map<Integer, Integer> errors = new TreeMap<Integer, Integer>();
         
-        for(Traveler t : test.getTravelers())
+        for(SAVTraveler t : test.getTravelers())
         {
             if(t.isExited())
             {
@@ -899,18 +902,18 @@ public class Main
         Node n5 = new Intersection(5, new Location(0, 0), new PriorityTBR(new TransitFirst()));
         
         Node n3 = new Intersection(3, new Location(-1, 0), new PriorityTBR(new TransitFirst()));
-        Node n1 = new Zone(1, new Location(-2, 0));
+        Zone n1 = new Zone(1, new Location(-2, 0));
         Node t1 = new Zone(201, new Location(-2, 0));
         Node n7 = new Intersection(7, new Location(1, 0), new PriorityTBR(new TransitFirst()));
-        Node n9 = new Zone(9, new Location(2, 0));
-        Node t9 = new Zone(209, new Location(2, 0));
+        Zone n9 = new Zone(9, new Location(2, 0));
+        Zone t9 = new Zone(209, new Location(2, 0));
         
         Node n4 = new Intersection(4, new Location(0, -1), new PriorityTBR(new TransitFirst()));
-        Node n2 = new Zone(2, new Location(0, -2));
-        Node t2 = new Zone(202, new Location(0, -2));
+        Zone n2 = new Zone(2, new Location(0, -2));
+        Zone t2 = new Zone(202, new Location(0, -2));
         Node n6 = new Intersection(6, new Location(0, 1), new PriorityTBR(new TransitFirst()));
-        Node n8 = new Zone(8, new Location(0, 2));
-        Node t8 = new Zone(208, new Location(0, 2));
+        Zone n8 = new Zone(8, new Location(0, 2));
+        Zone t8 = new Zone(208, new Location(0, 2));
         
         nodes.add(n1);
         nodes.add(n2);
@@ -973,14 +976,14 @@ public class Main
         
         for(int i = 0; i < num; i++)
         {
-            vehicles.add(new PersonalVehicle(i+1, n1, n9, (int)(3600.0/num*i)));
+            vehicles.add(new PersonalVehicle(new Traveler(i+1, n1, n9, (int)(3600.0/num*i), 1)));
         }
         
         num = (int)(DArate * 60.0/60);
         
         for(int i = 0; i < num; i++)
         {
-            vehicles.add(new PersonalVehicle(i+1, n2, n8, (int)(3600.0/num*i)));
+            vehicles.add(new PersonalVehicle(new Traveler(i+1, n2, n8, (int)(3600.0/num*i), 1)));
         }
         
         
@@ -1062,11 +1065,11 @@ public class Main
         Set<Link> links = new HashSet<Link>();
         
         
-        Node n1 = new Zone(1);
+        Zone n1 = new Zone(1);
         Node n2 = new Intersection(2, new PriorityTBR());
         Node n3 = new Intersection(3, new PriorityTBR());
-        Node n4 = new Zone(4);
-        Node n1a = new Zone(10);
+        Zone n4 = new Zone(4);
+        Zone n1a = new Zone(10);
         
         nodes.add(n1);
         nodes.add(n2);
@@ -1096,7 +1099,7 @@ public class Main
         
         for(int i = 0; i < num; i++)
         {
-            vehicles.add(new PersonalVehicle(i+1, n1, n4, (int)(3600.0/num*i)));
+            vehicles.add(new PersonalVehicle(new Traveler(i+1, n1, n4, (int)(3600.0/num*i), 1)));
         }
         
         

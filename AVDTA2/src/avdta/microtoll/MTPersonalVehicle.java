@@ -13,6 +13,7 @@ import avdta.vehicle.wallet.Wallet;
 import avdta.network.node.Node;
 import avdta.vehicle.fuel.VehicleClass;
 import avdta.network.link.Link;
+import avdta.traveler.Traveler;
 import avdta.vehicle.route.AdaptiveRoute;
 
 /**
@@ -25,20 +26,17 @@ public class MTPersonalVehicle extends PersonalVehicle
 
     private double total_toll;
     
-    public MTPersonalVehicle(int id, Node origin, Node dest, int dtime, double vot)
+    public MTPersonalVehicle(Traveler traveler)
     {
-        super(id, origin, dest, dtime, vot, Wallet.EMPTY, VehicleClass.icv, DriverType.AV);
-
-        total_toll = 0;
-        setRouteChoice(new AdaptiveRoute(this, origin, dest));
+        this(traveler, VehicleClass.icv, DriverType.AV);
     }
     
-    public MTPersonalVehicle(int id, Node origin, Node dest, int dtime, double vot, VehicleClass vehClass, DriverType driver)
+    public MTPersonalVehicle(Traveler traveler, VehicleClass vehClass, DriverType driver)
     {
-        super(id, origin, dest, dtime, vot, Wallet.EMPTY, vehClass, driver);
+        super(traveler, Wallet.EMPTY, vehClass, driver);
 
         total_toll = 0;
-        setRouteChoice(new AdaptiveRoute(this, origin, dest));
+        setRouteChoice(new AdaptiveRoute(this, traveler.getOrigin(), traveler.getDest()));
     }
     
     public double getTotalToll()

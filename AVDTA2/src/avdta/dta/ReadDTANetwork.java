@@ -13,6 +13,7 @@ import avdta.network.link.Link;
 import avdta.network.node.Node;
 import avdta.network.node.Zone;
 import avdta.project.DTAProject;
+import avdta.traveler.Traveler;
 import avdta.vehicle.VOT;
 import avdta.vehicle.DriverType;
 import avdta.vehicle.PersonalVehicle;
@@ -180,7 +181,7 @@ public class ReadDTANetwork extends ReadDemandNetwork
                     default:
                         throw new RuntimeException("Vehicle class not recognized - "+type);
                 }
-                vehicles.add(new PersonalVehicle(id, origin, dest, dtime, vot, vehClass, driver));
+                vehicles.add(new PersonalVehicle(new Traveler(id, origin, dest, dtime, vot), vehClass, driver));
             }
         }
         

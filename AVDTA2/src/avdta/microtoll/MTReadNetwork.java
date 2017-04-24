@@ -8,6 +8,7 @@ import avdta.dta.ReadDTANetwork;
 import avdta.network.Simulator;
 import avdta.network.node.Zone;
 import avdta.project.DTAProject;
+import avdta.traveler.Traveler;
 import avdta.vehicle.PersonalVehicle;
 import avdta.vehicle.wallet.StaticWallet;
 import avdta.vehicle.Vehicle;
@@ -51,7 +52,7 @@ public class MTReadNetwork extends ReadDTANetwork
                 origin.addProductions(1);
                 dest.addAttractions(1);
                 
-                vehicles.add(new MTPersonalVehicle(id, origin, dest, dtime, vot));
+                vehicles.add(new MTPersonalVehicle(new Traveler(id, origin, dest, dtime, vot)));
             }
         }
         

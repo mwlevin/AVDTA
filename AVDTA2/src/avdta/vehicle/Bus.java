@@ -20,7 +20,7 @@ import java.util.ArrayList;
  * This vehicle travels along a fixed route, updating travel times on relevant {@link BusLink}s as it travels.
  * @author Michael
  */
-public class Bus extends PersonalVehicle
+public class Bus extends Vehicle
 {
     public static final double VOT = 100;
     public static final Wallet wallet = new StaticWallet(Integer.MAX_VALUE);
@@ -29,6 +29,7 @@ public class Bus extends PersonalVehicle
     
     private int stop_idx;
     private int stop_arr_time;
+    private int dtime;
     
     private int route_id;
     
@@ -59,13 +60,20 @@ public class Bus extends PersonalVehicle
      */
     public Bus(int id, int route_id, int dtime, Path path, ArrayList<BusLink> transitStops, VehicleClass vehClass, DriverType driver)
     {
-        super(id, path.getOrigin(), path.getDest(), dtime, Bus.VOT, Bus.wallet, path, vehClass, driver);
+        super(id, Bus.wallet, vehClass, driver);
         
         this.transitStops = transitStops;
         this.route_id = route_id;
         
+        setPath(path);
         stop_idx = 0;
+        this.dtime = dtime;
         stop_arr_time = dtime;
+    }
+    
+    public int getDepTime()
+    {
+        return dtime;
     }
     
     /**

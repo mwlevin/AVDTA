@@ -15,7 +15,7 @@ import avdta.sav.SAVDest;
 import avdta.sav.SAVOrigin;
 import avdta.sav.SAVSimulator;
 import avdta.sav.Taxi;
-import avdta.sav.Traveler;
+import avdta.sav.SAVTraveler;
 import avdta.vehicle.DriverType;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -31,7 +31,7 @@ import java.util.TreeSet;
  */
 public class DefaultDispatch extends Dispatch
 {
-    private TreeSet<Traveler> waiting;
+    private TreeSet<SAVTraveler> waiting;
     
     
     private boolean relocate;
@@ -53,7 +53,7 @@ public class DefaultDispatch extends Dispatch
         ride_share = project.getOption("ride-sharing").equalsIgnoreCase("true");
         cost_factor = Double.parseDouble(project.getOption("cost-factor"));
         
-        waiting = new TreeSet<Traveler>();
+        waiting = new TreeSet<SAVTraveler>();
         
         
         origins = new HashSet<SAVOrigin>();
@@ -76,7 +76,7 @@ public class DefaultDispatch extends Dispatch
         waiting.clear();
     }
     
-    public void newTraveler(Traveler person)
+    public void newTraveler(SAVTraveler person)
     {
         waiting.add(person);
         
@@ -226,7 +226,7 @@ public class DefaultDispatch extends Dispatch
         //System.out.println("Relocating "+count);
     }
     
-    public void travelerDeparted(Taxi taxi, Traveler person)
+    public void travelerDeparted(Taxi taxi, SAVTraveler person)
     {
         waiting.remove(person);
     }
@@ -274,7 +274,7 @@ public class DefaultDispatch extends Dispatch
     {
         SAVOrigin origin = taxi.getLocation();
         
-        TreeSet<Traveler> waitingList = origin.getWaitingTravelers();
+        TreeSet<SAVTraveler> waitingList = origin.getWaitingTravelers();
         
         if(waitingList.size() == 0)
         {
@@ -285,7 +285,7 @@ public class DefaultDispatch extends Dispatch
         
         if(!ride_share)
         {
-            Traveler person = waitingList.pollFirst();
+            SAVTraveler person = waitingList.pollFirst();
             getSimulator().addTravelerToTaxi(taxi, person);
             
             Path firstPath = getPath(person.getOrigin(), person.getDest());
@@ -300,7 +300,7 @@ public class DefaultDispatch extends Dispatch
 
 
 
-            Traveler first = waitingList.pollFirst();
+            SAVTraveler first = waitingList.pollFirst();
             getSimulator().addTravelerToTaxi(taxi, first);
             int tt = 0;
 
@@ -311,9 +311,9 @@ public class DefaultDispatch extends Dispatch
             taxi.setPath(firstPath);
 
             // match travelers to first
-            Set<Traveler> removed = new HashSet<Traveler>();
+            Set<SAVTraveler> removed = new HashSet<SAVTraveler>();
 
-            for(Traveler t : waitingList)
+            for(SAVTraveler t : waitingList)
             {
                 if(dest == t.getDest())
                 {
@@ -327,7 +327,7 @@ public class DefaultDispatch extends Dispatch
                 }
             }
 
-            for(Traveler t : removed)
+            for(SAVTraveler t : removed)
             {
                 waitingList.remove(t);
             }
@@ -341,16 +341,16 @@ public class DefaultDispatch extends Dispatch
     {
         SAVOrigin origin = taxi.getLocation();
         
-        TreeSet<Traveler> waitingList = origin.getWaitingTravelers();
+        TreeSet<SAVTraveler> waitingList = origin.getWaitingTravelers();
         
-        List<Traveler> passengers = taxi.getPassengers();
+        List<SAVTraveler> passengers = taxi.getPassengers();
         
         SAVDest lastDest = passengers.get(passengers.size()-1).getDest();
         SAVOrigin curr = origin;
         
         double tt = 0;
         
-        for(Traveler t : passengers)
+        for(SAVTraveler t : passengers)
         {
             tt += getPath(curr, t.getDest()).getCost();
             curr = (SAVOrigin)t.getDest().getLinkedZone();
@@ -358,7 +358,7 @@ public class DefaultDispatch extends Dispatch
         
         boolean found = true;
         
-        Set<Traveler> removed = new HashSet<Traveler>();
+        Set<SAVTraveler> removed = new HashSet<SAVTraveler>();
         
         outer: while(found && passengers.size() < taxi.getCapacity())
         {
@@ -366,7 +366,7 @@ public class DefaultDispatch extends Dispatch
             // prioritize by longest waiting
             found = false;
             
-            for(Traveler t : waitingList)
+            for(SAVTraveler t : waitingList)
             {
                 double newTT = getPath(curr, t.getDest()).getCost() + tt;
                 
@@ -386,7 +386,7 @@ public class DefaultDispatch extends Dispatch
                 }
             }
             
-            for(Traveler t : removed)
+            for(SAVTraveler t : removed)
             {
                 waitingList.remove(t);
             }
@@ -395,7 +395,7 @@ public class DefaultDispatch extends Dispatch
             
             if(found)
             {
-                for(Traveler t : waitingList)
+                for(SAVTraveler t : waitingList)
                 {
                     if(lastDest == t.getDest())
                     {
@@ -409,7 +409,7 @@ public class DefaultDispatch extends Dispatch
                     }
                 }
                 
-                for(Traveler t : removed)
+                for(SAVTraveler t : removed)
                 {
                     waitingList.remove(t);
                 }
@@ -418,7 +418,7 @@ public class DefaultDispatch extends Dispatch
             }
         }
         
-        for(Traveler t : removed)
+        for(SAVTraveler t : removed)
         {
             waitingList.remove(t);
         }
@@ -431,7 +431,7 @@ public class DefaultDispatch extends Dispatch
      * Returns a list of waiting travelers.
      * @return a list of waiting travelers
      */
-    public TreeSet<Traveler> getWaiting()
+    public TreeSet<SAVTraveler> getWaiting()
     {
         return waiting;
     }
@@ -442,15 +442,15 @@ public class DefaultDispatch extends Dispatch
     {
         if(Simulator.time % Simulator.ast_duration == 0)
         {
-            for(Traveler t : waiting)
+            for(SAVTraveler t : waiting)
             {
                 t.unable = false;
             }
         }
         
-        Set<Traveler> handled = new HashSet<Traveler>();
+        Set<SAVTraveler> handled = new HashSet<SAVTraveler>();
         
-        for(Traveler person : waiting)
+        for(SAVTraveler person : waiting)
         {
             if(person.unable)
             {
@@ -499,7 +499,7 @@ public class DefaultDispatch extends Dispatch
        
             if(best != null && 
                     (etd == Integer.MAX_VALUE || etd < Simulator.time || 
-                    (etd > Simulator.time + min && etd > Simulator.time + Traveler.ALLOWED_DELAY)))
+                    (etd > Simulator.time + min && etd > Simulator.time + SAVTraveler.ALLOWED_DELAY)))
             {
                 if(path.size() > 0)
                 {
@@ -531,7 +531,7 @@ public class DefaultDispatch extends Dispatch
             }
         }
         
-        for(Traveler t : handled)
+        for(SAVTraveler t : handled)
         {
             waiting.remove(t);
         }
@@ -552,15 +552,15 @@ public class DefaultDispatch extends Dispatch
         {
             Set<SAVDest> dests = new HashSet<SAVDest>();
             
-            for(Traveler p : taxi.getPassengers())
+            for(SAVTraveler p : taxi.getPassengers())
             {
                 dests.add(p.getDest());
             }
             
             taxi.setPath(SAVSimulator.dispatch.getPath(node, taxi.getPassengers().get(0).getDest()));
             
-            Set<Traveler> removed = new HashSet<Traveler>();
-            for(Traveler p : node.getWaitingTravelers())
+            Set<SAVTraveler> removed = new HashSet<SAVTraveler>();
+            for(SAVTraveler p : node.getWaitingTravelers())
             {
                 if(dests.contains(p.getDest()))
                 {
@@ -574,7 +574,7 @@ public class DefaultDispatch extends Dispatch
                 }
             }
 
-            for(Traveler p : removed)
+            for(SAVTraveler p : removed)
             {
                 node.removeTraveler(p);
             }

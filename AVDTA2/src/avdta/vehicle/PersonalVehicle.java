@@ -10,6 +10,7 @@ import avdta.network.node.Node;
 import avdta.network.node.Zone;
 import avdta.network.Path;
 import avdta.network.Simulator;
+import avdta.traveler.Traveler;
 import avdta.vehicle.fuel.VehicleClass;
 import avdta.vehicle.Vehicle;
 import avdta.vehicle.DriverType;
@@ -24,8 +25,7 @@ import avdta.vehicle.fuel.ICV;
  */
 public class PersonalVehicle extends Vehicle 
 {
-    private Node origin, dest;
-    private int dep_time;
+    private Traveler traveler;
     
 
     /**
@@ -38,9 +38,9 @@ public class PersonalVehicle extends Vehicle
      * @param vot the value of time
      * @param wallet the wallet used for bidding at auctions
      */
-    public PersonalVehicle(int id, Node origin, Node dest, int dtime, double vot, Wallet wallet)
+    public PersonalVehicle(Traveler traveler, Wallet wallet)
     {
-        this(id, origin, dest, dtime, vot, wallet, VehicleClass.icv, DriverType.AV);
+        this(traveler, wallet, VehicleClass.icv, DriverType.AV);
     }
     
     /**
@@ -52,9 +52,9 @@ public class PersonalVehicle extends Vehicle
      * @param dest the destination {@link Node}
      * @param dtime the departure time
      */
-    public PersonalVehicle(int id, Node origin, Node dest, int dtime)
+    public PersonalVehicle(Traveler traveler)
     {
-        this(id, origin, dest, dtime, 1, Wallet.EMPTY, VehicleClass.icv, DriverType.AV);
+        this(traveler, Wallet.EMPTY, VehicleClass.icv, DriverType.AV);
     }
     
     /**
@@ -67,9 +67,9 @@ public class PersonalVehicle extends Vehicle
      * @param dtime the departure time
      * @param driver the driver
      */
-    public PersonalVehicle(int id, Node origin, Node dest, int dtime, DriverType driver)
+    public PersonalVehicle(Traveler traveler, DriverType driver)
     {
-        this(id, origin, dest, dtime, 1, Wallet.EMPTY, VehicleClass.icv, driver);
+        this(traveler, Wallet.EMPTY, VehicleClass.icv, driver);
     }
     
      /**
@@ -82,26 +82,11 @@ public class PersonalVehicle extends Vehicle
      * @param vehClass the {@link VehicleClass} used for calculating energy consumption
      * @param driver the driver
      */
-    public PersonalVehicle(int id, Node origin, Node dest, int dtime, VehicleClass vehClass, DriverType driver)
+    public PersonalVehicle(Traveler traveler, VehicleClass vehClass, DriverType driver)
     {
-        this(id, origin, dest, dtime, 1, Wallet.EMPTY, vehClass, driver);
+        this(traveler, Wallet.EMPTY, vehClass, driver);
     }
     
-    /**
-     * Constructs the {@link PersonalVehicle} with the given parameters.
-     * An {@link EmptyWallet} is used.
-     * @param id the id of the vehicle
-     * @param origin the origin {@link Node}
-     * @param dest the destination {@link Node}
-     * @param dtime the departure time
-     * @param vot the value of time
-     * @param vehClass the {@link VehicleClass} used for calculating energy consumption
-     * @param driver the driver
-     */
-    public PersonalVehicle(int id, Node origin, Node dest, int dtime, double vot, VehicleClass vehClass, DriverType driver)
-    {
-        this(id, origin, dest, dtime, vot, Wallet.EMPTY, vehClass, driver);
-    }
     
     /**
      * Constructs the {@link PersonalVehicle} with the given parameters.
@@ -114,16 +99,13 @@ public class PersonalVehicle extends Vehicle
      * @param vot the value of time
      * @param wallet the wallet used for bidding at auctions
      */
-    public PersonalVehicle(int id, Node origin, Node dest, int dtime, double vot, Wallet wallet, VehicleClass vehClass, DriverType driver)
+    public PersonalVehicle(Traveler traveler, Wallet wallet, VehicleClass vehClass, DriverType driver)
     {
-        super(id, wallet, vehClass, driver);
+        super(traveler.getId(), wallet, vehClass, driver);
         
-        this.origin = origin;
-        this.dest = dest;
-        this.dep_time = dtime;
+        this.traveler = traveler;
 
         arr_time = 0;
-        setVOT(vot);
 
     }
     
@@ -139,9 +121,9 @@ public class PersonalVehicle extends Vehicle
      * @param vot the value of time
      * @param path the vehicle path
      */
-    public PersonalVehicle(int id, Node origin, Node dest, int dtime, double vot, Wallet wallet, Path path, VehicleClass vehClass, DriverType driver)
+    public PersonalVehicle(Traveler traveler, Wallet wallet, Path path, VehicleClass vehClass, DriverType driver)
     {
-        this(id, origin, dest, dtime, vot, wallet, vehClass, driver);
+        this(traveler, wallet, vehClass, driver);
         setPath(path);
     }
     
@@ -151,7 +133,7 @@ public class PersonalVehicle extends Vehicle
      */
     public int getAST()
     {
-        return dep_time / DTASimulator.ast_duration;
+        return traveler.getDepTime() / DTASimulator.ast_duration;
     }
     
     /**
@@ -165,20 +147,7 @@ public class PersonalVehicle extends Vehicle
     
     
 
-    /**
-     * Updates the vehicle path. Also checks that the path is valid.
-     * @param p the new path
-     */
-    public void setPath(Path p)
-    {
-        if(checkInvalidPath(p))
-        {
-            throw new RuntimeException("Invalid path for "+getId()+" "+p+" "+origin+" "+dest);
-        }
-        
-        super.setPath(p);
-
-    }
+    
     
     /**
      * Checks whether the path travels from the origin to the destination
@@ -187,7 +156,7 @@ public class PersonalVehicle extends Vehicle
      */
     public boolean checkInvalidPath(Path p)
     {
-        return p == null || p.size() == 0 || p.getOrigin() != origin || p.getDest() != dest;
+        return p == null || p.size() == 0 || p.getOrigin() != getOrigin() || p.getDest() != getDest();
     }
     
     /**
@@ -201,9 +170,9 @@ public class PersonalVehicle extends Vehicle
         {
             PersonalVehicle rhs = (PersonalVehicle)v;
             
-            if(dep_time != rhs.dep_time)
+            if(traveler.getDepTime() != rhs.traveler.getDepTime())
             {
-                return dep_time - rhs.dep_time;
+                return traveler.getDepTime() - rhs.traveler.getDepTime();
             }
             else
             {
@@ -223,7 +192,7 @@ public class PersonalVehicle extends Vehicle
      */
     public int getDepTime()
     {
-        return dep_time;
+        return traveler.getDepTime();
     }
     
     /**
@@ -241,7 +210,7 @@ public class PersonalVehicle extends Vehicle
      */
     public Node getOrigin()
     {
-        return origin;
+        return traveler.getOrigin();
     }
     
     /**
@@ -250,7 +219,7 @@ public class PersonalVehicle extends Vehicle
      */
     public Node getDest()
     {
-        return dest;
+        return traveler.getDest();
     }
     
 }
