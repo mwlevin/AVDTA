@@ -126,6 +126,7 @@ public class ReadNetwork
     
     public static final int ICV = 1;
     public static final int BEV = 2;
+    public static final int HEV = 3;
     
     public static final int DA_VEHICLE = 100;
     public static final int BUS = 500;  

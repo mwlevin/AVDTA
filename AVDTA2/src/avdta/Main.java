@@ -32,6 +32,7 @@ import avdta.gui.editor.visual.rules.data.LinkFileSource;
 import avdta.gui.editor.visual.rules.data.VolumeLinkData;
 import avdta.network.Path;
 import avdta.network.ReadNetwork;
+import static avdta.network.ReadNetwork.BEV;
 import avdta.network.Simulator;
 import avdta.network.cost.TravelCost;
 import avdta.project.DTAProject;
@@ -59,6 +60,7 @@ import avdta.vehicle.Bus;
 import avdta.vehicle.DriverType;
 import avdta.vehicle.PersonalVehicle;
 import avdta.vehicle.Vehicle;
+import avdta.vehicle.fuel.BEV;
 import avdta.vehicle.fuel.ICV;
 import avdta.vehicle.fuel.VehicleClass;
 import java.awt.Color;
@@ -117,9 +119,10 @@ public class Main
         */
         
 
-        DTAProject project = new DTAProject(new File("projects/SiouxFalls"));
-        DTASimulator sim = project.getSimulator();
-        sim.msa(3);
+        BEV test = new BEV();
+        System.out.println(test.testMPG(30, 0, 0));
+        System.out.println(test.testMPG(45, 0, 0));
+        System.out.println(test.testMPG(60, 0, 0));
         
 
         //GUI.main(args);

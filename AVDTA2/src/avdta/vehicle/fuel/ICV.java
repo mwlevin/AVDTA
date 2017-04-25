@@ -12,8 +12,7 @@ import avdta.dta.ReadDTANetwork;
  */
 public class ICV extends VehicleClass
 {
-    public static final double FUELCOST = 3.5;
-    public static final double ENERGY_PER_GAL = 36.44;
+    
     
     public String toString()
     {

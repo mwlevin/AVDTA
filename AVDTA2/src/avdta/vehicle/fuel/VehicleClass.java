@@ -4,6 +4,7 @@
  */
 package avdta.vehicle.fuel;
 
+import avdta.network.ReadNetwork;
 import avdta.vehicle.fuel.ICV;
 import avdta.vehicle.fuel.BEV;
 import avdta.vehicle.Vehicle;
@@ -17,8 +18,11 @@ import avdta.vehicle.Vehicle;
 public abstract class VehicleClass 
 {
     public static final double E_PER_GALLON = 36.44;
+    public static final double FUELCOST = 2.0;    
+    
     public static final ICV icv = new ICV();
     public static final BEV bev = new BEV();
+    public static final HEV hev = new HEV();
     
     /**
      * Returns the {@link VehicleClass} subclass for the given type parameter
@@ -29,8 +33,9 @@ public abstract class VehicleClass
     {
         switch(type % 10)
         {
-            case 1 : return icv;
-            case 2 : return bev;
+            case ReadNetwork.ICV : return icv;
+            case ReadNetwork.BEV : return bev;
+            case ReadNetwork.HEV : return hev;
             default: return icv;
         }
     }

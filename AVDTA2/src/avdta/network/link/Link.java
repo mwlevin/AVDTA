@@ -725,7 +725,7 @@ public abstract class Link implements Serializable, Comparable<Link>
      */
     public double getAvgFuel(int enter)
     {
-        return getAvgEnergy(enter) / ICV.ENERGY_PER_GAL * ICV.FUELCOST;
+        return getAvgEnergy(enter) / ICV.E_PER_GALLON * ICV.FUELCOST;
     }
     
     /**
