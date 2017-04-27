@@ -44,25 +44,12 @@ public class Hyperpath implements RouteChoice
         Link l1 = iter.next();
         Link l2 = iter.next();
         
-        Iterator<Node> iter2 = nodes.iterator();
-        Node n = iter2.next();
-        
-        test.setNextLink(n, i1, l1);
-        test.setNextLink(n, i2, l2);
-        test.setInformation(i1);
-        System.out.println(test.getNextLink(n.getIncoming().iterator().next()) == l1);
-        test.setInformation(i2);
-        System.out.println(test.getNextLink(n.getIncoming().iterator().next()) == l2);
-        
-        n = iter2.next();
-        
-        test.setNextLink(n, i1, l1);
-        test.setNextLink(n, i2, l2);
-        test.setInformation(i1);
-        System.out.println(test.getNextLink(n.getIncoming().iterator().next()) == l1);
-        test.setInformation(i2);
-        System.out.println(test.getNextLink(n.getIncoming().iterator().next()) == l2);
-        
+        for(Node n : nodes)
+        {
+            test.setNextLink(n, i1, l1);
+            test.setNextLink(n, i2, l2);
+            break;
+        }
     }
     
     
@@ -80,6 +67,10 @@ public class Hyperpath implements RouteChoice
         Node node = link.getDest();
         Map<Incident, Link> innerMap;
         innerMap = outerMap.get(node);
+        if(innerMap==null)
+        {
+            return null;
+        }
         next = innerMap.get(information);
         return next;
     }
@@ -101,10 +92,13 @@ public class Hyperpath implements RouteChoice
         
     public void setNextLink(Node node, Incident incident, Link next)
     {
-        Map<Incident,Link> innerMap;
-        innerMap = outerMap.get(node);
+        Map<Incident,Link> innerMap = outerMap.get(node);
+        if(innerMap==null)
+        {
+            innerMap = new HashMap();
+            outerMap.put(node, innerMap);
+        }
         innerMap.put(incident, next);
-        outerMap.put(node,innerMap);
     }
 
     @Override
