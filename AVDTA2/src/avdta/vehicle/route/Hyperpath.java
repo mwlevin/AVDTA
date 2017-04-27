@@ -44,11 +44,25 @@ public class Hyperpath implements RouteChoice
         Link l1 = iter.next();
         Link l2 = iter.next();
         
-        for(Node n : nodes)
-        {
-            test.setNextLink(n, i1, l1);
-            test.setNextLink(n, i2, l2);
-        }
+        Iterator<Node> iter2 = nodes.iterator();
+        Node n = iter2.next();
+        
+        test.setNextLink(n, i1, l1);
+        test.setNextLink(n, i2, l2);
+        test.setInformation(i1);
+        System.out.println(test.getNextLink(n.getIncoming().iterator().next()) == l1);
+        test.setInformation(i2);
+        System.out.println(test.getNextLink(n.getIncoming().iterator().next()) == l2);
+        
+        n = iter2.next();
+        
+        test.setNextLink(n, i1, l1);
+        test.setNextLink(n, i2, l2);
+        test.setInformation(i1);
+        System.out.println(test.getNextLink(n.getIncoming().iterator().next()) == l1);
+        test.setInformation(i2);
+        System.out.println(test.getNextLink(n.getIncoming().iterator().next()) == l2);
+        
     }
     
     

@@ -17,6 +17,7 @@ import avdta.dta.DTAResults;
 import avdta.dta.DTASimulator;
 import avdta.dta.ReadDTANetwork;
 import avdta.dta.VehicleRecord;
+import avdta.duer.Incident;
 import avdta.fourstep.FourStepSimulator;
 import avdta.fourstep.ReadFourStepNetwork;
 import avdta.gui.DTAGUI;
@@ -63,6 +64,7 @@ import avdta.vehicle.Vehicle;
 import avdta.vehicle.fuel.BEV;
 import avdta.vehicle.fuel.ICV;
 import avdta.vehicle.fuel.VehicleClass;
+import avdta.vehicle.route.Hyperpath;
 import java.awt.Color;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
@@ -118,12 +120,7 @@ public class Main
         System.out.println(test.testMPG(60, 2, 0));
         */
         
-
-        BEV test = new BEV();
-        System.out.println(test.testMPG(30, 0, 0));
-        System.out.println(test.testMPG(45, 0, 0));
-        System.out.println(test.testMPG(60, 0, 0));
-        
+        Hyperpath.test();
 
         //GUI.main(args);
         
