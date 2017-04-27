@@ -113,14 +113,9 @@ public class Main
         
         //SAVtest();
         
-        /*
-        ICV test = new ICV();
-        System.out.println(test.testMPG(30, 2, 0));
-        System.out.println(test.testMPG(45, 2, 0));
-        System.out.println(test.testMPG(60, 2, 0));
-        */
-        
-        Hyperpath.test();
+        DTAProject test = new DTAProject(new File("projects/SiouxFalls"));
+        DTASimulator sim = test.getSimulator();
+        sim.msa(5);
 
         //GUI.main(args);
         

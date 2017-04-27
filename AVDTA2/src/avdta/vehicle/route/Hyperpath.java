@@ -27,35 +27,22 @@ import java.util.Set;
  */
 public class Hyperpath implements RouteChoice
 {
-    public static void test() throws IOException
+
+    private Map<Node,Map<Incident,Link>> outerMap;
+    
+    private Incident information;
+    
+    public Hyperpath()
     {
-        Hyperpath test = new Hyperpath();
-        
-        Incident i1 = new Incident(1);
-        Incident i2 = new Incident(2);
-        
-        DTAProject project = new DTAProject(new File("projects/coacongress2"));
-        DTASimulator sim = project.getSimulator();
-        
-        Set<Node> nodes = sim.getNodes();
-        Set<Link> links = sim.getLinks();
-        
-        Iterator<Link> iter = links.iterator();
-        Link l1 = iter.next();
-        Link l2 = iter.next();
-        
-        for(Node n : nodes)
-        {
-            test.setNextLink(n, i1, l1);
-            test.setNextLink(n, i2, l2);
-            break;
-        }
+        outerMap = new HashMap<>();
     }
     
     
-    private Map<Node,Map<Incident,Link>> outerMap = new HashMap<>();
-    
-    private Incident information;
+    // implement this
+    public double getAvgCost(double dep_time)
+    {
+        return 0;
+    }
     
     public void setInformation(Incident incident)
     {

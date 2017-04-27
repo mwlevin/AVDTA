@@ -520,6 +520,11 @@ public abstract class Vehicle implements Serializable, Comparable<Vehicle>
         return path;
     }
     
+    public RouteChoice getRouteChoice()
+    {
+        return routeChoice;
+    }
+    
     
     /**
      * Gets the next link in the route of the vehicle.

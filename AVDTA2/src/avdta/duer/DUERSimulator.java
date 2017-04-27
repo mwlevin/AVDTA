@@ -4,10 +4,24 @@
  */
 package avdta.duer;
 
+import avdta.dta.DTAResults;
 import avdta.dta.DTASimulator;
+import avdta.network.Path;
+import avdta.network.Simulator;
+import static avdta.network.Simulator.rand;
+import avdta.network.link.CentroidConnector;
+import avdta.network.link.Link;
 import avdta.network.node.Node;
 import avdta.project.DTAProject;
+import avdta.vehicle.DriverType;
+import avdta.vehicle.PersonalVehicle;
+import avdta.vehicle.Vehicle;
 import avdta.vehicle.route.Hyperpath;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 /**
  *
@@ -15,6 +29,9 @@ import avdta.vehicle.route.Hyperpath;
  */
 public class DUERSimulator extends DTASimulator
 {
+    private Map<Incident, Map<Link, Double>> avgTT; // store average travel times per incident state
+    
+    private Set<Incident> incidents;
     /**
      * Constructs this {@link DTASimulator} empty with the given project.
      * @param project the project
@@ -22,11 +39,163 @@ public class DUERSimulator extends DTASimulator
     public DUERSimulator(DTAProject project)
     {
         super(project);
+        
+        avgTT = new HashMap<Incident, Map<Link, Double>>();
+        incidents = new HashSet<Incident>();
+    }
+    
+    public void simulate() throws IOException
+    {
+        for(Incident i : incidents)
+        {
+            // activate incident
+            
+            super.simulate();
+            
+            // store link travel times
+            Map<Link, Double> tt = new HashMap<Link, Double>();
+            for(Link l : getLinks())
+            {
+                double avg = 0;
+                
+                for(int ast = 0; ast < Simulator.num_asts; ast++)
+                {
+                    avg += l.getAvgTT(ast * Simulator.ast_duration);
+                }
+                
+                avg /= Simulator.num_asts;
+                
+                tt.put(l, avg);
+            }
+            
+            avgTT.put(i, tt);
+        }
+    }
+    
+    /**
+     * Generates new paths and loads 1/stepsize vehicles onto the new paths.
+     * This method also compares minimum travel times with experienced travel times to calculate the gap.
+     * @param stepsize the proportion of vehicles to move onto new paths.
+     * @return the results from simulating the previous assignment
+     * @throws IOException if a file cannot be accessed
+     */
+    public DTAResults pathgen(double stepsize) throws IOException
+    {
+        int error_count = 0;
+
+        // map dest to new hyperpaths
+        Map<Node, Hyperpath[][]> newpaths = new HashMap<Node, Hyperpath[][]>();
+
+        double tstt = 0;
+        double min = 0;
+        int exiting = 0;
+
+        int count = 0;
+        int moved_count = 0;
+
+        for(Vehicle x : vehicles)
+        {
+            
+            
+            PersonalVehicle v = (PersonalVehicle)x;
+            
+            Node o = v.getOrigin();
+            Node d = v.getDest();
+            int ast = v.getAST();
+            int dep_time = v.getDepTime();
+
+
+            if(v.getExitTime() < Simulator.duration)
+            {
+                exiting++;
+            }
+
+
+            if(x.isTransit())
+            {
+                continue;
+            }
+            
+            Hyperpath[][] newPath; 
+            
+            if(newpaths.containsKey(d))
+            {
+                newPath = newpaths.get(d);
+            }
+            else
+            {
+                newpaths.put(d, newPath = new Hyperpath[Simulator.num_asts][]);
+            }
+            
+            int drivertype = v.getDriver().typeIndex();
+            
+            if(newPath[ast] == null)
+            {
+                newPath[ast] = new Hyperpath[DriverType.num_types];
+            }
+            
+            if(newPath[ast][drivertype] == null)
+            {
+                newPath[ast][drivertype] = osp(d, v.getDriver());
+            }
+
+            
+
+            if(v.getRouteChoice() != null)
+            {
+                tstt += ((Hyperpath)v.getRouteChoice()).getAvgCost(dep_time);
+            }
+            
+            min += newPath[ast][v.getDriver().typeIndex()].getAvgCost(dep_time);
+
+
+            
+            
+            // move vehicle random chance
+            if(v.getRouteChoice() == null || rand.nextDouble() < stepsize)
+            {
+
+                try
+                {
+                    v.setRouteChoice(newPath[ast][drivertype]);
+                    moved_count++;
+                }
+                catch(Exception ex)
+                {
+                    out.println("Path unable: "+o+" "+d);
+                    for(Link l : d.getIncoming())
+                    {
+                        out.println((l instanceof CentroidConnector)+" "+l.getSource());
+                    }
+                    error_count++;
+                }
+            }
+            
+
+            count ++;
+        }
+
+        
+        if(error_count > 0)
+        {
+            System.err.println("Unable: "+error_count);
+        }
+
+        simulate();
+        
+
+        if(tstt == 0)
+        {
+            tstt = min;
+        }
+
+
+        return new DTAResults(min, tstt, vehicles.size(), exiting);
+
     }
     
     
-    
-    public Hyperpath osp(Node dest)
+    public Hyperpath osp(Node dest, DriverType driver)
     {
         Hyperpath output = new Hyperpath();
         

@@ -228,12 +228,12 @@ public class DTASimulator extends Simulator
             }
             else
             {
-                temp1.put(d, temp2 = new Path[Simulator.num_asts][4]);
+                temp1.put(d, temp2 = new Path[Simulator.num_asts][DriverType.num_types]);
             }
 
             if(temp2[ast][v.getDriver().typeIndex()] == null)
             {
-                temp2[ast][v.getDriver().typeIndex()] = findPath(o, d, getAvgDepTime(ast), v.getVOT(), v.getDriver(), costFunc);;
+                temp2[ast][v.getDriver().typeIndex()] = findPath(o, d, getAvgDepTime(ast), v.getVOT(), v.getDriver(), costFunc);
             }
             
             
@@ -255,7 +255,7 @@ public class DTASimulator extends Simulator
             
             
             // move vehicle random chance
-            if(v.getPath() == null || v.getPath().isEmpty() || rand.nextDouble() < stepsize)
+            if(v.getRouteChoice() == null || rand.nextDouble() < stepsize)
             {
 
                 try
