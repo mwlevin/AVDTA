@@ -5,15 +5,21 @@
  */
 package avdta.vehicle.route;
 
+import avdta.dta.DTASimulator;
 import avdta.duer.Incident;
 import avdta.vehicle.Vehicle;
 import avdta.network.Path;
 import avdta.network.Simulator;
 import avdta.network.link.Link;
 import avdta.network.node.Node;
+import avdta.project.DTAProject;
 import static avdta.vehicle.route.AdaptiveRoute.costFunc;
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
 /**
  *
@@ -21,6 +27,31 @@ import java.util.Map;
  */
 public class Hyperpath implements RouteChoice
 {
+    public static void test() throws IOException
+    {
+        Hyperpath test = new Hyperpath();
+        
+        Incident i1 = new Incident(1);
+        Incident i2 = new Incident(2);
+        
+        DTAProject project = new DTAProject(new File("projects/coacongress2"));
+        DTASimulator sim = project.getSimulator();
+        
+        Set<Node> nodes = sim.getNodes();
+        Set<Link> links = sim.getLinks();
+        
+        Iterator<Link> iter = links.iterator();
+        Link l1 = iter.next();
+        Link l2 = iter.next();
+        
+        for(Node n : nodes)
+        {
+            test.setNextLink(n, i1, l1);
+            test.setNextLink(n, i2, l2);
+        }
+    }
+    
+    
     private Map<Node,Map<Incident,Link>> outerMap = new HashMap<>();
     
     private Incident information;

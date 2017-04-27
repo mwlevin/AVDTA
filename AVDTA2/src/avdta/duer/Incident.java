@@ -13,6 +13,11 @@ public class Incident
 {
     private int id;
     
+    public Incident(int id)
+    {
+        this.id = id;
+    }
+    
     public int getId()
     {
         return id;
