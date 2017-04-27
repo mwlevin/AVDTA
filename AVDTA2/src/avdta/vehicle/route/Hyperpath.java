@@ -12,75 +12,30 @@ import avdta.network.Simulator;
 import avdta.network.link.Link;
 import avdta.network.node.Node;
 import static avdta.vehicle.route.AdaptiveRoute.costFunc;
-import java.util.LinkedHashMap;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
  *
  * @author hdx
  */
-public abstract class Hyperpath implements RouteChoice
+public class Hyperpath implements RouteChoice
 {
-    Map<Node,Map<Incident,Link>> Withinfo = new LinkedHashMap<>();
+    private Map<Node,Map<Incident,Link>> outerMap = new HashMap<>();
     
-    private Node origin, dest;
+    private Incident information;
     
-    private final int Incident;
-    
-    private Path actual;
-    
-    private final Link Link;
-    
-    private Vehicle vehicle;
-                   
-    public int setInformation(){
-         return Incident;
-    }
-
-    public Hyperpath(Node origin,Node dest, int Incident, Link Link)
+    public void setInformation(Incident incident)
     {
-        this.origin = origin;
-        this.dest = dest;
-        this.Incident = Incident;
-        this.Link = Link;
+        information = incident; 
     }
-    
-        public Path getPath()
-    {
-        return actual;
-    }
-    
-    public Node getOrigin()
-    {
-        return origin;
-    }
-    
-    public Node getDest()
-    {
-        return dest;
-    }
-    
-    public void reset()
-    {
-        actual = new Path();
-    }
-    
     public Link getNextLink(Link link)
     {
-        Simulator sim = Simulator.active;
-        
-        if(link == null)
-        {
-            sim.dijkstras(origin, getDest(), sim.time, vehicle.getVOT(), vehicle.getDriver(), costFunc);    
-        }
-        else
-        {
-            sim.dijkstras(link, getDest(), sim.time, vehicle.getVOT(), vehicle.getDriver(), costFunc);    
-        }
-        Path newPath = sim.trace(origin, dest);
-        
-        Link next = newPath.get(0);
-        
+        Link next;
+        Node node = link.getDest();
+        Map<Incident, Link> innerMap;
+        innerMap = outerMap.get(node);
+        next = innerMap.get(information);
         return next;
     }
     
@@ -96,20 +51,20 @@ public abstract class Hyperpath implements RouteChoice
     
     public void enteredLink(Link link)
     {
-        actual.add(link);
+        
     }
-    
-    public double getLength()
+        
+    public void setNextLink(Node node, Incident incident, Link next)
     {
-        return actual.getLength();
+        Map<Incident,Link> innerMap;
+        innerMap = outerMap.get(node);
+        innerMap.put(incident, next);
+        outerMap.put(node,innerMap);
     }
-    
-    public void setNextLink(Node origin, Node dest, int Incident, Link Link)
-    {
-       origin = this.origin;
-       dest = this.dest;
-       Incident = this.Incident;
-       Link = this.Link;
+
+    @Override
+    public void reset() {
+       
     }
-   
+ 
 }
