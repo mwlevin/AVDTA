@@ -99,7 +99,7 @@ public class ReadDUERNetwork extends ReadDTANetwork
         return output;
     }
     
-    public String getIncidentFileHeader()
+    public static String getIncidentsFileHeader()
     {
         return "id\tprob_on\tprob_off\teffects";
     }

@@ -10,7 +10,9 @@ import avdta.dta.ReadDTANetwork;
 import avdta.duer.DUERSimulator;
 import avdta.duer.ReadDUERNetwork;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.PrintStream;
 
 
 /**
@@ -70,5 +72,18 @@ public class DUERProject extends DTAProject
     public File getIncidentsFile()
     {
         return new File(getProjectDirectory()+"/network/incidents.txt");
+    }
+    
+    /**
+     * Writes empty demand files. Also calls {@link TransitProject#writeEmptyFiles()}
+     * @throws IOException if a file cannot be created
+     */
+    public void writeEmptyFiles() throws IOException
+    {
+        super.writeEmptyFiles();
+        
+        PrintStream fileout = new PrintStream(new FileOutputStream(getIncidentsFile()), true);
+        fileout.println(ReadDUERNetwork.getIncidentsFileHeader());
+        fileout.close();
     }
 }
