@@ -91,8 +91,7 @@ public class DUERSimulator extends DTASimulator
             // activate incident
             activate(i);
             super.simulate();
-            deactivate(i);
-            
+
             // store link travel times
             Map<Link, Double> tt = new HashMap<Link, Double>();
             for(Link l : getLinks())
@@ -110,6 +109,8 @@ public class DUERSimulator extends DTASimulator
             }
             
             avgTT.put(i, tt);
+            
+            deactivate(i);
         }
     }
     
