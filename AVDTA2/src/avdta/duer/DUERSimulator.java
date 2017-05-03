@@ -33,6 +33,9 @@ public class DUERSimulator extends DTASimulator
     private Map<Incident, Map<Link, Double>> avgTT; // store average travel times per incident state
     
     private Set<Incident> incidents;
+    
+    private Set<IncidentEffect> null_effects;
+    
     /**
      * Constructs this {@link DTASimulator} empty with the given project.
      * @param project the project
@@ -43,6 +46,7 @@ public class DUERSimulator extends DTASimulator
         
         avgTT = new HashMap<Incident, Map<Link, Double>>();
         incidents = new HashSet<Incident>();
+        null_effects = new HashSet<IncidentEffect>();
     }
     
     public DUERSimulator(DUERProject project, Set<Node> nodes, Set<Link> links, Set<Incident> incidents)
@@ -50,6 +54,34 @@ public class DUERSimulator extends DTASimulator
         super(project, nodes, links);
         avgTT = new HashMap<Incident, Map<Link, Double>>();
         this.incidents = incidents;
+        null_effects = new HashSet<IncidentEffect>();
+    }
+    
+    public Set<Incident> getIncidents()
+    {
+        return incidents;
+    }
+    
+    public void activate(Incident i)
+    {
+        for(IncidentEffect e : i.getEffects())
+        {
+            Link link = e.getLink();
+            
+            null_effects.add(new IncidentEffect(link, link.getNumLanes(), link.getCapacityPerLane()));
+            link.setNumLanes(e.getLanesOpen());
+            link.setCapacityPerLane(e.getCapacityPerLane());
+        }
+    }
+    
+    public void deactivate(Incident i)
+    {
+        for(IncidentEffect e : null_effects)
+        {
+            Link link = e.getLink();
+            link.setNumLanes(e.getLanesOpen());
+            link.setCapacityPerLane(e.getCapacityPerLane());
+        }
     }
     
     public void simulate() throws IOException
@@ -57,8 +89,9 @@ public class DUERSimulator extends DTASimulator
         for(Incident i : incidents)
         {
             // activate incident
-            
+            activate(i);
             super.simulate();
+            deactivate(i);
             
             // store link travel times
             Map<Link, Double> tt = new HashMap<Link, Double>();

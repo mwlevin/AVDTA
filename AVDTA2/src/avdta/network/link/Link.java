@@ -443,7 +443,7 @@ public abstract class Link implements Serializable, Comparable<Link>
      * Updates the capacity per lane of this {@link Link} (veh/hr)
      * @param capacity the new capacity
      */
-    public void setCapacity(double capacity)
+    public void setCapacityPerLane(double capacity)
     {
         this.capacity = capacity;
     }
@@ -835,13 +835,22 @@ public abstract class Link implements Serializable, Comparable<Link>
     }
     
     /**
-     * Returns the number of lanes. 
+     * Returns the number of lanes allocated to this link.
      * Note that the number of lanes per cell may vary due to dynamic lane reversal.
      * @return the number of lanes
      */
     public int getNumLanes()
     {
         return numLanes;
+    }
+    
+    /**
+     * Updates the number of lanes allocated to this link.
+     * @param numLanes the new number of lanes
+     */
+    public void setNumLanes(int numLanes)
+    {
+        this.numLanes = numLanes;
     }
     
     /**
