@@ -13,6 +13,7 @@ import avdta.network.link.CentroidConnector;
 import avdta.network.link.Link;
 import avdta.network.node.Node;
 import avdta.project.DTAProject;
+import avdta.project.DUERProject;
 import avdta.vehicle.DriverType;
 import avdta.vehicle.PersonalVehicle;
 import avdta.vehicle.Vehicle;
@@ -42,6 +43,13 @@ public class DUERSimulator extends DTASimulator
         
         avgTT = new HashMap<Incident, Map<Link, Double>>();
         incidents = new HashSet<Incident>();
+    }
+    
+    public DUERSimulator(DUERProject project, Set<Node> nodes, Set<Link> links, Set<Incident> incidents)
+    {
+        super(project, nodes, links);
+        avgTT = new HashMap<Incident, Map<Link, Double>>();
+        this.incidents = incidents;
     }
     
     public void simulate() throws IOException

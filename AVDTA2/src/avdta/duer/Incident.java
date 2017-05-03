@@ -5,17 +5,38 @@
  */
 package avdta.duer;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  *
  * @author hdx
  */
 public class Incident 
 {
-    private int id;
+    public static final Incident NULL = new Incident(0, 0, 0, new ArrayList<IncidentEffect>());
     
-    public Incident(int id)
+    private List<IncidentEffect> effects;
+    
+    private int id;
+    private double pOff, pOn;
+    
+    public Incident(int id, double pOn, double pOff,  List<IncidentEffect> effects)
     {
         this.id = id;
+        this.pOff = pOff;
+        this.pOn = pOn;
+        this.effects = effects;
+    }
+    
+    public double getProbabilityOn()
+    {
+        return pOn;
+    }
+    
+    public double getProbabilityOff()
+    {
+        return pOff;
     }
     
     public int getId()
@@ -23,8 +44,13 @@ public class Incident
         return id;
     }
     
-        public int hashCode()
+    public int hashCode()
     {
         return id;
+    }
+    
+    public List<IncidentEffect> getEffects()
+    {
+        return effects;
     }
 }
