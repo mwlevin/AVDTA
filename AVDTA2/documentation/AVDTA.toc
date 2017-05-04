@@ -103,6 +103,7 @@
 \contentsline {subsection}{\numberline {13.2.1}Package \texttt {avdta.gui.editor.visual}}{61}{subsection.13.2.1}
 \contentsline {subsection}{\numberline {13.2.2}Editing nodes and links}{63}{subsection.13.2.2}
 \contentsline {section}{\numberline {13.3}Package \texttt {avdta.gui.util}}{63}{section.13.3}
-\contentsline {chapter}{Appendices}{65}{section*.1}
-\contentsline {chapter}{\numberline {A}Abbreviations}{66}{Appendix.1.A}
-\contentsline {chapter}{References}{66}{table.1.A.1}
+\contentsline {chapter}{\numberline {14}Examples}{65}{chapter.14}
+\contentsline {chapter}{Appendices}{67}{section*.1}
+\contentsline {chapter}{\numberline {A}Abbreviations}{68}{Appendix.1.A}
+\contentsline {chapter}{References}{68}{table.1.A.1}
