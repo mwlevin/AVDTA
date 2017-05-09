@@ -15,6 +15,9 @@ public class State
     private Link link;
     private Incident incident;
     
+    public double J;
+    public Link mu;
+    
     public State(Link link, Incident incident)
     {
         this.link = link;
