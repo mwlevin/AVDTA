@@ -39,7 +39,7 @@ public class Hyperpath implements RouteChoice
     
     
     // implement this
-    public double getAvgCost(double dep_time)
+    public double getAvgCost(Node origin, double dep_time)
     {
         return 0;
     }

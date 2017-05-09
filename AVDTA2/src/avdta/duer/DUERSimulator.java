@@ -237,10 +237,10 @@ public class DUERSimulator extends DTASimulator
 
             if(v.getRouteChoice() != null)
             {
-                tstt += ((Hyperpath)v.getRouteChoice()).getAvgCost(dep_time);
+                tstt += ((Hyperpath)v.getRouteChoice()).getAvgCost(v.getOrigin(), dep_time);
             }
             
-            min += newPath[ast][v.getDriver().typeIndex()].getAvgCost(dep_time);
+            min += newPath[ast][v.getDriver().typeIndex()].getAvgCost(v.getOrigin(), dep_time);
 
 
             
