@@ -601,36 +601,31 @@ public abstract class Vehicle implements Serializable, Comparable<Vehicle>
             path.add(l);
         }
         
-        
         Link i = getPrevLink();
-        
-        
-
 
         if(i == null)
         {
             net_enter_time = Simulator.time;
         }
         
-        
         Incident actual = Simulator.active.getIncident();
-        VMS vms = l.getSource().getVMS();
-        if(Math.random() < vms.getProbOfInformation(actual))
+        
+        if(actual != information)
         {
-            information = actual;
+            VMS vms = l.getSource().getVMS();
+            if(Math.random() < vms.getProbOfInformation(actual))
+            {
+                information = actual;
+            }
+            else if(Simulator.active.isObservable(l, actual))
+            {
+                information = actual;
+            }
         }
-        else if(Simulator.active.isObservable(l, actual))
-        {
-            information = actual;
-        }
-        
-        
-        
         
         routeChoice.enteredLink(l);
         
-        
-        
+
         time_waiting += Simulator.time + Network.dt - arr_time;
         
         arr_time = -1;

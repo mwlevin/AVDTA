@@ -32,6 +32,24 @@ public class DUERProject extends DTAProject
     }
     
     /**
+     * Returns the type indicator {@link String} used to create the indicator file to determine the type of this project.
+     * @return "dta"
+     */
+    public String getTypeIndicator()
+    {
+        return "duer";
+    }
+    
+    /**
+     * Returns the project type
+     * @return DTA
+     */
+    public String getType()
+    {
+        return "DUER";
+    }
+    
+    /**
      * Creates an empty {@link DUERSimulator}
      * @return an empty {@link DUERSimulator}
      */
