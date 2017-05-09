@@ -5,6 +5,8 @@
 package avdta.network; 
 
 import avdta.dta.DTAResults;
+import avdta.duer.Incident;
+import avdta.duer.IncidentEffect;
 import avdta.network.ReadNetwork;
 import avdta.network.cost.TravelCost;
 import avdta.gui.util.StatusUpdate;
@@ -133,6 +135,7 @@ public class Simulator extends Network
     
     protected StatusUpdate statusUpdate;
     
+    
     /**
      * Constructs the Simulator for the given {@link Project}. 
      * This also constructs an empty {@link Network} (see {@link Network#Network()}).
@@ -169,6 +172,16 @@ public class Simulator extends Network
  
         time = 0;
         lastExit = duration;
+    }
+    
+    public Incident getIncident()
+    {
+        return Incident.NULL;
+    }
+    
+    public boolean isObservable(Link l, Incident i)
+    {
+        return false;
     }
     
     /**

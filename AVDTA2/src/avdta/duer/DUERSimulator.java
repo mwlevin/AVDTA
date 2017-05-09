@@ -31,9 +31,11 @@ import java.util.Set;
 public class DUERSimulator extends DTASimulator
 {
     private Map<Incident, Map<Link, Double>> avgTT; // store average travel times per incident state
+    private static final double rationality_bound = 0.2;
     
     private Set<Incident> incidents;
     
+    private Incident activeIncident;
     private Set<IncidentEffect> null_effects;
     
     /**
@@ -47,6 +49,7 @@ public class DUERSimulator extends DTASimulator
         avgTT = new HashMap<Incident, Map<Link, Double>>();
         incidents = new HashSet<Incident>();
         null_effects = new HashSet<IncidentEffect>();
+        activeIncident = Incident.NULL;
     }
     
     public DUERSimulator(DUERProject project, Set<Node> nodes, Set<Link> links, Set<Incident> incidents)
@@ -55,6 +58,20 @@ public class DUERSimulator extends DTASimulator
         avgTT = new HashMap<Incident, Map<Link, Double>>();
         this.incidents = incidents;
         null_effects = new HashSet<IncidentEffect>();
+        activeIncident = Incident.NULL;
+    }
+    
+    public boolean isObservable(Link l, Incident i)
+    {
+        if(i == Incident.NULL)
+        {
+            return false;
+        }
+        
+        double normalTT = avgTT.get(Incident.NULL).get(l);
+        double incidentTT = avgTT.get(i).get(l);
+        
+        return incidentTT > (1 + rationality_bound)*normalTT;
     }
     
     public Set<Incident> getIncidents()
@@ -64,6 +81,7 @@ public class DUERSimulator extends DTASimulator
     
     public void activate(Incident i)
     {
+        activeIncident = i;
         for(IncidentEffect e : i.getEffects())
         {
             Link link = e.getLink();
@@ -76,12 +94,18 @@ public class DUERSimulator extends DTASimulator
     
     public void deactivate(Incident i)
     {
+        activeIncident = Incident.NULL;
         for(IncidentEffect e : null_effects)
         {
             Link link = e.getLink();
             link.setNumLanes(e.getLanesOpen());
             link.setCapacityPerLane(e.getCapacityPerLane());
         }
+    }
+    
+    public Incident getIncident()
+    {
+        return activeIncident;
     }
     
     public void simulate() throws IOException

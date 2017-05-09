@@ -7,6 +7,7 @@ package avdta.vehicle.route;
 
 import avdta.dta.DTASimulator;
 import avdta.duer.Incident;
+import avdta.duer.State;
 import avdta.vehicle.Vehicle;
 import avdta.network.Path;
 import avdta.network.Simulator;
@@ -23,18 +24,19 @@ import java.util.Set;
 
 /**
  *
- * @author hdx
+ * @author ml26893
  */
-public class Hyperpath implements RouteChoice
+public class VMSHyperpath implements RouteChoice
 {
 
-    private Map<Node,Map<Incident,Link>> outerMap;
+    private Map<State, Link> map;
+    private Map<Node, Link> originMap;
     
-    private Incident information;
     
-    public Hyperpath()
+    public VMSHyperpath()
     {
-        outerMap = new HashMap<>();
+        map = new HashMap<State, Link>();
+        originMap = new HashMap<Node, Link>();
     }
     
     
@@ -44,27 +46,17 @@ public class Hyperpath implements RouteChoice
         return 0;
     }
     
-    public void setInformation(Incident incident)
+   
+    public Link getNextLink(Link link, Incident incident)
     {
-        information = incident; 
-    }
-    public Link getNextLink(Link link, Incident information)
-    {
-        Link next;
-        Node node = link.getDest();
-        Map<Incident, Link> innerMap;
-        innerMap = outerMap.get(node);
-        if(innerMap==null)
-        {
-            return null;
-        }
-        next = innerMap.get(information);
-        return next;
+        State s = new State(link, incident);
+        
+        return map.get(s);
     }
     
     public Link getFirstLink(Node origin)
     {
-        return outerMap.get(origin).get(Incident.NULL);
+        return originMap.get(origin);
     }
     
     public void activate()
@@ -82,15 +74,9 @@ public class Hyperpath implements RouteChoice
         
     }
         
-    public void setNextLink(Node node, Incident incident, Link next)
+    public void setNextLink(Link curr, Incident incident, Link next)
     {
-        Map<Incident,Link> innerMap = outerMap.get(node);
-        if(innerMap==null)
-        {
-            innerMap = new HashMap();
-            outerMap.put(node, innerMap);
-        }
-        innerMap.put(incident, next);
+        map.put(new State(curr, incident), next);
     }
 
     @Override

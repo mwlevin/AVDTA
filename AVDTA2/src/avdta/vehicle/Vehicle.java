@@ -4,6 +4,8 @@
  */
 package avdta.vehicle;
 
+import avdta.duer.Incident;
+import avdta.duer.VMS;
 import avdta.vehicle.wallet.Wallet;
 import ilog.concert.IloIntVar;
 import avdta.network.Network;
@@ -54,6 +56,8 @@ public abstract class Vehicle implements Serializable, Comparable<Vehicle>
     private int exit_time, net_enter_time;
     
     private Path path;
+    
+    private Incident information;
     
     // energy
     private int prev_cell_time;
@@ -114,6 +118,17 @@ public abstract class Vehicle implements Serializable, Comparable<Vehicle>
         
         curr = null;
         path = new Path();
+        information = Incident.NULL;
+    }
+    
+    public void setInformation(Incident i)
+    {
+        information = i;
+    }
+    
+    public Incident getInformation()
+    {
+        return information;
     }
     
     /**
@@ -126,6 +141,16 @@ public abstract class Vehicle implements Serializable, Comparable<Vehicle>
     }
     
     
+    /**
+     * Returns the origin {@link Node}
+     * @return the origin {@link Node}
+     */
+    public abstract Node getOrigin();
+    
+    public int hashCode()
+    {
+        return id;
+    }
     
     
     /**
@@ -533,8 +558,16 @@ public abstract class Vehicle implements Serializable, Comparable<Vehicle>
      */
     public Link getNextLink()
     {
-        return routeChoice.getNextLink(curr);
+        if(curr == null)
+        {
+            return routeChoice.getFirstLink(getOrigin());
+        }
+        else
+        {
+            return routeChoice.getNextLink(curr, information);
+        }
     }
+    
     /**
      * Gets the previous link in the route of the vehicle.
      * @return Returns the previous {@link Link} in the route of the vehicle, if 
@@ -578,6 +611,20 @@ public abstract class Vehicle implements Serializable, Comparable<Vehicle>
         {
             net_enter_time = Simulator.time;
         }
+        
+        
+        Incident actual = Simulator.active.getIncident();
+        VMS vms = l.getSource().getVMS();
+        if(Math.random() < vms.getProbOfInformation(actual))
+        {
+            information = actual;
+        }
+        else if(Simulator.active.isObservable(l, actual))
+        {
+            information = actual;
+        }
+        
+        
         
         
         routeChoice.enteredLink(l);

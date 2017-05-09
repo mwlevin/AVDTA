@@ -4,6 +4,7 @@
  */
 package avdta.network.node;
 
+import avdta.duer.VMS;
 import avdta.gui.editor.visual.DisplayManager;
 import avdta.network.node.Intersection;
 import avdta.network.node.Zone;
@@ -56,6 +57,9 @@ public abstract class Node extends Location implements Serializable, Comparable<
     private Set<Link> incoming, outgoing;
     private int id;
     
+    private VMS vms;
+    
+    
     
     
     public double label;
@@ -65,6 +69,8 @@ public abstract class Node extends Location implements Serializable, Comparable<
     public boolean added, settled;
     
     public double vc;
+    
+    
     
     private Set<TransitLink> transitInc, transitOut;
     
@@ -94,7 +100,19 @@ public abstract class Node extends Location implements Serializable, Comparable<
         transitOut = new HashSet<TransitLink>();
         
         selected = false;
+        vms = VMS.NULL;
     }
+    
+    public void setVMS(VMS vms)
+    {
+        this.vms = vms;
+    }
+    
+    public VMS getVMS()
+    {
+        return vms;
+    }
+    
     
     /**
      * Checks whether this {@link Node} is selected for visualization

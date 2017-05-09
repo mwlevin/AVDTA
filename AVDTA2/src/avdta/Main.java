@@ -112,12 +112,12 @@ public class Main
         //new FourStepGUI();
         
         //SAVtest();
-        
+        /*
         DTAProject test = new DTAProject(new File("projects/SiouxFalls"));
         DTASimulator sim = test.getSimulator();
         sim.msa(5);
-
-        //GUI.main(args);
+        */
+        GUI.main(args);
         
         
         //transitTest2();

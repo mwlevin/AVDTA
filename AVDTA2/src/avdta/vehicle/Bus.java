@@ -12,6 +12,7 @@ import avdta.network.link.Link;
 import avdta.network.Path;
 import avdta.network.Simulator;
 import avdta.network.link.SharedTransitCTMLink;
+import avdta.network.node.Node;
 import avdta.vehicle.fuel.VehicleClass;
 import avdta.vehicle.fuel.ICV;
 import java.util.ArrayList;
@@ -32,6 +33,7 @@ public class Bus extends Vehicle
     private int dtime;
     
     private int route_id;
+    private Node origin, dest;
     
     /**
      * Constructs this {@link Bus} with the given parameters.
@@ -69,6 +71,18 @@ public class Bus extends Vehicle
         stop_idx = 0;
         this.dtime = dtime;
         stop_arr_time = dtime;
+        origin = path.get(0).getSource();
+        dest = path.get(path.size()-1).getDest();
+    }
+    
+    public Node getOrigin()
+    {
+        return origin;
+    }
+    
+    public Node getDest()
+    {
+        return dest;
     }
     
     public int getDepTime()

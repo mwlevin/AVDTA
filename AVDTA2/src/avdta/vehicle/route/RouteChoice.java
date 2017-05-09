@@ -5,6 +5,7 @@
  */
 package avdta.vehicle.route;
 
+import avdta.duer.Incident;
 import avdta.vehicle.Vehicle;
 import avdta.network.Path;
 import avdta.network.link.Link;
@@ -53,8 +54,9 @@ public interface RouteChoice
      * @param curr the current {@link Link}
      * @return the next {@link Link}
      */
-    public abstract Link getNextLink(Link curr);
+    public abstract Link getNextLink(Link curr, Incident incident);
     
+    public abstract Link getFirstLink(Node origin);
     
     
     /**

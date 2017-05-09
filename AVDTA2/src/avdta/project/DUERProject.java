@@ -71,7 +71,12 @@ public class DUERProject extends DTAProject
     
     public File getIncidentsFile()
     {
-        return new File(getProjectDirectory()+"/network/incidents.txt");
+        return new File(getProjectDirectory()+"/duer/incidents.txt");
+    }
+    
+    public File getVMSFile()
+    {
+        return new File(getProjectDirectory()+"/duer/vms.txt");
     }
     
     /**
@@ -84,6 +89,10 @@ public class DUERProject extends DTAProject
         
         PrintStream fileout = new PrintStream(new FileOutputStream(getIncidentsFile()), true);
         fileout.println(ReadDUERNetwork.getIncidentsFileHeader());
+        fileout.close();
+        
+        fileout = new PrintStream(new FileOutputStream(getVMSFile()), true);
+        fileout.println(ReadDUERNetwork.getVMSFileHeader());
         fileout.close();
     }
 }

@@ -12,8 +12,10 @@ import avdta.project.DTAProject;
 import avdta.project.DUERProject;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
 
@@ -23,9 +25,11 @@ import java.util.Set;
  */
 public class ReadDUERNetwork extends ReadDTANetwork
 {
+    private Map<Integer, Incident> incidentsmap;
+    
     public ReadDUERNetwork()
     {
-        
+        incidentsmap = new HashMap<Integer, Incident>();
     }
     
     /**
@@ -42,6 +46,7 @@ public class ReadDUERNetwork extends ReadDTANetwork
         Set<Node> nodes = readNodes(project);
         Set<Link> links = readLinks(project);
         Set<Incident> incidents = readIncidents(project);
+        readVMS(project);
         
         readIntersections(project);
         readPhases(project);
@@ -56,6 +61,37 @@ public class ReadDUERNetwork extends ReadDTANetwork
         
         
         return sim;
+    }
+    
+    public void readVMS(DUERProject project) throws IOException
+    {
+        Scanner filein = new Scanner(project.getVMSFile());
+        filein.nextLine();
+        
+        while(filein.hasNextInt())
+        {
+            int id = filein.nextInt();
+            int type = filein.nextInt();
+            String line = filein.nextLine();
+            
+            Map<Incident, Double> information = new HashMap<Incident, Double>();
+            while(line.indexOf('(') >= 0)
+            {
+                String effect = line.substring(line.indexOf('(')+1, line.indexOf(')'));
+                line = line.substring(line.indexOf(')')+1);
+                
+                effect = effect.replaceAll(",", " ");
+                Scanner chopper = new Scanner(effect);
+                
+                int incidentId = chopper.nextInt();
+                double prob = chopper.nextDouble();
+                
+                information.put(incidentsmap.get(incidentId), prob);
+            }
+            
+            nodesmap.get(id).setVMS(new VMS(information));
+        }
+        filein.close();
     }
     
     public Set<Incident> readIncidents(DUERProject project) throws IOException
@@ -93,7 +129,9 @@ public class ReadDUERNetwork extends ReadDTANetwork
                 effects.add(new IncidentEffect(link, lanesOpen, capPerLane));
             }
             
-            output.add(new Incident(id, pOn, pOff, effects));
+            Incident incident = new Incident(id, pOn, pOff, effects);
+            output.add(incident);
+            incidentsmap.put(id, incident);
         }
         
         return output;
@@ -102,5 +140,10 @@ public class ReadDUERNetwork extends ReadDTANetwork
     public static String getIncidentsFileHeader()
     {
         return "id\tprob_on\tprob_off\teffects";
+    }
+    
+    public static String getVMSFileHeader()
+    {
+        return "node id\type\tinformation";
     }
 }

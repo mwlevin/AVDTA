@@ -4,6 +4,7 @@
  */
 package avdta.vehicle.route;
 
+import avdta.duer.Incident;
 import avdta.microtoll.MTSimulator;
 import avdta.network.Path;
 import avdta.network.Simulator;
@@ -38,18 +39,23 @@ public class AdaptiveRoute implements RouteChoice
 
     }
     
-    public Link getNextLink(Link link)
+    public Link getNextLink(Link link, Incident incident)
     {
         Simulator sim = Simulator.active;
+        sim.dijkstras(link, dest, sim.time, vehicle.getVOT(), vehicle.getDriver(), costFunc);    
         
-        if(link == null)
-        {
-            sim.dijkstras(origin, dest, sim.time, vehicle.getVOT(), vehicle.getDriver(), costFunc);    
-        }
-        else
-        {
-            sim.dijkstras(link, dest, sim.time, vehicle.getVOT(), vehicle.getDriver(), costFunc);    
-        }
+        Path newPath = sim.trace(origin, dest);
+        
+        Link next = newPath.get(0);
+        
+        return next;
+    }
+    
+    public Link getFirstLink(Node origin)
+    {
+        Simulator sim = Simulator.active;
+        sim.dijkstras(origin, dest, sim.time, vehicle.getVOT(), vehicle.getDriver(), costFunc);  
+        
         Path newPath = sim.trace(origin, dest);
         
         Link next = newPath.get(0);

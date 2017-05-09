@@ -8,6 +8,7 @@ import avdta.network.Path;
 import avdta.network.Simulator;
 import avdta.network.cost.TravelCost;
 import avdta.network.link.Link;
+import avdta.network.node.Node;
 import avdta.network.node.Zone;
 import avdta.vehicle.fuel.VehicleClass;
 import avdta.vehicle.Vehicle;
@@ -58,6 +59,11 @@ public class Taxi extends Vehicle
         this.capacity = capacity;
         
         setEfficiency(1);
+    }
+    
+    public Node getOrigin()
+    {
+        return getLocation();
     }
     
     public void enteredLink(Link l)

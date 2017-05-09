@@ -5,6 +5,7 @@
  */
 package avdta.vehicle.route;
 
+import avdta.duer.Incident;
 import avdta.vehicle.Vehicle;
 import avdta.network.Path;
 import avdta.network.link.Link;
@@ -85,7 +86,7 @@ public class FixedPath implements RouteChoice
      * @param curr the current {@link Link}
      * @return the next {@link Link} to be traversed
      */
-    public Link getNextLink(Link curr)
+    public Link getNextLink(Link curr, Incident incident)
     {
         if(path_idx < path.size() - 1)
         {
@@ -95,6 +96,11 @@ public class FixedPath implements RouteChoice
         {
             return null;
         }
+    }
+    
+    public Link getFirstLink(Node origin)
+    {
+        return path.get(0);
     }
     
     /**
