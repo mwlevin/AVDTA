@@ -271,6 +271,8 @@ public class ImportNetworkPanel extends GUIPanel
         {
             GUI.handleException(ex);
         }
+        
+        JOptionPane.showMessageDialog(this, "Removed duplicate centroids.", "Completed", JOptionPane.INFORMATION_MESSAGE);
     }
     
     public void checkForOtherFiles(File f)
