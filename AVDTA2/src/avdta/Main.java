@@ -89,10 +89,8 @@ public class Main
 {
     public static void main(String[] args) throws Exception
     {
-        //DTAProject project = new DTAProject(new File("projects/coacongress2"));
-        //DTASimulator sim = project.getSimulator();
-        /////project.get
-        //CDTA.main(args);
+
+        CDTA.main(args);
         
         
         
@@ -115,9 +113,12 @@ public class Main
         /*
         DTAProject test = new DTAProject(new File("projects/SiouxFalls"));
         DTASimulator sim = test.getSimulator();
-        sim.msa(5);
+        for(Vehicle v : sim.getVehicles())
+        {
+            System.out.println(v.getId()+"\t"+v.getVOT());
+        }
         */
-        GUI.main(args);
+        //GUI.main(args);
         
         
         //transitTest2();

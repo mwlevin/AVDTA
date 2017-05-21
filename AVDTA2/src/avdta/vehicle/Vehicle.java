@@ -42,7 +42,6 @@ public abstract class Vehicle implements Serializable, Comparable<Vehicle>
     private RouteChoice routeChoice;
     
     private double total_toll;
-    private double vot;
     
     public int arr_time, enter_time, reservation_time; // arrival time at intersection
     public double pressure;
@@ -162,14 +161,6 @@ public abstract class Vehicle implements Serializable, Comparable<Vehicle>
         return vehClass;
     }
 
-    /**
-     * Updates the value of time of this {@link Vehicle}.
-     * @param vot the new value of time ($/hr)
-     */
-    public void setVOT(double vot)
-    {
-        this.vot = vot;
-    }
     
     /**
      * Updates the exit time of this {@link Vehicle}.
@@ -186,7 +177,7 @@ public abstract class Vehicle implements Serializable, Comparable<Vehicle>
      */
     public double getVOT()
     {
-        return vot;
+        return 1;
     }
     
     /**

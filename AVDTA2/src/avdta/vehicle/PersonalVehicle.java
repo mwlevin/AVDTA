@@ -128,6 +128,15 @@ public class PersonalVehicle extends Vehicle
     }
     
     /**
+     * Returns the value of time.
+     * @return the value of time ($/hr)
+     */
+    public double getVOT()
+    {
+        return traveler.getVOT();
+    }
+    
+    /**
      * Converts the departure time to an assignment interval
      * @return the assignment interval of the vehicle
      */

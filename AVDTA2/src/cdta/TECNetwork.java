@@ -45,9 +45,14 @@ import java.util.Set;
  */
 public class TECNetwork 
 {
+    public static boolean KEEP_FREE_FLOW = true;
+    
     private Map<Integer, Set<TECConnector>> zones;
     private Set<TECLink> links;
     private int T;
+    
+    
+    private double avgtt;
     
     private List<Vehicle> vehicles;
     
@@ -247,9 +252,14 @@ public class TECNetwork
         fileout.println("Avg. TT\t"+String.format("%.1f", tstt/60.0/vehicles.size())+"\tmin");
         fileout.close();
         
-        
+        this.avgtt = tstt/60.0/vehicles.size();
         
         return output;
+    }
+    
+    public double getAvgTT()
+    {
+        return avgtt;
     }
     
     public int calcFFTime(int origin, int dest, int dtime)
@@ -420,9 +430,21 @@ public class TECNetwork
                     
                     if(c == l.getNumCells()-1)
                     {
-                        cell.getSameCellConnector().setCongestionConnectivity(cell, cell, true);
+                        cell.getSameCellConnector().setCongestionConnectivity(cell, cell, !KEEP_FREE_FLOW);
                     }
                     
+                }
+            }
+            
+            if(KEEP_FREE_FLOW && (l instanceof TECConnector))
+            {
+                for(int c = 0; c < l.getNumCells(); c++)
+                {
+                    for(int t = 0; t < T-1; t++)
+                    {
+                        Cell cell = l.getCell(c, t);
+                        cell.getSameCellConnector().setCongestionConnectivity(cell, cell, true);
+                    }
                 }
             }
         }
@@ -464,7 +486,7 @@ public class TECNetwork
                 {
                     j.getLink().getCell(j.getId(), t-1).getSameCellConnector().setReservationConnectivity(false);
                 }
-                j.getSameCellConnector().setCongestionConnectivity(true);
+                j.getSameCellConnector().setCongestionConnectivity(!KEEP_FREE_FLOW);
                 
                 for(Cell kp : j.getNextCellConnector().getOutgoing(j))
                 {
@@ -485,7 +507,7 @@ public class TECNetwork
                     for(Cell i : connect.getIncoming(j))
                     {
                         connect.setCongestionConnectivity(i, j, false);
-                        connect.setCongestionConnectivity(i, i, true);
+                        connect.setCongestionConnectivity(i, i, !KEEP_FREE_FLOW);
                     }
                 }
             }
