@@ -182,7 +182,6 @@ public class DTASimulator extends Simulator
 
         double tstt = 0;
         double min = 0;
-        int exiting = 0;
 
         int count = 0;
         int moved_count = 0;
@@ -202,10 +201,6 @@ public class DTASimulator extends Simulator
             int dep_time = v.getDepTime();
 
 
-            if(v.getExitTime() < Simulator.duration)
-            {
-                exiting++;
-            }
 
 
             
@@ -296,7 +291,7 @@ public class DTASimulator extends Simulator
         }
 
 
-        return new DTAResults(min, tstt, vehicles.size(), exiting);
+        return new DTAResults(min, tstt, vehicles.size(), getNumExited());
 
     }
     
