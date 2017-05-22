@@ -207,15 +207,9 @@ public class Merge extends IntersectionControl
         for(Vehicle v : sending)
         {
             Link i = v.getPrevLink();
-            //if(i.getId() == 7629)
-            //    k=i;
+
             Link j = v.getNextLink();
-            ///*
-            if(j.getId() == 6715 && v.getId() == 32120)     //Added by Sudesh; can be removed later
-            {
-                System.out.println("Merge: Not exiting");
-            }
-            //*/
+
             if(j == null)
             {
                 i.removeVehicle(v);
