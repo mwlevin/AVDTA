@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.IOException;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -262,17 +263,34 @@ public class ImportNetworkPanel extends GUIPanel
         {
             return;
         }
-
-        try
-        {
-            ImportFromVISTA.removeDuplicateCentroids(project, origin_offset, dest_offset);
-        }
-        catch(Exception ex)
-        {
-            GUI.handleException(ex);
-        }
         
-        JOptionPane.showMessageDialog(this, "Removed duplicate centroids.", "Completed", JOptionPane.INFORMATION_MESSAGE);
+        final int origin_offset2 = origin_offset;
+        final int dest_offset2 = dest_offset;
+        
+        final JComponent frame = this;
+        
+        Thread t = new Thread()
+        {
+            public void run()
+            {
+                parentSetEnabled(false);
+                try
+                {
+                    ImportFromVISTA.removeDuplicateCentroids(project, origin_offset2, dest_offset2);
+                }
+                catch(Exception ex)
+                {
+                    GUI.handleException(ex);
+                }
+                parentSetEnabled(true);
+                JOptionPane.showMessageDialog(frame, "Removed duplicate centroids.", "Completed", JOptionPane.INFORMATION_MESSAGE);
+            }
+        };
+        t.start();
+
+        
+        
+        
     }
     
     public void checkForOtherFiles(File f)
