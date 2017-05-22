@@ -146,6 +146,10 @@ public abstract class Vehicle implements Serializable, Comparable<Vehicle>
      */
     public abstract Node getOrigin();
     
+    public abstract Node getDest();
+    
+    public abstract int getDepTime();
+    
     public int hashCode()
     {
         return id;

@@ -90,7 +90,7 @@ public class Main
     public static void main(String[] args) throws Exception
     {
 
-        CDTA.main(args);
+        //CDTA.main(args);
         
         
         
@@ -110,14 +110,8 @@ public class Main
         //new FourStepGUI();
         
         //SAVtest();
-        /*
-        DTAProject test = new DTAProject(new File("projects/SiouxFalls"));
-        DTASimulator sim = test.getSimulator();
-        for(Vehicle v : sim.getVehicles())
-        {
-            System.out.println(v.getId()+"\t"+v.getVOT());
-        }
-        */
+        
+        
         //GUI.main(args);
         
         
@@ -125,7 +119,20 @@ public class Main
         
         
         
+        DTAProject test = new DTAProject(new File("projects/coacongress"));
+        DTASimulator sim = test.getSimulator();
+        sim.msa(50);
+        sim.printLinkTT(1800, 5400);
         
+        test = new DTAProject(new File("projects/coacongress_CTL"));
+        sim = test.getSimulator();
+        sim.msa(50);
+        sim.printLinkTT(1800, 5400);
+        
+        test = new DTAProject(new File("projects/coacongress_DTL"));
+        sim = test.getSimulator();
+        sim.msa(50);
+        sim.printLinkTT(1800, 5400);
     }
     
     

@@ -189,7 +189,10 @@ public class DTASimulator extends Simulator
 
         for(Vehicle x : vehicles)
         {
-            
+            if(x.isTransit())
+            {
+                continue;
+            }
             
             PersonalVehicle v = (PersonalVehicle)x;
             
@@ -205,10 +208,7 @@ public class DTASimulator extends Simulator
             }
 
 
-            if(x.isTransit())
-            {
-                continue;
-            }
+            
             
             Map<Node, Path[][]> temp1;
             Path[][] temp2;
