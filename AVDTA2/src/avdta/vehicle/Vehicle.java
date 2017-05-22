@@ -390,6 +390,7 @@ public abstract class Vehicle implements Serializable, Comparable<Vehicle>
      */
     public void entered()
     {
+        net_enter_time = Simulator.time;
         routeChoice.activate();
     }
     
@@ -609,10 +610,6 @@ public abstract class Vehicle implements Serializable, Comparable<Vehicle>
         
         Link i = getPrevLink();
 
-        if(i == null)
-        {
-            net_enter_time = Simulator.time;
-        }
         
         Incident actual = Simulator.active.getIncident();
         

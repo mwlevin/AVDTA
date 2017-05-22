@@ -317,6 +317,7 @@ public class ReadNetwork
             }
             
             Link link = linksmap.get(linkid);
+
             
             if(!temproutes.containsKey(routeid))
             {
