@@ -167,33 +167,7 @@ public class PersonalVehicle extends Vehicle
     {
         return p == null || p.size() == 0 || p.getOrigin() != getOrigin() || p.getDest() != getDest();
     }
-    
-    /**
-     * Orders this vehicle against others based on departure time, then id
-     * @param v the vehicle to be compared against
-     * @return orders this vehicle against others based on departure time, then id
-     */
-    public int compareTo(Vehicle v)
-    {
-        if(v instanceof PersonalVehicle)
-        {
-            PersonalVehicle rhs = (PersonalVehicle)v;
-            
-            if(traveler.getDepTime() != rhs.traveler.getDepTime())
-            {
-                return traveler.getDepTime() - rhs.traveler.getDepTime();
-            }
-            else
-            {
-                return super.compareTo(v);
-            }         
-        }
-        else
-        {
-            return super.compareTo(v);
-        }
 
-    }
     
     /**
      * Returns the departure time

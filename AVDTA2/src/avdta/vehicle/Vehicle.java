@@ -486,7 +486,18 @@ public abstract class Vehicle implements Serializable, Comparable<Vehicle>
      */
     public int compareTo(Vehicle rhs)
     {
-        return id - rhs.id;
+        int dtime1 = getDepTime();
+        int dtime2 = rhs.getDepTime();
+        
+        
+        if(dtime1 != dtime2)
+        {
+            return dtime1 - dtime2;
+        }
+        else
+        {
+            return id - rhs.id;
+        }
     }
     /**
      * Gets the exit time of the vehicle if the vehicle has reached its 

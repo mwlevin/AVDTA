@@ -121,9 +121,11 @@ public class Main
         
         DTAProject test = new DTAProject(new File("projects/coacongress"));
         DTASimulator sim = test.getSimulator();
-        sim.msa(50);
-        sim.printLinkTT(1800, 5400);
+        sim.msa(2);
         
+        //sim.printLinkTT(1800, 5400);
+        
+        /*
         test = new DTAProject(new File("projects/coacongress_CTL"));
         sim = test.getSimulator();
         sim.msa(50);
@@ -133,6 +135,7 @@ public class Main
         sim = test.getSimulator();
         sim.msa(50);
         sim.printLinkTT(1800, 5400);
+        */
     }
     
     
