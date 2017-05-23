@@ -211,18 +211,7 @@ public class CentroidConnector extends Link
      */
     public int getType()
     {
-        if(getSource() instanceof Zone)
-        {
-            return ReadNetwork.CENTROID+1;
-        }
-        else if(getDest() instanceof Zone)
-        {
-            return ReadNetwork.CENTROID+2;
-        }
-        else
-        {
-            return ReadNetwork.CENTROID;
-        }
+        return ReadNetwork.CENTROID;
     }
     
     /**
