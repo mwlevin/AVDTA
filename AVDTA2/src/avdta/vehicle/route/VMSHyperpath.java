@@ -40,8 +40,8 @@ public class VMSHyperpath implements RouteChoice
     }
     
     
-    // implement this
-    public double getAvgCost(double dep_time)
+    // implement this. Probably make originMap a map to Object[] with one of the components storing the cost-to-go from the VI
+    public double getAvgCost(Node origin, double dep_time)
     {
         return 0;
     }

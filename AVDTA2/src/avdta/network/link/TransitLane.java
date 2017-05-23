@@ -70,7 +70,7 @@ public class TransitLane extends CTMLink
     {
         super.addVehicle(v);
         
-        if(!(v instanceof Bus))
+        if(!v.isTransit())
         {
             throw new RuntimeException("Adding non-transit vehicle to transit lane");
         }

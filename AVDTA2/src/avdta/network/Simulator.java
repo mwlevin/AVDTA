@@ -964,7 +964,7 @@ public class Simulator extends Network
         
         while(veh_idx < vehicles.size())
         {
-            PersonalVehicle v = (PersonalVehicle)vehicles.get(veh_idx);
+            Vehicle v = vehicles.get(veh_idx);
 
             if(v.getPath() == null)
             {

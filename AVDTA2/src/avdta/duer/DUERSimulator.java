@@ -19,8 +19,10 @@ import avdta.vehicle.PersonalVehicle;
 import avdta.vehicle.Vehicle;
 import avdta.vehicle.route.Hyperpath;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -31,12 +33,14 @@ import java.util.Set;
 public class DUERSimulator extends DTASimulator
 {
     private Map<Incident, Map<Link, Double>> avgTT; // store average travel times per incident state
-    private static final double rationality_bound = 0.2;
+    private static final double rationality_bound = 0.5;
     
     private Set<Incident> incidents;
     
     private Incident activeIncident;
     private Set<IncidentEffect> null_effects;
+    
+    private List<State> allStates;
     
     /**
      * Constructs this {@link DTASimulator} empty with the given project.
@@ -61,6 +65,22 @@ public class DUERSimulator extends DTASimulator
         activeIncident = Incident.NULL;
     }
     
+    
+    public void setLinks(Set<Link> links)
+    {
+        super.setLinks(links);
+        
+        allStates = new ArrayList<State>();
+        
+        for(Link l : links)
+        {
+            for(Incident i : incidents)
+            {
+                allStates.add(new State(l, i));
+            }
+        }
+    }
+    
     public boolean isObservable(Link l, Incident i)
     {
         if(i == Incident.NULL)
@@ -68,10 +88,18 @@ public class DUERSimulator extends DTASimulator
             return false;
         }
         
+        for(IncidentEffect effect : i.getEffects())
+        {
+            if(effect.getLink() == l)
+            {
+                return true;
+            }
+        }
+        
         double normalTT = avgTT.get(Incident.NULL).get(l);
         double incidentTT = avgTT.get(i).get(l);
         
-        return incidentTT > (1 + rationality_bound)*normalTT;
+        return incidentTT > (1 + rationality_bound) * normalTT;
     }
     
     public Set<Incident> getIncidents()
@@ -209,10 +237,10 @@ public class DUERSimulator extends DTASimulator
 
             if(v.getRouteChoice() != null)
             {
-                tstt += ((Hyperpath)v.getRouteChoice()).getAvgCost(dep_time);
+                tstt += ((Hyperpath)v.getRouteChoice()).getAvgCost(v.getOrigin(), dep_time);
             }
             
-            min += newPath[ast][v.getDriver().typeIndex()].getAvgCost(dep_time);
+            min += newPath[ast][v.getDriver().typeIndex()].getAvgCost(v.getOrigin(), dep_time);
 
 
             
@@ -264,6 +292,7 @@ public class DUERSimulator extends DTASimulator
     public Hyperpath osp(Node dest, DriverType driver)
     {
         Hyperpath output = new Hyperpath();
+        
         
         
         

@@ -182,14 +182,16 @@ public class DTASimulator extends Simulator
 
         double tstt = 0;
         double min = 0;
-        int exiting = 0;
 
         int count = 0;
         int moved_count = 0;
 
         for(Vehicle x : vehicles)
         {
-            
+            if(x.isTransit())
+            {
+                continue;
+            }
             
             PersonalVehicle v = (PersonalVehicle)x;
             
@@ -199,16 +201,9 @@ public class DTASimulator extends Simulator
             int dep_time = v.getDepTime();
 
 
-            if(v.getExitTime() < Simulator.duration)
-            {
-                exiting++;
-            }
 
 
-            if(x.isTransit())
-            {
-                continue;
-            }
+            
             
             Map<Node, Path[][]> temp1;
             Path[][] temp2;
@@ -296,7 +291,7 @@ public class DTASimulator extends Simulator
         }
 
 
-        return new DTAResults(min, tstt, vehicles.size(), exiting);
+        return new DTAResults(min, tstt, vehicles.size(), getNumExited());
 
     }
     

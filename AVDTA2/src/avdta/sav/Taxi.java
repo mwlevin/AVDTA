@@ -61,9 +61,28 @@ public class Taxi extends Vehicle
         setEfficiency(1);
     }
     
-    public Node getOrigin()
+    public SAVZone getOrigin()
     {
         return getLocation();
+    }
+    
+    public Node getDest()
+    {
+        Path curr = getPath();
+        
+        if(curr != null)
+        {
+            return curr.getDest();
+        }
+        else
+        {
+            return null;
+        }
+    }
+    
+    public int getDepTime()
+    {
+        return Simulator.time + delay;
     }
     
     public void enteredLink(Link l)

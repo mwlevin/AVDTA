@@ -143,8 +143,6 @@ public class Bus extends Vehicle
 
             stop_arr_time = Simulator.time;
         } 
-        
-        
                 
         if(l instanceof SharedTransitCTMLink)
         {

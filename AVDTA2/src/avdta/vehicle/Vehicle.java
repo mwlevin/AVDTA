@@ -42,7 +42,6 @@ public abstract class Vehicle implements Serializable, Comparable<Vehicle>
     private RouteChoice routeChoice;
     
     private double total_toll;
-    private double vot;
     
     public int arr_time, enter_time, reservation_time; // arrival time at intersection
     public double pressure;
@@ -147,6 +146,10 @@ public abstract class Vehicle implements Serializable, Comparable<Vehicle>
      */
     public abstract Node getOrigin();
     
+    public abstract Node getDest();
+    
+    public abstract int getDepTime();
+    
     public int hashCode()
     {
         return id;
@@ -162,14 +165,6 @@ public abstract class Vehicle implements Serializable, Comparable<Vehicle>
         return vehClass;
     }
 
-    /**
-     * Updates the value of time of this {@link Vehicle}.
-     * @param vot the new value of time ($/hr)
-     */
-    public void setVOT(double vot)
-    {
-        this.vot = vot;
-    }
     
     /**
      * Updates the exit time of this {@link Vehicle}.
@@ -186,7 +181,7 @@ public abstract class Vehicle implements Serializable, Comparable<Vehicle>
      */
     public double getVOT()
     {
-        return vot;
+        return 1;
     }
     
     /**
@@ -395,6 +390,7 @@ public abstract class Vehicle implements Serializable, Comparable<Vehicle>
      */
     public void entered()
     {
+        net_enter_time = Simulator.time;
         routeChoice.activate();
     }
     
@@ -491,7 +487,18 @@ public abstract class Vehicle implements Serializable, Comparable<Vehicle>
      */
     public int compareTo(Vehicle rhs)
     {
-        return id - rhs.id;
+        int dtime1 = getDepTime();
+        int dtime2 = rhs.getDepTime();
+        
+        
+        if(dtime1 != dtime2)
+        {
+            return dtime1 - dtime2;
+        }
+        else
+        {
+            return id - rhs.id;
+        }
     }
     /**
      * Gets the exit time of the vehicle if the vehicle has reached its 
@@ -601,36 +608,27 @@ public abstract class Vehicle implements Serializable, Comparable<Vehicle>
             path.add(l);
         }
         
-        
         Link i = getPrevLink();
-        
-        
 
-
-        if(i == null)
-        {
-            net_enter_time = Simulator.time;
-        }
-        
         
         Incident actual = Simulator.active.getIncident();
-        VMS vms = l.getSource().getVMS();
-        if(Math.random() < vms.getProbOfInformation(actual))
+        
+        if(actual != information)
         {
-            information = actual;
+            VMS vms = l.getSource().getVMS();
+            if(Math.random() < vms.getProbOfInformation(actual))
+            {
+                information = actual;
+            }
+            else if(Simulator.active.isObservable(l, actual))
+            {
+                information = actual;
+            }
         }
-        else if(Simulator.active.isObservable(l, actual))
-        {
-            information = actual;
-        }
-        
-        
-        
         
         routeChoice.enteredLink(l);
         
-        
-        
+
         time_waiting += Simulator.time + Network.dt - arr_time;
         
         arr_time = -1;
