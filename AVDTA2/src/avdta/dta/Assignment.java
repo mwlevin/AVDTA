@@ -382,14 +382,19 @@ public class Assignment implements Comparable<Assignment>
             int path_id = filein.nextInt();
             Path p = paths.get(path_id);
             
+            
             if(p == null)
             {
                 //throw new RuntimeException("Missing path when reading assignment - "+path_id);
             }
             
-            if(p.isValid(v))
+            if(!p.isValid(v))
             {
                 v.setPath(p);
+            }
+            else
+            {
+                System.err.println("Invalid path for "+v.getId()+" "+v.getDriver());
             }
             
         }
