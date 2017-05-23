@@ -60,6 +60,7 @@ import avdta.util.RunningAvg;
 public class Simulator extends Network 
 {
 
+    
     public static int time;
     
     public static int duration = 3600*10;
@@ -675,6 +676,16 @@ public class Simulator extends Network
         }
     }
     
+    
+     /**
+     * Returns total travel times for transit  vehicles
+     * @return total travel times for transit vehicles (s)
+     */
+    public double getBusTT()
+    {
+        return getBusTT(true);
+        
+    }
     /**
      * Returns total travel times for transit or non-transit vehicles
      * @param transit checks transit vehicles if true, checks non-transit vehicles if false
