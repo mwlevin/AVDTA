@@ -12,10 +12,13 @@ import avdta.gui.panels.GUIPanel;
 import javax.swing.JPanel;
 import static avdta.gui.util.GraphicUtils.*;
 import avdta.network.ReadNetwork;
+import avdta.network.link.CACCLTMLink;
 import avdta.network.link.CTMLink;
 import avdta.network.link.LTMLink;
 import avdta.network.link.Link;
 import avdta.network.link.LinkRecord;
+import avdta.network.link.SharedTransitCTMLink;
+import avdta.network.link.SplitCTMLink;
 import avdta.project.DTAProject;
 import avdta.project.Project;
 import avdta.vehicle.Vehicle;
@@ -193,6 +196,11 @@ public class LinksPanel extends GUIPanel
             int ltm = 0;
             int centroid = 0;
             
+            int dlr = 0;
+            int ctl = 0;
+            int dtl = 0;
+            int cacc = 0;
+            
             for(Link l : project.getSimulator().getLinks())
             {
                 if(l.isCentroidConnector())
@@ -202,10 +210,24 @@ public class LinksPanel extends GUIPanel
                 else if(l instanceof LTMLink)
                 {
                     ltm++;
+                    
+                    if(l instanceof CACCLTMLink)
+                    {
+                        cacc++;
+                    }
                 }
                 else if(l instanceof CTMLink)
                 {
                     ctm++;
+                    
+                    if(l instanceof SplitCTMLink)
+                    {
+                        ctl++;
+                    }
+                    else if(l instanceof SharedTransitCTMLink)
+                    {
+                        dtl++;
+                    }
                 }
                 total ++;
             }
@@ -221,7 +243,19 @@ public class LinksPanel extends GUIPanel
             }
             if(centroid > 0)
             {
-                data.append(centroid+"\tcentroid connectors\n");
+                data.append(centroid+"\tcentroid connectors\n\n");
+            }
+            if(dlr > 0)
+            {
+                data.append(dlr+"\tdynamic lane reversal\n");
+            }
+            if(ctl > 0)
+            {
+                data.append(ctl+"\ttransit lanes\n");
+            }
+            if(dtl > 0)
+            {
+                data.append(dtl+"\tdynamic transit lanes\n");
             }
             setEnabled(true);
             
