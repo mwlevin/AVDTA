@@ -115,10 +115,10 @@ public class Main
         //GUI.main(args);
         
         
-        //transitTest2();
+        transitTest3();
         
         
-        
+        /*
         DTAProject test = new DTAProject(new File("projects/coacongress_DTL"));
         DTASimulator sim = test.getSimulator();
         sim.msa(50);
@@ -133,7 +133,7 @@ public class Main
         sim = test.getSimulator();
         sim.msa(50);
         sim.printLinkTT(1800, 5400);
-        
+        */
     }
     
     
@@ -560,17 +560,19 @@ public class Main
     
     public static void transitTest3() throws IOException
     {
-        //String[] projects = new String[]{"coacongress2_CR_transit", "coacongress2_transit", "coacongress2_DTL", "coacongress2_CR_DTL", "coacongress2_TF_DTL"};
-        String[] projects = new String[]{"coacongress2_TL", "coacongress2_TF_TL"};
+        int[] indices = new int[]{3};
+        String[] projects = new String[]{"coacongress2_CR_transit", "coacongress2_CR_DTL", "coacongress2_TF_DTL", "coacongress2_TF_TL"};
+        //String[] projects = new String[]{"coacongress2_TL", "coacongress2_transit", coacongress2_DTL};
         
         int max_iter = 50;
         double min_gap = 0.1;
         
-        for(String x : projects)
+        for(int idx : indices)
         {
+            String x = projects[idx];
             PrintStream fileout = new PrintStream(new FileOutputStream(new File("results_"+x+".txt")), true);
             
-            fileout.println("Prop\tDemand\tTSTT\tDA time\tBus FF time\t Bus time\t Avg. bus time\tBus time ratio\tAvg. bus delay");
+            fileout.println("Prop\tDemand\tTSTT\tDA time\tBus FF time\t Bus time\t Avg. bus time\tBus time ratio\tAvg. bus delay\tAvg. St. Dev\tSpeed change");
             
             for(int i = 70; i <= 120; i += 5)
             {
@@ -592,7 +594,8 @@ public class Main
         DTASimulator sim = project.getSimulator();
         sim.initialize();
         
-        sim.msa(max_iter, min_gap);
+        sim.partial_demand(10);
+        sim.msa_cont(5, max_iter, min_gap);
         
         
         
@@ -604,7 +607,8 @@ public class Main
         fileout.close();
         
         output.println(prop+"\t"+(sim.getNumVehicles()-sim.getNumBuses())+"\t"+(sim.getTSTT()/3600)+"\t"+(sim.getAvgBusTT(false)/60)+"\t"+(sim.getBusFFTime()/60)+"\t"+
-                (sim.getBusTT(true)/60)+"\t"+(sim.getAvgBusTT(true)/60)+"\t"+sim.calcAvgBusTimeRatio()+"\t"+sim.calcAvgBusDelay());
+                (sim.getBusTT(true)/60)+"\t"+(sim.getAvgBusTT(true)/60)+"\t"+sim.calcAvgBusTimeRatio()+"\t"+sim.calcAvgBusDelay()+"\t"+
+                sim.calcAvgBusStDev(3600)+"\t"+sim.calcAvgTLSpeedChange(3600));
         
         sim.printBusTime(new File(project.getResultsFolder()+"/bus_"+prop+".txt"));
         

@@ -237,6 +237,31 @@ public class Path extends ArrayList<Link> implements Serializable
     }
     
     /**
+     * Returns the estimated travel time
+     * @param dep_time departure time
+     * @return estimated travel time given the departure time (s)
+     * @see Link#getAvgTT(int)
+     */
+    public double getStDevTT(int dep_time)
+    {
+        double time = dep_time;
+        double output = 0.0;
+        
+        Link i = null;
+        
+        for(Link j : this)
+        {
+            time += j.getAvgTT((int)time);
+            double stdev = j.getStDevTT((int)time);
+            output += stdev*stdev;
+            
+            i = j;
+        }
+        
+        return Math.sqrt(output);
+    }
+    
+    /**
      * Returns the expected cost when using the specified cost function
      * @param dep_time departure time
      * @param vot the value of time

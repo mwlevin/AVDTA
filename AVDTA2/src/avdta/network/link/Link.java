@@ -635,6 +635,20 @@ public abstract class Link implements Serializable, Comparable<Link>
         }
     }
     
+    public double getStDevTT(int enter)
+    {
+        int idx = (int)Math.min(Simulator.num_asts-1, enter / Simulator.ast_duration);
+        
+        if(idx >= 0 && idx < avgTT.length && avgTT[idx].getCount() > 0)
+        {
+            return avgTT[idx].getStDev();
+        }
+        else
+        {
+            return 0;
+        }
+    }
+    
     /**
      * Returns all stored average travel times
      * @return an array of {@link RunningAvg} containing stored travel times

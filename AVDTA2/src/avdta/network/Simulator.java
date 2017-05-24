@@ -50,7 +50,9 @@ import java.util.Scanner;
 import java.util.Set;
 import java.util.TreeSet;
 import avdta.network.cost.FFTime;
+import avdta.network.link.AbstractSplitLink;
 import avdta.network.link.LTMLink;
+import avdta.network.link.TransitLane;
 import avdta.util.RunningAvg;
 /**
  * A {@link Simulator} extends {@link Network} in adding {@link Vehicle}s and dynamic network loading. 
@@ -1334,6 +1336,55 @@ public class Simulator extends Network
         return output / count;
     }
     
+    public double calcAvgBusStDev(int time)
+    {
+        double output = 0;
+        int count = 0;
+        
+        
+        for(Link l : links)
+        {
+            if(l instanceof AbstractSplitLink)
+            {
+                TransitLane tl = ((AbstractSplitLink)l).getTransitLane();
+                
+                double stdev1 = tl.getStDevTT(time);
+                double stdev2 = l.getStDevTT(time);
+                
+                if(stdev2 > 0)
+                {
+                    output += (stdev2 - stdev1) / stdev2;
+                }
+                
+                count++;
+            }
+        }
+        
+        
+        return output / count;
+    }
+    
+    public double calcAvgTLSpeedChange(int time)
+    {
+        double output = 0;
+        int count = 0;
+        
+        for(Link l : links)
+        {
+            if(l instanceof AbstractSplitLink)
+            {
+                TransitLane tl = ((AbstractSplitLink)l).getTransitLane();
+                
+                double tt1 = tl.getAvgTT(time);
+                double tt2 = l.getAvgTT(time);
+                
+                output += (tt2 - tt1) / tt2;
+                count++;
+            }
+        }
+        
+        return output / count;
+    }
     
     
     /**
