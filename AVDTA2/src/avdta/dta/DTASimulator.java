@@ -561,6 +561,9 @@ public class DTASimulator extends Simulator
      */
     public DTAResults msa_cont(int start_iter, int max_iter, double min_gap) throws IOException
     {
+        long actual_time = System.nanoTime();
+        
+        
         currAssign = createAssignment(start_iter);
         
         if(statusUpdate != null)
@@ -625,6 +628,8 @@ public class DTASimulator extends Simulator
         {
             statusUpdate.update(1, 0, "");
         }
+        
+        actual_time = System.nanoTime() - actual_time;
 
         out.println(String.format("TSTT\t%.1f", getTSTT()/3600.0)+"\thr");
         out.println("Avg. TT\t"+String.format("%.2f", getTSTT() / 60 / vehicles.size())+"\tmin/veh");
@@ -639,6 +644,7 @@ public class DTASimulator extends Simulator
         out.println("DA TT:\t"+(getAvgBusTT(false)/60)+"\tmin");
         out.println("Bus TT:\t"+(getAvgBusTT(true)/60)+"\tmin");
         out.println("Bus ratio:\t"+(calcAvgBusTimeRatio()));
+        out.println("CPU time: "+String.format("%.1f", actual_time/1.0e9)+"s");
         
         fileout.println(String.format("TSTT\t%.1f", getTSTT()/3600.0)+"\thr\nAvg. TT\t"+String.format("%.2f", getTSTT() / 60 / vehicles.size())+"\tmin/veh");
         fileout.println();
@@ -652,6 +658,7 @@ public class DTASimulator extends Simulator
         fileout.println("DA TT:\t"+(getAvgBusTT(false)/60)+"\tmin");
         fileout.println("Bus TT:\t"+(getAvgBusTT(true)/60)+"\tmin");
         fileout.println("Bus TT ratio:\t"+calcAvgBusTimeRatio());
+        fileout.println("CPU time: "+String.format("%.1f", actual_time/1.0e9)+"s");
         
         fileout.close();
         
