@@ -14,6 +14,8 @@ public class RunningAvg implements Serializable
 {
 	private double value;
 	private double count;
+        
+        private double x_squared;
 	
         /**
          * Constructs the {@link RunningAvg} with 0.
@@ -22,6 +24,7 @@ public class RunningAvg implements Serializable
 	{
 		value = 0;
                 count = 0;
+                x_squared = 0;
 	}
         
         /**
@@ -32,6 +35,7 @@ public class RunningAvg implements Serializable
         {
             value = v;
             count = 1;
+            x_squared = value * value;
         }
 	
         /**
@@ -40,8 +44,9 @@ public class RunningAvg implements Serializable
          */
 	public void add(double val)
 	{
-		value += val;
-		count++;
+            value += val;
+            x_squared += val*val;
+            count++;
 	}
         
         /**
@@ -52,6 +57,7 @@ public class RunningAvg implements Serializable
         public void add(double val, double weight)
         {
             value += val * weight;
+            x_squared += val*val * weight;
             count += weight;
         }
 	
@@ -61,7 +67,7 @@ public class RunningAvg implements Serializable
          */
 	public double getCount()
 	{
-		return count;
+            return count;
 	}
 	
         /**
@@ -79,13 +85,26 @@ public class RunningAvg implements Serializable
                 return 0;
             }
 	}
+        
+        public double getStDev()
+        {
+            if(count > 0)
+            {
+                double avg = value / count;
+                return Math.sqrt(x_squared / count - avg * avg);
+            }
+            else
+            {
+                return 0;
+            }
+        }
 	
         /**
          * Resets the total value and weight to 0
          */
 	public void reset()
 	{
-		value = 0;
-		count = 0;
+            value = 0;
+            count = 0;
 	}
 }
