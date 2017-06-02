@@ -825,6 +825,40 @@ public class Simulator extends Network
         
     }
     
+    public double calcAvgBusSpeed()
+    {
+        double output = 0.0;
+        int count = 0;
+        
+        for(Vehicle v : vehicles)
+        {
+            if(v.isTransit())
+            {
+                output +=  v.getPath().getLength() / (v.getTT() / 3600.0);
+                count++;
+            }
+        }
+        
+        return output/count;
+    }
+    
+    public double calcAvgBusStDev()
+    {
+        double output = 0.0;
+        int count = 0;
+        
+        for(Vehicle v : vehicles)
+        {
+            if(v.isTransit())
+            {
+                output += v.getPath().getStDevTT(v.getDepTime()) / v.getTT();
+                count++;
+            }
+        }
+        
+        return output/count;
+    }
+    
     /**
      * Post-process simulation data to prepare for printing results, such as average link flows.
      * This contains an internal check to avoid post-processing multiple times.
