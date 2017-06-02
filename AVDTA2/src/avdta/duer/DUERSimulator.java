@@ -166,6 +166,16 @@ public class DUERSimulator extends DTASimulator
         }
     }
     
+    public Map<Integer, Incident> createIncidentIdsMap()
+    {
+        Map<Integer, Incident> output = new HashMap<>();
+        
+        for(Incident i : incidents)
+        {
+            output.put(i.getId(), i);
+        }
+        return output;
+    }
     /**
      * Generates new paths and loads 1/stepsize vehicles onto the new paths.
      * This method also compares minimum travel times with experienced travel times to calculate the gap.
