@@ -331,8 +331,8 @@ public class Path extends ArrayList<Link> implements Serializable
     }
     
     /**
-     * Returns the total distance traveled
-     * @return total distance 
+     * Returns the total distance traveled (mi)
+     * @return total distance (mi)
      */
     public double getLength()
     {
