@@ -13,6 +13,7 @@ import avdta.network.Simulator;
 import avdta.network.link.Link;
 import avdta.network.node.Node;
 import avdta.project.DTAProject;
+import avdta.util.Pair;
 import static avdta.vehicle.route.AdaptiveRoute.costFunc;
 import java.io.File;
 import java.io.IOException;
@@ -28,43 +29,39 @@ import java.util.Set;
 public class Hyperpath implements RouteChoice
 {
 
-    private Map<Node,Map<Incident,Link>> outerMap;
+    private Map<Link, Map<Incident,Link>> map;
     
-    private Incident information;
+    private Map<Node, Pair<Double, Link>> origins;
+
     
     public Hyperpath()
     {
-        outerMap = new HashMap<>();
+        map = new HashMap<>();
+        origins = new HashMap<>();
     }
     
     
     // implement this
     public double getAvgCost(Node origin, double dep_time)
     {
-        return 0;
+        return origins.get(origin).first();
     }
     
-    public void setInformation(Incident incident)
-    {
-        information = incident; 
-    }
     public Link getNextLink(Link link, Incident information)
     {
-        Link next;
-        Node node = link.getDest();
-        Map<Incident, Link> innerMap;
-        innerMap = outerMap.get(node);
-        if(innerMap==null)
+        if(!map.containsKey(link))
         {
             return null;
         }
-        next = innerMap.get(information);
-        return next;
+        else
+        {
+            return map.get(link).get(information);
+        }
     }
     
     public Link getFirstLink(Node origin)
     {
-        return outerMap.get(origin).get(Incident.NULL);
+        return origins.get(origin).second();
     }
     
     public void activate()
@@ -82,15 +79,24 @@ public class Hyperpath implements RouteChoice
         
     }
         
-    public void setNextLink(Node node, Incident incident, Link next)
+    public void setNextLink(Node origin, double cost, Link next)
     {
-        Map<Incident,Link> innerMap = outerMap.get(node);
-        if(innerMap==null)
+        origins.put(origin, new Pair(cost, next));
+    }
+    
+    public void setNextLink(Link link, Incident incident, Link next)
+    {
+        Map<Incident, Link> temp;
+        
+        if(map.containsKey(link))
         {
-            innerMap = new HashMap();
-            outerMap.put(node, innerMap);
+            temp = map.get(link);
         }
-        innerMap.put(incident, next);
+        else
+        {
+            map.put(link, temp = new HashMap<>());
+        }
+        temp.put(incident, next);
     }
 
     @Override

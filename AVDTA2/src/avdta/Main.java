@@ -137,6 +137,9 @@ public class Main
     }
     
     
+    
+    
+    
     public static void SAVtest() throws IOException
     {
         
@@ -560,7 +563,7 @@ public class Main
     
     public static void transitTest3() throws IOException
     {
-        int[] indices = new int[]{3};
+        int[] indices = new int[]{0, 1, 2, 3};
         String[] projects = new String[]{"coacongress2_CR_transit", "coacongress2_CR_DTL", "coacongress2_TF_DTL", "coacongress2_TF_TL"};
         //String[] projects = new String[]{"coacongress2_TL", "coacongress2_transit", coacongress2_DTL};
         
@@ -572,7 +575,7 @@ public class Main
             String x = projects[idx];
             PrintStream fileout = new PrintStream(new FileOutputStream(new File("results_"+x+".txt")), true);
             
-            fileout.println("Prop\tDemand\tTSTT\tDA time\tBus FF time\t Bus time\t Avg. bus time\tBus time ratio\tAvg. bus delay\tAvg. St. Dev\tSpeed change");
+            fileout.println("Prop\tDemand\tTSTT\tDA time\tBus FF time\t Bus time\t Avg. bus time\tBus time ratio\tAvg. bus delay\tAvg. St. Dev\tSpeed");
             
             for(int i = 70; i <= 120; i += 5)
             {
@@ -608,7 +611,7 @@ public class Main
         
         output.println(prop+"\t"+(sim.getNumVehicles()-sim.getNumBuses())+"\t"+(sim.getTSTT()/3600)+"\t"+(sim.getAvgBusTT(false)/60)+"\t"+(sim.getBusFFTime()/60)+"\t"+
                 (sim.getBusTT(true)/60)+"\t"+(sim.getAvgBusTT(true)/60)+"\t"+sim.calcAvgBusTimeRatio()+"\t"+sim.calcAvgBusDelay()+"\t"+
-                sim.calcAvgBusStDev(3600)+"\t"+sim.calcAvgTLSpeedChange(3600));
+                sim.calcAvgBusStDev()+"\t"+sim.calcAvgBusSpeed());
         
         sim.printBusTime(new File(project.getResultsFolder()+"/bus_"+prop+".txt"));
         
