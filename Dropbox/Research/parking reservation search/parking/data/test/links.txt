@@ -1,4 +1,0 @@
-source	dest	time
-1	2	20
-2	3	20
-3	1	20
