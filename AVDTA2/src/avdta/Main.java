@@ -17,6 +17,7 @@ import avdta.dta.DTAResults;
 import avdta.dta.DTASimulator;
 import avdta.dta.ReadDTANetwork;
 import avdta.dta.VehicleRecord;
+import avdta.duer.DUERSimulator;
 import avdta.duer.Incident;
 import avdta.fourstep.FourStepSimulator;
 import avdta.fourstep.ReadFourStepNetwork;
@@ -46,6 +47,7 @@ import avdta.network.node.*;
 import avdta.network.link.*;
 import avdta.network.link.cell.Cell;
 import avdta.network.node.policy.TransitFirst;
+import avdta.project.DUERProject;
 import avdta.project.FourStepProject;
 import avdta.project.SAVProject;
 import avdta.sav.ReadSAVNetwork;
@@ -115,7 +117,18 @@ public class Main
         //GUI.main(args);
         
         
-        transitTest3();
+        DUERProject project = new DUERProject(new File("projects/vms_test"));
+        DUERSimulator sim = project.getSimulator();
+        Node dest = sim.createNodeIdsMap().get(-106);
+        sim.test();
+        Hyperpath test = sim.osp(dest, DriverType.AV);
+        System.out.println("--");
+        sim.printStates();
+        System.out.println("--");
+        System.out.println(test.getFirstLink(sim.createNodeIdsMap().get(101)));
+        System.out.println(test.getNextLink(sim.createLinkIdsMap().get(101), Incident.UNKNOWN));
+        
+        //transitTest3();
         
         
         /*

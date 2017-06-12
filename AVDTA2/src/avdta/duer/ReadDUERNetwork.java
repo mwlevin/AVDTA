@@ -46,6 +46,7 @@ public class ReadDUERNetwork extends ReadDTANetwork
         Set<Node> nodes = readNodes(project);
         Set<Link> links = readLinks(project);
         Set<Incident> incidents = readIncidents(project);
+        
         readVMS(project);
         
         readIntersections(project);
@@ -102,12 +103,14 @@ public class ReadDUERNetwork extends ReadDTANetwork
         
         filein.nextLine();
         
+
         while(filein.hasNextInt())
         {
             int id = filein.nextInt();
             double pOn = filein.nextDouble();
             double pOff = filein.nextDouble();
             
+
             String line = filein.nextLine().trim();
             
             List<IncidentEffect> effects = new ArrayList<IncidentEffect>();
@@ -134,6 +137,9 @@ public class ReadDUERNetwork extends ReadDTANetwork
             incidentsmap.put(id, incident);
         }
         
+
+        output.add(Incident.UNKNOWN);
+
         return output;
     }
     
@@ -144,6 +150,6 @@ public class ReadDUERNetwork extends ReadDTANetwork
     
     public static String getVMSFileHeader()
     {
-        return "node id\type\tinformation";
+        return "node id\ttype\tinformation";
     }
 }

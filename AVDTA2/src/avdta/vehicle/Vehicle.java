@@ -117,7 +117,7 @@ public abstract class Vehicle implements Serializable, Comparable<Vehicle>
         
         curr = null;
         path = new Path();
-        information = Incident.NULL;
+        information = Incident.UNKNOWN;
     }
     
     public void setInformation(Incident i)

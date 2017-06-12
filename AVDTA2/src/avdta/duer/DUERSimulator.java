@@ -54,7 +54,10 @@ public class DUERSimulator extends DTASimulator
         avgTT = new HashMap<Incident, Map<Link, Double>>();
         incidents = new HashSet<Incident>();
         null_effects = new HashSet<IncidentEffect>();
-        activeIncident = Incident.NULL;
+        activeIncident = Incident.UNKNOWN;
+        
+        initializeTT();
+        createStates();
     }
     
     public DUERSimulator(DUERProject project, Set<Node> nodes, Set<Link> links, Set<Incident> incidents)
@@ -63,14 +66,87 @@ public class DUERSimulator extends DTASimulator
         avgTT = new HashMap<Incident, Map<Link, Double>>();
         this.incidents = incidents;
         null_effects = new HashSet<IncidentEffect>();
-        activeIncident = Incident.NULL;
+        activeIncident = Incident.UNKNOWN;
+        
+        initializeTT();
+        createStates();
     }
     
-    
-    public void setLinks(Set<Link> links)
+
+    // this method is used with vms_test network
+    public void test()
     {
-        super.setLinks(links);
+        Map<Integer, Link> linksMap = createLinkIdsMap();
+        Map<Integer, Incident> incidentsMap = createIncidentIdsMap();
         
+        Incident inc = incidentsMap.get(2);
+        Incident none = incidentsMap.get(1);
+        Link AB = linksMap.get(12);
+        Link AC = linksMap.get(13);
+        Link BD = linksMap.get(24);
+        Link CD = linksMap.get(34);
+        Link DE = linksMap.get(46);
+        Link DEtop1 = linksMap.get(45);
+        Link DEtop2 = linksMap.get(56);
+        
+        avgTT.get(Incident.UNKNOWN).put(AB, 5.0);
+        avgTT.get(none).put(AB, 5.0);
+        avgTT.get(inc).put(AB, 5.0);
+        
+        avgTT.get(Incident.UNKNOWN).put(AC, 4.0);
+        avgTT.get(none).put(AC, 4.0);
+        avgTT.get(inc).put(AC, 4.0);
+        
+        avgTT.get(Incident.UNKNOWN).put(CD, 5.0);
+        avgTT.get(none).put(CD, 5.0);
+        avgTT.get(inc).put(CD, 5.0);
+        
+        avgTT.get(Incident.UNKNOWN).put(BD, 5.0);
+        avgTT.get(none).put(BD, 5.0);
+        avgTT.get(inc).put(BD, 5.0);
+        
+        avgTT.get(Incident.UNKNOWN).put(DE, 10.0);
+        avgTT.get(none).put(DE, 10.0);
+        avgTT.get(inc).put(DE, 60.0);
+        
+        avgTT.get(Incident.UNKNOWN).put(DEtop1, 15.0);
+        avgTT.get(none).put(DEtop1, 15.0);
+        avgTT.get(inc).put(DEtop1, 15.0);
+        
+        avgTT.get(Incident.UNKNOWN).put(DEtop2, 15.0);
+        avgTT.get(none).put(DEtop2, 15.0);
+        avgTT.get(inc).put(DEtop2, 15.0);
+        
+    }
+    
+    public void printStates()
+    {
+        for(Link l : allStates.keySet())
+        {
+            for(State s : allStates.get(l))
+            {
+                System.out.println(s.getLink()+"\t"+s.getIncident()+"\t"+s.J+"\t"+s.mu);
+            }
+        }
+    }
+    
+    private void initializeTT()
+    {
+        Set<Link> links = getLinks();
+        for(Incident i : incidents)
+        {
+            Map<Link, Double> temp = new HashMap<>();
+            avgTT.put(i, temp);
+            
+            for(Link l : links)
+            {
+                temp.put(l, l.getFFTime());
+            }
+        }
+    }
+        
+    private void createStates()
+    {
         allStates = new HashMap<>();
         
         for(Link l : links)
@@ -94,7 +170,7 @@ public class DUERSimulator extends DTASimulator
     
     public boolean isObservable(Link l, Incident i)
     {
-        if(i == Incident.NULL)
+        if(i == Incident.UNKNOWN)
         {
             return false;
         }
@@ -107,10 +183,20 @@ public class DUERSimulator extends DTASimulator
             }
         }
         
-        double normalTT = avgTT.get(Incident.NULL).get(l);
-        double incidentTT = avgTT.get(i).get(l);
+        double normalTT = getAvgTT(l, Incident.UNKNOWN);
+        double incidentTT = getAvgTT(l, i);
         
         return incidentTT > (1 + rationality_bound) * normalTT;
+    }
+    
+    public double getAvgTT(Link l, Incident i)
+    {
+        if(i == Incident.UNKNOWN)
+        {
+            i = Incident.NONE;
+        }
+        
+        return avgTT.get(i).get(l);
     }
     
     public Set<Incident> getIncidents()
@@ -133,7 +219,7 @@ public class DUERSimulator extends DTASimulator
     
     public void deactivate(Incident i)
     {
-        activeIncident = Incident.NULL;
+        activeIncident = Incident.NONE;
         for(IncidentEffect e : null_effects)
         {
             Link link = e.getLink();
@@ -334,7 +420,7 @@ public class DUERSimulator extends DTASimulator
             
             System.out.println(iter+"\t"+error);
         }
-        while(error < error_bound);
+        while(error >= error_bound);
         
         // calculate best policy
         vi_iter(dest);
@@ -363,7 +449,7 @@ public class DUERSimulator extends DTASimulator
                     // find null incident state
                     for(State s : allStates.get(l))
                     {
-                        if(s.getIncident() == Incident.NULL)
+                        if(s.getIncident() == Incident.UNKNOWN)
                         {
                             nullI = s;
                             break;
@@ -406,25 +492,32 @@ public class DUERSimulator extends DTASimulator
                     Link bestMu = null;
 
                     // look through outgoing links
-                    for(Link l : s.U)
+                    for(Link u : s.U)
                     {
                         double expJ = 0.0;
 
                         // calculate transition
-                        if(inc != Incident.NULL)
+                        if(inc != Incident.UNKNOWN)
                         {
-                            expJ = avgTT.get(inc).get(l);
+                            for(State sp : allStates.get(u))
+                            {
+                                if(sp.getIncident() == inc)
+                                {
+                                    expJ = sp.J;
+                                    break;
+                                }
+                            }
                         }
                         else
                         {
                             State nullIncident = null;
                             double totalProb = 0.0;
 
-                            for(State sp : allStates.get(link))
+                            for(State sp : allStates.get(u))
                             {
                                 Incident ip = sp.getIncident();
 
-                                if(ip == Incident.NULL)
+                                if(ip == Incident.UNKNOWN)
                                 {
                                     nullIncident = sp;
                                     continue;
@@ -432,30 +525,36 @@ public class DUERSimulator extends DTASimulator
 
                                 double prob;
 
-                                if(isObservable(l, ip))
+                                if(isObservable(u, ip))
                                 {
                                     prob = ip.getProbabilityOn();
                                 }
                                 else
                                 {
-                                    prob = l.getDest().getVMS().getProbOfInformation(ip) * ip.getProbabilityOn();
+                                    prob = link.getDest().getVMS().getProbOfInformation(ip) * ip.getProbabilityOn();
                                 }
 
                                 totalProb += prob;
 
                                 expJ += sp.J * prob;
+                                
+                                
                             }
+                            
+                            
 
                             // calculate null incident probability separately
                             expJ += nullIncident.J * (1 - totalProb);
+
                         }
 
                         double temp = g + expJ;
+                        
 
                         if(temp < newJ)
                         {
                             newJ = temp;
-                            bestMu = l;
+                            bestMu = u;
                         }
                     }
 

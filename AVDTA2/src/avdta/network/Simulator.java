@@ -179,7 +179,7 @@ public class Simulator extends Network
     
     public Incident getIncident()
     {
-        return Incident.NULL;
+        return Incident.UNKNOWN;
     }
     
     public boolean isObservable(Link l, Incident i)
