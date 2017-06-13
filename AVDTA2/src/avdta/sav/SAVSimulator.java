@@ -26,7 +26,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import avdta.sav.dispatch.Dispatch;
 import avdta.gui.util.StatusUpdate;
-import avdta.sav.dispatch.DefaultDispatch;
+import avdta.sav.dispatch.RealTimeDispatch;
 
 /**
  * This class extends {@link Simulator} to handle the simulation of travelers and taxis.
@@ -43,6 +43,8 @@ public class SAVSimulator extends Simulator
     private List<Taxi> taxis;
     private List<SAVTraveler> travelers;
     
+    private List<Taxi> departing;
+    
     public static Dispatch dispatch;
     
     
@@ -58,9 +60,14 @@ public class SAVSimulator extends Simulator
         super(project);
         
         taxis = new ArrayList<Taxi>();
+        departing = new ArrayList<Taxi>();
         setCostFunction(TravelCost.dnlTime);
         
-        setDispatch(new DefaultDispatch());
+    }
+    
+    public void addDeparting(Taxi t)
+    {
+        departing.add(t);
     }
     
     /**
@@ -75,13 +82,12 @@ public class SAVSimulator extends Simulator
         
         taxis = new ArrayList<Taxi>();
         setCostFunction(TravelCost.dnlTime);
-        
-        setDispatch(new DefaultDispatch());
     }
     
     /**
      * Updates the dispatch. 
-     * This should not be called during simulation.
+     * Call this before starting simulation.
+     * This should not be called during simulation.   
      * @param dispatch the new dispatch
      */
     public void setDispatch(Dispatch dispatch)
@@ -275,7 +281,13 @@ public class SAVSimulator extends Simulator
      */
     public void addVehicles()
     {
-        super.addVehicles();
+        for(Taxi v : departing)
+        {
+            v.entered();
+            v.getNextLink().addVehicle(v);
+        }
+        
+        departing.clear();
         
         // update shortest paths if needed
         if(time % ast_duration == 0)
@@ -300,6 +312,7 @@ public class SAVSimulator extends Simulator
             if(t.getDepTime() <= Simulator.time)
             {
                 ((SAVOrigin)t.getOrigin()).addTraveler(t);
+                dispatch.newTraveler(t);
                 traveler_idx++;
             }
             else
@@ -400,6 +413,11 @@ public class SAVSimulator extends Simulator
         }
         
         return output / count;
+    }
+    
+    public Dispatch getDispatch()
+    {
+        return dispatch;
     }
     
     /**

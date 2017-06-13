@@ -64,7 +64,7 @@ public class SAVDest extends SAVZone
             }
         }
         
-        Iterator<Taxi> iterator = parkedTaxis.iterator();
+        Iterator<Taxi> iterator = getParkedTaxis().iterator();
         
         while(iterator.hasNext())
         {
@@ -123,12 +123,12 @@ public class SAVDest extends SAVZone
         
         if(t.tempTaxi)
         {
-            parkedTaxis.add(t);
+            addParkedTaxi(t);
             t.delay = Integer.MAX_VALUE;
         }
         else if(t.delay > 0)
         {
-            parkedTaxis.add(t);
+            addParkedTaxi(t);
         }
         else
         {

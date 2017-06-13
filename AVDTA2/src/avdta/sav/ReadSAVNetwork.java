@@ -33,6 +33,7 @@ import java.util.Random;
 import java.util.Scanner;
 import java.util.Set;
 import avdta.project.SAVProject;
+import avdta.sav.dispatch.AssignedDispatch;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
 import java.util.TreeSet;
@@ -299,8 +300,15 @@ public class ReadSAVNetwork extends ReadDemandNetwork
             int origin_id = filein.nextInt();
             int capacity = filein.nextInt();
             
-            Taxi taxi = new Taxi(id, (SAVOrigin)nodesmap.get(origin_id), capacity);
-            
+            Taxi taxi;
+            if(sim.getDispatch() instanceof AssignedDispatch)
+            {
+                taxi = new AssignedTaxi(id, (SAVOrigin)nodesmap.get(origin_id), capacity);
+            }
+            else
+            {
+                taxi = new Taxi(id, (SAVOrigin)nodesmap.get(origin_id), capacity);
+            }
 
             sim.addTaxi(taxi);
         }

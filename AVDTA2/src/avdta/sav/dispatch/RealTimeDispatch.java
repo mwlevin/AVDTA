@@ -29,7 +29,7 @@ import java.util.TreeSet;
  *
  * @author Michael
  */
-public class DefaultDispatch extends Dispatch
+public class RealTimeDispatch extends Dispatch
 {
     private TreeSet<SAVTraveler> waiting;
     
@@ -41,7 +41,7 @@ public class DefaultDispatch extends Dispatch
     private Set<SAVOrigin> origins;;
     
     
-    public DefaultDispatch()
+    public RealTimeDispatch()
     {
     }
     
@@ -189,7 +189,9 @@ public class DefaultDispatch extends Dispatch
                 
                 for(int i = 0; i < numToSend; i++)
                 {
-                    r.getFreeTaxis().pollFirst().setPath(getPath(r, dest));
+                    Taxi taxi = r.getFreeTaxis().remove(0);
+                    taxi.setPath(getPath(r, dest));
+                    getSimulator().addDeparting(taxi);
                     count++;
                 }
             }
@@ -290,6 +292,7 @@ public class DefaultDispatch extends Dispatch
             
             Path firstPath = getPath(person.getOrigin(), person.getDest());
             taxi.setPath(firstPath);
+            getSimulator().addDeparting(taxi);
             
         }
         else
@@ -309,6 +312,7 @@ public class DefaultDispatch extends Dispatch
 
             Path firstPath = getPath(origin, dest);
             taxi.setPath(firstPath);
+            getSimulator().addDeparting(taxi);
 
             // match travelers to first
             Set<SAVTraveler> removed = new HashSet<SAVTraveler>();
@@ -488,7 +492,7 @@ public class DefaultDispatch extends Dispatch
                 if(cost < min)
                 {
                     min = cost;
-                    best = origin.getFreeTaxis().first();
+                    best = origin.getFreeTaxis().get(0);
                     path = temp;
                 }
 
@@ -504,6 +508,7 @@ public class DefaultDispatch extends Dispatch
                 if(path.size() > 0)
                 {
                     best.setPath(path);
+                    getSimulator().addDeparting(best);
                     person.setEtd((int)min);
                 }
                 handled.add(person);
@@ -558,6 +563,7 @@ public class DefaultDispatch extends Dispatch
             }
             
             taxi.setPath(SAVSimulator.dispatch.getPath(node, taxi.getPassengers().get(0).getDest()));
+            getSimulator().addDeparting(taxi);
             
             Set<SAVTraveler> removed = new HashSet<SAVTraveler>();
             for(SAVTraveler p : node.getWaitingTravelers())
@@ -590,13 +596,12 @@ public class DefaultDispatch extends Dispatch
         if(taxi.getNumPassengers() > 0)
         {
             taxi.setPath(getPath(node, taxi.getPassengers().get(0).getDest()));
+            getSimulator().addDeparting(taxi);
         }
         // if no travelers waiting, hold taxi
         else if(node.getNumWaiting() == 0)
         {
-
             addFreeTaxi(taxi);
-
         }
         // otherwise, give taxi to longest waiting traveler
         else

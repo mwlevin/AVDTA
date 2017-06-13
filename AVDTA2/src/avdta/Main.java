@@ -56,7 +56,7 @@ import avdta.sav.SAVSimulator;
 import avdta.sav.SAVZone;
 import avdta.sav.Taxi;
 import avdta.sav.SAVTraveler;
-import avdta.sav.dispatch.DefaultDispatch;
+import avdta.sav.dispatch.RealTimeDispatch;
 import avdta.traveler.Traveler;
 import avdta.util.RunningAvg;
 import avdta.vehicle.Bus;
@@ -196,7 +196,7 @@ public class Main
         project.loadSimulator();
         SAVSimulator test = project.getSimulator();
         
-        DefaultDispatch dispatch = new DefaultDispatch();
+        RealTimeDispatch dispatch = new RealTimeDispatch();
         
         test.setDispatch(dispatch);
         

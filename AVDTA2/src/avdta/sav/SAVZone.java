@@ -21,7 +21,7 @@ import java.util.Set;
  */
 public abstract class SAVZone extends Zone
 {
-    protected Set<Taxi> parkedTaxis;
+    private List<Taxi> parkedTaxis;
     
     /**
      * Creates this {@link SAVZone} with the specified id.
@@ -31,7 +31,7 @@ public abstract class SAVZone extends Zone
     {
         super(id);
         
-        parkedTaxis = new HashSet<Taxi>();
+        parkedTaxis = new ArrayList<Taxi>();
     }
     
     /**
@@ -43,7 +43,7 @@ public abstract class SAVZone extends Zone
     {
         super(id, loc);
         
-        parkedTaxis = new HashSet<Taxi>();
+        parkedTaxis = new ArrayList<Taxi>();
     }
     
     /**
@@ -60,7 +60,7 @@ public abstract class SAVZone extends Zone
      * Returns a set of all parked taxis.
      * @return a set of all parked taxis
      */
-    public Set<Taxi> getParkedTaxis()
+    public List<Taxi> getParkedTaxis()
     {
         return parkedTaxis;
     }

@@ -69,7 +69,7 @@ public abstract class Dispatch
         switch(idx)
         {
             case DEFAULT:
-                return new DefaultDispatch();
+                return new RealTimeDispatch();
             default:
                 throw new RuntimeException("Dispatcher \""+d+"\" not found.");
         }

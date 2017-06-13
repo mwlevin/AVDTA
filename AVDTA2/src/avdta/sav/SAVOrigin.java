@@ -8,6 +8,8 @@ import avdta.network.node.Location;
 import avdta.network.Simulator;
 import avdta.network.cost.TravelCost;
 import avdta.network.node.Zone;
+import avdta.sav.dispatch.AssignedDispatch;
+import avdta.sav.dispatch.RealTimeDispatch;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -28,7 +30,7 @@ public class SAVOrigin extends SAVZone
     private TreeSet<SAVTraveler> waitingTravelers;
     
     private TreeSet<Taxi> enrouteTaxis;
-    private TreeSet<Taxi> freeTaxis;
+    private List<Taxi> freeTaxis;
     
     private int storedGoal;
     public int storedDiff;
@@ -42,6 +44,7 @@ public class SAVOrigin extends SAVZone
         this(id, new Location());
     }
     
+    
     /**
      * Creates this {@link SAVOrigin} with the specified id and location.
      * @param id the id
@@ -52,14 +55,25 @@ public class SAVOrigin extends SAVZone
         super(id, loc);
         
         waitingTravelers = new TreeSet<SAVTraveler>();
-        enrouteTaxis = new TreeSet<Taxi>(new Comparator<Taxi>()
+
+    }
+    
+    public void initialize()
+    {
+        super.initialize();
+        
+        if(SAVSimulator.dispatch instanceof RealTimeDispatch)
         {
-            public int compare(Taxi lhs, Taxi rhs)
+            freeTaxis = new ArrayList<Taxi>();
+            
+            enrouteTaxis = new TreeSet<Taxi>(new Comparator<Taxi>()
             {
-                return lhs.eta - rhs.eta;
-            }
-        });
-        freeTaxis = new TreeSet<Taxi>();
+                public int compare(Taxi lhs, Taxi rhs)
+                {
+                    return lhs.eta - rhs.eta;
+                }
+            });
+        }
     }
     
     /**
@@ -124,10 +138,8 @@ public class SAVOrigin extends SAVZone
     {
         waitingTravelers.add(p);
         
-        SAVSimulator.dispatch.newTraveler(p);
-        
         // update etd
-        if(enrouteTaxis.size() >= waitingTravelers.size())
+        if(enrouteTaxis != null && enrouteTaxis.size() >= waitingTravelers.size())
         {
             int count = waitingTravelers.size()-1;
             
@@ -162,8 +174,14 @@ public class SAVOrigin extends SAVZone
     public void reset()
     {
         super.reset();
+        
         waitingTravelers.clear();
-        enrouteTaxis.clear();
+        
+        if(enrouteTaxis != null)
+        {
+            freeTaxis.clear();
+            enrouteTaxis.clear();
+        }
     }
     
     /**
@@ -179,7 +197,7 @@ public class SAVOrigin extends SAVZone
      * Returns a set of free taxis.
      * @return a set of free taxis
      */
-    public TreeSet<Taxi> getFreeTaxis()
+    public List<Taxi> getFreeTaxis()
     {
         return freeTaxis;
     }
@@ -237,7 +255,10 @@ public class SAVOrigin extends SAVZone
     {
         taxi.setLocation(this);
         
-        enrouteTaxis.remove(taxi);
+        if(enrouteTaxis != null)
+        {
+            enrouteTaxis.remove(taxi);
+        }
         
         // decide what to do with taxi
         addParkedTaxi(taxi);
@@ -256,7 +277,7 @@ public class SAVOrigin extends SAVZone
      */
     public int step()
     {
-        Iterator<Taxi> iterator = parkedTaxis.iterator();
+        Iterator<Taxi> iterator = getParkedTaxis().iterator();
         
         while(iterator.hasNext())
         {
