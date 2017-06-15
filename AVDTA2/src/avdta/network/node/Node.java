@@ -57,7 +57,7 @@ public abstract class Node extends Location implements Serializable, Comparable<
     private Set<Link> incoming, outgoing;
     private int id;
     
-    private VMS vms;
+    
     
     
     
@@ -100,18 +100,10 @@ public abstract class Node extends Location implements Serializable, Comparable<
         transitOut = new HashSet<TransitLink>();
         
         selected = false;
-        vms = VMS.NULL;
+        
     }
     
-    public void setVMS(VMS vms)
-    {
-        this.vms = vms;
-    }
     
-    public VMS getVMS()
-    {
-        return vms;
-    }
     
     
     /**

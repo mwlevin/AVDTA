@@ -4,6 +4,7 @@
  */
 package avdta.network.link;
 
+import avdta.duer.VMS;
 import avdta.network.node.Node;
 import avdta.util.RunningAvg;
 import avdta.network.Network;
@@ -85,6 +86,8 @@ public abstract class Link implements Serializable, Comparable<Link>
     public boolean added, settled;
 
     
+    private VMS vms;
+    
     // elevation
     private double grade;
     
@@ -128,7 +131,7 @@ public abstract class Link implements Serializable, Comparable<Link>
         coords[0] = source;
         coords[1] = dest;
         
-        
+        vms = VMS.NULL;
         
         
         avgTT = new RunningAvg[(int)Math.ceil(Simulator.duration / Simulator.ast_duration + 1)];
@@ -147,6 +150,16 @@ public abstract class Link implements Serializable, Comparable<Link>
         
         flowin = new int[(int)Math.ceil((double)Simulator.duration / Simulator.ast_duration)+1];
         
+    }
+    
+    public void setVMS(VMS vms)
+    {
+        this.vms = vms;
+    }
+    
+    public VMS getVMS()
+    {
+        return vms;
     }
     
     /**

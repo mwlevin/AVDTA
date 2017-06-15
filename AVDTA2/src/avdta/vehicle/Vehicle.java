@@ -615,7 +615,7 @@ public abstract class Vehicle implements Serializable, Comparable<Vehicle>
         
         if(actual != information)
         {
-            VMS vms = l.getSource().getVMS();
+            VMS vms = l.getVMS();
             if(Math.random() < vms.getProbOfInformation(actual))
             {
                 information = actual;

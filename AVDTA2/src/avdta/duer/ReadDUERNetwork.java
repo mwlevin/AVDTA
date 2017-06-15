@@ -90,7 +90,7 @@ public class ReadDUERNetwork extends ReadDTANetwork
                 information.put(incidentsmap.get(incidentId), prob);
             }
             
-            nodesmap.get(id).setVMS(new VMS(information));
+            linksmap.get(id).setVMS(new VMS(information));
         }
         filein.close();
     }
@@ -150,6 +150,6 @@ public class ReadDUERNetwork extends ReadDTANetwork
     
     public static String getVMSFileHeader()
     {
-        return "node id\ttype\tinformation";
+        return "link id\ttype\tinformation";
     }
 }

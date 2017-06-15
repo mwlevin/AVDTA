@@ -531,7 +531,7 @@ public class DUERSimulator extends DTASimulator
                                 }
                                 else
                                 {
-                                    prob = link.getDest().getVMS().getProbOfInformation(ip) * ip.getProbabilityOn();
+                                    prob = link.getVMS().getProbOfInformation(ip) * ip.getProbabilityOn();
                                 }
 
                                 totalProb += prob;
