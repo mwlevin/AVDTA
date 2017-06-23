@@ -19,7 +19,10 @@ import avdta.vehicle.DriverType;
 import avdta.vehicle.PersonalVehicle;
 import avdta.vehicle.Vehicle;
 import avdta.vehicle.route.Hyperpath;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -295,6 +298,65 @@ public class DUERSimulator extends DTASimulator
         }
         return output;
     }
+    
+    public void printHyperpaths(File file) throws IOException
+    {
+        PrintStream fileout = new PrintStream(new FileOutputStream(file), true);
+        
+        fileout.println("vehicle\tincident\tlinks");
+        
+        for(Vehicle v : vehicles)
+        {
+            for(Incident i : incidents)
+            {
+                List<Link> links = trace((Hyperpath)v.getRouteChoice(), v.getOrigin(), i);
+                
+                fileout.print(v.getId()+"\t"+i.getId()+"\t");
+                
+                String string = "";
+                
+                if(links.size() > 0)
+                {
+                    string += links.get(0);
+                    
+                    for(int j = 1; j < links.size(); j++)
+                    {
+                        string += ","+links.get(j);
+                    }
+                }
+                
+                fileout.println("{"+string+"}");
+            }
+        }
+        fileout.close();
+    }
+    
+    public List<Link> trace(Hyperpath path, Node origin, Incident incident)
+    {
+        List<Link> output = new ArrayList<>();
+        
+        Link curr = path.getFirstLink(origin);
+        Incident perception = Incident.UNKNOWN;
+        
+        while(curr != null)
+        {
+            output.add(curr);
+            
+            if(curr.getVMS().getProbOfInformation(incident) > 0)
+            {
+                perception = incident;
+            }
+            else if(isObservable(curr, incident))
+            {
+                perception = incident;
+            }
+            
+            curr = path.getNextLink(curr, perception);
+        }
+        
+        return output;
+    }
+    
     /**
      * Generates new paths and loads 1/stepsize vehicles onto the new paths.
      * This method also compares minimum travel times with experienced travel times to calculate the gap.

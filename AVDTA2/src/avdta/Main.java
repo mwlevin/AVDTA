@@ -122,12 +122,8 @@ public class Main
         Node dest = sim.createNodeIdsMap().get(-106);
         sim.test();
         Hyperpath test = sim.osp(dest, DriverType.AV);
-        System.out.println("--");
-        sim.printStates();
-        System.out.println("--");
-        System.out.println(test.getFirstLink(sim.createNodeIdsMap().get(101)));
-        System.out.println(test.getNextLink(sim.createLinkIdsMap().get(101), Incident.UNKNOWN));
-        
+        System.out.println(sim.trace(test, sim.createNodeIdsMap().get(101), sim.createIncidentIdsMap().get(1)));
+        System.out.println(sim.trace(test, sim.createNodeIdsMap().get(101), sim.createIncidentIdsMap().get(2)));
         //transitTest3();
         
         
