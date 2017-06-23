@@ -43,6 +43,8 @@ public class DUERSimulator extends DTASimulator
     
     private Map<Link, List<State>> allStates;
     
+    private double expTT;
+    
     /**
      * Constructs this {@link DTASimulator} empty with the given project.
      * @param project the project
@@ -70,6 +72,11 @@ public class DUERSimulator extends DTASimulator
         
         initializeTT();
         createStates();
+    }
+    
+    public double getExpTT()
+    {
+        return expTT;
     }
     
 
@@ -235,6 +242,8 @@ public class DUERSimulator extends DTASimulator
     
     public void simulate() throws IOException
     {
+        expTT = 0;
+        
         for(Incident i : incidents)
         {
             // activate incident
@@ -260,6 +269,19 @@ public class DUERSimulator extends DTASimulator
             avgTT.put(i, tt);
             
             deactivate(i);
+            
+            avgTT.put(i, tt);
+            
+            deactivate(i);
+            
+            double totalTT = 0.0;
+            
+            for(Vehicle v : vehicles)
+            {
+                totalTT += v.getTT();
+            }
+            
+            expTT += i.getProbabilityOn() * totalTT;
         }
     }
     
