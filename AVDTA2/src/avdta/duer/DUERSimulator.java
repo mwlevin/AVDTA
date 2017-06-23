@@ -288,6 +288,15 @@ public class DUERSimulator extends DTASimulator
         }
     }
     
+    /**
+     * Returns the vehicle arrival times file.
+     * @return {@link Project#getResultsFolder()}{@code /vat.dat}
+     */
+    public File getVatFile()
+    {
+        return new File(getProject().getResultsFolder()+"/vat_"+activeIncident.getId()+".dat");
+    }
+    
     public Map<Integer, Incident> createIncidentIdsMap()
     {
         Map<Integer, Incident> output = new HashMap<>();
