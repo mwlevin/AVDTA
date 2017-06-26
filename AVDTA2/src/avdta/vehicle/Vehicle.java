@@ -4,6 +4,7 @@
  */
 package avdta.vehicle;
 
+import avdta.dta.DTASimulator;
 import avdta.duer.Incident;
 import avdta.duer.VMS;
 import avdta.vehicle.wallet.Wallet;
@@ -118,6 +119,15 @@ public abstract class Vehicle implements Serializable, Comparable<Vehicle>
         curr = null;
         path = new Path();
         information = Incident.UNKNOWN;
+    }
+    
+    /**
+     * Converts the departure time to an assignment interval
+     * @return the assignment interval of the vehicle
+     */
+    public int getAST()
+    {
+        return getDepTime() / DTASimulator.ast_duration;
     }
     
     public void setInformation(Incident i)

@@ -61,6 +61,7 @@ import avdta.traveler.Traveler;
 import avdta.util.RunningAvg;
 import avdta.vehicle.Bus;
 import avdta.vehicle.DriverType;
+import avdta.vehicle.EmergencyVehicle;
 import avdta.vehicle.PersonalVehicle;
 import avdta.vehicle.Vehicle;
 import avdta.vehicle.fuel.BEV;
@@ -92,9 +93,8 @@ public class Main
     public static void main(String[] args) throws Exception
     {
 
-        //CDTA.main(args);
-        
-        
+        double[] output = emergencyTest1(1500);
+        System.out.println(output[0]+" "+output[1]);
         
         //caccTest1("scenario_2_PM", "scenario_2_PM_CACC");
         //caccTest2("scenario_2_PM_2_CACC");
@@ -116,7 +116,7 @@ public class Main
         
         //GUI.main(args);
         
-        
+        /*
         DUERProject project = new DUERProject(new File("projects/vms_test"));
         DUERSimulator sim = project.getSimulator();
         Node dest = sim.createNodeIdsMap().get(-106);
@@ -127,7 +127,7 @@ public class Main
         System.out.println("--");
         System.out.println(test.getFirstLink(sim.createNodeIdsMap().get(101)));
         System.out.println(test.getNextLink(sim.createLinkIdsMap().get(101), Incident.UNKNOWN));
-        
+        */
         //transitTest3();
         
         
@@ -1054,29 +1054,90 @@ public class Main
         return new double[]{vehTime.getAverage(), busTime.getAverage()};
     }
     
-    public static void transitTest1() throws IOException
-    {
+    
 
-        PrintStream fileout = new PrintStream(new FileOutputStream(new File("shared_transit1.txt")));
-        fileout.println("DA rate\tDA TT\tBus TT");
+    
+    public static void emergencyTest1() throws IOException
+    {
+        PrintStream fileout = new PrintStream(new FileOutputStream(new File("emergency_test1.txt")));
+        fileout.println("DA rate\tDA TT\tEV TT");
         for(int rate = 2200; rate <= 2200; rate+=10)
         {
-            double[] temp = transitTest1(rate, 200);
+            double[] temp = emergencyTest1(rate);
             fileout.println(rate+"\t"+temp[0]+"\t"+temp[1]);
         }
         
         fileout.close();
+    }
+    
+    public static double[] emergencyTest1(int DArate) throws IOException
+    {
+        DTAProject project = new DTAProject();
+        project.createProject("transit", new File("projects/emergency"));
+        DTASimulator sim = project.createEmptySimulator();
         
-        fileout = new PrintStream(new FileOutputStream(new File("shared_transit2.txt")));
-        fileout.println("bus rate\tDA TT\tBus TT");
-        for(int rate = 600; rate <= 600; rate+=10)
+        Set<Node> nodes = new HashSet<Node>();
+        Set<Link> links = new HashSet<Link>();
+        
+        
+        Zone n1 = new Zone(1);
+        Node n2 = new Intersection(2, new PriorityTBR());
+        Node n3 = new Intersection(3, new PriorityTBR());
+        Zone n4 = new Zone(4);
+        Zone n1a = new Zone(10);
+        
+        nodes.add(n1);
+        nodes.add(n2);
+        nodes.add(n3);
+        nodes.add(n4);
+        nodes.add(n1a);
+        
+        Link l12 = new CentroidConnector(12, n1, n2);
+        Link l12a = new CentroidConnector(110, n1a, n2);
+        CTMLink l23 = new CTMLink(23, n2, n3, 1200, 30, 15, 5280.0/Vehicle.vehicle_length, 2.0, 2);
+        Link l34 = new CentroidConnector(34, n3, n4);
+        
+        links.add(l12);
+        links.add(l23);
+        links.add(l34);
+        links.add(l12a);
+        
+        sim.setNetwork(nodes, links);
+        
+        
+        List<Vehicle> vehicles = new ArrayList<Vehicle>();
+        
+        int num = (int)(DArate * 60.0/60);
+        
+        for(int i = 0; i < num; i++)
         {
-            double[] temp = transitTest1(1800, rate);
-            fileout.println(rate+"\t"+temp[0]+"\t"+temp[1]);
+            vehicles.add(new PersonalVehicle(new Traveler(i+1, n1, n4, (int)(3600.0/num*i), 1)));
         }
         
-        fileout.close();
+        vehicles.add(new EmergencyVehicle(-1, n1a, n4, 200));
         
+        Collections.sort(vehicles);
+        
+        sim.setVehicles(vehicles);
+        
+        sim.msa(2);
+        
+        RunningAvg evTime = new RunningAvg();
+        RunningAvg vehTime = new RunningAvg();
+        
+        for(Vehicle v : vehicles)
+        {
+            if(v instanceof EmergencyVehicle)
+            {
+                evTime.add(v.getTT());
+            }
+            else
+            {
+                vehTime.add(v.getTT());
+            }
+        }
+        
+        return new double[]{vehTime.getAverage(), evTime.getAverage()};
     }
     
     public static double[] transitTest1(int DArate, int busRate) throws IOException
@@ -1137,11 +1198,6 @@ public class Main
         {
             vehicles.add(new Bus(100+i+1, 1, (int)(3600.0/num*i), path, stops));
         }
-        
-        Collections.sort(vehicles);
-        
-        
-        
         
         sim.setVehicles(vehicles);
         

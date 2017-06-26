@@ -136,14 +136,7 @@ public class PersonalVehicle extends Vehicle
         return traveler.getVOT();
     }
     
-    /**
-     * Converts the departure time to an assignment interval
-     * @return the assignment interval of the vehicle
-     */
-    public int getAST()
-    {
-        return traveler.getDepTime() / DTASimulator.ast_duration;
-    }
+    
     
     /**
      * Returns the vehicle type code

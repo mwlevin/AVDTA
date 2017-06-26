@@ -33,6 +33,7 @@ public class CDTA
 {
     public static void main(String[] args) throws IOException
     {
+        /*
         int type = 2;
         
         String network;
@@ -72,11 +73,12 @@ public class CDTA
         fileout2.close();
         fileout3.close();
 
-
+*/
 
         
-        
-        //analyze(new File("cdta_ast5_vehicles_150.txt"), 10);
+        analyze(new File("cdta_vehicles_100.txt"), 10);
+        System.out.println();
+        analyze(new File("cdta_vehicles_150.txt"), 10);
 
         //test2("coacongress2", 150, 5);
         //test2("coacongress2", 150, 15);

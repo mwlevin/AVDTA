@@ -130,6 +130,7 @@ public class ReadNetwork
     
     public static final int DA_VEHICLE = 100;
     public static final int BUS = 500;  
+    public static final int EMERGENCY_VEHICLE = 600;
     
 
     

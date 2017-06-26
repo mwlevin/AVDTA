@@ -13,6 +13,7 @@ import java.util.Iterator;
 import java.util.List;
 import avdta.network.node.obj.BackPressureObj;
 import avdta.network.link.Link;
+import avdta.vehicle.EmergencyVehicle;
 
 /**
  * This class represents a cell in the cell transmission model of a link ({@link CTMLink}). 
@@ -31,6 +32,8 @@ public abstract class Cell implements Comparable<Cell>
     private CTMLink link;
     
     
+    
+    private int num_emergency_vehicles;
 
     protected List<Vehicle> curr, next;
     
@@ -53,6 +56,8 @@ public abstract class Cell implements Comparable<Cell>
         next = new ArrayList<Vehicle>();
         
         numLanes = link.getNumLanes();
+        
+        num_emergency_vehicles = 0;
     }
     
     /**
@@ -172,6 +177,11 @@ public abstract class Cell implements Comparable<Cell>
     public void addVehicle(Vehicle v)
     {
         next.add(v);
+        
+        if(v instanceof EmergencyVehicle)
+        {
+            num_emergency_vehicles++;
+        }
     }
 
     /**
@@ -179,12 +189,53 @@ public abstract class Cell implements Comparable<Cell>
      */
     public void update()
     {
-        for(Vehicle v : next)
+        // move emergency vehicles to the front of the link if possible
+        if(num_emergency_vehicles > 0 && numLanes > 1 && curr.size() > getJamDPerLane() * (numLanes - 1))
         {
-            curr.add(v);
-        }
+            List<Vehicle> emergencyVehicles = new ArrayList<Vehicle>();
+            
+            Iterator<Vehicle> iter = curr.iterator();
+            
+            while(iter.hasNext())
+            {
+                Vehicle v = iter.next();
+                if(v instanceof EmergencyVehicle)
+                {
+                    emergencyVehicles.add(v);
+                    iter.remove();
+                }
+            }
 
-        next.clear();
+            for(Vehicle v : emergencyVehicles)
+            {
+                curr.add(0, v);
+            }
+            
+            for(Vehicle v : next)
+            {
+                if(v instanceof EmergencyVehicle)
+                {
+                    curr.add(0, v);
+                }
+                else
+                {
+                    curr.add(v);
+                }
+            }
+            
+            next.clear();
+        }
+        else
+        {
+            for(Vehicle v : next)
+            {
+                curr.add(v);
+            }
+
+            next.clear();
+        }
+        
+        
     }
     
     /**
@@ -192,7 +243,14 @@ public abstract class Cell implements Comparable<Cell>
      */
     public void prepare()
     {
-        double capacity = scaleCapacity(getCapacity()) * Network.dt / 3600.0;
+        int numLanes = getNumLanes();
+        
+        if(num_emergency_vehicles > 0 && numLanes > 1)
+        {
+            numLanes --;
+        }
+        
+        double capacity = scaleCapacity(getCapacityPerLane() * numLanes) * Network.dt / 3600.0;
 
         R = R - Math.floor(R);
         max_S = max_S - Math.floor(max_S);
@@ -215,6 +273,11 @@ public abstract class Cell implements Comparable<Cell>
         return link.getCapacityPerLane() * getNumLanes();
     }
     
+    public double getCapacityPerLane()
+    {
+        return link.getCapacityPerLane();
+    }
+    
     /**
      * Returns the jam density of this {@link Cell}. The jam density depends on the current number of lanes.
      * @return {@link CTMLink#getCellJamdPerLane()}*{@link Cell#getNumLanes()}
@@ -222,6 +285,11 @@ public abstract class Cell implements Comparable<Cell>
     public double getJamD()
     {
         return link.getCellJamdPerLane() * getNumLanes();
+    }
+    
+    public double getJamDPerLane()
+    {
+        return link.getCellJamdPerLane();
     }
 
     /**
@@ -312,6 +380,10 @@ public abstract class Cell implements Comparable<Cell>
      */
     public double getReceivingFlow(int numLanes)
     {
+        if(num_emergency_vehicles > 0 && numLanes > 1)
+        {
+            numLanes --;
+        }
         return Math.min(scaleCapacity(getCapacity()) * Network.dt / 3600.0, 
                 scaleWaveSpeed(link.getWaveSpeed()) / link.getFFSpeed() * (getJamD() - curr.size()));
     }
@@ -323,7 +395,18 @@ public abstract class Cell implements Comparable<Cell>
      */
     public boolean removeVehicle(Vehicle v)
     {
-        return curr.remove(v);
+        if(curr.remove(v))
+        {
+            if(v instanceof EmergencyVehicle)
+            {
+                num_emergency_vehicles--;
+            }
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
     
     /**

@@ -186,14 +186,12 @@ public class DTASimulator extends Simulator
         int count = 0;
         int moved_count = 0;
 
-        for(Vehicle x : vehicles)
+        for(Vehicle v : vehicles)
         {
-            if(x.isTransit())
+            if(v.isTransit())
             {
                 continue;
             }
-            
-            PersonalVehicle v = (PersonalVehicle)x;
             
             Node o = v.getOrigin();
             Node d = v.getDest();
