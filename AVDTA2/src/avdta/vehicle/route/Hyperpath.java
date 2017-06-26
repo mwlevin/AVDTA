@@ -14,7 +14,6 @@ import avdta.network.link.Link;
 import avdta.network.node.Node;
 import avdta.project.DTAProject;
 import avdta.util.Pair;
-import static avdta.vehicle.route.AdaptiveRoute.costFunc;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
@@ -28,7 +27,11 @@ import java.util.Set;
  */
 public class Hyperpath implements RouteChoice
 {
-
+    public static int next_id = 1;
+    
+    private int id;
+    
+    
     private Map<Link, Map<Incident,Link>> map;
     
     private Map<Node, Pair<Double, Link>> origins;
@@ -38,8 +41,25 @@ public class Hyperpath implements RouteChoice
     {
         map = new HashMap<>();
         origins = new HashMap<>();
+        setId();
     }
     
+    /**
+     * Updates the id to a uniquely generated id.
+     */
+    public void setId()
+    {
+        id = next_id++;
+    }
+    
+    /**
+     * Returns the {@link Path} id
+     * @return the id
+     */
+    public int getId()
+    {
+        return id;
+    }
     
     // implement this
     public double getAvgCost(Node origin, double dep_time)

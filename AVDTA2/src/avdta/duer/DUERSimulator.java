@@ -19,7 +19,10 @@ import avdta.vehicle.DriverType;
 import avdta.vehicle.PersonalVehicle;
 import avdta.vehicle.Vehicle;
 import avdta.vehicle.route.Hyperpath;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -42,6 +45,8 @@ public class DUERSimulator extends DTASimulator
     private Set<IncidentEffect> null_effects;
     
     private Map<Link, List<State>> allStates;
+    
+    private double expTT;
     
     /**
      * Constructs this {@link DTASimulator} empty with the given project.
@@ -70,6 +75,11 @@ public class DUERSimulator extends DTASimulator
         
         initializeTT();
         createStates();
+    }
+    
+    public double getExpTT()
+    {
+        return expTT;
     }
     
 
@@ -235,6 +245,8 @@ public class DUERSimulator extends DTASimulator
     
     public void simulate() throws IOException
     {
+        expTT = 0;
+        
         for(Incident i : incidents)
         {
             // activate incident
@@ -260,7 +272,29 @@ public class DUERSimulator extends DTASimulator
             avgTT.put(i, tt);
             
             deactivate(i);
+            
+            avgTT.put(i, tt);
+            
+            deactivate(i);
+            
+            double totalTT = 0.0;
+            
+            for(Vehicle v : vehicles)
+            {
+                totalTT += v.getTT();
+            }
+            
+            expTT += i.getProbabilityOn() * totalTT;
         }
+    }
+    
+    /**
+     * Returns the vehicle arrival times file.
+     * @return {@link Project#getResultsFolder()}{@code /vat.dat}
+     */
+    public File getVatFile()
+    {
+        return new File(getProject().getResultsFolder()+"/vat_"+activeIncident.getId()+".dat");
     }
     
     public Map<Integer, Incident> createIncidentIdsMap()
@@ -273,6 +307,65 @@ public class DUERSimulator extends DTASimulator
         }
         return output;
     }
+    
+    public void printHyperpaths(File file) throws IOException
+    {
+        PrintStream fileout = new PrintStream(new FileOutputStream(file), true);
+        
+        fileout.println("vehicle\tincident\tlinks");
+        
+        for(Vehicle v : vehicles)
+        {
+            for(Incident i : incidents)
+            {
+                List<Link> links = trace((Hyperpath)v.getRouteChoice(), v.getOrigin(), i);
+                
+                fileout.print(v.getId()+"\t"+i.getId()+"\t");
+                
+                String string = "";
+                
+                if(links.size() > 0)
+                {
+                    string += links.get(0);
+                    
+                    for(int j = 1; j < links.size(); j++)
+                    {
+                        string += ","+links.get(j);
+                    }
+                }
+                
+                fileout.println("{"+string+"}");
+            }
+        }
+        fileout.close();
+    }
+    
+    public List<Link> trace(Hyperpath path, Node origin, Incident incident)
+    {
+        List<Link> output = new ArrayList<>();
+        
+        Link curr = path.getFirstLink(origin);
+        Incident perception = Incident.UNKNOWN;
+        
+        while(curr != null)
+        {
+            output.add(curr);
+            
+            if(curr.getVMS().getProbOfInformation(incident) > 0)
+            {
+                perception = incident;
+            }
+            else if(isObservable(curr, incident))
+            {
+                perception = incident;
+            }
+            
+            curr = path.getNextLink(curr, perception);
+        }
+        
+        return output;
+    }
+    
     /**
      * Generates new paths and loads 1/stepsize vehicles onto the new paths.
      * This method also compares minimum travel times with experienced travel times to calculate the gap.
