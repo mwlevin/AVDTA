@@ -2,19 +2,56 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-/*
+
 package avdta.sav;
 
+import avdta.demand.DemandRecord;
+import avdta.demand.DynamicODRecord;
+import avdta.demand.ReadDemandNetwork;
 import avdta.network.link.Link;
 import avdta.network.node.Node;
 import avdta.network.Simulator;
 import avdta.network.node.policy.IntersectionPolicy;
+import avdta.project.SAVProject;
+import avdta.sav.tabusearch.TabuSearch;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
 import java.util.TreeMap;
+
+
+public class SAVMain
+{
+    public static void main(String[] args) throws Exception
+    {
+        SAVProject project = new SAVProject(new File("projects/SiouxFalls"));
+        
+        /*
+        ReadSAVNetwork read = new ReadSAVNetwork();
+        
+        read.prepareDemand(project, 0.04);
+        
+        read.createFleetEq(project, 300);
+        System.exit(0);
+        */
+        
+
+        SAVSimulator sim = project.getSimulator();
+        
+        sim.setUseLinkDijkstras(false);
+        TabuSearch t = new TabuSearch(project);
+        t.assignInitialTravelers();
+        
+        
+        sim.simulate();
+        
+    }
+}
 
 /**
  *

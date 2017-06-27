@@ -6,6 +6,7 @@ package avdta.sav;
 
 import avdta.network.Path;
 import avdta.traveler.Traveler;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -22,6 +23,19 @@ public class AssignedTaxi extends Taxi
     public AssignedTaxi(int id, SAVOrigin startLocation, int capacity)
     {
         super(id, startLocation, capacity);
+        
+        travelers = new ArrayList<SAVTraveler>();
+        segments = new ArrayList<>();
+    }
+    
+    public void assignTraveler(SAVTraveler t, Path path)
+    {
+        travelers.add(t);
+        segments.add(path);
+    }
+    public List<SAVTraveler> getTravelers()
+    {
+        return travelers;
     }
     
     // do not call this during simulation

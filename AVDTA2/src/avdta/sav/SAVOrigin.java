@@ -62,9 +62,11 @@ public class SAVOrigin extends SAVZone
     {
         super.initialize();
         
+        freeTaxis = new ArrayList<Taxi>();
+        
         if(SAVSimulator.dispatch instanceof RealTimeDispatch)
         {
-            freeTaxis = new ArrayList<Taxi>();
+            
             
             enrouteTaxis = new TreeSet<Taxi>(new Comparator<Taxi>()
             {

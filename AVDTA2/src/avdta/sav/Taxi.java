@@ -45,6 +45,8 @@ public class Taxi extends Vehicle
     
     private int capacity;
     
+    private double dropTime;
+    
     public Taxi(int id, SAVOrigin startLocation, int capacity)
     {
         super(id);
@@ -55,6 +57,7 @@ public class Taxi extends Vehicle
        
         total_distance = 0;
         empty_distance = 0;
+        dropTime = 0;
         
         this.capacity = capacity;
         
@@ -77,6 +80,17 @@ public class Taxi extends Vehicle
         else
         {
             return null;
+        }
+    }
+    
+    public Node getCurrentLocation(){
+        if(!passengers.isEmpty()){
+            int size = passengers.size();
+            SAVDest dest = null != passengers.get(size)? passengers.get(size).getDest() : null;
+            return null != dest ? dest.getLinkedZone():null;
+        }
+        else{
+            return getLocation();
         }
     }
     
@@ -183,5 +197,13 @@ public class Taxi extends Vehicle
     public boolean isEmpty()
     {
         return getNumPassengers() == 0;
+    }
+
+    public double getDropTime() {
+        return dropTime;
+    }
+
+    public void setDropTime(double dropTime) {
+        this.dropTime = dropTime;
     }
 }

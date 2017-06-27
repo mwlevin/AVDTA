@@ -26,6 +26,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import avdta.sav.dispatch.Dispatch;
 import avdta.gui.util.StatusUpdate;
+import avdta.sav.dispatch.AssignedDispatch;
 import avdta.sav.dispatch.RealTimeDispatch;
 
 /**
@@ -82,6 +83,8 @@ public class SAVSimulator extends Simulator
         
         taxis = new ArrayList<Taxi>();
         setCostFunction(TravelCost.dnlTime);
+        
+        dispatch = new AssignedDispatch();
     }
     
     /**

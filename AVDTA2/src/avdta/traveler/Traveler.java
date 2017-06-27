@@ -42,6 +42,11 @@ public class Traveler implements Comparable<Traveler>, Serializable
         this.vot = vot;
     }
     
+    public String toString()
+    {
+        return ""+id;
+    }
+    
     public double getVOT()
     {
         return vot;
