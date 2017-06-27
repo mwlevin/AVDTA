@@ -94,8 +94,8 @@ public class Main
     public static void main(String[] args) throws Exception
     {
 
-        double[] output = emergencyTest1(1500);
-        System.out.println(output[0]+" "+output[1]);
+       // double[] output = emergencyTest1(1500);
+        //System.out.println(output[0]+" "+output[1]);
         
         //caccTest1("scenario_2_PM", "scenario_2_PM_CACC");
         //caccTest2("scenario_2_PM_2_CACC");
@@ -115,7 +115,7 @@ public class Main
         //SAVtest();
         
         
-        //GUI.main(args);
+        GUI.main(args);
         
         /*
         DUERProject project = new DUERProject(new File("projects/vms_test"));
@@ -150,8 +150,68 @@ public class Main
         */
     }
     
+    public static void testAllEmergency() throws IOException
+    {
+        int num_repeats = 50;
+        
+        PrintStream out = System.out;
+        
+        out.println("Demand\tNormal\tEV priority");
+        for(int dem = 70; dem <= 120; dem += 5)
+        {
+            double normal = testEmergencyVehicle("coacongress2_"+dem, num_repeats);
+            double ev_fcfs = testEmergencyVehicle("cocaongress2_"+dem+"_EV", num_repeats);
+            
+            out.println(dem+"\t"+normal+"\t"+ev_fcfs);
+        }
+    }
     
-    
+    // returns average % delay for emergency vehicle
+    public static double testEmergencyVehicle(String network, int num_repeats) throws IOException
+    {
+        DTAProject project = new DTAProject(new File("projects/"+network));
+        
+        DTASimulator sim = project.getSimulator();
+        sim.loadAssignment(project.getLastAssignment());
+        
+        List<Vehicle> vehicles = sim.getVehicles();
+        
+        List<Node> nodes = new ArrayList<Node>();
+        
+        for(Node n : sim.getNodes())
+        {
+            if(!n.isZone())
+            {
+                nodes.add(n);
+            }
+        }
+        
+        RunningAvg output = new RunningAvg();
+        
+        for(int i = 0; i < num_repeats; i++)
+        {
+            Node origin = nodes.get((int)(Math.random()*nodes.size()));
+            Node dest = null;
+            do
+            {
+                dest = nodes.get((int)(Math.random()*nodes.size()));
+            }
+            while(dest == origin);
+            
+            int deptime = (int)(Math.random() * 3600)+1800;
+            
+            EmergencyVehicle ev = new EmergencyVehicle(1000000, origin, dest, deptime);
+            vehicles.add(ev);
+            Collections.sort(vehicles);
+            sim.simulate();
+            
+            vehicles.remove(ev);
+            
+            output.add(sim.calcAvgEmergencyPercentDelay());
+        }
+        
+        return output.getAverage();
+    }
     
     
     public static void SAVtest() throws IOException

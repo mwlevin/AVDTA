@@ -16,6 +16,7 @@ import avdta.project.DTAProject;
 import avdta.traveler.Traveler;
 import avdta.vehicle.VOT;
 import avdta.vehicle.DriverType;
+import avdta.vehicle.EmergencyVehicle;
 import avdta.vehicle.PersonalVehicle;
 import avdta.vehicle.wallet.StaticWallet;
 import avdta.vehicle.Vehicle;
@@ -128,7 +129,15 @@ public class ReadDTANetwork extends ReadDemandNetwork
             double vot = filein.nextDouble();
             filein.nextLine();
   
-            if(type / 100 == DA_VEHICLE/100)
+            if(type/100 == EMERGENCY_VEHICLE/100)
+            {
+                Zone origin = (Zone)nodesmap.get(origin_id);
+                Zone dest = (Zone)nodesmap.get(dest_id);
+                
+                
+                vehicles.add(new EmergencyVehicle(id, origin, dest, dtime));
+            }
+            else if(type / 100 == DA_VEHICLE/100)
             {
                 
             

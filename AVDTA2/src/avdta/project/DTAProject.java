@@ -54,6 +54,25 @@ public class DTAProject extends DemandProject
         return "dta";
     }
     
+    // return the last created
+    public Assignment getLastAssignment() throws IOException
+    {
+        File directory = new File(getAssignmentsFolder());
+        
+        File newest = null;
+        long time = 0;
+        
+        for(File f : directory.listFiles())
+        {
+            if(f.lastModified() > time)
+            {
+                time = f.lastModified();
+                newest =f ;
+            }
+        }
+        return new Assignment(newest);
+    }
+    
     /**
      * Loads the specified {@link Assignment} into the associated {@link DTASimulator}
      * @param assign the {@link Assignment} to be loaded

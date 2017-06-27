@@ -1368,6 +1368,29 @@ public class Simulator extends Network
     }
     
     /**
+     * This calculates the average bus travel time ratio.
+     * This iterates over all vehicles and averages the travel time ratio for transit vehicles.
+     * The travel time ratio is {@link Vehicle#getTT()}/the vehicle free flow travel time.
+     * @return the average bus travel time ratio
+     */
+    public double calcAvgEmergencyPercentDelay()
+    {
+        double output = 0;
+        int count = 0;
+        
+        for(Vehicle v : vehicles)
+        {
+            if(v instanceof EmergencyVehicle)
+            {
+                output += v.getTT() / v.getPath().getFFTime();
+                count++;
+            }
+        }
+        
+        return output / count - 1;
+    }
+    
+    /**
      * This calculates the average transit delay.
      * The delay is the travel time - the free flow travel time.
      * This iterates over all vehicles and sums the delay for transit vehicles.
