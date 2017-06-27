@@ -35,6 +35,7 @@ import avdta.network.node.policy.SignalWeightedTBR;
 import avdta.network.node.StopSign;
 import avdta.network.node.TrafficSignal;
 import avdta.network.node.Zone;
+import avdta.network.node.policy.EmergencyPolicy;
 import avdta.network.node.policy.TransitFirst;
 import avdta.project.DTAProject;
 import avdta.project.Project;
@@ -78,7 +79,7 @@ public class NodesPanel extends GUIPanel
     
     private StatusBar update;
     
-    private static final String[] NODE_OPTIONS = new String[]{"FCFS", "backpressure", "P0", "Phased", "Signal-weighted", "Transit-FCFS"};
+    private static final String[] NODE_OPTIONS = new String[]{"FCFS", "backpressure", "P0", "Phased", "Signal-weighted", "Transit-FCFS", "Emergency-FCFS"};
     private JComboBox<String> nodeOptions;
     
     public NodesPanel(NetworkPanel parent)
@@ -213,6 +214,7 @@ public class NodesPanel extends GUIPanel
             int p0Count = 0;
             int auctionCount = 0;
             int transitFirstCount = 0;
+            int emergencyCount = 0;
             
             for(Node n : project.getSimulator().getNodes())
             {
@@ -273,7 +275,11 @@ public class NodesPanel extends GUIPanel
                         
                         IntersectionPolicy policy = ((PriorityTBR)c).getPolicy();
                         
-                        if(policy instanceof FCFSPolicy)
+                        if(policy instanceof EmergencyPolicy)
+                        {
+                            emergencyCount++;
+                        }
+                        else if(policy instanceof FCFSPolicy)
                         {
                             fcfsCount++;
                         }
@@ -347,6 +353,10 @@ public class NodesPanel extends GUIPanel
                 if(transitFirstCount > 0)
                 {
                     data.append(transitFirstCount+"\ttransit first");
+                }
+                if(emergencyCount > 0)
+                {
+                    data.append(emergencyCount + "\temergency first");
                 }
             }
             
@@ -438,6 +448,10 @@ public class NodesPanel extends GUIPanel
                         else if(nodeOptions.getSelectedItem().equals("Transit-FCFS"))
                         {
                             newtype += ReadNetwork.TRANSIT_FIRST + ReadNetwork.FCFS;
+                        }
+                        else if(nodeOptions.getSelectedItem().equals("Emergency-FCFS"))
+                        {
+                            newtype += ReadNetwork.EMERGENCY_FIRST;
                         }
                     }
 

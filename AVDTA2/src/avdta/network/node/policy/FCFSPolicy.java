@@ -7,9 +7,13 @@ package avdta.network.node.policy;
 import avdta.network.ReadNetwork;
 import avdta.network.node.policy.IntersectionPolicy;
 import avdta.network.Simulator;
+import avdta.network.link.Link;
 import avdta.vehicle.Vehicle;
 import avdta.network.node.TBR;
 import avdta.network.node.TBR;
+import avdta.vehicle.EmergencyVehicle;
+import avdta.vehicle.route.FixedPath;
+import java.util.Set;
 
 /**
  * Prioritizes vehicles based on their reservation time (set on initialization, or when a vehicle reaches the front of its lane).

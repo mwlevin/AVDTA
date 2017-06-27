@@ -19,7 +19,7 @@ public class FixedPath implements RouteChoice
 {
     private Path path;
     
-    public int path_idx;
+    private int path_idx;
     
     /**
      * Constructs this {@link FixedPath} around the given {@link Path}.
@@ -34,6 +34,11 @@ public class FixedPath implements RouteChoice
     public void activate()
     {
         
+    }
+    
+    public int getPathIndex()
+    {
+        return path_idx;
     }
     
     /**

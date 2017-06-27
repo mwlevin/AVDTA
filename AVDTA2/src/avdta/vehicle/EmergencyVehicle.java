@@ -5,8 +5,11 @@
 package avdta.vehicle;
 
 import avdta.dta.ReadDTANetwork;
+import avdta.network.Simulator;
+import avdta.network.cost.TravelCost;
 import avdta.network.node.Node;
 import avdta.vehicle.fuel.VehicleClass;
+import avdta.vehicle.route.FixedPath;
 import avdta.vehicle.wallet.Wallet;
 
 /**
@@ -24,6 +27,14 @@ public class EmergencyVehicle extends Vehicle
         this.origin = origin;
         this.dest = dest;
         this.deptime = deptime;
+        
+        setRouteChoice(new FixedPath(Simulator.active.findPath(this, TravelCost.ffTime)));
+    }
+    
+    public void exited()
+    {
+        super.exited();
+        Simulator.active.getEmergencyVehicles().remove(this);
     }
     
     public int getType()

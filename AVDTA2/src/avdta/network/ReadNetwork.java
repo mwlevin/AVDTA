@@ -97,6 +97,7 @@ public class ReadNetwork
     
     // reservation policies
     public static final int FCFS = 1;
+    public static final int EMERGENCY_FIRST = 61;
     public static final int FIFO = 4;
     public static final int AUCTION = 8;
     public static final int RANDOM = 9;
@@ -109,6 +110,7 @@ public class ReadNetwork
     public static final int PRESSURE = 2;
     public static final int P0 = 3;
     public static final int TRANSIT_FIRST = 40;
+    
     
 
  
@@ -531,6 +533,9 @@ public class ReadNetwork
                                 break;
                             case RANDOM: 
                                 node.setControl(new PriorityTBR(node, IntersectionPolicy.random));
+                                break;
+                            case EMERGENCY_FIRST:
+                                node.setControl(new PriorityTBR(node, IntersectionPolicy.emergency));
                                 break;
                             case PRESSURE: 
                                 node.setControl(new MCKSTBR(node, backpressureobj));

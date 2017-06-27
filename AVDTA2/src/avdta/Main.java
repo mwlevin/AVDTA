@@ -93,8 +93,8 @@ public class Main
     public static void main(String[] args) throws Exception
     {
 
-        double[] output = emergencyTest1(1500);
-        System.out.println(output[0]+" "+output[1]);
+        //double[] output = emergencyTest1(1500);
+        //System.out.println(output[0]+" "+output[1]);
         
         //caccTest1("scenario_2_PM", "scenario_2_PM_CACC");
         //caccTest2("scenario_2_PM_2_CACC");
@@ -114,7 +114,7 @@ public class Main
         //SAVtest();
         
         
-        //GUI.main(args);
+        GUI.main(args);
         
         /*
         DUERProject project = new DUERProject(new File("projects/vms_test"));

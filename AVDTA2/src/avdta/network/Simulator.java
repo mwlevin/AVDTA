@@ -54,6 +54,7 @@ import avdta.network.link.AbstractSplitLink;
 import avdta.network.link.LTMLink;
 import avdta.network.link.TransitLane;
 import avdta.util.RunningAvg;
+import avdta.vehicle.EmergencyVehicle;
 /**
  * A {@link Simulator} extends {@link Network} in adding {@link Vehicle}s and dynamic network loading. 
  * Where the {@link Network} works with {@link Node}s and {@link Link}s, {@link Simulator} methods are focused on {@link Vehicle}s.
@@ -69,7 +70,7 @@ public class Simulator extends Network
     
     public static int ast_duration = 15*60;
     public static final int num_asts = duration / ast_duration ;
-    
+
     
     /**
      * Calculates the assignment interval for the current time, based on the assignment duration.
@@ -138,6 +139,8 @@ public class Simulator extends Network
     
     protected StatusUpdate statusUpdate;
     
+    private Set<EmergencyVehicle> emergency;
+    
     
     /**
      * Constructs the Simulator for the given {@link Project}. 
@@ -152,7 +155,10 @@ public class Simulator extends Network
         vehicles = new ArrayList<Vehicle>();
         active = this;
         lastExit = duration;
+        
+        emergency = new HashSet<>();
     }
+    
     
     /**
      * Constructs the Simulator for the given {@link Project} with the given {@link Node}s and {@link Link}s.
@@ -175,6 +181,13 @@ public class Simulator extends Network
  
         time = 0;
         lastExit = duration;
+        
+        emergency = new HashSet<>();
+    }
+    
+    public Set<EmergencyVehicle> getEmergencyVehicles()
+    {
+        return emergency;
     }
     
     public Incident getIncident()
@@ -354,6 +367,8 @@ public class Simulator extends Network
         {
             v.reset();
         }
+        
+        emergency.clear();
     }
 
     /**
@@ -427,7 +442,7 @@ public class Simulator extends Network
      * @return the shortest path
      * @see TravelCost
      */
-    public Path findPath(PersonalVehicle v, TravelCost costFunc)
+    public Path findPath(Vehicle v, TravelCost costFunc)
     {
         return findPath(v.getOrigin(), v.getDest(), v.getDepTime(), v.getVOT(), v.getDriver(), costFunc);
     }
@@ -1021,6 +1036,11 @@ public class Simulator extends Network
             {
                 v.entered();
                 v.getNextLink().addVehicle(v);
+                
+                if(v instanceof EmergencyVehicle)
+                {
+                    emergency.add((EmergencyVehicle)v);
+                }
                 veh_idx++;
             }
             else

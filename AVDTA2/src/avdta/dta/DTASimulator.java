@@ -22,6 +22,7 @@ import avdta.project.Project;
 import avdta.util.FileTransfer;
 import avdta.vehicle.Bus;
 import avdta.vehicle.DriverType;
+import avdta.vehicle.EmergencyVehicle;
 import avdta.vehicle.PersonalVehicle;
 import avdta.vehicle.VOT;
 import avdta.vehicle.Vehicle;
@@ -248,7 +249,7 @@ public class DTASimulator extends Simulator
             
             
             // move vehicle random chance
-            if(v.getRouteChoice() == null || rand.nextDouble() < stepsize)
+            if(v.getRouteChoice() == null || (rand.nextDouble() < stepsize && !(v instanceof EmergencyVehicle)))
             {
 
                 try

@@ -29,6 +29,7 @@ public abstract class IntersectionPolicy implements Comparator<Vehicle>
     public static final RandomPolicy random = new RandomPolicy();
     public static final BackPressureObj backpressure = new BackPressureObj();
     public static final P0Obj P0 = new P0Obj();
+    public static final EmergencyPolicy emergency = new EmergencyPolicy();
     
     /**
      * Initializes {@link Vehicle} priority for the specified {@link Node} and {@link Vehicle}
