@@ -46,6 +46,7 @@ import java.util.HashSet;
 import avdta.network.node.*;
 import avdta.network.link.*;
 import avdta.network.link.cell.Cell;
+import avdta.network.node.policy.IntersectionPolicy;
 import avdta.network.node.policy.TransitFirst;
 import avdta.project.DUERProject;
 import avdta.project.FourStepProject;
@@ -93,8 +94,8 @@ public class Main
     public static void main(String[] args) throws Exception
     {
 
-        //double[] output = emergencyTest1(1500);
-        //System.out.println(output[0]+" "+output[1]);
+        double[] output = emergencyTest1(1500);
+        System.out.println(output[0]+" "+output[1]);
         
         //caccTest1("scenario_2_PM", "scenario_2_PM_CACC");
         //caccTest2("scenario_2_PM_2_CACC");
@@ -114,7 +115,7 @@ public class Main
         //SAVtest();
         
         
-        GUI.main(args);
+        //GUI.main(args);
         
         /*
         DUERProject project = new DUERProject(new File("projects/vms_test"));
@@ -1081,8 +1082,8 @@ public class Main
         
         
         Zone n1 = new Zone(1);
-        Node n2 = new Intersection(2, new PriorityTBR());
-        Node n3 = new Intersection(3, new PriorityTBR());
+        Node n2 = new Intersection(2, new PriorityTBR(IntersectionPolicy.emergency));
+        Node n3 = new Intersection(3, new PriorityTBR(IntersectionPolicy.emergency));
         Zone n4 = new Zone(4);
         Zone n1a = new Zone(10);
         

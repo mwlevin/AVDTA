@@ -72,5 +72,6 @@ public class EmergencyPolicy extends FCFSPolicy
         {
             v.reservation_time = Integer.MAX_VALUE;
         }
+        
     }
 }
