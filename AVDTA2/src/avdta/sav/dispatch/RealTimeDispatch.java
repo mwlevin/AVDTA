@@ -191,7 +191,7 @@ public class RealTimeDispatch extends Dispatch
                 {
                     Taxi taxi = r.getFreeTaxis().remove(0);
                     taxi.setPath(getPath(r, dest));
-                    getSimulator().addDeparting(taxi);
+                    taxi.delay = 0;
                     count++;
                 }
             }
@@ -292,8 +292,7 @@ public class RealTimeDispatch extends Dispatch
             
             Path firstPath = getPath(person.getOrigin(), person.getDest());
             taxi.setPath(firstPath);
-            getSimulator().addDeparting(taxi);
-            
+            taxi.delay = 0;
         }
         else
         {
@@ -312,7 +311,7 @@ public class RealTimeDispatch extends Dispatch
 
             Path firstPath = getPath(origin, dest);
             taxi.setPath(firstPath);
-            getSimulator().addDeparting(taxi);
+            taxi.delay = 0;
 
             // match travelers to first
             Set<SAVTraveler> removed = new HashSet<SAVTraveler>();
@@ -508,7 +507,7 @@ public class RealTimeDispatch extends Dispatch
                 if(path.size() > 0)
                 {
                     best.setPath(path);
-                    getSimulator().addDeparting(best);
+                    best.delay = 0;
                     person.setEtd((int)min);
                 }
                 handled.add(person);
@@ -563,7 +562,7 @@ public class RealTimeDispatch extends Dispatch
             }
             
             taxi.setPath(SAVSimulator.dispatch.getPath(node, taxi.getPassengers().get(0).getDest()));
-            getSimulator().addDeparting(taxi);
+            taxi.delay = 0;
             
             Set<SAVTraveler> removed = new HashSet<SAVTraveler>();
             for(SAVTraveler p : node.getWaitingTravelers())
@@ -596,7 +595,7 @@ public class RealTimeDispatch extends Dispatch
         if(taxi.getNumPassengers() > 0)
         {
             taxi.setPath(getPath(node, taxi.getPassengers().get(0).getDest()));
-            getSimulator().addDeparting(taxi);
+            taxi.delay = 0;
         }
         // if no travelers waiting, hold taxi
         else if(node.getNumWaiting() == 0)

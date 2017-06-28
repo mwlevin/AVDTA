@@ -8,6 +8,7 @@ import avdta.network.node.policy.IntersectionPolicy;
 import avdta.network.link.Link;
 import avdta.network.Network;
 import avdta.network.ReadNetwork;
+import avdta.network.Simulator;
 import avdta.vehicle.Vehicle;
 import avdta.network.node.TurningMovement;
 import java.util.ArrayList;
@@ -166,6 +167,8 @@ public class PriorityTBR extends TBR
         for(Link l : node.getIncoming())
         {
             List<Vehicle> temp = l.getSendingFlow();
+            
+            
 
             l.q = 0;
             l.Q = Math.max(l.getCapacityPerTimestep(), temp.size());
@@ -185,6 +188,7 @@ public class PriorityTBR extends TBR
                 vehicles.add(v); 
             }
         }
+
 
         // initializations
 
@@ -242,6 +246,11 @@ public class PriorityTBR extends TBR
                 {
                     TurningMovement movement = conflicts.get(i).get(j);
 
+                    if(conflicts.get(i).get(j) == null)
+                    {
+                        System.out.println(v.getId());
+                        System.out.println(i+" "+j+" "+node.getId()+" "+v.getRouteChoice());
+                    }
                     if(j.R >= receivingFlow && hasAvailableCapacity(i, j, equiv_flow))
                     {
                         

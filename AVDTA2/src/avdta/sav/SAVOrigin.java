@@ -210,27 +210,33 @@ public class SAVOrigin extends SAVZone
      */
     public void addEnrouteTaxi(Taxi t)
     {
-        enrouteTaxis.add(t);
-        
-        // check if all passengers in t are destined here
-        for(SAVTraveler p : t.getPassengers())
+        if(enrouteTaxis != null)
         {
-            if(p.getDest() != getLinkedZone())
+            enrouteTaxis.add(t);
+
+            // check if all passengers in t are destined here
+            for(SAVTraveler p : t.getPassengers())
             {
-                return;
+                if(p.getDest() != getLinkedZone())
+                {
+                    return;
+                }
             }
+            updateEtds(t.eta);
+            // whenever a taxi is on the way, update etd for next traveler
         }
-        updateEtds(t.eta);
-        // whenever a taxi is on the way, update etd for next traveler
     }
     
     public void removeEnrouteTaxi(Taxi t)
     {
-        enrouteTaxis.remove(t);
-        
-        if(enrouteTaxis.size() > 0)
+        if(enrouteTaxis != null)
         {
-            updateEtds(enrouteTaxis.first().eta);
+            enrouteTaxis.remove(t);
+
+            if(enrouteTaxis.size() > 0)
+            {
+                updateEtds(enrouteTaxis.first().eta);
+            }
         }
     }
     
@@ -289,10 +295,19 @@ public class SAVOrigin extends SAVZone
             {
                 if(t.delay <= 0)
                 {
+                    /*
+                    if(Simulator.debug)
+                    {
+                        System.out.println(Simulator.time+": "+t+" entered "+t.getRouteChoice());
+                    }
+                    */
                     iterator.remove();
                     t.entered();
                     t.getNextLink().addVehicle(t);
                     // whenever a taxi departs, update its eta
+                    
+                    
+
                 }
                 else
                 {

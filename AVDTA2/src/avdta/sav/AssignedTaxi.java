@@ -17,7 +17,7 @@ public class AssignedTaxi extends Taxi
 {
     private List<SAVTraveler> travelers;
     private List<Path> segments;
-    private int traveler_idx;
+    public int traveler_idx;
     private int segment_idx;
     
     public AssignedTaxi(int id, SAVOrigin startLocation, int capacity)
@@ -26,6 +26,28 @@ public class AssignedTaxi extends Taxi
         
         travelers = new ArrayList<SAVTraveler>();
         segments = new ArrayList<>();
+    }
+    
+    public void addSegment(Path path)
+    {
+        segments.add(path);
+    }
+    
+    public void addPassenger(SAVTraveler person)
+    {
+        super.addPassenger(person);
+        traveler_idx++;
+    }
+    
+    public void entered()
+    {
+        super.entered();
+        segment_idx++;
+    }
+    
+    public List<Path> getSegments()
+    {
+        return segments;
     }
     
     public void assignTraveler(SAVTraveler t, Path path)

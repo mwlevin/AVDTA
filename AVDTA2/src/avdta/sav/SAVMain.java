@@ -44,9 +44,24 @@ public class SAVMain
         SAVSimulator sim = project.getSimulator();
         
         sim.setUseLinkDijkstras(false);
+        
         TabuSearch t = new TabuSearch(project);
         t.assignInitialTravelers();
         
+        
+        
+        /*
+            AssignedTaxi taxi = (AssignedTaxi)sim.getTaxis().get(0);
+
+            
+            System.out.println("--\n"+taxi.getId());
+            System.out.println(taxi.getSegments());
+
+            for(SAVTraveler traveler: taxi.getTravelers())
+            {
+                System.out.println(traveler.getOrigin()+"\t"+traveler.getDest());
+            }
+        */
         
         sim.simulate();
         

@@ -28,6 +28,7 @@ import avdta.sav.dispatch.Dispatch;
 import avdta.gui.util.StatusUpdate;
 import avdta.sav.dispatch.AssignedDispatch;
 import avdta.sav.dispatch.RealTimeDispatch;
+import avdta.vehicle.route.FixedPath;
 
 /**
  * This class extends {@link Simulator} to handle the simulation of travelers and taxis.
@@ -44,13 +45,12 @@ public class SAVSimulator extends Simulator
     private List<Taxi> taxis;
     private List<SAVTraveler> travelers;
     
-    private List<Taxi> departing;
-    
     public static Dispatch dispatch;
     
     
     
-    private static int traveling;
+
+    protected static int exited_travelers;
 
     /**
      * Constructs the simulator for the specified project.
@@ -61,16 +61,10 @@ public class SAVSimulator extends Simulator
         super(project);
         
         taxis = new ArrayList<Taxi>();
-        departing = new ArrayList<Taxi>();
         setCostFunction(TravelCost.dnlTime);
         
     }
-    
-    public void addDeparting(Taxi t)
-    {
-        departing.add(t);
-    }
-    
+
     /**
      * Constructs the simulator for the specified project, with the given sets of {@link Node}s and {@link Link}s.
      * @param project the project
@@ -83,7 +77,6 @@ public class SAVSimulator extends Simulator
         
         taxis = new ArrayList<Taxi>();
         setCostFunction(TravelCost.dnlTime);
-        
         dispatch = new AssignedDispatch();
     }
     
@@ -263,11 +256,10 @@ public class SAVSimulator extends Simulator
             t.reset();
         }
         
-        
+        exited_travelers = 0;
         
         traveler_idx = 0;
-        
-        traveling = 0;
+ 
 
     }
     
@@ -284,19 +276,9 @@ public class SAVSimulator extends Simulator
      */
     public void addVehicles()
     {
-        for(Taxi v : departing)
-        {
-            v.entered();
-            v.getNextLink().addVehicle(v);
-        }
-        
-        departing.clear();
-        
         // update shortest paths if needed
         if(time % ast_duration == 0)
         {
-            
-            
             if(statusUpdate != null)
             {
                 statusUpdate.update((double) time / Simulator.duration, ((double)ast_duration) / Simulator.duration, "Simulation time: "+Simulator.time);
@@ -323,6 +305,7 @@ public class SAVSimulator extends Simulator
                 break;
             }
         }
+        
 
         
         
@@ -435,10 +418,10 @@ public class SAVSimulator extends Simulator
     {
         dispatch.travelerDeparted(taxi, person);
         
+        person.getOrigin().removeTraveler(person);
         person.enteredTaxi();
         taxi.addPassenger(person);
         taxi.delay = Taxi.DELAY_ENTER;
-        traveling++;
     }
     
     
@@ -471,6 +454,11 @@ public class SAVSimulator extends Simulator
     }
     
     
+    public int getNumExited()
+    {
+        return exited_travelers;
+    }
+    
     
     /**
      * Checks whether the simulation has finished. 
@@ -479,7 +467,7 @@ public class SAVSimulator extends Simulator
      */
     public boolean isSimulationFinished()
     {
-        return exit_count == travelers.size();
+        return exited_travelers == travelers.size();
     }
 
     /**

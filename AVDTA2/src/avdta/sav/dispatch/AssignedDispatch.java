@@ -8,8 +8,10 @@ import avdta.network.Path;
 import avdta.network.Simulator;
 import avdta.sav.AssignedTaxi;
 import avdta.sav.SAVOrigin;
+import avdta.sav.SAVSimulator;
 import avdta.sav.SAVTraveler;
 import avdta.sav.Taxi;
+import avdta.vehicle.route.FixedPath;
 import java.util.Iterator;
 
 /**
@@ -32,7 +34,28 @@ public class AssignedDispatch extends Dispatch
     
     public void newTimestep()
     {
-        
+        if(Simulator.time == 0)
+        {
+            for(Taxi t : ((SAVSimulator)Simulator.active).getTaxis())
+            {
+                AssignedTaxi taxi = (AssignedTaxi)t;
+                
+                Path nextSegment = taxi.getNextSegment();
+                
+                SAVTraveler nextTraveler = taxi.getNextTraveler();
+                
+                if(nextTraveler == null || nextTraveler.getOrigin() != t.getLocation())
+                {
+                    taxi.setPath(nextSegment);
+                    taxi.delay = 0;
+
+                    if(Simulator.debug)
+                    {
+                        System.out.println(Simulator.time+": "+taxi+" departed from "+t.getLocation());
+                    }
+                }
+            }
+        }
     }
     
     public void addFreeTaxi(Taxi t)
@@ -50,19 +73,31 @@ public class AssignedDispatch extends Dispatch
         AssignedTaxi taxi = (AssignedTaxi)t;
         
         Path nextSegment = taxi.getNextSegment();
+        
+        taxi.delay = Integer.MAX_VALUE;
+
         if(nextSegment != null)
         {
             SAVTraveler nextTraveler = taxi.getNextTraveler();
             if(nextTraveler == null || nextTraveler.getOrigin() != node)
             {
                 taxi.setPath(nextSegment);
-                getSimulator().addDeparting(taxi);
+                taxi.delay = 0;
+
+                if(Simulator.debug)
+                {
+                    System.out.println(Simulator.time+": "+taxi+" departed from "+node);
+                }
             }
             else if(node.getWaitingTravelers().contains(nextTraveler))
             {
                 getSimulator().addTravelerToTaxi(taxi, nextTraveler);
                 taxi.setPath(nextSegment);
-                getSimulator().addDeparting(taxi);
+                
+                if(Simulator.debug)
+                {
+                    System.out.println(Simulator.time+": "+taxi+" departed from "+node+" with "+nextTraveler);
+                }
             }
 
         }
@@ -73,21 +108,25 @@ public class AssignedDispatch extends Dispatch
         // if taxi is already there, enter taxi
         // otherwise wait for taxi to show up. taxiArrived() event call will assign traveler to taxi in this case
         
-        Iterator<Taxi> iter = person.getOrigin().getParkedTaxis().iterator();
-        
-        while(iter.hasNext())
+
+        for(Taxi t : person.getOrigin().getParkedTaxis())
         {
-            AssignedTaxi taxi = (AssignedTaxi)iter.next();
+            AssignedTaxi taxi = (AssignedTaxi)t;
             
             if(taxi.getNextTraveler() == person)
             {
                 getSimulator().addTravelerToTaxi(taxi, person);
                 taxi.setPath(taxi.getNextSegment());
-                getSimulator().addDeparting(taxi);
                 
-                iter.remove();
+                if(Simulator.debug)
+                {
+                    System.out.println(Simulator.time+": "+taxi+" departed from "+person.getOrigin()+" with "+person);
+                }
+
                 break;
             }
         }
+        
+        
     }
 }

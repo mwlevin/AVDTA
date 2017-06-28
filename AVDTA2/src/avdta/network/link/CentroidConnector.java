@@ -135,6 +135,8 @@ public class CentroidConnector extends Link
      */
     public List<Vehicle> getSendingFlow()
     {
+        
+        
         List<Vehicle> output = new ArrayList<Vehicle>();
         
         for(Vehicle v : queue)

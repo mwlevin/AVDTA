@@ -106,6 +106,16 @@ public class SAVDest extends SAVZone
         int output = 0;
         
         // remove travelers for this destination
+        
+        if(Simulator.debug)
+        {
+            if(t.getPassengers().isEmpty())
+            {
+                System.out.print(Simulator.time+": "+t+" arrived at "+(-getId())+" ");
+                AssignedTaxi taxi = (AssignedTaxi)t;
+                System.out.println(taxi.getTravelers()+" "+taxi.getNextTraveler()+" "+taxi.getNextTraveler().getOrigin()); 
+            }
+        }
         ListIterator<SAVTraveler> passengers = t.getPassengers().listIterator();
         
         while(passengers.hasNext())
@@ -115,11 +125,19 @@ public class SAVDest extends SAVZone
             if(person.getDest() == this)
             {
                 person.exited();
+                SAVSimulator.exited_travelers++;
                 passengers.remove();
                 t.delay = Taxi.DELAY_EXIT;
                 output++;
+                
+                if(Simulator.debug)
+                {
+                    System.out.println(Simulator.time+": "+t+" arrived at "+(-getId())+" with "+person);
+                }
             }
         }
+        
+        
         
         if(t.tempTaxi)
         {

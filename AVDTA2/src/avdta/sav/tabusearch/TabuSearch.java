@@ -144,18 +144,14 @@ public class TabuSearch {
      * @return 
      */
     public void findClosestTaxi(SAVTraveler traveler, List<Taxi> taxis) {
-        Taxi minT = taxis.get(0);
-        //System.out.println(minT.getCurrentLocation().getClass()+" "+traveler.getOrigin().getLinkedZone().getClass());
-        //System.out.println(minT.getCurrentLocation().getOutgoing());
-        //System.out.println(traveler.getOrigin().getLinkedZone().getIncoming());
-        
-        Path p = sim.findPath(minT.getCurrentLocation(), traveler.getOrigin().getLinkedZone());
-        
-        //System.out.println(p);
+
         //minT.setPath(p);
         
+        Taxi minT = null;
         Path best = null;
-        double arrivalTime = minT.getDropTime() + p.getCost();
+        SAVOrigin location = null;
+        double arrivalTime = Integer.MAX_VALUE;
+        //double arrivalTime = minT.getDropTime() + p.getCost();
         
         for(Node n : sim.getNodes())
         {
@@ -168,34 +164,63 @@ public class TabuSearch {
             Taxi t = null;
             if(node.getFreeTaxis().size() > 0)
             {
-                t = node.getFreeTaxis().get(0);
+                Taxi best_taxi = null;
+                double best_time = Integer.MAX_VALUE;
+                
+                // todo: use binary search and insertion sort
+                for(Taxi t2 : node.getFreeTaxis())
+                {
+                    if(t2.getDropTime() < best_time)
+                    {
+                        best_time = t2.getDropTime();
+                        best_taxi = t2;
+                    }
+                }
+                
+                t = best_taxi;
             }
             else
             {
                 continue;
             }
-            Path p1 = sim.findPath(t.getCurrentLocation(), traveler.getOrigin().getLinkedZone());
-            //t.setPath(p1);
-
-            if (t.getDropTime() + p1.getCost() < arrivalTime) {
+            
+            if(n == traveler.getOrigin())
+            {
                 minT = t;
-                arrivalTime = t.getDropTime() + p1.getCost();
-                best = p1;
+                arrivalTime = t.getDropTime();
+                best = null;
+                location = (SAVOrigin)n;
+                break;
+            }
+            else
+            {
+                Path p1 = sim.findPath(n, traveler.getOrigin().getLinkedZone());
+                //t.setPath(p1);
+
+                if (t.getDropTime() + p1.getCost() < arrivalTime) {
+                    minT = t;
+                    arrivalTime = t.getDropTime() + p1.getCost();
+                    best = p1;
+                    location = (SAVOrigin)n;
+                }
             }
         }
-        
-  
-        //traveler.setAssignedTaxi(minT);
-        ((AssignedTaxi)minT).assignTraveler(traveler, best);
-        
-        minT.getStartLocation().removeFreeTaxi(minT);
-        ((SAVOrigin)traveler.getDest().getLinkedZone()).addFreeTaxi(minT);
-        //System.out.println(traveler+" assigned to "+minT);
-        if (arrivalTime > traveler.getDepTime()) {
-            minT.setDropTime(findDropTime(traveler.getOrigin(), traveler.getDest(), arrivalTime));
-        } else {
-            minT.setDropTime(findDropTime(traveler.getOrigin(), traveler.getDest(), traveler.getDepTime()));
+
+        if(best != null)
+        {
+            ((AssignedTaxi)minT).addSegment(best);
         }
+
+        int dep_time = (int)Math.max(arrivalTime, traveler.getDepTime());
+        Path od = sim.findPath(traveler.getOrigin(), traveler.getDest(), (int)dep_time, 0, DriverType.AV, TravelCost.ttCost);
+        minT.setDropTime(dep_time + traveler.getDest().label);
+        
+        ((AssignedTaxi)minT).assignTraveler(traveler, od);
+        
+        location.removeFreeTaxi(minT);
+        
+        ((SAVOrigin)traveler.getDest().getLinkedZone()).addFreeTaxi(minT);
+        
     }
 
     /**
@@ -237,12 +262,7 @@ public class TabuSearch {
 
         });
 
-        int count = 0;
         for (SAVTraveler t : travelers) {
-            if(++count % 100 == 0)
-            {
-                System.out.println(count);
-            }
             findClosestTaxi(t, taxis);
         }
 

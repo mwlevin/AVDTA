@@ -577,7 +577,17 @@ public abstract class Vehicle implements Serializable, Comparable<Vehicle>
     {
         if(curr == null)
         {
-            return routeChoice.getFirstLink(getOrigin());
+            try
+            {
+                return routeChoice.getFirstLink(getOrigin());
+            }
+            catch(Exception ex)
+            {
+                System.out.println(Simulator.time);
+                System.out.println("error id="+getId());
+                System.out.println("curr link="+getCurrLink());
+                throw ex;
+            }
         }
         else
         {

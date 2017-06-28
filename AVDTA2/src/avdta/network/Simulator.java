@@ -96,6 +96,7 @@ public class Simulator extends Network
     public static PrintStream vat;
     
     public static boolean print_status = true;
+    public static boolean debug = true;
     
     
 
@@ -795,6 +796,7 @@ public class Simulator extends Network
     public void simulate() throws IOException
     {   
         resetSim();
+
         
         PrintStream sim_vat = null;
         
@@ -816,7 +818,6 @@ public class Simulator extends Network
             {
                 break;
             }
-
         }
         
 

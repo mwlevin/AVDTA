@@ -66,7 +66,7 @@ public class FixedPath implements RouteChoice
      */
     public void exited()
     {
-        path_idx++;
+        path_idx = -1;
     }
     
     /**
@@ -86,6 +86,33 @@ public class FixedPath implements RouteChoice
         return path.size() - path_idx;
     }
     
+    
+    
+    public Link getFirstLink(Node origin)
+    {
+        return path.get(0);
+    }
+    
+    public String toString()
+    {
+        return path+" "+path_idx;
+    }
+    /**
+     * Returns the {@link Link} pointed to by the current path index.
+     * @return the current {@link Link}
+     */
+    public Link getCurrLink()
+    {
+        if(path_idx >= 0 && path_idx < path.size())
+        {
+            return path.get(path_idx);
+        }
+        else
+        {
+            return null;
+        }
+    }
+    
     /**
      * Returns the next {@link Link} to be traversed, according to the path pointer.
      * @param curr the current {@link Link}
@@ -96,27 +123,6 @@ public class FixedPath implements RouteChoice
         if(path_idx < path.size() - 1)
         {
             return path.get(path_idx+1);
-        }
-        else
-        {
-            return null;
-        }
-    }
-    
-    public Link getFirstLink(Node origin)
-    {
-        return path.get(0);
-    }
-    
-    /**
-     * Returns the {@link Link} pointed to by the current path index.
-     * @return the current {@link Link}
-     */
-    public Link getCurrLink()
-    {
-        if(path_idx >= 0 && path_idx < path.size())
-        {
-            return path.get(path_idx);
         }
         else
         {

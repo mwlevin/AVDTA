@@ -52,6 +52,7 @@ import avdta.project.DUERProject;
 import avdta.project.FourStepProject;
 import avdta.project.SAVProject;
 import avdta.sav.ReadSAVNetwork;
+import avdta.sav.SAVMain;
 import avdta.sav.SAVOrigin;
 import avdta.sav.SAVSimulator;
 import avdta.sav.SAVZone;
@@ -115,7 +116,7 @@ public class Main
         //SAVtest();
         
         
-        GUI.main(args);
+        SAVMain.main(args);
         
         /*
         DUERProject project = new DUERProject(new File("projects/vms_test"));

@@ -26,8 +26,8 @@ public class Taxi extends Vehicle
     
     private SAVOrigin startLocation, location;
     
-    public static final int DELAY_ENTER = 60;
-    public static final int DELAY_EXIT = 60;
+    public static final int DELAY_ENTER = 30;
+    public static final int DELAY_EXIT = 30;
     
     
     public int delay;
@@ -169,7 +169,7 @@ public class Taxi extends Vehicle
     {
         Path curr = getPath();
         
-        if(curr != null)
+        if(curr != null && !curr.isEmpty())
         {
             ((SAVOrigin)((Zone)curr.getDest()).getLinkedZone()).removeEnrouteTaxi(this);
         }
