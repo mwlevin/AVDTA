@@ -95,8 +95,9 @@ public class ReadNetwork
     public static final int DIVERGE = 110;
     public static final int MERGE = 120;
     public static final int CONNECTOR = 130;
+    public static final int STOPSIGN = 190;
     
-    public static final int STOPSIGN = 200;
+    
     public static final int RESERVATION = 300;
     public static final int HIGHWAY = 400;
     
@@ -1280,9 +1281,6 @@ public class ReadNetwork
                         foundType = true;
                         break;
                     case SIGNAL/100:
-                        foundType = true;
-                        break;
-                    case STOPSIGN/100:
                         foundType = true;
                         break;
                     case RESERVATION/100:
