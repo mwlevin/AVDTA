@@ -39,6 +39,7 @@ import avdta.network.link.AbstractSplitLink;
 import avdta.network.link.LinkRecord;
 import avdta.network.link.SplitCTMLink;
 import avdta.network.link.TransitLane;
+import avdta.network.node.Connector;
 import avdta.network.node.Highway;
 import avdta.network.node.obj.BackPressureObj;
 import avdta.network.node.obj.P0Obj;
@@ -91,6 +92,10 @@ public class ReadNetwork
     
     //public static final int CENTROID = 100;
     public static final int SIGNAL = 100;
+    public static final int DIVERGE = 110;
+    public static final int MERGE = 120;
+    public static final int CONNECTOR = 130;
+    
     public static final int STOPSIGN = 200;
     public static final int RESERVATION = 300;
     public static final int HIGHWAY = 400;
@@ -497,6 +502,7 @@ public class ReadNetwork
             
             Intersection node = (Intersection)nodesmap.get(id);
         
+            /*
             if(node.getIncoming().size() == 1 && type != HIGHWAY)
             {
                 node.setControl(new Diverge());
@@ -507,72 +513,88 @@ public class ReadNetwork
             }
             else
             {
-                BackPressureObj backpressureobj = new BackPressureObj();
-                P0Obj p0obj = new P0Obj();
-                
-                switch(type/100)
-                {
-                    case SIGNAL/100:
-                        node.setControl(new TrafficSignal());
-                        break;
-                    case STOPSIGN/100:
-                        node.setControl(new StopSign());
-                        break;
-                    case HIGHWAY/100:
-                        node.setControl(new Highway());
-                        break;
-                    case RESERVATION/100:
+            */
+            BackPressureObj backpressureobj = new BackPressureObj();
+            P0Obj p0obj = new P0Obj();
+
+            switch(type/100)
+            {
+                case SIGNAL/100:
+
+                    switch(type)
                     {
-                        switch(type % 100)
-                        {
-                            case FCFS: 
-                                node.setControl(new PriorityTBR(node, IntersectionPolicy.FCFS));
-                                break;
-                            case AUCTION: 
-                                node.setControl(new PriorityTBR(node, IntersectionPolicy.auction));
-                                break;
-                            case RANDOM: 
-                                node.setControl(new PriorityTBR(node, IntersectionPolicy.random));
-                                break;
-                            case EMERGENCY_FIRST:
-                                node.setControl(new PriorityTBR(node, IntersectionPolicy.emergency));
-                                break;
-                            case PRESSURE: 
-                                node.setControl(new MCKSTBR(node, backpressureobj));
-                                break;
-                            case P0: 
-                                node.setControl(new MCKSTBR(node, p0obj));
-                                break;
-                            case PHASED:
-                                node.setControl(new PhasedTBR());
-                                break;
-                            case WEIGHTED:
-                                node.setControl(new SignalWeightedTBR());
-                                break;
-                            case TRANSIT_FIRST + FCFS: 
-                                node.setControl(new PriorityTBR(node, new TransitFirst(IntersectionPolicy.FCFS)));
-                                break;
-                            case TRANSIT_FIRST + AUCTION: 
-                                node.setControl(new PriorityTBR(node, new TransitFirst(IntersectionPolicy.auction)));
-                                break;
-                            case TRANSIT_FIRST + RANDOM: 
-                                node.setControl(new PriorityTBR(node, new TransitFirst(IntersectionPolicy.random)));
-                                break;
-                            case TRANSIT_FIRST + PRESSURE: 
-                                node.setControl(new MCKSTBR(node, backpressureobj));
-                                break;
-                            case TRANSIT_FIRST + P0: 
-                                node.setControl(new MCKSTBR(node, p0obj));
-                                break;
-                            default:
-                                throw new RuntimeException("Reservation type not recognized: "+type);
-                        }
-                        break;
+                        case SIGNAL:
+                            node.setControl(new TrafficSignal());
+                            break;
+                        case STOPSIGN:
+                            node.setControl(new StopSign());
+                            break;
+                        case DIVERGE:
+                            node.setControl(new Diverge());
+                            break;
+                        case MERGE:
+                            node.setControl(new Merge());
+                            break;
+                        case CONNECTOR:
+                            node.setControl(new Connector());
+                            break;
                     }
-                    default:
-                        throw new RuntimeException("Node type not recognized: "+type);
+                    break;
+                case HIGHWAY/100:
+                    node.setControl(new Highway());
+                    break;
+                case RESERVATION/100:
+                {
+                    switch(type % 100)
+                    {
+                        case FCFS: 
+                            node.setControl(new PriorityTBR(node, IntersectionPolicy.FCFS));
+                            break;
+                        case AUCTION: 
+                            node.setControl(new PriorityTBR(node, IntersectionPolicy.auction));
+                            break;
+                        case RANDOM: 
+                            node.setControl(new PriorityTBR(node, IntersectionPolicy.random));
+                            break;
+                        case EMERGENCY_FIRST:
+                            node.setControl(new PriorityTBR(node, IntersectionPolicy.emergency));
+                            break;
+                        case PRESSURE: 
+                            node.setControl(new MCKSTBR(node, backpressureobj));
+                            break;
+                        case P0: 
+                            node.setControl(new MCKSTBR(node, p0obj));
+                            break;
+                        case PHASED:
+                            node.setControl(new PhasedTBR());
+                            break;
+                        case WEIGHTED:
+                            node.setControl(new SignalWeightedTBR());
+                            break;
+                        case TRANSIT_FIRST + FCFS: 
+                            node.setControl(new PriorityTBR(node, new TransitFirst(IntersectionPolicy.FCFS)));
+                            break;
+                        case TRANSIT_FIRST + AUCTION: 
+                            node.setControl(new PriorityTBR(node, new TransitFirst(IntersectionPolicy.auction)));
+                            break;
+                        case TRANSIT_FIRST + RANDOM: 
+                            node.setControl(new PriorityTBR(node, new TransitFirst(IntersectionPolicy.random)));
+                            break;
+                        case TRANSIT_FIRST + PRESSURE: 
+                            node.setControl(new MCKSTBR(node, backpressureobj));
+                            break;
+                        case TRANSIT_FIRST + P0: 
+                            node.setControl(new MCKSTBR(node, p0obj));
+                            break;
+                        default:
+                            throw new RuntimeException("Reservation type not recognized: "+type);
+                    }
+                    break;
                 }
+                default:
+                    throw new RuntimeException("Node type not recognized: "+type);
             }
+            //}
         
         
         }

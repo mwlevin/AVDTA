@@ -46,7 +46,7 @@ public class Merge extends IntersectionControl
      */
     public int getType()
     {
-        return ReadNetwork.SIGNAL;
+        return ReadNetwork.MERGE;
     }
     
     /**

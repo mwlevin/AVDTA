@@ -567,4 +567,10 @@ public abstract class GUI extends JFrame
             GUI.handleException(ex);
         }
     }
+
+    public static class main {
+
+        public main() {
+        }
+    }
 }

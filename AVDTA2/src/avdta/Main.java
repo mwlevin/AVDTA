@@ -114,9 +114,9 @@ public class Main
         //new FourStepGUI();
         
         //SAVtest();
+        //GUI.main(args);
         
-        
-        SAVMain.main(args);
+        //SAVMain.main(args);
         
         /*
         DUERProject project = new DUERProject(new File("projects/vms_test"));

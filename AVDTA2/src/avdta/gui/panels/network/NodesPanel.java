@@ -455,13 +455,35 @@ public class NodesPanel extends GUIPanel
                         }
                     }
 
+                    Map<Integer, Node> nodes = project.getSimulator().createNodeIdsMap();
+                    
                     while(filein.hasNextInt())
                     {
                         NodeRecord node = new NodeRecord(filein.nextLine());
+                        
+                        Node n = nodes.get(node.getId());
 
                         if(node.getType()/100 != ReadNetwork.CENTROID/100)
                         {
-                            node.setType(newtype);
+                            if(n.getIncoming().size() == 1)
+                            {
+                                if(n.getOutgoing().size() == 1)
+                                {
+                                    node.setType(ReadNetwork.CONNECTOR);
+                                }
+                                else
+                                {
+                                    node.setType(ReadNetwork.DIVERGE);
+                                }
+                            }
+                            else if(n.getOutgoing().size() == 1)
+                            {
+                                node.setType(ReadNetwork.MERGE);
+                            }
+                            else
+                            {
+                                node.setType(newtype);
+                            }
                         }
 
                         temp.add(node);

@@ -41,7 +41,7 @@ public class Diverge extends IntersectionControl
      */
     public int getType()
     {
-        return ReadNetwork.SIGNAL;
+        return ReadNetwork.DIVERGE;
     }
     
     /**
@@ -191,7 +191,7 @@ public class Diverge extends IntersectionControl
                 PhaseMovement movement = movements.get(j);
                 double equiv_flow = v.getDriver().getEquivFlow(i.getFFSpeed());
                 
-                if(movement.hasAvailableCapacity(equiv_flow))
+                if(j.R >= equiv_flow && movement.hasAvailableCapacity(equiv_flow))
                 {
                     movement.update(equiv_flow);
                     i.removeVehicle(v);
