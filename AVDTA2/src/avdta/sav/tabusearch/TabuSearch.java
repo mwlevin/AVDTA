@@ -111,27 +111,59 @@ public class TabuSearch {
      * @param W
      * @return
      */
-    public List<NearestNeighbour> getPNeighbourhood(SAVTraveler traveler, List<SAVTraveler> W, int pSize) {
-        sim.dijkstras(traveler.getDest(), 0, 1, DriverType.AV, TravelCost.ttCost);
+    public List<NearestNeighbour> getNearestTraveler(SAVTraveler traveler, List<SAVTraveler> travelers, int pSize) {
+        double depTime = traveler.getDepTime();
 
-        List<NearestNeighbour> pNeighbours = new ArrayList<>(pSize);
-        //remove all items that come after pSize
-        for (SAVTraveler t : W) {
-            // node.label
-            Path p = sim.node_trace(traveler.getDest(), t.getOrigin());
-            NearestNeighbour n = new NearestNeighbour(t, p.getCost());
-            int index = Collections.binarySearch(pNeighbours, n);
-            if (index < pSize - 1) {
-                pNeighbours.add(index < 0 ? -index - 1 : index, n);
-                pNeighbours.remove(pSize);
+        List<NearestNeighbour> nNeighbours = new ArrayList<>();
+        for (SAVTraveler t : travelers) {
+
+            if (depTime - 450 <= t.getDepTime() && depTime + 450 >= t.getDepTime()) {
+                Path p = sim.node_trace(traveler.getDest().getLinkedZone(), t.getOrigin());
+
+                NearestNeighbour n = new NearestNeighbour(t, t.getAssignedTaxi(), p.getCost(), p);
+                int index = Collections.binarySearch(nNeighbours, n);
+                
+                if (index < pSize - 1) {
+                    nNeighbours.add(index < 0 ? -index - 1 : index, n);
+                    if (nNeighbours.size() > pSize) {
+                        nNeighbours.remove(pSize - 1);
+                    }
+                }
+                Collections.sort(nNeighbours);
             }
-            Collections.sort(pNeighbours);
+            
         }
 
-        return pNeighbours;
-
+        return nNeighbours;
     }
 
+    /**
+     *
+     * @param startLocation
+     * @param W
+     * @return
+     */
+//    public List<NearestNeighbour> getPNeighbourhood(SAVTraveler traveler, List<SAVTraveler> W, int pSize) {
+//        sim.dijkstras(traveler.getDest(), 0, 1, DriverType.AV, TravelCost.ttCost);
+//
+//        List<NearestNeighbour> pNeighbours = getNearestTraveler(traveler, travelers);
+//        //remove all items that come after pSize
+//        for (NearestNeighbour n : pNeighbours) {
+//            // node.label
+//            Path p = sim.node_trace(traveler.getDest().getLinkedZone(), n.getNeighbour().getOrigin());
+//            NearestNeighbour n = new NearestNeighbour(t, p.getCost());
+//            int index = Collections.binarySearch(pNeighbours, n);
+//            if (index < pSize - 1) {
+//                pNeighbours.add(index < 0 ? -index - 1 : index, n);
+//                pNeighbours.remove(pSize);
+//            }
+//            Collections.sort(pNeighbours);
+//        }
+//
+//        return pNeighbours;
+//
+//    }
+    
     public List<Path> genInsert(SAVTraveler v, Taxi routeR, Taxi routeS) {
 
         return null;
@@ -141,59 +173,48 @@ public class TabuSearch {
      *
      * @param traveler
      * @param list of taxis
-     * @return 
+     * @return
      */
     public void findClosestTaxi(SAVTraveler traveler, List<Taxi> taxis) {
 
         //minT.setPath(p);
-        
         Taxi minT = null;
         Path best = null;
         SAVOrigin location = null;
         double arrivalTime = Integer.MAX_VALUE;
         //double arrivalTime = minT.getDropTime() + p.getCost();
-        
-        for(Node n : sim.getNodes())
-        {
-            if(!(n instanceof SAVOrigin))
-            {
+
+        for (Node n : sim.getNodes()) {
+            if (!(n instanceof SAVOrigin)) {
                 continue;
             }
-            SAVOrigin node = (SAVOrigin)n;
-            
+            SAVOrigin node = (SAVOrigin) n;
+
             Taxi t = null;
-            if(node.getFreeTaxis().size() > 0)
-            {
+            if (node.getFreeTaxis().size() > 0) {
                 Taxi best_taxi = null;
                 double best_time = Integer.MAX_VALUE;
-                
+
                 // todo: use binary search and insertion sort
-                for(Taxi t2 : node.getFreeTaxis())
-                {
-                    if(t2.getDropTime() < best_time)
-                    {
+                for (Taxi t2 : node.getFreeTaxis()) {
+                    if (t2.getDropTime() < best_time) {
                         best_time = t2.getDropTime();
                         best_taxi = t2;
                     }
                 }
-                
+
                 t = best_taxi;
-            }
-            else
-            {
+            } else {
                 continue;
             }
-            
-            if(n == traveler.getOrigin())
-            {
+
+            if (n == traveler.getOrigin()) {
                 minT = t;
                 arrivalTime = t.getDropTime();
                 best = null;
-                location = (SAVOrigin)n;
+                location = (SAVOrigin) n;
                 break;
-            }
-            else
-            {
+            } else {
                 Path p1 = sim.findPath(n, traveler.getOrigin().getLinkedZone());
                 //t.setPath(p1);
 
@@ -201,26 +222,25 @@ public class TabuSearch {
                     minT = t;
                     arrivalTime = t.getDropTime() + p1.getCost();
                     best = p1;
-                    location = (SAVOrigin)n;
+                    location = (SAVOrigin) n;
                 }
             }
         }
 
-        if(best != null)
-        {
-            ((AssignedTaxi)minT).addSegment(best);
+        if (best != null) {
+            ((AssignedTaxi) minT).addSegment(best);
         }
 
-        int dep_time = (int)Math.max(arrivalTime, traveler.getDepTime());
-        Path od = sim.findPath(traveler.getOrigin(), traveler.getDest(), (int)dep_time, 0, DriverType.AV, TravelCost.ttCost);
+        int dep_time = (int) Math.max(arrivalTime, traveler.getDepTime());
+        Path od = sim.findPath(traveler.getOrigin(), traveler.getDest(), (int) dep_time, 0, DriverType.AV, TravelCost.ttCost);
         minT.setDropTime(dep_time + traveler.getDest().label);
-        
-        ((AssignedTaxi)minT).assignTraveler(traveler, od);
-        
+
+        ((AssignedTaxi) minT).assignTraveler(traveler, od);
+
         location.removeFreeTaxi(minT);
-        
-        ((SAVOrigin)traveler.getDest().getLinkedZone()).addFreeTaxi(minT);
-        
+
+        ((SAVOrigin) traveler.getDest().getLinkedZone()).addFreeTaxi(minT);
+
     }
 
     /**
@@ -236,17 +256,16 @@ public class TabuSearch {
     }
 
     /**
-     *1. Sort the travelers by departure time
-     *2. For each traveler, assign the taxi with the earliest arrival time.
+     * 1. Sort the travelers by departure time 2. For each traveler, assign the
+     * taxi with the earliest arrival time.
+     *
      * @param list of travelers
      * @param list of taxis
      * @return find initial solution.
      */
     public void assignInitialTravelers() {
-        
-        
-        for(Taxi t : taxis)
-        {
+
+        for (Taxi t : taxis) {
             t.getStartLocation().addFreeTaxi(t);
         }
         Collections.sort(travelers, new Comparator<SAVTraveler>() {
