@@ -6,8 +6,8 @@
 package avdta.sav.tabusearch;
 
 import avdta.network.Path;
+import avdta.sav.SAVTraveler;
 import avdta.sav.Taxi;
-import avdta.traveler.Traveler;
 
 /**
  *
@@ -15,23 +15,23 @@ import avdta.traveler.Traveler;
  */
 public class NearestNeighbour implements Comparable<NearestNeighbour> {
 
-    private Traveler neighbour;
+    private SAVTraveler neighbour;
     private Taxi assignedTaxi;
     private double travelTime;
     private Path path;
 
-    public NearestNeighbour(Traveler neighbour, Taxi taxi, double travelTime, Path path) {
+    public NearestNeighbour(SAVTraveler neighbour, Taxi taxi, double travelTime, Path path) {
         this.neighbour = neighbour;
         this.assignedTaxi = taxi;
         this.travelTime = travelTime;
         this.path = path;
     }
 
-    public Traveler getNeighbour() {
+    public SAVTraveler getNeighbour() {
         return neighbour;
     }
 
-    public void setNeighbour(Traveler neighbour) {
+    public void setNeighbour(SAVTraveler neighbour) {
         this.neighbour = neighbour;
     }
 

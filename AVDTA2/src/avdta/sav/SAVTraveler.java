@@ -4,6 +4,7 @@
  */
 package avdta.sav;
 
+import avdta.network.Path;
 import avdta.network.Simulator;
 import avdta.sav.Taxi;
 import avdta.sav.SAVDest;
@@ -26,6 +27,11 @@ public class SAVTraveler extends Traveler
     
     public boolean unable;
    
+    public double pickupTime;
+    
+    public double dropTime;
+    
+    public Path path;
     /**
      * Constructs the traveler with the specified parameters.
      * @param id the id
@@ -38,6 +44,15 @@ public class SAVTraveler extends Traveler
         super(id, origin, dest, dtime, vot);
         
         etd = Integer.MAX_VALUE;
+    }
+    
+    public SAVTraveler(int id, SAVOrigin origin, SAVDest dest, int dtime, double vot, double pickupTime, double dropTime, Path path, int etd){
+        super(id, origin, dest, dtime, vot);
+        this.pickupTime = pickupTime;
+        this.dropTime = dropTime;
+        this.path = path;
+        this.etd = etd;
+        this.assigned = assigned;
     }
     
     /**
@@ -113,7 +128,27 @@ public class SAVTraveler extends Traveler
         setEnterTime(Simulator.time);
     }
     
+    public double getPickupTime() {
+        return pickupTime;
+    }
     
+    public void setPickupTime(double pickupTime) {
+        this.pickupTime = pickupTime;
+    }
     
+    public double getDropTime() {
+        return dropTime;
+    }
     
+    public void setDropTime(double dropTime) {
+        this.dropTime = dropTime;
+}
+
+    public Path getPath() {
+        return path;
+    }
+
+    public void setPath(Path path) {
+        this.path = path;
+    }
 }
