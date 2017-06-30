@@ -151,22 +151,25 @@ public class Main
         sim.msa(50);
         sim.printLinkTT(1800, 5400);
         */
+        
+        System.out.println(testEmergencyVehicle("coacongress2_"+70, 50));
     }
     
     public static void testAllEmergency() throws IOException
     {
         int num_repeats = 50;
         
-        PrintStream out = System.out;
+        PrintStream out = new PrintStream(new FileOutputStream("ev_output.txt"), true);
         
         out.println("Demand\tNormal\tEV priority");
         for(int dem = 70; dem <= 120; dem += 5)
         {
             double normal = testEmergencyVehicle("coacongress2_"+dem, num_repeats);
-            double ev_fcfs = testEmergencyVehicle("cocaongress2_"+dem+"_EV", num_repeats);
+            double ev_fcfs = testEmergencyVehicle("coacongress2_"+dem+"_EV", num_repeats);
             
             out.println(dem+"\t"+normal+"\t"+ev_fcfs);
         }
+        out.close();
     }
     
     // returns average % delay for emergency vehicle

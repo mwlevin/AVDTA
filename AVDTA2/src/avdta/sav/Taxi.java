@@ -99,10 +99,15 @@ public class Taxi extends Vehicle
         return Simulator.time + delay;
     }
     
+    public void exited()
+    {
+        super.exited();
+        
+        ttt += super.getTT();
+    }
+    
     public void enteredLink(Link l)
     {
-        ttt += Simulator.time - enter_time;
-
         super.enteredLink(l);
     }
     
