@@ -118,6 +118,8 @@ public class Main
         
         //SAVMain.main(args);
         
+       // testAllEmergency();
+       //testEmergencyVehicle("coacongress2_100_EV",50);
         /*
         DUERProject project = new DUERProject(new File("projects/vms_test"));
         DUERSimulator sim = project.getSimulator();

@@ -23,6 +23,9 @@ import javax.swing.JOptionPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import static avdta.gui.util.GraphicUtils.*;
+import avdta.network.node.Connector;
+import avdta.network.node.Diverge;
+import avdta.network.node.Merge;
 import avdta.network.node.PhasedTBR;
 import avdta.network.node.PriorityTBR;
 import avdta.network.node.StopSign;
@@ -58,11 +61,12 @@ public class EditNode extends JPanel
     public static final int CENTROID = 0;
     public static final int INTERSECTION = 1;
     
-    public static final String[] CONTROLS = new String[]{"Signals", "Stop sign", "Reservations"};
+    public static final String[] CONTROLS = new String[]{"Signal", "Stop sign", "Diverge/Merge", "Reservation"};
     
     public static final int SIGNALS = 0;
     public static final int STOP_SIGN = 1;
-    public static final int RESERVATIONS = 2;
+    public static final int RESERVATIONS = 3;
+    public static final int DIVERGE = 2;
     
     public static final String[] POLICIES = new String[]{"FCFS", "Auction", "Backpressure", "P0", "Phased", "Signal-weighted", "Transit-FCFS"};
     
@@ -516,11 +520,31 @@ public class EditNode extends JPanel
             
             switch(control.getSelectedIndex())
             {
-                case SIGNALS:
-                    i.setControl(new TrafficSignal());
-                    break;
+                
                 case STOP_SIGN:
                     i.setControl(new StopSign());
+                    break;
+                case DIVERGE:
+                    if(i.getIncoming().size() == 1)
+                    {
+                        if(i.getOutgoing().size() == 1)
+                        {
+                            i.setControl(new Connector());
+                            break;
+                        }
+                        else
+                        {
+                            i.setControl(new Diverge());
+                            break;
+                        }
+                    }
+                    else if(i.getOutgoing().size() == 1)
+                    {
+                        i.setControl(new Merge());
+                        break;
+                    }
+                case SIGNALS:
+                    i.setControl(new TrafficSignal());
                     break;
                 case RESERVATIONS:
                     switch(policy.getSelectedIndex())
