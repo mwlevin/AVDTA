@@ -5,6 +5,8 @@
  */
 package avdta.sav.tabusearch;
 
+import avdta.network.Path;
+import avdta.sav.Taxi;
 import avdta.traveler.Traveler;
 
 /**
@@ -12,12 +14,17 @@ import avdta.traveler.Traveler;
  * @author prashanthvenkatraman
  */
 public class NearestNeighbour implements Comparable<NearestNeighbour> {
-    private Traveler neighbour;
-    private double travelTime;
 
-    public NearestNeighbour(Traveler neighbour, double travelTime) {
+    private Traveler neighbour;
+    private Taxi assignedTaxi;
+    private double travelTime;
+    private Path path;
+
+    public NearestNeighbour(Traveler neighbour, Taxi taxi, double travelTime, Path path) {
         this.neighbour = neighbour;
+        this.assignedTaxi = taxi;
         this.travelTime = travelTime;
+        this.path = path;
     }
 
     public Traveler getNeighbour() {
@@ -28,6 +35,14 @@ public class NearestNeighbour implements Comparable<NearestNeighbour> {
         this.neighbour = neighbour;
     }
 
+    public Taxi getAssignedTaxi() {
+        return assignedTaxi;
+    }
+
+    public void setAssignedTaxi(Taxi assignedTaxi) {
+        this.assignedTaxi = assignedTaxi;
+    }
+
     public double getTravelTime() {
         return travelTime;
     }
@@ -36,16 +51,22 @@ public class NearestNeighbour implements Comparable<NearestNeighbour> {
         this.travelTime = travelTime;
     }
 
+    public Path getPath() {
+        return path;
+    }
+
+    public void setPath(Path path) {
+        this.path = path;
+    }
+
     @Override
     public int compareTo(NearestNeighbour neighbour) {
-        if(this.getTravelTime() > neighbour.getTravelTime()){
+        if (this.getTravelTime() > neighbour.getTravelTime()) {
             return 1;
-        }
-        else if(this.getTravelTime() < neighbour.getTravelTime()){
+        } else if (this.getTravelTime() < neighbour.getTravelTime()) {
             return -1;
         }
         return 0;
     }
-    
-    
+
 }
