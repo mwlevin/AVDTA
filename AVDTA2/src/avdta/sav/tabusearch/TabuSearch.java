@@ -96,7 +96,7 @@ public class TabuSearch {
         assignInitialTravelers();
         sim.simulate();
         double tstt = sim.getTSTT();
-
+        
         return null;
     }
 
@@ -125,10 +125,10 @@ public class TabuSearch {
         return a >= b ? a : b;
     }
 
-    public double getSolution(SAVTraveler traveler, List<SAVTraveler> travelers, int pSize, int nmax) throws IOException {
+    public double getSolution(SAVTraveler traveler, List<SAVTraveler> travelers, int pSize, int nmax, int maxMoves) throws IOException {
         double bestTstt = sim.getTSTT();
         int n = 0;
-        Map<TabuList, Integer> tabuList = new HashMap<TabuList, Integer>();
+        Map<TabuList, Integer> tabuMap = new HashMap<TabuList, Integer>();
         for (SAVTraveler t : travelers) {
             List<NearestNeighbour> nNeigbour = getNearestTraveler(traveler, travelers, pSize);
             Iterator<NearestNeighbour> it = nNeigbour.iterator();
@@ -138,21 +138,35 @@ public class TabuSearch {
                 for (Taxi tx : taxis) {
                     taxiCopy.add(createTaxiCopy(tx, travelerCopy));
                 }
+                Taxi tx = t.getAssignedTaxi();
                 genInsert(t, it.next());
                 sim.simulate();
                 double tstt = sim.getTSTT();
 
                 //to-do: add item to tabulist and update tabu list count
-                if (tstt <= bestTstt) {
+                TabuList tabu = new  TabuList(t,t.getAssignedTaxi());
+                if (tstt <= bestTstt && !tabuMap.containsKey(tabu)) {
                     n = tstt == bestTstt ? n++ : n;
                     bestTstt = tstt;
                     travelerCopy.clear();
                     taxiCopy.clear();
-
+                    
+                    tabu.setPreviousTaxi(t.getAssignedTaxi());
+                    tabuMap.put(tabu, 0);
+                    if(n==nmax){
+                        break;
+                    }
                 } else {
                     travelers = travelerCopy;
                     taxis = taxiCopy;
                 }
+                tabuMap.forEach((k,v) -> {
+                    v++;
+                    if(v>=maxMoves){
+                        tabuMap.remove(k);
+                    }
+                        });
+                
             }
         }
         return bestTstt;
