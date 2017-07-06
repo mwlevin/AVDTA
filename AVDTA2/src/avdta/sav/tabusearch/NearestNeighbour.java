@@ -16,15 +16,19 @@ import avdta.sav.Taxi;
 public class NearestNeighbour implements Comparable<NearestNeighbour> {
 
     private SAVTraveler neighbour;
+    private SAVTraveler previousPassenger;
     private Taxi assignedTaxi;
     private double travelTime;
-    private Path path;
+    private Path travelerTaxiPath;
+    private Path neighbourTaxiPath;
 
-    public NearestNeighbour(SAVTraveler neighbour, Taxi taxi, double travelTime, Path path) {
+    public NearestNeighbour(SAVTraveler neighbour, SAVTraveler previousPassenger, Taxi assignedTaxi, double travelTime, Path travelerTaxiPath, Path neighbourTaxiPath) {
         this.neighbour = neighbour;
-        this.assignedTaxi = taxi;
+        this.previousPassenger = previousPassenger;
+        this.assignedTaxi = assignedTaxi;
         this.travelTime = travelTime;
-        this.path = path;
+        this.travelerTaxiPath = travelerTaxiPath;
+        this.neighbourTaxiPath = neighbourTaxiPath;
     }
 
     public SAVTraveler getNeighbour() {
@@ -51,12 +55,28 @@ public class NearestNeighbour implements Comparable<NearestNeighbour> {
         this.travelTime = travelTime;
     }
 
-    public Path getPath() {
-        return path;
+    public SAVTraveler getPreviousPassenger() {
+        return previousPassenger;
     }
 
-    public void setPath(Path path) {
-        this.path = path;
+    public void setPreviousPassenger(SAVTraveler previousPassenger) {
+        this.previousPassenger = previousPassenger;
+    }
+
+    public Path getTravelerTaxiPath() {
+        return travelerTaxiPath;
+    }
+
+    public void setTravelerTaxiPath(Path travelerTaxiPath) {
+        this.travelerTaxiPath = travelerTaxiPath;
+    }
+
+    public Path getNeighbourTaxiPath() {
+        return neighbourTaxiPath;
+    }
+
+    public void setNeighbourTaxiPath(Path neighbourTaxiPath) {
+        this.neighbourTaxiPath = neighbourTaxiPath;
     }
 
     @Override

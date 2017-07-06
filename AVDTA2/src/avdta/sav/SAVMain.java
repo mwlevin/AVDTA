@@ -46,7 +46,7 @@ public class SAVMain
         sim.setUseLinkDijkstras(false);
         
         TabuSearch t = new TabuSearch(project);
-        t.assignInitialTravelers();
+        t.getBestRoute();
         
         
         

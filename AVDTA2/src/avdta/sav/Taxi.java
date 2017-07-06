@@ -64,7 +64,7 @@ public class Taxi extends Vehicle
         setEfficiency(1);
     }
     
-    public Taxi(int id, SAVOrigin startLocation, SAVOrigin location, int capacity, double dropTime, int ttt, List<SAVTraveler> passengers, int delay, int eta, int park_time, double total_distance, double empty_distance){
+    public Taxi(int id,  SAVOrigin startLocation, int capacity, SAVOrigin location, double dropTime, int ttt, List<SAVTraveler> passengers){
         super(id);
         setDriver(DriverType.AV);
         this.startLocation = startLocation;
@@ -73,11 +73,7 @@ public class Taxi extends Vehicle
         this.dropTime = dropTime;
         this.ttt = ttt;
         this.passengers = passengers;
-        this.delay = delay;
-        this.eta = eta;
-        this.park_time = park_time;
-        this.total_distance = total_distance;
-        this.empty_distance = empty_distance;
+    
         setEfficiency(1);
     }
     

@@ -116,7 +116,7 @@ public class Main
         //SAVtest();
         //GUI.main(args);
         
-        //SAVMain.main(args);
+        SAVMain.main(args);
         
        // testAllEmergency();
        //testEmergencyVehicle("coacongress2_100_EV",50);
@@ -152,7 +152,7 @@ public class Main
         sim.printLinkTT(1800, 5400);
         */
         
-        System.out.println(testEmergencyVehicle("coacongress2_"+70, 50));
+//        System.out.println(testEmergencyVehicle("coacongress2_"+70, 50));
     }
     
     public static void testAllEmergency() throws IOException

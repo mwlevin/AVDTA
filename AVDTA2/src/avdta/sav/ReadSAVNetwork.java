@@ -223,7 +223,6 @@ public class ReadSAVNetwork extends ReadDemandNetwork
         fileout.close();
         
     }
-    
     /**
      * This creates a fleet of the specified size, distributing them among centroids proportional to productions.
      * The output is in the project fleet file.
@@ -278,6 +277,45 @@ public class ReadSAVNetwork extends ReadDemandNetwork
                 }
             }
         }
+        fileout.close();
+        
+    }
+    
+    
+    /**
+     * This creates a fleet of the specified size, distributing them among centroids proportional to productions.
+     * The output is in the project fleet file.
+     * @param project the project
+     * @param total the fleet size
+     * @throws IOException if a file cannot be accessed
+     */
+    public void createFleetProb(SAVProject project, int total) throws IOException
+    {
+        PrintStream fileout = new PrintStream(new FileOutputStream(project.getFleetFile()), true);
+        
+        fileout.println(getFleetFileHeader());
+
+        
+        int new_id = 1;
+        
+        List<SAVOrigin> origins = new ArrayList<>();
+        
+        for(Node n : project.getSimulator().getNodes())
+        {
+            
+            if(n instanceof SAVOrigin)
+            {
+                origins.add((SAVOrigin)n);
+            }
+        }
+        for(int i = 0; i < total; i++)
+        {
+            Zone z = origins.get((int)(Math.random() * origins.size()));
+            
+            
+            fileout.println((new_id++)+"\t"+z.getId()+"\t"+4);
+        }
+        
         fileout.close();
         
     }

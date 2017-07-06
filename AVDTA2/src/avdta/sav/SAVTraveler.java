@@ -32,6 +32,8 @@ public class SAVTraveler extends Traveler
     public double dropTime;
     
     public Path path;
+    
+    public Path taxiPathToOrigin;
     /**
      * Constructs the traveler with the specified parameters.
      * @param id the id
@@ -150,5 +152,13 @@ public class SAVTraveler extends Traveler
 
     public void setPath(Path path) {
         this.path = path;
+    }
+
+    public Path getTaxiPathToOrigin() {
+        return taxiPathToOrigin;
+    }
+
+    public void setTaxiPathToOrigin(Path taxiPathToOrigin) {
+        this.taxiPathToOrigin = taxiPathToOrigin;
     }
 }
