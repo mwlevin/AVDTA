@@ -72,6 +72,7 @@ public class AssignedTaxi extends Taxi
     {
         travelers.add(t);
         segments.add(path);
+        //t.setAssignedTaxi(this);
     }
     public List<SAVTraveler> getTravelers()
     {
@@ -84,6 +85,12 @@ public class AssignedTaxi extends Taxi
         this.travelers = travelers;
         this.segments = segments;
         
+        /*
+        for(SAVTraveler t : travelers)
+        {
+            t.setAssignedTaxi(this);
+        }
+        */
         traveler_idx = 0;
         segment_idx = 0;
     }

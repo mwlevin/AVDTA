@@ -195,7 +195,7 @@ public class Taxi extends Vehicle
         super.setPath(p);
         
 
-        if(p != null)
+        if(p != null && !p.isEmpty())
         {
             eta = (int)(p.getAvgCost(Simulator.time, 1.0, TravelCost.dnlTime)) + delay;
             ((SAVOrigin)((Zone)p.getDest()).getLinkedZone()).addEnrouteTaxi(this);

@@ -113,7 +113,11 @@ public class SAVDest extends SAVZone
             {
                 System.out.print(Simulator.time+": "+t+" arrived at "+(-getId())+" ");
                 AssignedTaxi taxi = (AssignedTaxi)t;
-                System.out.println(taxi.getTravelers()+" "+taxi.getNextTraveler()+" "+taxi.getNextTraveler().getOrigin()); 
+                
+                if(taxi.getNextTraveler() != null)
+                {
+                    System.out.println(taxi.getTravelers()+" "+taxi.getNextTraveler()+" "+taxi.getNextTraveler().getOrigin()); 
+                }
             }
         }
         ListIterator<SAVTraveler> passengers = t.getPassengers().listIterator();
