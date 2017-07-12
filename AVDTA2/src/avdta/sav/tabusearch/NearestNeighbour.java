@@ -16,19 +16,18 @@ import avdta.sav.Taxi;
 public class NearestNeighbour implements Comparable<NearestNeighbour> {
 
     private SAVTraveler neighbour;
-    private SAVTraveler previousPassenger;
     private Taxi assignedTaxi;
     private double travelTime;
-    private Path travelerTaxiPath;
-    private Path neighbourTaxiPath;
+    private double neighbourTravelTime;
 
-    public NearestNeighbour(SAVTraveler neighbour, SAVTraveler previousPassenger, Taxi assignedTaxi, double travelTime, Path travelerTaxiPath, Path neighbourTaxiPath) {
+    private Path travelerNewTaxiPath;
+
+    public NearestNeighbour(SAVTraveler neighbour, Taxi assignedTaxi, double travelTime, double neighbourTravelTime, Path travelerNewTaxiPath) {
         this.neighbour = neighbour;
-        this.previousPassenger = previousPassenger;
         this.assignedTaxi = assignedTaxi;
         this.travelTime = travelTime;
-        this.travelerTaxiPath = travelerTaxiPath;
-        this.neighbourTaxiPath = neighbourTaxiPath;
+        this.neighbourTravelTime = neighbourTravelTime;
+        this.travelerNewTaxiPath = travelerNewTaxiPath;
     }
 
     public SAVTraveler getNeighbour() {
@@ -55,35 +54,27 @@ public class NearestNeighbour implements Comparable<NearestNeighbour> {
         this.travelTime = travelTime;
     }
 
-    public SAVTraveler getPreviousPassenger() {
-        return previousPassenger;
+    public Path getTravelerNewTaxiPath() {
+        return travelerNewTaxiPath;
     }
 
-    public void setPreviousPassenger(SAVTraveler previousPassenger) {
-        this.previousPassenger = previousPassenger;
+    public void setTravelerNewTaxiPath(Path travelerNewTaxiPath) {
+        this.travelerNewTaxiPath = travelerNewTaxiPath;
     }
 
-    public Path getTravelerTaxiPath() {
-        return travelerTaxiPath;
+    public double getNeighbourTravelTime() {
+        return neighbourTravelTime;
     }
 
-    public void setTravelerTaxiPath(Path travelerTaxiPath) {
-        this.travelerTaxiPath = travelerTaxiPath;
-    }
-
-    public Path getNeighbourTaxiPath() {
-        return neighbourTaxiPath;
-    }
-
-    public void setNeighbourTaxiPath(Path neighbourTaxiPath) {
-        this.neighbourTaxiPath = neighbourTaxiPath;
+    public void setNeighbourTravelTime(double neighbourTravelTime) {
+        this.neighbourTravelTime = neighbourTravelTime;
     }
 
     @Override
     public int compareTo(NearestNeighbour neighbour) {
-        if (this.getTravelTime() > neighbour.getTravelTime()) {
+        if (this.getTravelTime() + this.getNeighbourTravelTime() > neighbour.getTravelTime() + neighbour.getNeighbourTravelTime()) {
             return 1;
-        } else if (this.getTravelTime() < neighbour.getTravelTime()) {
+        } else if (this.getTravelTime() + this.getNeighbourTravelTime() < neighbour.getTravelTime() + neighbour.getNeighbourTravelTime()) {
             return -1;
         }
         return 0;

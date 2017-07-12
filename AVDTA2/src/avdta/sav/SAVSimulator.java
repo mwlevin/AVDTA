@@ -245,6 +245,7 @@ public class SAVSimulator extends Simulator
         
         for(Taxi t : taxis)
         {
+            t.reset();
             t.getStartLocation().addParkedTaxi(t);
             t.setLocation(t.getStartLocation());
             dispatch.addFreeTaxi(t);
@@ -399,6 +400,27 @@ public class SAVSimulator extends Simulator
         }
         
         return output / count;
+    }
+    
+    /**
+     * Returns the average travel time over all travelers.
+     * This includes in-vehicle travel time and waiting time.
+     * @return the average travel time (s)
+     */
+    public double getTotalPersonTT()
+    {
+        double output = 0;
+
+        
+        for(SAVTraveler t : travelers)
+        {
+            if(t.isExited())
+            {
+                output += t.getTT();
+            }                  
+        }
+        
+        return output;
     }
     
     public Dispatch getDispatch()

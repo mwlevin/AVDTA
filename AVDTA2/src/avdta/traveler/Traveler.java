@@ -93,13 +93,20 @@ public class Traveler implements Comparable<Traveler>, Serializable
         }
     }
     
+    public boolean equals(Object o)
+    {
+        Traveler rhs = (Traveler)o;
+        
+        return rhs.id == id;
+    }
+    
     /**
      * Resets the traveler to restart the simulation.
      */
     public void reset()
     {
         enter_time = -1;
-        exit_time = -1;
+        exit_time = Simulator.duration;
     }
     
     /**

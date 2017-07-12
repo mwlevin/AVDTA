@@ -90,17 +90,13 @@ public class TabuSearch {
 
         assignInitialTravelers();
         sim.simulate();
+        double best = sim.getTSTT();
+        double personBestTt = sim.getTotalPersonTT();
 
-        for (Taxi t : taxis) {
-            List<Path> s = ((AssignedTaxi) t).getSegments();
-            Iterator it = s.iterator();
-            System.out.print("Taxi t route is : ");
-            while (it.hasNext()) {
-                System.out.print(it.next());
-            }
-            System.out.println("\n");
-        }
         double tstt = getSolution(10, 15, 5);
+
+        System.out.println("initial total person travel time = " + personBestTt + "\t aVerage person travel time " + (personBestTt / 60 / travelers.size()));
+        System.out.println("initial total vehicle travel time = " + best);
 
         return null;
     }
@@ -110,7 +106,7 @@ public class TabuSearch {
     }
 
     public Taxi createTaxiCopy(Taxi taxi, List<SAVTraveler> travelersCopy) {
-        List<SAVTraveler> passengers = taxi.getPassengers();
+        List<SAVTraveler> passengers = ((AssignedTaxi) taxi).getTravelers();
         Iterator<SAVTraveler> itrav = passengers.iterator();
         List<SAVTraveler> passengersCopy = new ArrayList<>();
         while (itrav.hasNext()) {
@@ -120,9 +116,9 @@ public class TabuSearch {
         }
         Taxi tCopy = new AssignedTaxi(taxi.getId(), taxi.getStartLocation(), taxi.getLocation(), taxi.getCapacity(), taxi.getDropTime(), taxi.getTT(), passengersCopy, taxi.delay, taxi.eta, taxi.park_time, taxi.total_distance, taxi.empty_distance);
         itrav = passengersCopy.iterator();
-        while (itrav.hasNext()) {
-            itrav.next().setAssignedTaxi(tCopy);
-        }
+//        while (itrav.hasNext()) {
+//            itrav.next().setAssignedTaxi(tCopy);
+//        }
         return tCopy;
     }
 
@@ -132,7 +128,9 @@ public class TabuSearch {
 
     public double getSolution(int pSize, int nmax, int maxMoves) throws IOException {
         double bestTstt = sim.getTSTT();
-        System.out.println("The travel time is " + bestTstt);
+        double bestPersonTt = sim.getTotalPersonTT();
+        System.out.println("The travel time is " + bestTstt + " expected " + getExpTaxiTT());
+        System.out.println("The person travel time is " + bestPersonTt + "\t aVerage person travel time " + (bestPersonTt / 60 / travelers.size()));
         int n = 0;
         Map<TabuList, Integer> tabuMap = new HashMap<TabuList, Integer>();
         for (SAVTraveler t : travelers) {
@@ -140,40 +138,44 @@ public class TabuSearch {
             Iterator<NearestNeighbour> it = nNeigbour.iterator();
             while (it.hasNext()) {
                 NearestNeighbour neighbour = it.next();
-                List<SAVTraveler> travelerCopy = new ArrayList<>();
-                List<Taxi> taxiCopy = new ArrayList<>();
-                for (Taxi tx : taxis) {
-                    taxiCopy.add(createTaxiCopy(tx, travelerCopy));
-                }
+
                 Taxi tx = t.getAssignedTaxi();
                 Taxi old = neighbour.getNeighbour().getAssignedTaxi();
 
-                genInsert(t, neighbour);
-                System.out.println("Traveler taxi = " + t.getAssignedTaxi() + " Old Taxi = " + tx);
-                System.out.println("Neighbour taxi = " + neighbour.getNeighbour().getAssignedTaxi() + " Old Taxi = " + old);
+                TabuList tabu = new TabuList(t, neighbour.getAssignedTaxi());
+                if (!tabuMap.containsKey(tabu)) {
+                    genInsert(t, neighbour.getNeighbour());
+//                System.out.println("Traveler taxi = " + t.getAssignedTaxi() + " Old Taxi = " + tx);
+//                System.out.println("Neighbour taxi = " + neighbour.getNeighbour().getAssignedTaxi() + " Old Taxi = " + old);
 
-                sim.simulate();
-                double tstt = sim.getTSTT();
-                System.out.println(tstt);
+                    System.out.println("***Simulating***");
+                    sim.simulate();
+                    double tstt = sim.getTSTT();
+                    double personTt = sim.getTotalPersonTT();
+                    if (personTt <= bestPersonTt) {
+                        n = tstt == bestTstt ? n++ : n;
+                        bestTstt = tstt;
+                        bestPersonTt = personTt;
+//                    travelerCopy.clear();
+//                    taxiCopy.clear();
 
-                //to-do: add item to tabulist and update tabu list count
-                TabuList tabu = new TabuList(t, t.getAssignedTaxi());
-                if (tstt <= bestTstt && !tabuMap.containsKey(tabu)) {
-                    n = tstt == bestTstt ? n++ : n;
-                    bestTstt = tstt;
-                    travelerCopy.clear();
-                    taxiCopy.clear();
+                        tabu.setPreviousTaxi(t.getAssignedTaxi());
+                        tabuMap.put(tabu, 0);
+                        System.out.println("The best travel time is " + bestTstt + " expected: " + getExpTaxiTT());
+                        System.out.println("Total person tt " + personTt + "\t Average person travel time " + (personTt / 60 / travelers.size()) + "\n");
 
-                    tabu.setPreviousTaxi(t.getAssignedTaxi());
-                    tabuMap.put(tabu, 0);
-                    System.out.println("The best travel time is " + bestTstt);
-                    if (n == nmax) {
-                        break;
+                        if (n == nmax) {
+                            break;
+                        }
+                    } else {
+
+                        System.out.println("The simulated travel time is " + tstt + " expected: " + getExpTaxiTT());
+                        System.out.println("Simulated Total person tt " + personTt + "\t Average person travel time " + (personTt / 60 / travelers.size()) + "\n");
+                        
+                        genInsert(neighbour.getNeighbour(), t);
+
+
                     }
-                } else {
-                    travelers = travelerCopy;
-                    taxis = taxiCopy;
-                    System.out.println("The travel time is " + tstt);
                 }
                 for (Map.Entry entry : tabuMap.entrySet()) {
                     int value = (int) entry.getValue();
@@ -185,7 +187,23 @@ public class TabuSearch {
 
             }
         }
+        System.out.println("Simulated Best person travel time " + bestPersonTt + "\t Simulated Average person travel time " + (bestPersonTt / 60 / travelers.size()));
+        System.out.println("Simulated Best vehicle travel time " + bestTstt);
         return bestTstt;
+    }
+
+    public double getExpTaxiTT() {
+        double output = 0.0;
+
+        for (Taxi t : taxis) {
+            AssignedTaxi taxi = (AssignedTaxi) t;
+
+            for (Path p : taxi.getSegments()) {
+                output += p.getFFTime();
+            }
+        }
+
+        return output;
     }
 
     /**
@@ -200,6 +218,8 @@ public class TabuSearch {
         Taxi travelerTaxi = traveler.getAssignedTaxi();
         List<SAVTraveler> travelerMates = ((AssignedTaxi) travelerTaxi).getTravelers();
         int neighbourPrevPassIndex = travelerMates.indexOf(traveler) - 1;
+        int neighbourNextPassIndex = travelerMates.indexOf(traveler) + 1;
+
         List<NearestNeighbour> nNeighbours = new ArrayList<>();
 
         for (SAVTraveler t : travelers) {
@@ -210,35 +230,79 @@ public class TabuSearch {
             if (depTime - 450 <= t.getDepTime() && depTime + 450 >= t.getDepTime()) {
                 Taxi taxi = t.getAssignedTaxi();
                 List<SAVTraveler> passengers = ((AssignedTaxi) taxi).getTravelers();
-                
-                SAVTraveler previousPassenger = null;
-                
+
+                SAVTraveler previousPassenger, nextPassenger, neighPrevPass, neighNextPass = null;
+//                System.out.print(travelerTaxi + " to " + taxi + "\n");
+//               System.out.print("Traveler " + traveler + " to " + t + "\n");
+
                 int prevPassengerIndex = passengers.indexOf(t) - 1;
-                Path p, p1 = null;
-                if (prevPassengerIndex >= 0 && prevPassengerIndex <= passengers.size() - 1) {
+                int nextPassengerIndex = passengers.indexOf(t) + 1;
+                double travelTimeTravOrig, nextPassDropTime = 0.0;
+                double prevPassDropTime = 0.0;
+                Path p = null;
+                if (prevPassengerIndex >= 0 && prevPassengerIndex < passengers.size() - 1) {
                     previousPassenger = passengers.get(prevPassengerIndex);
+                    prevPassDropTime = previousPassenger.getDropTime();
                     p = sim.findPath(previousPassenger.getDest().getLinkedZone(), traveler.getOrigin().getLinkedZone(), (int) previousPassenger.getDropTime(), 0, DriverType.AV, TravelCost.ttCost);
                 } else {
                     p = sim.findPath(taxi.getStartLocation(), traveler.getOrigin().getLinkedZone(), (int) taxi.getDepTime(), 0, DriverType.AV, TravelCost.ttCost);
                 }
 
-                if (neighbourPrevPassIndex >= 0 && neighbourPrevPassIndex <= travelerMates.size()) {
-                    SAVTraveler prevTravMate = travelerMates.get(neighbourPrevPassIndex);
-                    p1 = sim.findPath(prevTravMate.getDest().getLinkedZone(), t.getOrigin().getLinkedZone(), (int) prevTravMate.getDropTime(), 0, DriverType.AV, TravelCost.ttCost);
+                Path p1 = null;
+                if (nextPassengerIndex > 0 && nextPassengerIndex <= passengers.size() - 1) {
+                    nextPassenger = passengers.get(nextPassengerIndex);
+                    nextPassDropTime = nextPassenger.getDropTime();
+                    p1 = sim.findPath(traveler.getDest().getLinkedZone(), nextPassenger.getOrigin().getLinkedZone(), (int) traveler.getDropTime(), 0, DriverType.AV, TravelCost.ttCost);
                 } else {
-                    p1 = sim.findPath(travelerTaxi.getStartLocation(), t.getOrigin().getLinkedZone(), (int) travelerTaxi.getDepTime(), 0, DriverType.AV, TravelCost.ttCost);
+                    p1 = null;
+                }
+                nextPassDropTime = 0.0 != nextPassDropTime ? nextPassDropTime : traveler.getDropTime();
+                prevPassDropTime = 0.0 != prevPassDropTime ? prevPassDropTime : taxi.getDepTime();
+                travelTimeTravOrig = nextPassDropTime - prevPassDropTime;
+
+                Path p2 = null;
+                double neighTimeTravOrig, neighNextPassDrop = 0.0;
+                double neighPrevPassDrop = 0.0;
+                if (neighbourPrevPassIndex >= 0 && neighbourPrevPassIndex < travelerMates.size() - 1) {
+                    neighPrevPass = travelerMates.get(neighbourPrevPassIndex);
+                    neighPrevPassDrop = neighPrevPass.getDropTime();
+                    p2 = sim.findPath(neighPrevPass.getDest().getLinkedZone(), t.getOrigin().getLinkedZone(), (int) neighPrevPass.getDropTime(), 0, DriverType.AV, TravelCost.ttCost);
+                } else {
+                    p2 = sim.findPath(travelerTaxi.getStartLocation(), t.getOrigin().getLinkedZone(), (int) travelerTaxi.getDepTime(), 0, DriverType.AV, TravelCost.ttCost);
                 }
 
-                NearestNeighbour n = new NearestNeighbour(t, previousPassenger, taxi, p.getCost(), p, p1);
-                int index = Collections.binarySearch(nNeighbours, n);
+                Path p3 = null;
+                if (neighbourNextPassIndex > 0 && neighbourNextPassIndex <= travelerMates.size() - 1) {
+                    neighNextPass = travelerMates.get(neighbourNextPassIndex);
+                    neighNextPassDrop = neighNextPass.getDropTime();
+                    p3 = sim.findPath(t.getDest().getLinkedZone(), neighNextPass.getOrigin().getLinkedZone(), (int) t.getDropTime(), 0, DriverType.AV, TravelCost.ttCost);
+                } else {
+                    p3 = null;
+                }
 
-                if (index < pSize - 1) {
-                    nNeighbours.add(index < 0 ? -index - 1 : index, n);
-                    if (nNeighbours.size() > pSize) {
-                        nNeighbours.remove(pSize - 1);
+                neighPrevPassDrop = 0.0 != neighPrevPassDrop ? neighPrevPassDrop : travelerTaxi.getDepTime();
+                neighNextPassDrop = 0.0 != neighNextPassDrop ? neighNextPassDrop : t.getDropTime();
+                neighTimeTravOrig = neighNextPassDrop - neighPrevPassDrop;
+
+                double dropTimeTraveler = null != p1 ? p1.getCost() : traveler.getDropTime();
+                double dropTimeNeighbour = null != p3 ? p3.getCost() : t.getDropTime();
+                double travelerTTime = p.getCost() + traveler.getPath().getCost() + dropTimeTraveler;
+                double neighTTime = p2.getCost() + t.getPath().getCost() + dropTimeNeighbour;
+
+                if (travelerTTime + neighTTime < travelTimeTravOrig + neighTimeTravOrig) {
+                    NearestNeighbour n = new NearestNeighbour(t, taxi, travelerTTime, neighTTime, p);
+
+                    int index = Collections.binarySearch(nNeighbours, n);
+
+                    if (index < pSize - 1) {
+                        nNeighbours.add(index < 0 ? -index - 1 : index, n);
+                        if (nNeighbours.size() > pSize) {
+                            nNeighbours.remove(pSize - 1);
+                        }
                     }
+                    Collections.sort(nNeighbours);
                 }
-                Collections.sort(nNeighbours);
+
             }
 
         }
@@ -246,73 +310,97 @@ public class TabuSearch {
         return nNeighbours;
     }
 
-    /**
-     *
-     * @param startLocation
-     * @param W
-     * @return
-     */
-//    public List<NearestNeighbour> getPNeighbourhood(SAVTraveler traveler, List<SAVTraveler> W, int pSize) {
-//        sim.dijkstras(traveler.getDest(), 0, 1, DriverType.AV, TravelCost.ttCost);
-//
-//        List<NearestNeighbour> pNeighbours = getNearestTraveler(traveler, travelers);
-//        //remove all items that come after pSize
-//        for (NearestNeighbour n : pNeighbours) {
-//            // node.label
-//            Path p = sim.node_trace(traveler.getDest().getLinkedZone(), n.getNeighbour().getOrigin());
-//            NearestNeighbour n = new NearestNeighbour(t, p.getCost());
-//            int index = Collections.binarySearch(pNeighbours, n);
-//            if (index < pSize - 1) {
-//                pNeighbours.add(index < 0 ? -index - 1 : index, n);
-//                pNeighbours.remove(pSize);
-//            }
-//            Collections.sort(pNeighbours);
-//        }
-//
-//        return pNeighbours;
-//
-//    }
-    public void genInsert(SAVTraveler v, NearestNeighbour n) {
-        SAVTraveler nTraveler = n.getNeighbour();
-        Taxi swapTaxi = nTraveler.getAssignedTaxi();
+    public void genInsert(SAVTraveler v, SAVTraveler n) {
 
-        swapPassenger(v, nTraveler, swapTaxi, n.getTravelerTaxiPath());
-        swapPassenger(nTraveler, v, v.getAssignedTaxi(), n.getNeighbourTaxiPath());
+        Taxi nTaxi = n.getAssignedTaxi();
+        List<SAVTraveler> travelers = ((AssignedTaxi) nTaxi).getTravelers();
+        SAVTraveler previousPassenger, nextPassenger = null;
 
-        nTraveler.setAssignedTaxi(v.getAssignedTaxi());
+        int prevPassengerIndex = travelers.indexOf(n) - 1;
+        int nextPassengerIndex = travelers.indexOf(n) + 1;
+
+        Path p, p1, p2, p3 = null;
+        if (prevPassengerIndex >= 0 && prevPassengerIndex <= travelers.size() - 1) {
+            previousPassenger = travelers.get(prevPassengerIndex);
+            p = sim.findPath(previousPassenger.getDest().getLinkedZone(), v.getOrigin().getLinkedZone(), (int) previousPassenger.getDropTime(), 0, DriverType.AV, TravelCost.ttCost);
+        } else {
+            p = sim.findPath(nTaxi.getStartLocation(), v.getOrigin().getLinkedZone(), (int) nTaxi.getDepTime(), 0, DriverType.AV, TravelCost.ttCost);
+        }
+
+        if (nextPassengerIndex >= travelers.size() - 1) {
+            p2 = null;
+        } else {
+//            System.out.println("The travelers size is " + travelers.size() + " and the index is " + nextPassengerIndex);
+            nextPassenger = travelers.get(nextPassengerIndex);
+            p2 = sim.findPath(v.getDest().getLinkedZone(), nextPassenger.getOrigin().getLinkedZone(), (int) v.getDropTime(), 0, DriverType.AV, TravelCost.ttCost);
+        }
+        swapPassenger(v, n, n.getAssignedTaxi(), p, p2);
+
+        Taxi travelerTaxi = v.getAssignedTaxi();
+        List<SAVTraveler> travelerMates = ((AssignedTaxi) travelerTaxi).getTravelers();
+        int neighbourPrevPassIndex = travelerMates.indexOf(v) - 1;
+        int neighbourNextPassIndex = travelerMates.indexOf(v) + 1;
+
+        if (neighbourPrevPassIndex >= 0 && neighbourPrevPassIndex <= travelerMates.size()) {
+            SAVTraveler prevTravMate = travelerMates.get(neighbourPrevPassIndex);
+            p1 = sim.findPath(prevTravMate.getDest().getLinkedZone(), n.getOrigin().getLinkedZone(), (int) prevTravMate.getDropTime(), 0, DriverType.AV, TravelCost.ttCost);
+        } else {
+            p1 = sim.findPath(travelerTaxi.getStartLocation(), n.getOrigin().getLinkedZone(), (int) travelerTaxi.getDepTime(), 0, DriverType.AV, TravelCost.ttCost);
+        }
+
+        if (neighbourNextPassIndex >= travelerMates.size() - 1) {
+            p3 = null;
+        } else {
+//            System.out.println("The traveler mates size is " + travelerMates.size() + " and the index is " + neighbourNextPassIndex);
+            SAVTraveler nextTravMate = travelerMates.get(neighbourNextPassIndex);
+            p3 = sim.findPath(n.getDest().getLinkedZone(), nextTravMate.getOrigin().getLinkedZone(), (int) n.getDropTime(), 0, DriverType.AV, TravelCost.ttCost);
+        }
+
+        swapPassenger(n, v, v.getAssignedTaxi(), p1, p3);
 
         n.setAssignedTaxi(v.getAssignedTaxi());
-        n.setNeighbour(nTraveler);
-        v.setAssignedTaxi(swapTaxi);
+
+//        n.setAssignedTaxi(v.getAssignedTaxi());
+        v.setAssignedTaxi(nTaxi);
 
     }
 
-    public void swapPassenger(SAVTraveler t, SAVTraveler neighbour, Taxi swapTaxi, Path p) {
+    public void swapPassenger(SAVTraveler t, SAVTraveler neighbour, Taxi swapTaxi, Path prevPath, Path nextPath) {
 
         List<SAVTraveler> passengers = ((AssignedTaxi) swapTaxi).getTravelers();
         int index = passengers.indexOf(neighbour);
-        System.out.println("Insertion index" + index);
+//        System.out.println("Insertion index" + index + " " + neighbour + " " + passengers);
 
         passengers.add(index, t);
         passengers.remove(index + 1);
+
+//      System.out.println("Traveler " + t + " for " + neighbour + "inserted in Taxi " + swapTaxi + "in" + passengers);
 
         List<Path> segments = ((AssignedTaxi) swapTaxi).getSegments();
 
         int segmentIndex = (2 * index) + 1;
 
-        System.out.println("Segment index " + segmentIndex);
-        System.out.println(neighbour.getPath());
-        System.out.println(segments.get(segmentIndex));
-        System.out.print("Taxi path is : ");
-        for (Path s : segments) {
-            System.out.print(s);
-        }
-        System.out.print("\n");
+//        System.out.println("Segment index " + segmentIndex);
+//        System.out.println(neighbour.getPath());
+//        System.out.println(segments.get(segmentIndex));
+//        System.out.print("Taxi path is : ");
+//        for (Path s : segments) {
+//            System.out.print(s);
+//        }
+//        System.out.print("\n");
         segments.add(segmentIndex, t.getPath());
 
-        segments.remove(segmentIndex - 1);
-        segments.add(segmentIndex - 1, p);
+        if (null != prevPath) {
+            segments.remove(segmentIndex - 1);
+            segments.add(segmentIndex - 1, prevPath);
+        }
+
         segments.remove(segmentIndex + 1);
+
+        if (null != nextPath) {
+            segments.remove(segmentIndex + 1);
+            segments.add(segmentIndex + 1, nextPath);
+        }
 
     }
 
@@ -383,22 +471,12 @@ public class TabuSearch {
         minT.setDropTime(dep_time + traveler.getDest().label);
         traveler.setPath(od);
         traveler.setPickupTime(dep_time);
-        traveler.setAssignedTaxi(minT);
+//        traveler.setAssignedTaxi(minT);
         traveler.setDropTime(dep_time + traveler.getDest().label);
         traveler.setTaxiPathToOrigin(best);
         ((AssignedTaxi) minT).assignTraveler(traveler, od);
 
-        System.out.println(best + " " + od);
         location.removeFreeTaxi(minT);
-
-        for (Path p : ((AssignedTaxi) minT).getSegments()) {
-            if (p.equals(best)) {
-                System.out.print("Path to Traveler : " + p);
-            }
-            if (p.equals(od)) {
-                System.out.print("Path to OD : " + p);
-            }
-        }
 
         ((SAVOrigin) traveler.getDest().getLinkedZone()).addFreeTaxi(minT);
 
@@ -444,7 +522,7 @@ public class TabuSearch {
 
         for (SAVTraveler t : travelers) {
             findClosestTaxi(t, taxis);
-            System.out.print("\n");
+            //System.out.print("\n");
         }
 
     }

@@ -30,14 +30,28 @@ public class AssignedTaxi extends Taxi
     }
     
     public AssignedTaxi(int id, SAVOrigin startLocation, SAVOrigin location, int capacity, double dropTime, int ttt, List<SAVTraveler> passengers, int delay, int eta, int park_time, double total_distance, double empty_distance){
-        super(id, startLocation, capacity, location, dropTime, ttt, passengers);
+        super(id, startLocation, capacity, location, dropTime, ttt);
         setDriver(DriverType.AV);
         this.delay = delay;
         this.eta = eta;
         this.park_time = park_time;
         this.total_distance = total_distance;
         this.empty_distance = empty_distance;
+        
+        this.travelers = passengers;
+        
+        for(SAVTraveler t : travelers)
+        {
+            t.setAssignedTaxi(this);
+        }
         setEfficiency(1);
+    }
+    
+    public void reset()
+    {
+        super.reset();
+        segment_idx = 0;
+        traveler_idx = 0;
     }
     
     public void addSegment(Path path)
@@ -55,12 +69,18 @@ public class AssignedTaxi extends Taxi
     {
         super.entered();
         segment_idx++;
-        
+       
         
         if(segments.size() > segment_idx && segments.get(segment_idx).isEmpty())
         {
             segment_idx++;
         }
+        
+    }
+    
+    public int getSegmentIndex()
+    {
+        return segment_idx;
     }
     
     public List<Path> getSegments()
@@ -72,7 +92,7 @@ public class AssignedTaxi extends Taxi
     {
         travelers.add(t);
         segments.add(path);
-        //t.setAssignedTaxi(this);
+        t.setAssignedTaxi(this);
     }
     public List<SAVTraveler> getTravelers()
     {
@@ -85,12 +105,12 @@ public class AssignedTaxi extends Taxi
         this.travelers = travelers;
         this.segments = segments;
         
-        /*
+        
         for(SAVTraveler t : travelers)
         {
             t.setAssignedTaxi(this);
         }
-        */
+        
         traveler_idx = 0;
         segment_idx = 0;
     }

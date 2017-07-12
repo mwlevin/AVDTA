@@ -291,16 +291,17 @@ public class SAVOrigin extends SAVZone
         {
             Taxi t = iterator.next();
             
+
             if(t.getPath() != null && t.getPath().size() > 0)
             {
                 if(t.delay <= 0)
                 {
-                    /*
+                    
                     if(Simulator.debug)
                     {
                         System.out.println(Simulator.time+": "+t+" entered "+t.getRouteChoice());
                     }
-                    */
+                    
                     iterator.remove();
                     t.entered();
                     t.getNextLink().addVehicle(t);

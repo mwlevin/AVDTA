@@ -440,8 +440,10 @@ public abstract class Vehicle implements Serializable, Comparable<Vehicle>
         exit_time = -1;
         time_waiting = 0;
         
-        routeChoice.reset();
-        
+        if(routeChoice != null)
+        {
+            routeChoice.reset();
+        }
         cell_enter = 0;
         prev_cell_time = 0;
         prev_cell = null;

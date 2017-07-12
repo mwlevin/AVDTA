@@ -34,14 +34,17 @@ public class SAVMain
         /*
         ReadSAVNetwork read = new ReadSAVNetwork();
         
-        read.prepareDemand(project, 0.04);
+        read.prepareDemand(project, 0.004);
         
-        read.createFleetEq(project, 300);
+        read.createFleetProb(project, 40);
         System.exit(0);
         */
         
+        Simulator.debug = false;
 
         SAVSimulator sim = project.getSimulator();
+        
+        System.out.println("Non-exit time is "+(sim.getTravelers().size() * Simulator.duration));
         
         sim.setUseLinkDijkstras(false);
         
