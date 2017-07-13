@@ -340,6 +340,20 @@ public class DUERSimulator extends DTASimulator
         fileout.close();
     }
     
+    public double getTT(Hyperpath path, Node origin, Incident incident)
+    {
+        List<Link> links = trace(path, origin, incident);
+        
+        double output = 0.0;
+        
+        Map<Link, Double> temp = avgTT.get(incident);
+        for(Link l : links)
+        {
+            output += temp.get(l);
+        }
+        
+        return output;
+    }
     public List<Link> trace(Hyperpath path, Node origin, Incident incident)
     {
         List<Link> output = new ArrayList<>();
