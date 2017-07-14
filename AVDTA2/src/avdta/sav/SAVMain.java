@@ -2,7 +2,6 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package avdta.sav;
 
 import avdta.demand.DemandRecord;
@@ -24,35 +23,30 @@ import java.util.Map;
 import java.util.Scanner;
 import java.util.TreeMap;
 
+public class SAVMain {
 
-public class SAVMain
-{
-    public static void main(String[] args) throws Exception
-    {
+    public static void main(String[] args) throws Exception {
         SAVProject project = new SAVProject(new File("projects/SiouxFalls"));
-        
+
         /*
         ReadSAVNetwork read = new ReadSAVNetwork();
         
         read.prepareDemand(project, 0.004);
         
-        read.createFleetProb(project, 40);
+        read.createFleetProb(project, 30);
         System.exit(0);
         */
-        
         Simulator.debug = false;
 
         SAVSimulator sim = project.getSimulator();
-        
-        System.out.println("Non-exit time is "+(sim.getTravelers().size() * Simulator.duration));
-        
+
+        System.out.println("Non-exit time is " + (sim.getTravelers().size() * Simulator.duration));
+
         sim.setUseLinkDijkstras(false);
-        
+
         TabuSearch t = new TabuSearch(project);
         t.getBestRoute();
-        
-        
-        
+
         /*
             AssignedTaxi taxi = (AssignedTaxi)sim.getTaxis().get(0);
 
@@ -64,10 +58,9 @@ public class SAVMain
             {
                 System.out.println(traveler.getOrigin()+"\t"+traveler.getDest());
             }
-        */
-        
+         */
         sim.simulate();
-        
+
     }
 }
 
@@ -307,4 +300,4 @@ public class SAVMain
         return output;
     }
 }
-*/
+ */
