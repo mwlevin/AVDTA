@@ -22,6 +22,8 @@ public class AssignedTaxi extends Taxi
     public int traveler_idx;
     private int segment_idx;
     
+    private int curr_segment;
+    
     public AssignedTaxi(int id, SAVOrigin startLocation, int capacity)
     {
         super(id, startLocation, capacity);
@@ -70,7 +72,9 @@ public class AssignedTaxi extends Taxi
     {
         super.entered();
         
-        getPath().dtime = Simulator.time;
+        curr_segment = segment_idx;
+        
+        getCurrentSegment().dtime = Simulator.time;
         
         segment_idx++;
        
@@ -79,14 +83,18 @@ public class AssignedTaxi extends Taxi
         {
             segment_idx++;
         }
-        
+    }
+    
+    public Path getCurrentSegment()
+    {
+        return segments.get(curr_segment);
     }
     
     public void exited()
     {
         super.exited();
         
-        getPath().etime = Simulator.time;
+        getCurrentSegment().etime = Simulator.time;
     }
     
     public int getSegmentIndex()
