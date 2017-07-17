@@ -21,13 +21,19 @@ public class NearestNeighbour implements Comparable<NearestNeighbour> {
     private double neighbourTravelTime;
 
     private Path travelerNewTaxiPath;
+    private Path travelerNewTaxiNextPath;
+    private Path neighbourNewTaxiPath;
+    private Path neighbourNewTaxiNextPath;
 
-    public NearestNeighbour(SAVTraveler neighbour, Taxi assignedTaxi, double travelTime, double neighbourTravelTime, Path travelerNewTaxiPath) {
+    public NearestNeighbour(SAVTraveler neighbour, Taxi assignedTaxi, double travelTime, double neighbourTravelTime, Path travelerNewTaxiPath, Path travelerNewTaxiNextPath, Path neighbourNewTaxiPath, Path neighbourNewTaxiNextPath) {
         this.neighbour = neighbour;
         this.assignedTaxi = assignedTaxi;
         this.travelTime = travelTime;
         this.neighbourTravelTime = neighbourTravelTime;
         this.travelerNewTaxiPath = travelerNewTaxiPath;
+        this.travelerNewTaxiNextPath = travelerNewTaxiNextPath;
+        this.neighbourNewTaxiPath = neighbourNewTaxiPath;
+        this.neighbourNewTaxiNextPath = neighbourNewTaxiNextPath;
     }
 
     public SAVTraveler getNeighbour() {
@@ -68,6 +74,30 @@ public class NearestNeighbour implements Comparable<NearestNeighbour> {
 
     public void setNeighbourTravelTime(double neighbourTravelTime) {
         this.neighbourTravelTime = neighbourTravelTime;
+    }
+
+    public Path getTravelerNewTaxiNextPath() {
+        return travelerNewTaxiNextPath;
+    }
+
+    public void setTravelerNewTaxiNextPath(Path travelerNewTaxiNextPath) {
+        this.travelerNewTaxiNextPath = travelerNewTaxiNextPath;
+    }
+
+    public Path getNeighbourNewTaxiPath() {
+        return neighbourNewTaxiPath;
+    }
+
+    public void setNeighbourNewTaxiPath(Path neighbourNewTaxiPath) {
+        this.neighbourNewTaxiPath = neighbourNewTaxiPath;
+    }
+
+    public Path getNeighbourNewTaxiNextPath() {
+        return neighbourNewTaxiNextPath;
+    }
+
+    public void setNeighbourNewTaxiNextPath(Path neighbourNewTaxiNextPath) {
+        this.neighbourNewTaxiNextPath = neighbourNewTaxiNextPath;
     }
 
     @Override
