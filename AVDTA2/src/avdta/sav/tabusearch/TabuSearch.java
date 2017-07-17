@@ -167,6 +167,9 @@ public class TabuSearch {
                         tabuMap.put(tabu, 0);
                         System.out.println("The best travel time is " + bestTstt + " expected: " + getExpTaxiTT());
                         System.out.println("Best total person tt " + personTt + "\t Average best person travel time " + (personTt / 60 / travelers.size()) + "\n");
+                        
+                        printAssignment();
+                        
                         break;
                     } else {
                         n = avgPersonTt >= avgBestPersonTt - 1 ? n + 1 : n;
@@ -209,7 +212,8 @@ public class TabuSearch {
     
     public void maybeSimulate() throws IOException
     {
-        if(swap_count == swaps_before_simulate)
+        if(true)
+        //if(swap_count == swaps_before_simulate)
         {
             swap_count = 0;
             System.out.println("***Simulating***");
@@ -217,8 +221,6 @@ public class TabuSearch {
             tstt = sim.getTSTT();
             personTt = sim.getTotalPersonTT();
             avgPersonTt = personTt / 60 / travelers.size();
-            
-            printAssignment();
         }
         else
         {
@@ -447,6 +449,8 @@ public class TabuSearch {
         int index = passengers.indexOf(neighbour);
 //        System.out.println("Insertion index" + index + " " + neighbour + " " + passengers);
 
+        System.out.println("Index is "+index+" "+neighbour+" "+passengers);
+        
         passengers.add(index, t);
         passengers.remove(index + 1);
 
@@ -455,6 +459,8 @@ public class TabuSearch {
 //        System.out.println(segments);
 
         int segmentIndex = (2 * index) + 1;
+        
+        
 
 //        System.out.println("Segment index " + segmentIndex);
 //        System.out.println(neighbour.getPath());
@@ -493,11 +499,13 @@ public class TabuSearch {
             startTime = segments.get(startIndex-1).etime + Taxi.DELAY_EXIT;
         }
         
+        System.out.println("Start time is "+startTime+" startIndex is "+startIndex);
+        
         for(int i = startIndex; i < segments.size(); i++)
         {
             Path seg = segments.get(i);
             
-            
+            int old_etime = seg.etime;
             seg.dtime = startTime;
             
             if(seg.traveler != null && seg.traveler.getDepTime() > startTime)
@@ -510,11 +518,7 @@ public class TabuSearch {
             {
                 seg.etime +=  Taxi.DELAY_EXIT + Taxi.DELAY_ENTER;
                 
-                int newPersonTT = seg.etime - seg.traveler.getDepTime();
-                
-                int oldPersonTT = seg.traveler.getTT();
-                
-                int change = newPersonTT - oldPersonTT;
+                int change = seg.etime - old_etime;
                 
                 personTt += change;
             }

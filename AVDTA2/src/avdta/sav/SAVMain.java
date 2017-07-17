@@ -31,9 +31,9 @@ public class SAVMain {
         /*
         ReadSAVNetwork read = new ReadSAVNetwork();
         
-        read.prepareDemand(project, 0.04);
+        read.prepareDemand(project, 100.0/28835);
         
-        read.createFleetProb(project, 350);
+        read.createFleetProb(project, 35);
         System.exit(0);
         */
         Simulator.debug = false;
