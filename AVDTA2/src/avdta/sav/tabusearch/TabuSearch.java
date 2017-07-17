@@ -492,6 +492,7 @@ public class TabuSearch {
             segments.add(segmentIndex + 1, nextPath);
         }
         
+        /*
         int startTime = 0;
         
         if(startIndex > 0)
@@ -526,7 +527,7 @@ public class TabuSearch {
             startTime = seg.etime;
             
         }
-
+*/
     }
 
     /**
