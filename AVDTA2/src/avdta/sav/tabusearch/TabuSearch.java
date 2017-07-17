@@ -20,7 +20,9 @@ import avdta.traveler.Traveler;
 import avdta.vehicle.DriverType;
 import avdta.vehicle.Vehicle;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -215,6 +217,8 @@ public class TabuSearch {
             tstt = sim.getTSTT();
             personTt = sim.getTotalPersonTT();
             avgPersonTt = personTt / 60 / travelers.size();
+            
+            printAssignment();
         }
         else
         {
@@ -224,6 +228,28 @@ public class TabuSearch {
             
         }
 
+    }
+    
+    public void printAssignment() throws IOException
+    {
+        File file = new File(project.getResultsFolder()+"/SAV_assignment.txt");
+        
+        PrintStream fileout = new PrintStream(new FileOutputStream(file), true);
+        
+        fileout.println("Taxi id\tTravelers (in order)");
+        for(Taxi t : sim.getTaxis())
+        {
+            AssignedTaxi taxi = (AssignedTaxi)t;
+            
+            fileout.print(taxi.getId());
+            
+            for(Traveler person : taxi.getTravelers())
+            {
+                fileout.print("\t"+person.getId());
+            }
+        }
+        
+        fileout.close();
     }
     
     public double getExpTravelerTT(){
