@@ -152,6 +152,7 @@ public class SAVTraveler extends Traveler
 
     public void setPath(Path path) {
         this.path = path;
+        path.traveler = this;
     }
 
     public Path getTaxiPathToOrigin() {

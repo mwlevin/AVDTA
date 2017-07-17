@@ -7,6 +7,7 @@ package avdta.network;
 import avdta.network.link.Link;
 import avdta.network.node.Node;
 import avdta.network.cost.TravelCost;
+import avdta.traveler.Traveler;
 import avdta.vehicle.DriverType;
 import avdta.vehicle.Vehicle;
 import java.io.Serializable;
@@ -23,6 +24,9 @@ public class Path extends ArrayList<Link> implements Serializable
     private int id;
     
     private double cost;
+    
+    public int dtime, etime;
+    public Traveler traveler;
     
     /**
      * Constructs an empty {@link Path} with an id of -1.

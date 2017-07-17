@@ -150,11 +150,9 @@ public class TabuSearch {
 //                System.out.println("Traveler taxi = " + t.getAssignedTaxi() + " Old Taxi = " + tx);
 //                System.out.println("Neighbour taxi = " + neighbour.getNeighbour().getAssignedTaxi() + " Old Taxi = " + old);
 
-                    System.out.println("***Simulating***");
-                    sim.simulate();
-                    double tstt = sim.getTSTT();
-                    double personTt = sim.getTotalPersonTT();
-                    double avgPersonTt = personTt / 60 / travelers.size();
+                    maybeSimulate();
+                    
+                    
                     if (personTt <= bestPersonTt) {
                         if (tstt <= bestTstt) {
                             bestTstt = tstt;
@@ -199,6 +197,33 @@ public class TabuSearch {
         System.out.println("Simulated Best person travel time " + bestPersonTt + "\t Simulated Average person travel time " + (bestPersonTt / 60 / travelers.size()));
         System.out.println("Simulated Best vehicle travel time " + bestTstt);
         return bestTstt;
+    }
+    
+    double tstt;
+    double personTt, avgPersonTt;
+    
+    int swap_count = 0;
+    int swaps_before_simulate = 10;
+    
+    public void maybeSimulate() throws IOException
+    {
+        if(swap_count == swaps_before_simulate)
+        {
+            swap_count = 0;
+            System.out.println("***Simulating***");
+            sim.simulate();
+            tstt = sim.getTSTT();
+            personTt = sim.getTotalPersonTT();
+            avgPersonTt = personTt / 60 / travelers.size();
+        }
+        else
+        {
+            swap_count++;
+            
+            
+            
+        }
+
     }
     
     public double getExpTravelerTT(){
@@ -413,11 +438,19 @@ public class TabuSearch {
 //            System.out.print(s);
 //        }
 //        System.out.print("\n");
+        
+        int startIndex = segmentIndex;
+        int tIndex = segmentIndex;
+        
         segments.add(segmentIndex, t.getPath());
+        
+        
 
         if (null != prevPath) {
             segments.remove(segmentIndex - 1);
             segments.add(segmentIndex - 1, prevPath);
+            
+            startIndex = segmentIndex-1;
         }
 
         segments.remove(segmentIndex + 1);
@@ -425,6 +458,43 @@ public class TabuSearch {
         if (null != nextPath) {
             segments.remove(segmentIndex + 1);
             segments.add(segmentIndex + 1, nextPath);
+        }
+        
+        int startTime = 0;
+        
+        if(startIndex > 0)
+        {
+            startTime = segments.get(startIndex-1).etime + Taxi.DELAY_EXIT;
+        }
+        
+        for(int i = startIndex; i < segments.size(); i++)
+        {
+            Path seg = segments.get(i);
+            
+            
+            seg.dtime = startTime;
+            
+            if(seg.traveler != null && seg.traveler.getDepTime() > startTime)
+            {
+                seg.dtime = seg.traveler.getDepTime();
+            }
+            seg.etime = (int)(startTime + seg.getAvgTT(startTime));
+            
+            if(seg.traveler != null)
+            {
+                seg.etime +=  Taxi.DELAY_EXIT + Taxi.DELAY_ENTER;
+                
+                int newPersonTT = seg.etime - seg.traveler.getDepTime();
+                
+                int oldPersonTT = seg.traveler.getTT();
+                
+                int change = newPersonTT - oldPersonTT;
+                
+                personTt += change;
+            }
+            
+            startTime = seg.etime;
+            
         }
 
     }

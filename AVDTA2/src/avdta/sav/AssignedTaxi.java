@@ -5,6 +5,7 @@
 package avdta.sav;
 
 import avdta.network.Path;
+import avdta.network.Simulator;
 import avdta.traveler.Traveler;
 import avdta.vehicle.DriverType;
 import java.util.ArrayList;
@@ -68,6 +69,9 @@ public class AssignedTaxi extends Taxi
     public void entered()
     {
         super.entered();
+        
+        getPath().dtime = Simulator.time;
+        
         segment_idx++;
        
         
@@ -76,6 +80,13 @@ public class AssignedTaxi extends Taxi
             segment_idx++;
         }
         
+    }
+    
+    public void exited()
+    {
+        super.exited();
+        
+        getPath().etime = Simulator.time;
     }
     
     public int getSegmentIndex()
