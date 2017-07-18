@@ -159,7 +159,7 @@ public class Main
         ReadDemandNetwork read = new ReadDemandNetwork();
         
         DUERSimulator sim = project.getSimulator();
-        sim.msa(15);
+        sim.msa(25);
         
     }
     

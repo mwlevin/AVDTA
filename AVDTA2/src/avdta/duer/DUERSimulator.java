@@ -266,12 +266,17 @@ public class DUERSimulator extends DTASimulator
             {
                 double avg = 0;
                 
+                /*
                 for(int ast = 0; ast < Simulator.num_asts; ast++)
                 {
                     avg += l.getAvgTT(ast * Simulator.ast_duration);
                 }
                 
                 avg /= Simulator.num_asts;
+                */
+                avg = l.getAvgTT(3600);
+                
+                //System.out.println(l+"\t"+avg+"\t"+l.getFFTime());
                 
                 tt.put(l, avg);
             }
@@ -452,12 +457,12 @@ public class DUERSimulator extends DTASimulator
                 newPath[ast][drivertype] = osp(d, v.getDriver());
             }
 
-            
+            /*
             if(v.getRouteChoice() != null)
             {
                 tstt += ((Hyperpath)v.getRouteChoice()).getAvgCost(v.getOrigin(), dep_time);
             }
-            
+            */
             min += newPath[ast][v.getDriver().typeIndex()].getAvgCost(v.getOrigin(), dep_time);
 
 
@@ -504,7 +509,7 @@ public class DUERSimulator extends DTASimulator
         System.out.println(expTT+"\t"+min+"\t"+tstt);
 
 
-        return new DTAResults(min, tstt, vehicles.size(), exiting);
+        return new DTAResults(min, expTT, vehicles.size(), exiting);
 
     }
     
