@@ -131,7 +131,8 @@ public class Main
         System.out.println("--");
         System.out.println(test.getFirstLink(sim.createNodeIdsMap().get(101)));
         System.out.println(test.getNextLink(sim.createLinkIdsMap().get(101), Incident.UNKNOWN));
-        */
+ */
+        
         //transitTest3();
         
         
