@@ -874,7 +874,10 @@ public class Network
             }
         }
         
-        System.out.println("Tied "+count+" links");
+        if(count > 0)
+        {
+            System.out.println("Tied "+count+" links");
+        }
     }
     
     /**

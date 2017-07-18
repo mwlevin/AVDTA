@@ -116,7 +116,7 @@ public class Main
         //SAVtest();
         //GUI.main(args);
         
-        SAVMain.main(args);
+
         
        // testAllEmergency();
        //testEmergencyVehicle("coacongress2_100_EV",50);
@@ -153,6 +153,14 @@ public class Main
         */
         
 //        System.out.println(testEmergencyVehicle("coacongress2_"+70, 50));
+        
+        DUERProject project = new DUERProject(new File("projects/SiouxFalls2"));
+        
+        ReadDemandNetwork read = new ReadDemandNetwork();
+        
+        DUERSimulator sim = project.getSimulator();
+        sim.msa(15);
+        
     }
     
     public static void testAllEmergency() throws IOException

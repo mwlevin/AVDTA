@@ -36,6 +36,8 @@ import java.util.Set;
  */
 public class DUERSimulator extends DTASimulator
 {
+    private static final boolean PRINT = false;
+    
     private Map<Incident, Map<Link, Double>> avgTT; // store average travel times per incident state
     private static final double rationality_bound = 0.5;
     
@@ -77,7 +79,7 @@ public class DUERSimulator extends DTASimulator
         createStates();
     }
     
-    public double getExpTT()
+    public double getTSTT()
     {
         return expTT;
     }
@@ -249,6 +251,11 @@ public class DUERSimulator extends DTASimulator
         
         for(Incident i : incidents)
         {
+            if(i == Incident.UNKNOWN)
+            {
+                continue;
+            }
+            
             // activate incident
             activate(i);
             super.simulate();
@@ -277,12 +284,9 @@ public class DUERSimulator extends DTASimulator
             
             deactivate(i);
             
-            double totalTT = 0.0;
+            double totalTT = super.getTSTT();
             
-            for(Vehicle v : vehicles)
-            {
-                totalTT += v.getTT();
-            }
+            //System.out.println("TSTT="+i+" "+totalTT);
             
             expTT += i.getProbabilityOn() * totalTT;
         }
@@ -393,14 +397,15 @@ public class DUERSimulator extends DTASimulator
 
         // map dest to new hyperpaths
         Map<Node, Hyperpath[][]> newpaths = new HashMap<Node, Hyperpath[][]>();
-
-        double tstt = 0;
+        
         double min = 0;
         int exiting = 0;
 
         int count = 0;
         int moved_count = 0;
 
+        double tstt = 0;
+        
         for(Vehicle x : vehicles)
         {
             
@@ -448,7 +453,6 @@ public class DUERSimulator extends DTASimulator
             }
 
             
-
             if(v.getRouteChoice() != null)
             {
                 tstt += ((Hyperpath)v.getRouteChoice()).getAvgCost(v.getOrigin(), dep_time);
@@ -492,10 +496,12 @@ public class DUERSimulator extends DTASimulator
         simulate();
         
 
-        if(tstt == 0)
+        
+        if(tstt < min)
         {
             tstt = min;
         }
+        System.out.println(expTT+"\t"+min+"\t"+tstt);
 
 
         return new DTAResults(min, tstt, vehicles.size(), exiting);
@@ -525,7 +531,10 @@ public class DUERSimulator extends DTASimulator
             iter++;
             error = vi_iter(dest);
             
-            System.out.println(iter+"\t"+error);
+            if(PRINT)
+            {
+                System.out.println(iter+"\t"+error);
+            }
         }
         while(error >= error_bound);
         
