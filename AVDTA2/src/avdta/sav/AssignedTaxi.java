@@ -74,8 +74,6 @@ public class AssignedTaxi extends Taxi
         
         curr_segment = segment_idx;
         
-        getCurrentSegment().dtime = Simulator.time;
-        
         segment_idx++;
        
         
@@ -89,13 +87,7 @@ public class AssignedTaxi extends Taxi
     {
         return segments.get(curr_segment);
     }
-    
-    public void exited()
-    {
-        super.exited();
-        
-        getCurrentSegment().etime = Simulator.time;
-    }
+
     
     public int getSegmentIndex()
     {

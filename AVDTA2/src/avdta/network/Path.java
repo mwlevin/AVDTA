@@ -24,8 +24,7 @@ public class Path extends ArrayList<Link> implements Serializable
     private int id;
     
     private double cost;
-    
-    public int dtime, etime;
+
     public Traveler traveler;
     
     /**
