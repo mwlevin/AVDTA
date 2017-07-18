@@ -27,6 +27,8 @@ public class RunningAvg implements Serializable
                 x_squared = 0;
 	}
         
+        
+        
         /**
          * Sets the value as specified and sets the total weight to 1.
          * @param v the new value
@@ -61,6 +63,10 @@ public class RunningAvg implements Serializable
             count += weight;
         }
 	
+        public void add(RunningAvg rhs)
+        {
+            add(rhs.value/rhs.count, rhs.count);
+        }
         /**
          * Returns the total weight
          * @return the total weight
@@ -70,6 +76,11 @@ public class RunningAvg implements Serializable
             return count;
 	}
 	
+        public double getTotal()
+        {
+            return value;
+        }
+        
         /**
          * Returns the running average
          * @return the running average

@@ -15,6 +15,7 @@ import avdta.network.node.Node;
 import avdta.network.node.Zone;
 import avdta.project.DTAProject;
 import avdta.project.DUERProject;
+import avdta.util.RunningAvg;
 import avdta.vehicle.DriverType;
 import avdta.vehicle.PersonalVehicle;
 import avdta.vehicle.Vehicle;
@@ -264,21 +265,22 @@ public class DUERSimulator extends DTASimulator
             Map<Link, Double> tt = new HashMap<Link, Double>();
             for(Link l : getLinks())
             {
-                double avg = 0;
+                RunningAvg avg = new RunningAvg();
                 
-                /*
+                
                 for(int ast = 0; ast < Simulator.num_asts; ast++)
                 {
-                    avg += l.getAvgTT(ast * Simulator.ast_duration);
+                    RunningAvg temp = l.getAvgTTRA(ast * Simulator.ast_duration);
+                    
+                    if(temp != null)
+                    {
+                        avg.add(temp);
+                    }
+
                 }
                 
-                avg /= Simulator.num_asts;
-                */
-                avg = l.getAvgTT(3600);
                 
-                //System.out.println(l+"\t"+avg+"\t"+l.getFFTime());
-                
-                tt.put(l, avg);
+                tt.put(l, avg.getAverage());
             }
             
             avgTT.put(i, tt);
