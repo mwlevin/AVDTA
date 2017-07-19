@@ -116,7 +116,88 @@ public class Main
         //SAVtest();
         //GUI.main(args);
         
-
+        //SAVMain.main(args);
+        
+        testAllEmergency();
+        
+        
+        /*
+        DTAProject project = new DTAProject(new File("projects/coacongress2_100"));
+        DTASimulator sim = project.getSimulator();
+        
+        List<Node> nodes = new ArrayList<>();
+        
+        for(Node n : sim.getNodes())
+        {
+            if(!n.isZone())
+            {
+                nodes.add(n);
+            }
+        }
+        
+        PrintStream fileout = new PrintStream(new FileOutputStream("evs2.txt"), true);
+        for(int i = 0; i < 1000; i++)
+        {
+            Node origin = nodes.get((int)(Math.random() * nodes.size()));
+            Node dest = null;
+            do
+            {
+                dest = nodes.get((int)(Math.random() * nodes.size()));
+                
+                try
+                {
+                    sim.findPath(origin, dest);
+                }
+                catch(Exception ex)
+                {
+                    continue;
+                }
+            }
+            while(origin == dest);
+            
+            int dtime = (int)(Math.random()*3600+1800);
+            
+            fileout.println(origin.getId()+"\t"+dest.getId()+"\t"+dtime);
+        }
+        fileout.close();
+        */
+        
+        /*
+        for(int i = 75; i <= 120; i+= 5)
+        {
+            DTAProject project = new DTAProject(new File("projects/coacongress2_"+i+"_EV_limited"));
+            
+            List<NodeRecord> nodes = new ArrayList<NodeRecord>();
+            
+            Scanner filein = new Scanner(project.getNodesFile());
+            filein.nextLine();
+            
+            while(filein.hasNext())
+            {
+                nodes.add(new NodeRecord(filein.nextLine()));
+            }
+            filein.close();
+            
+            for(NodeRecord n : nodes)
+            {
+                if(n.getType() == 361)
+                {
+                    n.setType(362);
+                }
+            }
+            
+            PrintStream fileout = new PrintStream(new FileOutputStream(project.getNodesFile()), true);
+            
+            fileout.println(ReadNetwork.getNodesFileHeader());
+            
+            for(NodeRecord n : nodes)
+            {
+                fileout.println(n);
+            }
+            
+            fileout.close();
+        }
+        */
         
        // testAllEmergency();
        //testEmergencyVehicle("coacongress2_100_EV",50);
@@ -131,8 +212,7 @@ public class Main
         System.out.println("--");
         System.out.println(test.getFirstLink(sim.createNodeIdsMap().get(101)));
         System.out.println(test.getNextLink(sim.createLinkIdsMap().get(101), Incident.UNKNOWN));
- */
-        
+        */
         //transitTest3();
         
         
@@ -154,35 +234,34 @@ public class Main
         */
         
 //        System.out.println(testEmergencyVehicle("coacongress2_"+70, 50));
-        
-        DUERProject project = new DUERProject(new File("projects/SiouxFalls2"));
-        
-        ReadDemandNetwork read = new ReadDemandNetwork();
-        
-        DUERSimulator sim = project.getSimulator();
-        sim.msa(25);
-        
     }
     
-    public static void testAllEmergency() throws IOException
+    public static void testAllMultipleEV() throws Exception
     {
-        int num_repeats = 50;
-        
-        PrintStream out = new PrintStream(new FileOutputStream("ev_output.txt"), true);
-        
-        out.println("Demand\tNormal\tEV priority");
-        for(int dem = 70; dem <= 120; dem += 5)
+        for(int i = 2; i <= 10; i++)
         {
-            double normal = testEmergencyVehicle("coacongress2_"+dem, num_repeats);
-            double ev_fcfs = testEmergencyVehicle("coacongress2_"+dem+"_EV", num_repeats);
+            PrintStream fileout = new PrintStream(new FileOutputStream("mult_ev_"+i+".txt"));
+            RunningAvg[] output = multipleEVTest("coacongress2_100", i, 50);
+            fileout.println("Base");
+            fileout.println("EV\t"+output[0].getAverage()+"\t"+output[0].getStDev());
+            fileout.println("TSTT\t"+output[1].getAverage()+"\t"+output[1].getStDev());
             
-            out.println(dem+"\t"+normal+"\t"+ev_fcfs);
+            output = multipleEVTest("coacongress2_100_EV", i, 50);
+            fileout.println("EV");
+            fileout.println("EV\t"+output[0].getAverage()+"\t"+output[0].getStDev());
+            fileout.println("TSTT\t"+output[1].getAverage()+"\t"+output[1].getStDev());
+            
+            output = multipleEVTest("coacongress2_100_EV_limited", i, 50);
+            fileout.println("EV_limited");
+            fileout.println("EV\t"+output[0].getAverage()+"\t"+output[0].getStDev());
+            fileout.println("TSTT\t"+output[1].getAverage()+"\t"+output[1].getStDev());
+            
+            
+            fileout.close();
         }
-        out.close();
     }
     
-    // returns average % delay for emergency vehicle
-    public static double testEmergencyVehicle(String network, int num_repeats) throws IOException
+    public static RunningAvg[] multipleEVTest(String network, int num_evs, int num_repeats) throws Exception
     {
         DTAProject project = new DTAProject(new File("projects/"+network));
         
@@ -201,31 +280,115 @@ public class Main
             }
         }
         
-        RunningAvg output = new RunningAvg();
+        RunningAvg[] output = new RunningAvg[2];
+        
+        for(int i = 0; i < output.length; i++)
+        {
+            output[i] = new RunningAvg();
+        }
+        
+        Scanner filein = new Scanner(new File("evs2.txt"));
+        
+        Map<Integer, Node> nodesmap = sim.createNodeIdsMap();
+        
+        List<Vehicle> evs = new ArrayList<Vehicle>();
         
         for(int i = 0; i < num_repeats; i++)
         {
-            Node origin = nodes.get((int)(Math.random()*nodes.size()));
-            Node dest = null;
-            do
+            for(int j = 0; j < num_evs; j++)
             {
-                dest = nodes.get((int)(Math.random()*nodes.size()));
+                Node origin = nodesmap.get(filein.nextInt());
+                Node dest = nodesmap.get(filein.nextInt());
+                int deptime = filein.nextInt();
+                
+                EmergencyVehicle ev = new EmergencyVehicle(1000000, origin, dest, deptime);
+                vehicles.add(ev);
+                evs.add(ev);
             }
-            while(dest == origin);
             
-            int deptime = (int)(Math.random() * 3600)+1800;
+            
+            Collections.sort(vehicles);
+            sim.simulate();
+            
+            output[0].add(sim.calcAvgEmergencyPercentDelay());
+            output[1].add(sim.getAvgTT(DriverType.AV));
+            
+            
+            for(Vehicle ev : evs)
+            {
+                vehicles.remove(ev);
+            }
+            
+        }
+        
+        return output;
+    }
+
+    public static void testAllEmergency() throws Exception
+    {
+        for(int i = 120; i <= 120; i += 5)
+        {
+            RunningAvg[] output = testEmergencyVehicle("coacongress2_"+i+"_EV_limited", 3);
+            PrintStream fileout = new PrintStream(new FileOutputStream(new File("EV_test2_"+i+".txt")), true);
+
+            fileout.println("EV\t"+output[0].getAverage()+"\t"+output[0].getStDev());
+            fileout.println("TSTT\t"+output[1].getAverage()+"\t"+output[1].getStDev());
+            fileout.close();
+        }
+    }
+    
+    // returns average % delay for emergency vehicle
+    public static RunningAvg[] testEmergencyVehicle(String network, int num_repeats) throws IOException
+    {
+        DTAProject project = new DTAProject(new File("projects/"+network));
+        
+        DTASimulator sim = project.getSimulator();
+        sim.loadAssignment(project.getLastAssignment());
+        
+        List<Vehicle> vehicles = sim.getVehicles();
+        
+        List<Node> nodes = new ArrayList<Node>();
+        
+        for(Node n : sim.getNodes())
+        {
+            if(!n.isZone())
+            {
+                nodes.add(n);
+            }
+        }
+        
+        RunningAvg[] output = new RunningAvg[2];
+        
+        for(int i = 0; i < output.length; i++)
+        {
+            output[i] = new RunningAvg();
+        }
+        
+        Scanner filein = new Scanner(new File("evs.txt"));
+        
+        Map<Integer, Node> nodesmap = sim.createNodeIdsMap();
+        
+        for(int i = 0; i < num_repeats; i++)
+        {
+            System.out.println(i);
+            Node origin = nodesmap.get(filein.nextInt());
+            Node dest = nodesmap.get(filein.nextInt());
+            int deptime = filein.nextInt();
             
             EmergencyVehicle ev = new EmergencyVehicle(1000000, origin, dest, deptime);
             vehicles.add(ev);
             Collections.sort(vehicles);
             sim.simulate();
             
+            output[0].add(sim.calcAvgEmergencyPercentDelay());
+            output[1].add(sim.getAvgTT(DriverType.AV));
+            
             vehicles.remove(ev);
             
-            output.add(sim.calcAvgEmergencyPercentDelay());
+            
         }
         
-        return output.getAverage();
+        return output;
     }
     
     
