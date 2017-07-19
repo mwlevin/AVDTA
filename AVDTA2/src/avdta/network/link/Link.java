@@ -638,13 +638,18 @@ public abstract class Link implements Serializable, Comparable<Link>
     {
         int idx = (int)Math.min(Simulator.num_asts-1, enter / Simulator.ast_duration);
         
+        return getAvgTT_ast(idx);
+    }
+    
+    public double getAvgTT_ast(int idx)
+    {
         if(idx >= 0 && idx < avgTT.length && avgTT[idx].getCount() > 0)
         {
             return Math.max(getFFTime(),avgTT[idx].getAverage());
         }
         else
         {
-            return getFFTime()-0.1;
+            return getFFTime();
         }
     }
     

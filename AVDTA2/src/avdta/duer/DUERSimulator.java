@@ -37,9 +37,11 @@ import java.util.Set;
  */
 public class DUERSimulator extends DTASimulator
 {
+    private Incident NO_INCIDENT;
+    
     private static final boolean PRINT = false;
     
-    private Map<Incident, Map<Link, Double>> avgTT; // store average travel times per incident state
+    private Map<Incident, Map<Link, Double[]>> avgTT; // store average travel times per incident state
     private static final double rationality_bound = 0.5;
     
     private Set<Incident> incidents;
@@ -59,9 +61,11 @@ public class DUERSimulator extends DTASimulator
     {
         super(project);
         
-        avgTT = new HashMap<Incident, Map<Link, Double>>();
+        avgTT = new HashMap<>();
         incidents = new HashSet<Incident>();
         null_effects = new HashSet<IncidentEffect>();
+        
+        
         activeIncident = Incident.UNKNOWN;
         
         initializeTT();
@@ -71,7 +75,7 @@ public class DUERSimulator extends DTASimulator
     public DUERSimulator(DUERProject project, Set<Node> nodes, Set<Link> links, Set<Incident> incidents)
     {
         super(project, nodes, links);
-        avgTT = new HashMap<Incident, Map<Link, Double>>();
+        avgTT = new HashMap<>();
         this.incidents = incidents;
         null_effects = new HashSet<IncidentEffect>();
         activeIncident = Incident.UNKNOWN;
@@ -102,33 +106,33 @@ public class DUERSimulator extends DTASimulator
         Link DEtop1 = linksMap.get(45);
         Link DEtop2 = linksMap.get(56);
         
-        avgTT.get(Incident.UNKNOWN).put(AB, 5.0);
-        avgTT.get(none).put(AB, 5.0);
-        avgTT.get(inc).put(AB, 5.0);
+        avgTT.get(Incident.UNKNOWN).put(AB, new Double[]{5.0});
+        avgTT.get(none).put(AB, new Double[]{5.0});
+        avgTT.get(inc).put(AB, new Double[]{5.0});
         
-        avgTT.get(Incident.UNKNOWN).put(AC, 4.0);
-        avgTT.get(none).put(AC, 4.0);
-        avgTT.get(inc).put(AC, 4.0);
+        avgTT.get(Incident.UNKNOWN).put(AC, new Double[]{4.0});
+        avgTT.get(none).put(AC, new Double[]{4.0});
+        avgTT.get(inc).put(AC, new Double[]{4.0});
         
-        avgTT.get(Incident.UNKNOWN).put(CD, 5.0);
-        avgTT.get(none).put(CD, 5.0);
-        avgTT.get(inc).put(CD, 5.0);
+        avgTT.get(Incident.UNKNOWN).put(CD, new Double[]{5.0});
+        avgTT.get(none).put(CD, new Double[]{5.0});
+        avgTT.get(inc).put(CD, new Double[]{5.0});
         
-        avgTT.get(Incident.UNKNOWN).put(BD, 5.0);
-        avgTT.get(none).put(BD, 5.0);
-        avgTT.get(inc).put(BD, 5.0);
+        avgTT.get(Incident.UNKNOWN).put(BD, new Double[]{5.0});
+        avgTT.get(none).put(BD, new Double[]{5.0});
+        avgTT.get(inc).put(BD, new Double[]{5.0});
         
-        avgTT.get(Incident.UNKNOWN).put(DE, 10.0);
-        avgTT.get(none).put(DE, 10.0);
-        avgTT.get(inc).put(DE, 60.0);
+        avgTT.get(Incident.UNKNOWN).put(DE, new Double[]{10.0});
+        avgTT.get(none).put(DE, new Double[]{10.0});
+        avgTT.get(inc).put(DE, new Double[]{60.0});
         
-        avgTT.get(Incident.UNKNOWN).put(DEtop1, 15.0);
-        avgTT.get(none).put(DEtop1, 15.0);
-        avgTT.get(inc).put(DEtop1, 15.0);
+        avgTT.get(Incident.UNKNOWN).put(DEtop1, new Double[]{15.0});
+        avgTT.get(none).put(DEtop1, new Double[]{15.0});
+        avgTT.get(inc).put(DEtop1, new Double[]{15.0});
         
-        avgTT.get(Incident.UNKNOWN).put(DEtop2, 15.0);
-        avgTT.get(none).put(DEtop2, 15.0);
-        avgTT.get(inc).put(DEtop2, 15.0);
+        avgTT.get(Incident.UNKNOWN).put(DEtop2, new Double[]{15.0});
+        avgTT.get(none).put(DEtop2, new Double[]{15.0});
+        avgTT.get(inc).put(DEtop2, new Double[]{15.0});
         
     }
     
@@ -148,14 +152,31 @@ public class DUERSimulator extends DTASimulator
         Set<Link> links = getLinks();
         for(Incident i : incidents)
         {
-            Map<Link, Double> temp = new HashMap<>();
+            Map<Link, Double[]> temp = new HashMap<>();
             avgTT.put(i, temp);
             
             for(Link l : links)
             {
-                temp.put(l, l.getFFTime());
+                Double[] temp2 = new Double[Simulator.num_asts];
+                for(int j = 0; j < temp2.length; j++)
+                {
+                    temp2[j] = l.getFFTime();
+                }
+                temp.put(l, temp2);
             }
         }
+        
+        NO_INCIDENT = Incident.UNKNOWN;
+        
+        for(Incident i : incidents)
+        {
+            if(i.getId() == 0)
+            {
+                NO_INCIDENT = i;
+                break;
+            }
+        }
+
     }
         
     private void createStates()
@@ -181,7 +202,7 @@ public class DUERSimulator extends DTASimulator
         }
     }
     
-    public boolean isObservable(Link l, Incident i)
+    public boolean isObservable(Link l, Incident i, int time)
     {
         if(i == Incident.UNKNOWN)
         {
@@ -196,20 +217,22 @@ public class DUERSimulator extends DTASimulator
             }
         }
         
-        double normalTT = getAvgTT(l, Incident.UNKNOWN);
-        double incidentTT = getAvgTT(l, i);
+        int ast = time/ Simulator.ast_duration;
+        
+        double normalTT = getAvgTT(l, NO_INCIDENT, ast);
+        double incidentTT = getAvgTT(l, i, ast);
         
         return incidentTT > (1 + rationality_bound) * normalTT;
     }
     
-    public double getAvgTT(Link l, Incident i)
+    public double getAvgTT(Link l, Incident i, int ast)
     {
         if(i == Incident.UNKNOWN)
         {
-            i = Incident.NONE;
+            i = NO_INCIDENT;
         }
-        
-        return avgTT.get(i).get(l);
+
+        return avgTT.get(i).get(l)[ast];
     }
     
     public Set<Incident> getIncidents()
@@ -232,7 +255,7 @@ public class DUERSimulator extends DTASimulator
     
     public void deactivate(Incident i)
     {
-        activeIncident = Incident.NONE;
+        activeIncident = NO_INCIDENT;
         for(IncidentEffect e : null_effects)
         {
             Link link = e.getLink();
@@ -262,33 +285,20 @@ public class DUERSimulator extends DTASimulator
             super.simulate();
 
             // store link travel times
-            Map<Link, Double> tt = new HashMap<Link, Double>();
+            Map<Link, Double[]> tt = avgTT.get(i);
+            
             for(Link l : getLinks())
             {
-                RunningAvg avg = new RunningAvg();
-                
+                Double[] temp = tt.get(l);
+
                 
                 for(int ast = 0; ast < Simulator.num_asts; ast++)
                 {
-                    RunningAvg temp = l.getAvgTTRA(ast * Simulator.ast_duration);
-                    
-                    if(temp != null)
-                    {
-                        avg.add(temp);
-                    }
-
+                    temp[ast] = l.getAvgTT_ast(ast);
                 }
                 
-                
-                tt.put(l, avg.getAverage());
             }
-            
-            avgTT.put(i, tt);
-            
-            deactivate(i);
-            
-            avgTT.put(i, tt);
-            
+
             deactivate(i);
             
             double totalTT = super.getTSTT();
@@ -351,16 +361,16 @@ public class DUERSimulator extends DTASimulator
         fileout.close();
     }
     
-    public double getTT(Hyperpath path, Node origin, Incident incident)
+    public double getTT(Hyperpath path, Node origin, Incident incident, int ast)
     {
         List<Link> links = trace(path, origin, incident);
         
         double output = 0.0;
         
-        Map<Link, Double> temp = avgTT.get(incident);
+        Map<Link, Double[]> temp = avgTT.get(incident);
         for(Link l : links)
         {
-            output += temp.get(l);
+            output += temp.get(l)[ast];
         }
         
         return output;
@@ -424,7 +434,6 @@ public class DUERSimulator extends DTASimulator
             int ast = v.getAST();
             int dep_time = v.getDepTime();
 
-
             if(v.getExitTime() < Simulator.duration)
             {
                 exiting++;
@@ -456,7 +465,7 @@ public class DUERSimulator extends DTASimulator
             
             if(newPath[ast][drivertype] == null)
             {
-                newPath[ast][drivertype] = osp(d, v.getDriver());
+                newPath[ast][drivertype] = osp(d, v.getDriver(), (int)((ast+0.5) * Simulator.ast_duration));
             }
 
             /*
@@ -503,12 +512,13 @@ public class DUERSimulator extends DTASimulator
         simulate();
         
 
+        System.out.println(expTT+"\t"+min);
         
         if(tstt < min)
         {
             tstt = min;
         }
-        System.out.println(expTT+"\t"+min+"\t"+tstt);
+        
 
 
         return new DTAResults(min, expTT, vehicles.size(), exiting);
@@ -518,8 +528,10 @@ public class DUERSimulator extends DTASimulator
     public static final double error_bound = 1.0e-4;
     
     // for simplicity, ignore driver type
-    public Hyperpath osp(Node dest, DriverType driver)
+    public Hyperpath osp(Node dest, DriverType driver, int dtime)
     {
+        int ast = dtime / Simulator.ast_duration;
+        
         // initialize
         for(Link l: allStates.keySet())
         {
@@ -536,7 +548,7 @@ public class DUERSimulator extends DTASimulator
         do
         {
             iter++;
-            error = vi_iter(dest);
+            error = vi_iter(dest, ast);
             
             if(PRINT)
             {
@@ -546,7 +558,7 @@ public class DUERSimulator extends DTASimulator
         while(error >= error_bound);
         
         // calculate best policy
-        vi_iter(dest);
+        vi_iter(dest, ast);
         
         Hyperpath output = new Hyperpath();
         
@@ -593,7 +605,7 @@ public class DUERSimulator extends DTASimulator
         return output;
     }
     
-    private double vi_iter(Node dest)
+    private double vi_iter(Node dest, int ast)
     {
         double error = 0.0;
         for(Link link : allStates.keySet())
@@ -601,13 +613,14 @@ public class DUERSimulator extends DTASimulator
             for(State s : allStates.get(link))
             {
                 Incident inc = s.getIncident();
-
+                
                 double newJ = Integer.MAX_VALUE;
-                double g = avgTT.get(inc).get(link);
+                
+                double g = getAvgTT(link, inc, ast);
 
                 if(link.getDest() == dest)
                 {
-                    newJ = avgTT.get(inc).get(link);
+                    newJ = getAvgTT(link, inc, ast);
                     s.mu = null;
                 }
                 else
