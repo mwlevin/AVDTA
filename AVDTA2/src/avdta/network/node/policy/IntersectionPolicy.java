@@ -30,7 +30,7 @@ public abstract class IntersectionPolicy implements Comparator<Vehicle>
     public static final BackPressureObj backpressure = new BackPressureObj();
     public static final P0Obj P0 = new P0Obj();
     public static final EmergencyPolicy emergency = new EmergencyPolicy();
-    
+    public static final EmergencyLimitedPolicy emergency_limited = new EmergencyLimitedPolicy();
     /**
      * Initializes {@link Vehicle} priority for the specified {@link Node} and {@link Vehicle}
      * @param node the intersection at which the {@link Vehicle} is waiting.

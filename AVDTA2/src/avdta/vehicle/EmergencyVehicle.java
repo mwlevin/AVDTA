@@ -28,7 +28,7 @@ public class EmergencyVehicle extends Vehicle
         this.dest = dest;
         this.deptime = deptime;
         
-        setRouteChoice(new FixedPath(Simulator.active.findPath(this, TravelCost.ffTime)));
+        setPath(Simulator.active.findPath(this, TravelCost.ffTime));
     }
     
     public void exited()
