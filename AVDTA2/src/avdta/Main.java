@@ -19,6 +19,7 @@ import avdta.dta.ReadDTANetwork;
 import avdta.dta.VehicleRecord;
 import avdta.duer.DUERSimulator;
 import avdta.duer.Incident;
+import avdta.duer.ValueIteration;
 import avdta.fourstep.FourStepSimulator;
 import avdta.fourstep.ReadFourStepNetwork;
 import avdta.gui.DTAGUI;
@@ -234,6 +235,25 @@ public class Main
         */
         
 //        System.out.println(testEmergencyVehicle("coacongress2_"+70, 50));
+
+
+        //DUERProject test = new DUERProject(new File("projects/freeway"));
+        //DUERProject test = new DUERProject(new File("projects/SiouxFalls"));
+        DUERProject test = new DUERProject(new File("projects/coacongress2"));
+        DUERSimulator sim = test.getSimulator();
+        //for (int i = 1; i < 11; i++){
+            for(int j = 1; j < 11; j++){
+                //for (int dest=1; dest<25; dest++){
+                   
+                    ValueIteration VI = new ValueIteration(sim, 0.1*1, 0.1*j);
+                    VI.hardcode();
+                    VI.solve();
+                    //Hyperpath osp = VI.getHyperpath();
+                    
+                //}
+            //}
+        }
+
     }
     
     public static void testAllMultipleEV() throws Exception
