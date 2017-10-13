@@ -57,7 +57,7 @@ public abstract class Vehicle implements Serializable, Comparable<Vehicle>
     
     private Path path;
     
-    private Incident information;
+    private Incident incident;
     
     // energy
     private int prev_cell_time;
@@ -118,7 +118,7 @@ public abstract class Vehicle implements Serializable, Comparable<Vehicle>
         
         curr = null;
         path = new Path();
-        information = Incident.UNKNOWN;
+        incident = Incident.NULL;
     }
     
     /**
@@ -130,14 +130,14 @@ public abstract class Vehicle implements Serializable, Comparable<Vehicle>
         return getDepTime() / DTASimulator.ast_duration;
     }
     
-    public void setInformation(Incident i)
+    public void setIncident(Incident i)
     {
-        information = i;
+        incident = i;
     }
     
-    public Incident getInformation()
+    public Incident getIncident()
     {
-        return information;
+        return incident;
     }
     
     /**
@@ -593,7 +593,7 @@ public abstract class Vehicle implements Serializable, Comparable<Vehicle>
         }
         else
         {
-            return routeChoice.getNextLink(curr, information);
+            return routeChoice.getNextLink(curr, incident);
         }
     }
     
@@ -635,16 +635,16 @@ public abstract class Vehicle implements Serializable, Comparable<Vehicle>
         
         Incident actual = Simulator.active.getIncident();
         
-        if(actual != information)
+        if(actual != incident)
         {
             VMS vms = l.getVMS();
             if(Math.random() < vms.getProbOfInformation(actual))
             {
-                information = actual;
+                incident = actual;
             }
             else if(Simulator.active.isObservable(l, actual))
             {
-                information = actual;
+                incident = actual;
             }
         }
         

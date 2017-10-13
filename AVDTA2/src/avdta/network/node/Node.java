@@ -462,4 +462,8 @@ public abstract class Node extends Location implements Serializable, Comparable<
     {
         return getStyleAssigned().getStroke();
     }
+
+    public void setVMS(VMS vms) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }
