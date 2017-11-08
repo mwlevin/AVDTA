@@ -67,6 +67,10 @@ public class Traveler implements Comparable<Traveler>, Serializable
         return enter_time;
     }
     
+    public int getExitTime(){
+    	return exit_time;
+    }
+    
     /**
      * Returns the traveler's departure time.
      * @return the traveler's departure time
@@ -139,7 +143,7 @@ public class Traveler implements Comparable<Traveler>, Serializable
      */
     public boolean isExited()
     {
-        return exit_time > 0;
+        return exit_time > 0 && enter_time > -1;
     }
     
     /**

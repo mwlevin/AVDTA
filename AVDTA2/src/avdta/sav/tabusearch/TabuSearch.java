@@ -94,10 +94,19 @@ public class TabuSearch {
         sim.simulate();
         double best = sim.getTSTT();
         double personBestTt = sim.getTotalPersonTT();
+        for(SAVTraveler t:travelers){
+        	System.out.println("Traveler enter time:" + t.getEnterTime() + "Travler departure time:" + t.getDepTime() + "Traveler Exit time:s" + t.getExitTime());
+        }
+        
+        double avgWaitTime = sim.getAvgWait()/60;
+        double avgIVTT = sim.getAvgIVTT()/60;
+        System.out.println("Avg wait:" + avgWaitTime + "Avg IVTT:" + avgIVTT);
         Map<TabuList, Integer> tabuMap = new HashMap<TabuList, Integer>();
-        double tstt = getSolution(10, 0, 5, tabuMap);
+        double tstt = getSolution(10, 20, 5, tabuMap);
         System.out.println("initial total person travel time = " + personBestTt + "\t aVerage person travel time " + (personBestTt / 60 / travelers.size()));
         System.out.println("initial total vehicle travel time = " + best);
+        
+        
 
 //        double tst1 = getSolution(5, 10, 10, tabuMap);
 ////
@@ -118,9 +127,14 @@ public class TabuSearch {
     public double getSolution(int pSize, int nmax, int maxMoves, Map<TabuList, Integer> tabuMap) throws IOException {
         double bestTstt = sim.getTSTT();
         double bestPersonTt = sim.getTotalPersonTT();
+        
         double avgBestPersonTt = bestPersonTt / 60 / travelers.size();
+        double avgIVTT = sim.getAvgIVTT()/60;
+        double avgWaitTime = sim.getAvgWait();
         System.out.println("The travel time is " + bestTstt + " expected " + getExpTaxiTT());
         System.out.println("The person travel time is " + bestPersonTt + "\t aVerage person travel time " + (bestPersonTt / 60 / travelers.size()));
+        System.out.println("Average Wait Time per traveler " + avgWaitTime + "\nAverage In-Vehicle TravelT " + avgIVTT + "\n");
+
         int n = 0;
 //        Map<TabuList, Integer> tabuMap = new HashMap<TabuList, Integer>();
         for (SAVTraveler t : travelers) {
@@ -152,9 +166,13 @@ public class TabuSearch {
 //                System.out.println("Traveler taxi = " + t.getAssignedTaxi() + " Old Taxi = " + tx);
 //                System.out.println("Neighbour taxi = " + neighbour.getNeighbour().getAssignedTaxi() + " Old Taxi = " + old);
 
-                    maybeSimulate();
-                    
-                    
+                    System.out.println("***Simulating***");
+                    sim.simulate();
+                    double tstt = sim.getTSTT();
+                    double personTt = sim.getTotalPersonTT();
+                    avgIVTT = sim.getAvgIVTT()/60;
+                    avgWaitTime = sim.getAvgWait();
+                    double avgPersonTt = personTt / 60 / travelers.size();
                     if (personTt <= bestPersonTt) {
                         if (tstt <= bestTstt) {
                             bestTstt = tstt;
@@ -162,24 +180,24 @@ public class TabuSearch {
                         bestPersonTt = personTt;
                         avgBestPersonTt = avgPersonTt;
 //                        n = (avgPersonTt >= avgBestPersonTt - 1 && avgPersonTt <= avgBestPersonTt + 1) ? n + 1 : n;
-
+                        n=0;
                         tabu.setPreviousTaxi(t.getAssignedTaxi());
                         tabuMap.put(tabu, 0);
                         System.out.println("The best travel time is " + bestTstt + " expected: " + getExpTaxiTT());
-                        System.out.println("Best total person tt " + personTt + "\t Average best person travel time " + (personTt / 60 / travelers.size()) + "\n");
-                        
+                        System.out.println("Best total person tt " + personTt + "\t Average best person travel time " + (personTt / 60 / travelers.size()));
+                        System.out.println("Average Wait Time per traveler " + avgWaitTime + "\nAverage In-Vehicle TravelT " + avgIVTT + "\n");
                         printAssignment();
-                        
                         break;
                     } else {
-                        n = avgPersonTt >= avgBestPersonTt - 1 ? n + 1 : n;
+//                        n = avgPersonTt >= avgBestPersonTt - 1 ? n + 1 : n;
 //                        System.out.println("n is " + n);
-
+                        n++;
                         System.out.println("The simulated travel time is " + tstt + " expected: " + getExpTaxiTT());
                         System.out.println("Simulated Total person tt " + personTt + " expected = " + getExpTravelerTT() +"\t Average person travel time " + (personTt / 60 / travelers.size()) + "\n");
+                        System.out.println("Average Wait Time per traveler " + avgWaitTime + "\n Average In-Vehicle TravelT " + avgIVTT);
 
                         genInsert(neighbour.getNeighbour(), t, p, p2, p1, p3);
-                        if (n == 5) {
+                        if (n == nmax) {
 //                            Collections.shuffle(travelers);
 //                            System.out.println("***Recursing***");
 //                            bestTstt = getSolution(pSize, nmax, maxMoves, tabuMap);
@@ -197,61 +215,14 @@ public class TabuSearch {
                 }
 
             }
+            if(n == nmax){
+                break;
+            }
 
         }
         System.out.println("Simulated Best person travel time " + bestPersonTt + "\t Simulated Average person travel time " + (bestPersonTt / 60 / travelers.size()));
         System.out.println("Simulated Best vehicle travel time " + bestTstt);
         return bestTstt;
-    }
-    
-    double tstt;
-    double personTt, avgPersonTt;
-    
-    int swap_count = 0;
-    int swaps_before_simulate = 10;
-    
-    public void maybeSimulate() throws IOException
-    {
-        if(true)
-        //if(swap_count == swaps_before_simulate)
-        {
-            swap_count = 0;
-            System.out.println("***Simulating***");
-            sim.simulate();
-            tstt = sim.getTSTT();
-            personTt = sim.getTotalPersonTT();
-            avgPersonTt = personTt / 60 / travelers.size();
-        }
-        else
-        {
-            swap_count++;
-            
-            
-            
-        }
-
-    }
-    
-    public void printAssignment() throws IOException
-    {
-        File file = new File(project.getResultsFolder()+"/SAV_assignment.txt");
-        
-        PrintStream fileout = new PrintStream(new FileOutputStream(file), true);
-        
-        fileout.println("Taxi id\tTravelers (in order)");
-        for(Taxi t : sim.getTaxis())
-        {
-            AssignedTaxi taxi = (AssignedTaxi)t;
-            
-            fileout.print(taxi.getId());
-            
-            for(Traveler person : taxi.getTravelers())
-            {
-                fileout.print("\t"+person.getId());
-            }
-        }
-        
-        fileout.close();
     }
     
     public double getExpTravelerTT(){
@@ -278,6 +249,28 @@ public class TabuSearch {
         }
 
         return output;
+    }
+    
+    public void printAssignment() throws IOException
+    {
+        File file = new File(project.getResultsFolder()+"/SAV_assignment.txt");
+        
+        PrintStream fileout = new PrintStream(new FileOutputStream(file), true);
+        
+        fileout.println("Taxi id\tTravelers (in order)");
+        for(Taxi t : sim.getTaxis())
+        {
+            AssignedTaxi taxi = (AssignedTaxi)t;
+            
+            fileout.print(taxi.getId());
+            
+            for(Traveler person : taxi.getTravelers())
+            {
+                fileout.print("\t"+person.getId());
+            }
+        }
+        
+        fileout.close();
     }
     
     public List<NearestNeighbour> getNearestTaxiInsert(SAVTraveler traveler, List<SAVTraveler> travelers, int pSize){
@@ -364,10 +357,10 @@ public class TabuSearch {
                 neighNextPassDrop = 0.0 != neighNextPassDrop ? neighNextPassDrop : t.getDropTime();
                 neighTimeTravOrig = neighNextPassDrop - neighPrevPassDrop;
 
-                double dropTimeTraveler = null != p1 ? p1.getCost() : traveler.getDropTime();
+                double dropTimeTraveler = null != p2 ? p2.getCost() : traveler.getDropTime();
                 double dropTimeNeighbour = null != p3 ? p3.getCost() : t.getDropTime();
                 double travelerTTime = p.getCost() + traveler.getPath().getCost() + dropTimeTraveler;
-                double neighTTime = p2.getCost() + t.getPath().getCost() + dropTimeNeighbour;
+                double neighTTime = p1.getCost() + t.getPath().getCost() + dropTimeNeighbour;
 
                 if (travelerTTime + neighTTime < travelTimeTravOrig + neighTimeTravOrig) {
                     NearestNeighbour n = new NearestNeighbour(t, taxi, travelerTTime, neighTTime, p, p2, p1, p3);
@@ -449,8 +442,6 @@ public class TabuSearch {
         int index = passengers.indexOf(neighbour);
 //        System.out.println("Insertion index" + index + " " + neighbour + " " + passengers);
 
-        System.out.println("Index is "+index+" "+neighbour+" "+passengers);
-        
         passengers.add(index, t);
         passengers.remove(index + 1);
 
@@ -459,8 +450,6 @@ public class TabuSearch {
 //        System.out.println(segments);
 
         int segmentIndex = (2 * index) + 1;
-        
-        
 
 //        System.out.println("Segment index " + segmentIndex);
 //        System.out.println(neighbour.getPath());
@@ -470,19 +459,11 @@ public class TabuSearch {
 //            System.out.print(s);
 //        }
 //        System.out.print("\n");
-        
-        int startIndex = segmentIndex;
-        int tIndex = segmentIndex;
-        
         segments.add(segmentIndex, t.getPath());
-        
-        
 
         if (null != prevPath) {
             segments.remove(segmentIndex - 1);
             segments.add(segmentIndex - 1, prevPath);
-            
-            startIndex = segmentIndex-1;
         }
 
         segments.remove(segmentIndex + 1);
@@ -491,43 +472,7 @@ public class TabuSearch {
             segments.remove(segmentIndex + 1);
             segments.add(segmentIndex + 1, nextPath);
         }
-        
-        /*
-        int startTime = 0;
-        
-        if(startIndex > 0)
-        {
-            startTime = segments.get(startIndex-1).etime + Taxi.DELAY_EXIT;
-        }
-        
-        System.out.println("Start time is "+startTime+" startIndex is "+startIndex);
-        
-        for(int i = startIndex; i < segments.size(); i++)
-        {
-            Path seg = segments.get(i);
-            
-            int old_etime = seg.etime;
-            seg.dtime = startTime;
-            
-            if(seg.traveler != null && seg.traveler.getDepTime() > startTime)
-            {
-                seg.dtime = seg.traveler.getDepTime();
-            }
-            seg.etime = (int)(startTime + seg.getAvgTT(startTime));
-            
-            if(seg.traveler != null)
-            {
-                seg.etime +=  Taxi.DELAY_EXIT + Taxi.DELAY_ENTER;
-                
-                int change = seg.etime - old_etime;
-                
-                personTt += change;
-            }
-            
-            startTime = seg.etime;
-            
-        }
-*/
+
     }
 
     /**

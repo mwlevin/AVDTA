@@ -26,14 +26,14 @@ import java.util.TreeMap;
 public class SAVMain {
 
     public static void main(String[] args) throws Exception {
-        SAVProject project = new SAVProject(new File("projects/SiouxFalls"));
-
-        /*
+        SAVProject project = new SAVProject(new File("/Users/prashanthvenkatraman/Documents/workspace/AVDTA/AVDTA2/projects/SiouxFalls"));
+        /*System.out.println("Hello World");
+        
         ReadSAVNetwork read = new ReadSAVNetwork();
         
-        read.prepareDemand(project, 100.0/28835);
+        read.prepareDemand(project, 100.0/28335);
         
-        read.createFleetProb(project, 35);
+        read.createFleetProb(project, 5000);
         System.exit(0);
         */
         Simulator.debug = false;
