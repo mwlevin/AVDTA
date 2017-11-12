@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package avdta;
+package netdesign;
 
 import avdta.dta.DTASimulator;
 import avdta.network.ReadNetwork;
