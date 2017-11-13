@@ -124,17 +124,32 @@ public class Main
             
         	Scanner filein = new Scanner(sim.getProject().getPhasesFile());
             while(filein.hasNextLine()){
-            	SignalRecord signal = new SignalRecord(filein.nextLine());
-        		createTestIntersection(signal.getNode());
+                PhaseRecord phase = new PhaseRecord(filein.nextLine());
+            	Map<TurnRecord,Integer> turnCount = new HashMap<>();
+
+                    // change phase link ids
+                for(Vehicle v:sim.getVehicles()){
+                	Path p = v.getPath();
+                   	for(TurnRecord t : phase.getTurns())
+                    {
+                        if(p.contains(t.getI()) && p.contains(t.getJ())){
+                        	if(turnCount.containsKey(t))  turnCount.put(t, turnCount.get(t)+1);
+                        	else turnCount.put(t, 1);
+                        }
+                   		
+                    }
+                    
+                }
+        		createTestIntersection(phase.getNode(), turnCount);
             }
-        	
+            
         
 //        	out.println(sim1.getTSTT());
 //        	out.close();
         }
     }
     
-    public static void createTestIntersection(int nodeid) throws IOException
+    public static void createTestIntersection(int nodeid, Map<TurnRecord, Integer> turnCount) throws IOException
     {
         // requires 4 incoming and 4 outgoing links (not including centroid connectors)
         
