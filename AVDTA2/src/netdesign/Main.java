@@ -94,35 +94,142 @@ import java.io.IOException;
  */
 public class Main 
 {
+	static DTASimulator sim;
     public static void main(String[] args) throws IOException
     {
-    		int maxiter = 20;
-    		double prop = 1;
+    		int maxiter = 1;
+    		double[] prop = {0.75}; //,0.85,1.0
     		double mingap = 1;
     		
     		
-    		PrintStream out = new PrintStream(new FileOutputStream(new File("AVDTA2/projects/coacongress/results/test1_100.txt")));
-    		out.println("Test output 1 for coacongress network at 100% demand");
-    		out.println("TSTT");
+//    		PrintStream out = new PrintStream(new FileOutputStream(new File("AVDTA2/projects/coacongress/results/test1_100.txt")));
+//    		out.println("Test output 1 for coacongress network at 100% demand");
+//    		out.println("TSTT");
     		//load project
         DTAProject project = new DTAProject(new File("AVDTA2/projects/coacongress"));
         
         //adjust demand proportion
-        ReadDTANetwork read1 = new ReadDTANetwork();
-        read1.prepareDemand(project, prop);
+        for(double i:prop){
+        	ReadDTANetwork read1 = new ReadDTANetwork();
+        	read1.prepareDemand(project, i);
         
-        //load simulator
-        DTASimulator sim1 = project.getSimulator();
+        	//load simulator
+        	sim = project.getSimulator();
         
-        //run MSA
-        sim1.msa(maxiter, mingap);
+        	//run MSA
+        	sim.msa(maxiter, mingap);
         
-        sim1.getAssignment().getAssignmentFolder().renameTo(new File(project.getAssignmentsFolder()+"/100"));
+        	sim.getAssignment().getAssignmentFolder().renameTo(new File(project.getAssignmentsFolder()+"/100"));
+        	System.out.println("End of MSA");
+//        	for(Node n:sim.nodes){
+//        		if(100 != n.getType() || 200 != n.getType()){
+//        			continue;
+//        		}
+        		createTestIntersection(6336);
+//        	}
         
+//        	out.println(sim1.getTSTT());
+//        	out.close();
+        }
+    }
+    
+    public static void createTestIntersection(int nodeid) throws IOException
+    {
+        // requires 4 incoming and 4 outgoing links (not including centroid connectors)
         
+        //DTAProject project = new DTAProject(new File("projects/coacongress"));
+       // DTASimulator sim = project.getSimulator();
         
-        out.println(sim1.getTSTT());
-        out.close();
+        DTAProject newIntersection = new DTAProject();
+        newIntersection.createProject("intersection"+nodeid, new File("projects/intersection"+nodeid));
+        //DTASimulator sim2 = newIntersection.getSimulator();
+        System.out.println("Project intersection");
+        Node node = sim.getNode(nodeid);
+        
+        Map<Integer ,Link> linkMap = new HashMap();
+        
+        for(Link l:node.getIncoming()){
+        	if(l.isCentroidConnector()){
+        		continue;
+        	}
+        	linkMap.put(l.getId(),l);
+        }
+        
+        for(Link l: node.getOutgoing()){
+        	if(l.isCentroidConnector() || linkMap.containsKey(l.getId())){
+        		continue;
+        	}
+        	linkMap.put(l.getId(),l);
+        }
+        
+        System.out.println(linkMap.size());
+        // create list link records for outputs
+        List<LinkRecord> links = new ArrayList<LinkRecord>();
+        
+        for(Link l : linkMap.values())
+        {
+            links.add(l.createLinkRecord());
+        }
+
+        
+        // copy link details to mapped links
+//        for(Link l : linkMap.values())
+//        {
+//            if(map.containsKey(record.getId()))
+//            {
+//        		LinkRecord record = new LinkRecord(l.getId(), l.getType(), l.getSource().getId(), l.getDest().getId(), l.getLength(), l.getFFSpeed(), l.getWaveSpeed(), l.getCapacity(), l.getNumLanes());
+//                links.add(record);
+//            }
+//        }
+        
+        // write links to file
+        PrintStream fileout = new PrintStream(new FileOutputStream(newIntersection.getLinksFile()), true);
+        fileout.println(ReadNetwork.getLinksFileHeader());
+        for(LinkRecord record : links)
+        {
+            fileout.println(record);
+        }
+        fileout.close();
+        
+       
+        // create reverse map of above
+        Map<Integer, Integer> reverseMap = new HashMap<>();
+        for(int k : linkMap.keySet())
+        {
+            reverseMap.put(linkMap.get(k).getId(), k);
+        }
+        
+        // print 0 signal offset
+        fileout = new PrintStream(new FileOutputStream(newIntersection.getSignalsFile()), true);
+        fileout.println(ReadNetwork.getSignalsFileHeader());
+        fileout.println(new SignalRecord(1, 0));
+        fileout.close();
+        
+        // copy phases data
+        fileout = new PrintStream(new FileOutputStream(newIntersection.getPhasesFile()), true);
+        fileout.println(ReadNetwork.getPhasesFileHeader());
+        
+        Scanner filein = new Scanner(sim.getProject().getPhasesFile());
+        filein.nextLine();
+        
+        while(filein.hasNextLine())
+        {
+            PhaseRecord phase = new PhaseRecord(filein.nextLine());
+            
+            if(phase.getNode() == node.getId())
+            {
+                // change phase link ids
+                for(TurnRecord t : phase.getTurns())
+                {
+                    t.setI(linkMap.get(t.getI()));
+                    t.setJ(linkMap.get(t.getJ()));
+                }
+                
+                fileout.println(phase);
+            }
+        }
+        fileout.close();
+        
     }
     
 }

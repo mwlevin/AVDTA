@@ -98,6 +98,8 @@ public abstract class Link implements Serializable, Comparable<Link>
     
     private boolean selected;
     
+    private double totalOccupancy;
+    
     /**
      * Constructs the link with the given parameters 
      * @param id the link id
@@ -899,6 +901,13 @@ public abstract class Link implements Serializable, Comparable<Link>
         this.numLanes = numLanes;
     }
     
+    public void setTotalOccupancy(double occupancy){
+    	this.totalOccupancy+=occupancy;
+    }
+    
+    public double getTotalOccupancy(){
+    	return this.totalOccupancy;
+    }
     /**
      * Returns the total jam density
      * @return total jam density (not per lane) (veh/mi)
@@ -1017,6 +1026,10 @@ public abstract class Link implements Serializable, Comparable<Link>
         {
             return true;
         }
+    }
+    
+    public double getAvgOccupancy(int count){
+    	return this.totalOccupancy/count;
     }
     
 }

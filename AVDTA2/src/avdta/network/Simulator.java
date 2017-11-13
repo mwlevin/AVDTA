@@ -63,7 +63,7 @@ import avdta.vehicle.EmergencyVehicle;
 public class Simulator extends Network 
 {
 
-    
+    public double occupancy;
     public static int time;
     
     public static int duration = 3600*10;
@@ -89,6 +89,10 @@ public class Simulator extends Network
     public static int ast(int time)
     {
         return (int)Math.min(time / ast_duration, num_asts-1);
+    }
+    
+    public void setOccupancy(double occupancy){
+    	this.occupancy +=occupancy;
     }
     
     
@@ -806,6 +810,8 @@ public class Simulator extends Network
 
         exit_count = 0;
         
+        int count = 0;
+        
         for(time = 0; time < duration; time += dt)
         {
             // push vehicles onto centroid connectors at departure time
@@ -813,7 +819,8 @@ public class Simulator extends Network
             
             
             propagateFlow();
-
+           
+            count++;
             if(isSimulationFinished())
             {
                 break;
@@ -831,8 +838,6 @@ public class Simulator extends Network
                 l.updateTT(v.enter_time, Simulator.time);
             }
         }
-        
-
         
         simulationFinished();
          
@@ -1076,6 +1081,7 @@ public class Simulator extends Network
         for(Link l : links)
         {
             l.update();
+            l.setTotalOccupancy(l.getOccupancy());
         }
         
     }

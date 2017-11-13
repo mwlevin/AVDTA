@@ -17,7 +17,7 @@ public class LinkRecord
 {
 
     private int id, source, dest, numLanes, type;
-    private double capacity, ffspd, wavespd, length;
+    private double capacity, ffspd, wavespd, length, avgOccupancy;
     
     // id\ttype\tsource\tdest\tlength (ft)\tffspd (mph)\tw (mph)\tcapacity\tnum_lanes
     /**
@@ -45,7 +45,26 @@ public class LinkRecord
         this.numLanes = numLanes;
     }
     
-    /**
+    
+    
+    public LinkRecord(int id, int source, int dest, int numLanes, int type, double capacity, double ffspd,
+			double wavespd, double length, double avgOccupancy) {
+		super();
+		this.id = id;
+		this.source = source;
+		this.dest = dest;
+		this.numLanes = numLanes;
+		this.type = type;
+		this.capacity = capacity;
+		this.ffspd = ffspd;
+		this.wavespd = wavespd;
+		this.length = length;
+		this.avgOccupancy = avgOccupancy;
+	}
+
+
+
+	/**
      * Constructs a clone of this {@link LinkRecord}
      * @return a clone
      */

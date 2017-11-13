@@ -53,8 +53,7 @@ public class DTASimulator extends Simulator
     private int iteration;
     
     private boolean continueUntilExit = true;
-    
-    
+        
     
     /**
      * Constructs this {@link DTASimulator} empty with the given project.
@@ -90,6 +89,7 @@ public class DTASimulator extends Simulator
         return (DTAProject)super.getProject();
     }
     
+   
     /**
      * Loads demand over multiple iterations to reduce the congestion at the start.
      * Each iteration, 1/iter vehicles are loaded onto the shortest path.
