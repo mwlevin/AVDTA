@@ -97,7 +97,7 @@ public class Main
 	static DTASimulator sim;
     public static void main(String[] args) throws IOException
     {
-    		int maxiter = 1;
+    		int maxiter = 20;
     		double[] prop = {0.75}; //,0.85,1.0
     		double mingap = 1;
     		
@@ -121,12 +121,13 @@ public class Main
         
         	sim.getAssignment().getAssignmentFolder().renameTo(new File(project.getAssignmentsFolder()+"/100"));
         	System.out.println("End of MSA");
-//        	for(Node n:sim.nodes){
-//        		if(100 != n.getType() || 200 != n.getType()){
-//        			continue;
-//        		}
-        		createTestIntersection(6336);
-//        	}
+            
+        	Scanner filein = new Scanner(sim.getProject().getPhasesFile());
+            while(filein.hasNextLine()){
+            	SignalRecord signal = new SignalRecord(filein.nextLine());
+        		createTestIntersection(signal.getNode());
+            }
+        	
         
 //        	out.println(sim1.getTSTT());
 //        	out.close();
@@ -141,7 +142,7 @@ public class Main
        // DTASimulator sim = project.getSimulator();
         
         DTAProject newIntersection = new DTAProject();
-        newIntersection.createProject("intersection"+nodeid, new File("projects/intersection"+nodeid));
+        newIntersection.createProject("intersection"+nodeid, new File("projects/intersection/"+nodeid));
         //DTASimulator sim2 = newIntersection.getSimulator();
         System.out.println("Project intersection");
         Node node = sim.getNode(nodeid);
