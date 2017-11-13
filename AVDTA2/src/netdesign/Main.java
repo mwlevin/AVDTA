@@ -207,7 +207,12 @@ public class Main
         }
         fileout.close();
         
-       
+        fileout = new PrintStream(new FileOutputStream(newIntersection.getStaticODFile()), true);
+        fileout.println(ReadNetwork.getNodesFileHeader());
+        for(TurnRecord t:turnCount.keySet()){
+        	//TODO: Print the OD pairs onto the Static OD file
+        	//fileout.println();
+        }
         // create reverse map of above
         Map<Integer, Integer> reverseMap = new HashMap<>();
         for(int k : linkMap.keySet())
