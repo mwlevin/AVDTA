@@ -1134,6 +1134,10 @@ public class ReadNetwork
         return "id\ttype\tlongitude\tlatitude\televation";
     }
     
+    public static String getStatidODHeader(){
+    	return "id\ttype\torigin\tddestination\tdemand";
+    }
+    
     /**
      * This returns the header for the link_points file.
      * @return the header for the link_points file

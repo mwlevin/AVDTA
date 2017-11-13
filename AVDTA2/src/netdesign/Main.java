@@ -10,6 +10,7 @@ import avdta.demand.DemandProfile;
 import avdta.demand.DynamicODRecord;
 import avdta.demand.DynamicODTable;
 import avdta.demand.ReadDemandNetwork;
+import avdta.demand.StaticODRecord;
 import avdta.dta.Assignment;
 import avdta.dta.DTAImportFromVISTA;
 import avdta.network.link.transit.BusLink;
@@ -207,11 +208,15 @@ public class Main
         }
         fileout.close();
         
+        
         fileout = new PrintStream(new FileOutputStream(newIntersection.getStaticODFile()), true);
-        fileout.println(ReadNetwork.getNodesFileHeader());
+        fileout.println(ReadNetwork.getStatidODHeader());
+        int i = 1;
         for(TurnRecord t:turnCount.keySet()){
-        	//TODO: Print the OD pairs onto the Static OD file
-        	//fileout.println();
+        	Link in = linkMap.get(t.getI());
+        	Link out = linkMap.get(t.getJ());
+        	StaticODRecord staticOD = new StaticODRecord(i, 111, in.getSource().getId(), out.getDest().getId(), turnCount.get(t));
+        	fileout.println(staticOD);
         }
         // create reverse map of above
         Map<Integer, Integer> reverseMap = new HashMap<>();
