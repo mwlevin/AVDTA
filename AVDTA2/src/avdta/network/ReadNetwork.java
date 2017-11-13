@@ -1135,7 +1135,7 @@ public class ReadNetwork
     }
     
     public static String getStatidODHeader(){
-    	return "id\ttype\torigin\tddestination\tdemand";
+    	return "id\ttype\torigin\tdestination\tdemand";
     }
     
     /**

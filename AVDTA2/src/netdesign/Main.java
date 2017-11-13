@@ -98,7 +98,7 @@ public class Main
 	static DTASimulator sim;
     public static void main(String[] args) throws IOException
     {
-    		int maxiter = 20;
+    		int maxiter = 1;
     		double[] prop = {0.75}; //,0.85,1.0
     		double mingap = 1;
     		
@@ -124,16 +124,19 @@ public class Main
         	System.out.println("End of MSA");
             
         	Scanner filein = new Scanner(sim.getProject().getPhasesFile());
+        	filein.nextLine();
             while(filein.hasNextLine()){
                 PhaseRecord phase = new PhaseRecord(filein.nextLine());
             	Map<TurnRecord,Integer> turnCount = new HashMap<>();
 
                     // change phase link ids
                 for(Vehicle v:sim.getVehicles()){
-                	Path p = v.getPath();
+                	Path  p = v.getPath();
+                	List<Integer> pList = p.getPathIdList();
+                	
                    	for(TurnRecord t : phase.getTurns())
                     {
-                        if(p.contains(t.getI()) && p.contains(t.getJ())){
+                        if(pList.contains(t.getI()) && pList.contains(t.getJ())){
                         	if(turnCount.containsKey(t))  turnCount.put(t, turnCount.get(t)+1);
                         	else turnCount.put(t, 1);
                         }
@@ -143,6 +146,7 @@ public class Main
                 }
         		createTestIntersection(phase.getNode(), turnCount);
             }
+            filein.close();
             
         
 //        	out.println(sim1.getTSTT());
@@ -199,24 +203,29 @@ public class Main
 //            }
 //        }
         
-        // write links to file
-        PrintStream fileout = new PrintStream(new FileOutputStream(newIntersection.getLinksFile()), true);
-        fileout.println(ReadNetwork.getLinksFileHeader());
-        for(LinkRecord record : links)
-        {
-            fileout.println(record);
-        }
-        fileout.close();
         
-        
-        fileout = new PrintStream(new FileOutputStream(newIntersection.getStaticODFile()), true);
+        PrintStream fileout = new PrintStream(new FileOutputStream(newIntersection.getStaticODFile()), true);
         fileout.println(ReadNetwork.getStatidODHeader());
         int i = 1;
         for(TurnRecord t:turnCount.keySet()){
         	Link in = linkMap.get(t.getI());
         	Link out = linkMap.get(t.getJ());
         	StaticODRecord staticOD = new StaticODRecord(i, 111, in.getSource().getId()+10000, out.getDest().getId()+100000, turnCount.get(t));
+        	LinkRecord centIn = new LinkRecord(70000+i, 1000, in.getSource().getId()+10000, in.getSource().getId(), 500.0, 60.0, 30.0, 800, 1);
+        	LinkRecord centOut = new LinkRecord(80000+i, 1000, out.getDest().getId(), out.getDest().getId()+100000, 500.0, 60.0, 30.0, 800, 1);
+        	links.add(centIn);
+        	links.add(centOut);
+//        	System.out.println(in.getSource().getId()+10000+ "\t" + out.getDest().getId()+10000 + "\t" +  turnCount.get(t));
         	fileout.println(staticOD);
+        }
+        fileout.close();
+        
+     // write links to file
+        fileout = new PrintStream(new FileOutputStream(newIntersection.getLinksFile()), true);
+        fileout.println(ReadNetwork.getLinksFileHeader());
+        for(LinkRecord record : links)
+        {
+            fileout.println(record);
         }
         fileout.close();
         

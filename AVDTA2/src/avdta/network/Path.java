@@ -12,6 +12,7 @@ import avdta.vehicle.DriverType;
 import avdta.vehicle.Vehicle;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A route, defined as a list of {@link Link}s with additional functionality.
@@ -95,6 +96,13 @@ public class Path extends ArrayList<Link> implements Serializable
         return false;
     }
     
+    public List<Integer> getPathIdList(){
+    	List<Integer> pathList = new ArrayList();
+    	for(Link l:this){
+    		pathList.add(l.getId());
+    	}
+    	return pathList;
+    }
     /**
      * Update the cost of this {@link Path}
      * @param cost the new cost
