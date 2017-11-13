@@ -215,9 +215,11 @@ public class Main
         for(TurnRecord t:turnCount.keySet()){
         	Link in = linkMap.get(t.getI());
         	Link out = linkMap.get(t.getJ());
-        	StaticODRecord staticOD = new StaticODRecord(i, 111, in.getSource().getId(), out.getDest().getId(), turnCount.get(t));
+        	StaticODRecord staticOD = new StaticODRecord(i, 111, in.getSource().getId()+10000, out.getDest().getId()+100000, turnCount.get(t));
         	fileout.println(staticOD);
         }
+        fileout.close();
+        
         // create reverse map of above
         Map<Integer, Integer> reverseMap = new HashMap<>();
         for(int k : linkMap.keySet())
