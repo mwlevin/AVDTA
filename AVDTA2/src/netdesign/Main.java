@@ -7,6 +7,7 @@ package netdesign;
 
 import avdta.demand.DemandImportFromVISTA;
 import avdta.demand.DemandProfile;
+import avdta.demand.DemandProfileRecord;
 import avdta.demand.DynamicODRecord;
 import avdta.demand.DynamicODTable;
 import avdta.demand.ReadDemandNetwork;
@@ -95,132 +96,235 @@ import java.io.IOException;
  */
 public class Main 
 {
-	static DTASimulator sim;
+	//percentage of total demand simulated
+	static int demand = 100;
+	
     public static void main(String[] args) throws IOException
     {
     		int maxiter = 1;
-    		double[] prop = {0.75}; //,0.85,1.0
+    		double prop = demand/100.0;
     		double mingap = 1;
     		
-    		
-//    		PrintStream out = new PrintStream(new FileOutputStream(new File("AVDTA2/projects/coacongress/results/test1_100.txt")));
-//    		out.println("Test output 1 for coacongress network at 100% demand");
-//    		out.println("TSTT");
-    		//load project
+    		//load parent project
         DTAProject project = new DTAProject(new File("AVDTA2/projects/coacongress"));
         
         //adjust demand proportion
-        for(double i:prop){
-        	ReadDTANetwork read1 = new ReadDTANetwork();
-        	read1.prepareDemand(project, i);
+        	ReadDTANetwork read = new ReadDTANetwork();
+        	read.prepareDemand(project, prop);
         
         	//load simulator
-        	sim = project.getSimulator();
+        DTASimulator sim = project.getSimulator();
         
         	//run MSA
         	sim.msa(maxiter, mingap);
         
-        	sim.getAssignment().getAssignmentFolder().renameTo(new File(project.getAssignmentsFolder()+"/100"));
-        	System.out.println("End of MSA");
-            
-        	Scanner filein = new Scanner(sim.getProject().getPhasesFile());
+        	//rename coacongress assignment folder for given demand
+        	sim.getAssignment().getAssignmentFolder().renameTo(new File(project.getAssignmentsFolder()+"/"+demand));
+        	
+        	//for a list of all signal node IDs
+        	List<Integer> signals = new ArrayList<>();
+        	Scanner filein = new Scanner(project.getSignalsFile());
         	filein.nextLine();
-            while(filein.hasNextLine()){
-                PhaseRecord phase = new PhaseRecord(filein.nextLine());
-            	Map<TurnRecord,Integer> turnCount = new HashMap<>();
-
-                    // change phase link ids
-                for(Vehicle v:sim.getVehicles()){
-                	Path  p = v.getPath();
-                	List<Integer> pList = p.getPathIdList();
-                	
-                   	for(TurnRecord t : phase.getTurns())
-                    {
-                        if(pList.contains(t.getI()) && pList.contains(t.getJ())){
-                        	if(turnCount.containsKey(t))  turnCount.put(t, turnCount.get(t)+1);
-                        	else turnCount.put(t, 1);
-                        }
-                   		
-                    }
-                    
-                }
-        		createTestIntersection(phase.getNode(), turnCount);
-            }
-            filein.close();
-            
-        
-//        	out.println(sim1.getTSTT());
-//        	out.close();
-        }
+        	while(filein.hasNextLine()) {
+        		signals.add(filein.nextInt());
+        		filein.nextLine();
+        	}
+        	filein.close();
+        	
+        	//create new projects for all signal intersections in coacongress
+        	for(int i : signals) {
+        		createTestIntersection(i, sim, 0);
+        	}
+    
     }
     
-    public static void createTestIntersection(int nodeid, Map<TurnRecord, Integer> turnCount) throws IOException
+    //Creates a new DTA project and network consisting of just one intersection
+    //intControl = (0:signal, 1:reservation)
+    public static void createTestIntersection(int nodeid, DTASimulator sim, int intControl) throws IOException
     {
-        // requires 4 incoming and 4 outgoing links (not including centroid connectors)
-        
-        //DTAProject project = new DTAProject(new File("projects/coacongress"));
-       // DTASimulator sim = project.getSimulator();
-        
+        //Create new project for Test Intersection (in links and nodes lists)
         DTAProject newIntersection = new DTAProject();
-        newIntersection.createProject("intersection"+nodeid, new File("projects/intersection/"+nodeid));
-        //DTASimulator sim2 = newIntersection.getSimulator();
-        System.out.println("Project intersection");
-        Node node = sim.getNode(nodeid);
+        newIntersection.createProject("intersection"+nodeid+"_"+demand, new File("AVDTA2/projects/testIntersections/intersection"+nodeid+"_"+demand));
+
+        Node Intnode = sim.getNode(nodeid);
         
-        Map<Integer ,Link> linkMap = new HashMap();
+        //Get nodes and links of newIntersection (Maps = ID:Link or Node)
+        Map<Integer ,Link> linkMap = new HashMap<>();
+        Map<Integer, Node> nodeMap = new HashMap<>();
+        nodeMap.put(Intnode.getId(), Intnode);
         
-        for(Link l:node.getIncoming()){
-        	if(l.isCentroidConnector()){
-        		continue;
-        	}
-        	linkMap.put(l.getId(),l);
+        for(Link l:Intnode.getIncoming()){
+	        	if(!l.isCentroidConnector()){
+	        		linkMap.put(l.getId(),l);
+	        	}
+	        
+	        	if(!l.getSource().isZone()) {
+	        		nodeMap.put(l.getSource().getId(), l.getSource());
+	        	}
         }
         
-        for(Link l: node.getOutgoing()){
-        	if(l.isCentroidConnector() || linkMap.containsKey(l.getId())){
-        		continue;
-        	}
-        	linkMap.put(l.getId(),l);
+        for(Link l: Intnode.getOutgoing()){
+	        	if(!l.isCentroidConnector() && !linkMap.containsKey(l.getId())) {
+	        		linkMap.put(l.getId(),l);
+	        	}
+	        	
+	        	if(!l.getDest().isZone() && !nodeMap.containsKey(l.getDest().getId())) {
+	        	nodeMap.put(l.getDest().getId(), l.getDest());
+	        }
         }
         
-        System.out.println(linkMap.size());
-        // create list link records for outputs
+        //Create LinkRecord and NodeRecord Lists
         List<LinkRecord> links = new ArrayList<LinkRecord>();
-        
+        List<NodeRecord> nodes = new ArrayList<NodeRecord>();
         for(Link l : linkMap.values())
         {
             links.add(l.createLinkRecord());
         }
+        for(Node n : nodeMap.values()) {
+        		nodes.add(n.createNodeRecord());
+        }
+        //TODO check if the below is correct and sufficient in changing the network's control
+        //change the intersection control based on input intControl
+        if(intControl == 1) {
+        		for(NodeRecord r : nodes) {
+        			r.setType(301);
+        		}
+        }
+        
+        //To get the demand at each Turn/OD (for StaticOD)
+        		//create list of intersection's phases
+        List<PhaseRecord> phases = new ArrayList<>();
+        Scanner phasefilein = new Scanner(sim.getProject().getPhasesFile());
+        phasefilein.nextLine();
+        
+        while(phasefilein.hasNextLine()) {
+        		PhaseRecord phase = new PhaseRecord(phasefilein.nextLine());
+        		
+        		if(phase.getNode() == Intnode.getId()) {
+        			phases.add(phase);
+        		}
+        }
+        phasefilein.close();
+        		//create map of each TurnRecord to its demand
+        Map<TurnRecord,Integer> turnCount = new HashMap<>();
 
+        for(Vehicle v : sim.getVehicles()){
+        	Path  p = v.getPath();
+        	List<Integer> pList = p.getPathIdList();
+        	
+	        	for(PhaseRecord phase : phases) 
+	        	{
+	        		for(TurnRecord t : phase.getTurns())
+	                {
+	                    if(pList.contains(t.getI()) && pList.contains(t.getJ()))
+	                    {
+	                    	if(turnCount.containsKey(t))  turnCount.put(t, turnCount.get(t)+1);
+	                    	else turnCount.put(t, 1);
+	                    }           		
+	                }  
+	        	}
+        }
         
-        // copy link details to mapped links
-//        for(Link l : linkMap.values())
-//        {
-//            if(map.containsKey(record.getId()))
-//            {
-//        		LinkRecord record = new LinkRecord(l.getId(), l.getType(), l.getSource().getId(), l.getDest().getId(), l.getLength(), l.getFFSpeed(), l.getWaveSpeed(), l.getCapacity(), l.getNumLanes());
-//                links.add(record);
-//            }
-//        }
-        
-        
-        PrintStream fileout = new PrintStream(new FileOutputStream(newIntersection.getStaticODFile()), true);
-        fileout.println(ReadNetwork.getStatidODHeader());
+        //for getting StaticODRecord List, and adding centroids and centroid connectors to nodes and links Lists
+        List<StaticODRecord> ODrecord = new ArrayList<StaticODRecord>();
         int i = 1;
-        for(TurnRecord t:turnCount.keySet()){
-        	Link in = linkMap.get(t.getI());
-        	Link out = linkMap.get(t.getJ());
-        	StaticODRecord staticOD = new StaticODRecord(i, 111, in.getSource().getId()+10000, out.getDest().getId()+100000, turnCount.get(t));
-        	LinkRecord centIn = new LinkRecord(70000+i, 1000, in.getSource().getId()+10000, in.getSource().getId(), 500.0, 60.0, 30.0, 800, 1);
-        	LinkRecord centOut = new LinkRecord(80000+i, 1000, out.getDest().getId(), out.getDest().getId()+100000, 500.0, 60.0, 30.0, 800, 1);
-        	links.add(centIn);
-        	links.add(centOut);
-//        	System.out.println(in.getSource().getId()+10000+ "\t" + out.getDest().getId()+10000 + "\t" +  turnCount.get(t));
-        	fileout.println(staticOD);
+        for(TurnRecord t:turnCount.keySet())
+        {
+        		//obtain demand in StaticODRecord List (based on counts from coacongress DTA run)
+	        	Link in = linkMap.get(t.getI());
+	        	Link out = linkMap.get(t.getJ());
+	        	StaticODRecord staticOD = new StaticODRecord(i, 121, in.getSource().getId()+100000, out.getDest().getId()+100000, turnCount.get(t));
+	        	//	check for duplicates
+	        	int j = 0;
+	        	for(StaticODRecord s : ODrecord) {
+	        		if((s.getOrigin() == staticOD.getOrigin()) && (s.getDest() == staticOD.getDest())) {
+	        			j++;
+	        		}
+	        	}
+	        	if(j == 0)		ODrecord.add(staticOD);
+	        	
+	        	//add Noderecords for Centroid nodes
+	        	NodeRecord zoneSource = new NodeRecord(in.getSource().getId()+100000, 1000, 0, 0, 0);
+	        	NodeRecord zoneSink = new NodeRecord(out.getDest().getId()+100000, 1000, 0, 0, 0);
+	        	//	check for duplicates
+	        	int q = 0, k = 0;
+	        	for(NodeRecord r : nodes) {
+	        		if (r.getId() == zoneSource.getId()) {
+	        			q++;
+	        		}
+	        		if (r.getId() == zoneSink.getId()) {
+	        			k++;
+	        		}
+	        	}
+	        	if(q == 0)		nodes.add(zoneSource);	
+	        if(k == 0)		nodes.add(zoneSink);
+	        
+	        	//add LinkRecords for Centroid Connectors/links
+	        	LinkRecord centIn = new LinkRecord(70000+i, 1000, in.getSource().getId()+100000, in.getSource().getId(), 500.0, 60.0, 30.0, 800, 1);
+	        	LinkRecord centOut = new LinkRecord(80000+i, 1000, out.getDest().getId(), out.getDest().getId()+100000, 500.0, 60.0, 30.0, 800, 1);
+	        	//	check for duplicates
+	        	int x = 0, y = 0;
+	        	for(LinkRecord l : links) {
+	        		if ((l.getSource() == centIn.getSource()) && (l.getDest() == centIn.getDest())) {
+	        			x++;
+	        		}
+	        		if ((l.getSource() == centOut.getSource()) && (l.getDest() == centOut.getDest())) {
+	        			y++;
+	        		}
+	        	}
+	        	if(x == 0)		links.add(centIn);	
+	        if(y == 0)		links.add(centOut);
+	        
+	        	i++;
+        }
+        
+        
+        
+        //////////////////////////////
+        //WRITE TO FILES
+        //////////////////////////////
+        
+        //Write to Phases file
+        PrintStream fileout = new PrintStream(new FileOutputStream(newIntersection.getPhasesFile()), true);
+        fileout.println(ReadNetwork.getPhasesFileHeader());
+        for(PhaseRecord r : phases) {
+        		fileout.println(r);
         }
         fileout.close();
         
-     // write links to file
+        
+        //Write to Static OD File (based on demand counted during DTA run of coacongress)
+        fileout = new PrintStream(new FileOutputStream(newIntersection.getStaticODFile()), true);
+        fileout.println(ReadNetwork.getStatidODHeader());
+        for(StaticODRecord s : ODrecord) {
+        		fileout.println(s);
+        }
+        fileout.close();
+        
+        //Write to Demand Profile file (copy from coacongress)
+        fileout = new PrintStream(new FileOutputStream(newIntersection.getDemandProfileFile()), true);
+        fileout.println(ReadDemandNetwork.getDemandProfileFileHeader());
+        Scanner SODfilein = new Scanner(sim.getProject().getDemandProfileFile());
+        SODfilein.nextLine();
+        
+        while(SODfilein.hasNextLine()) {
+        		DemandProfileRecord SOD = new DemandProfileRecord(SODfilein.nextLine());
+        		fileout.println(SOD);
+        }
+        fileout.close();
+        SODfilein.close();
+        
+        
+        //Write/create Dynamic OD file from Static OD and Demand Profile
+        ReadDemandNetwork read = new ReadDemandNetwork();
+        read.createDynamicOD(newIntersection);
+        
+        //TODO do we need this proportion to be the same as coacongress?
+        //Write/create Demand file from Dynamic OD and Demand Profile and specified proportion of total demand
+        read.prepareDemand(newIntersection, 1);
+        
+        
+        //Write to Links File (including centroid connectors)
         fileout = new PrintStream(new FileOutputStream(newIntersection.getLinksFile()), true);
         fileout.println(ReadNetwork.getLinksFileHeader());
         for(LinkRecord record : links)
@@ -229,44 +333,53 @@ public class Main
         }
         fileout.close();
         
-        // create reverse map of above
-        Map<Integer, Integer> reverseMap = new HashMap<>();
-        for(int k : linkMap.keySet())
-        {
-            reverseMap.put(linkMap.get(k).getId(), k);
-        }
         
-        // print 0 signal offset
+        // Write to Signals File
         fileout = new PrintStream(new FileOutputStream(newIntersection.getSignalsFile()), true);
         fileout.println(ReadNetwork.getSignalsFileHeader());
-        fileout.println(new SignalRecord(1, 0));
+        fileout.println(Intnode.getId() + "\t" + 0);
         fileout.close();
         
-        // copy phases data
-        fileout = new PrintStream(new FileOutputStream(newIntersection.getPhasesFile()), true);
-        fileout.println(ReadNetwork.getPhasesFileHeader());
         
-        Scanner filein = new Scanner(sim.getProject().getPhasesFile());
-        filein.nextLine();
+        //Write to Nodes File (including centroids)
+        fileout = new PrintStream(new FileOutputStream(newIntersection.getNodesFile()), true);
+        fileout.println(ReadNetwork.getNodesFileHeader());
         
-        while(filein.hasNextLine())
-        {
-            PhaseRecord phase = new PhaseRecord(filein.nextLine());
-            
-            if(phase.getNode() == node.getId())
-            {
-                // change phase link ids
-                for(TurnRecord t : phase.getTurns())
-                {
-                    t.setI(linkMap.get(t.getI()));
-                    t.setJ(linkMap.get(t.getJ()));
-                }
-                
-                fileout.println(phase);
-            }
+        for(NodeRecord n : nodes) {
+        		fileout.println(n);
+        }
+        fileout.close();
+
+        
+        //Write to Link Coordinates file
+        fileout = new PrintStream(new FileOutputStream(newIntersection.getLinkPointsFile()), true);
+        fileout.println(ReadNetwork.getLinkPointsFileHeader());
+        
+        for(Link l : linkMap.values()) {
+        		
+        		fileout.println(l.getId() + "\t" + "("+l.getSource().getLon()+","+l.getSource().getLat()+"),("+l.getDest().getLon()+","+l.getDest().getLat()+")");
+
         }
         fileout.close();
         
-    }
+        
+        //Write to Signal Results file
+        fileout = new PrintStream(new FileOutputStream(new File("AVDTA2/projects/testIntersections/intersection"+nodeid+"_"+demand+"/results/signalresults.txt")), true);
+        fileout.println("Signal Regression Results: Intersection "+nodeid+"@"+demand+"% demand");
+        fileout.println();
+        fileout.println("time_red\ttime_yellow\ttime_green\tnum_moves\tcapacity\tnum_lanes");
+        //TODO Find how to encapsulate variables for a whole intersection for all phases
+        fileout.println("TSTT = ");
+        fileout.close();
+        
+        //Write to Reservation Results file
+        fileout = new PrintStream(new FileOutputStream(new File("AVDTA2/projects/testIntersections/intersection"+nodeid+"_"+demand+"/results/TBRresults.txt")), true);
+        fileout.println("TBR Regression Results: Intersection "+nodeid+"@"+demand+"% demand");
+        fileout.println();
+        fileout.println("num_moves\tcapacity\tnum_lanes");
+        //TODO Find more variables to use for reservations and how to encapsulate current variables for whole intersection
+        fileout.println("TSTT = ");
+        fileout.close();
+}
     
 }

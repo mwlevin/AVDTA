@@ -33,11 +33,11 @@ public class CreateIntersection
     {
         // requires 4 incoming and 4 outgoing links (not including centroid connectors)
         
-        DTAProject project = new DTAProject(new File("projects/coacongress"));
+        DTAProject project = new DTAProject(new File("AVDTA2/projects/coacongress"));
         DTASimulator sim = project.getSimulator();
         
-        DTAProject newIntersection = new DTAProject(new File("projects/intersection"));
-        DTASimulator sim2 = newIntersection.getSimulator();
+        DTAProject newIntersection = new DTAProject();
+        newIntersection.createProject("intersection_"+nodeid, new File("AVDTA2/projects/intersection"));
         
         Node node = sim.getNode(nodeid);
         
@@ -45,11 +45,13 @@ public class CreateIntersection
             
         List<LinkRecord> links = new ArrayList<LinkRecord>();
         
-        for(Link l : sim2.getLinks())
+        for(Link l : sim.getLinks())
         {
             links.add(l.createLinkRecord());
         }
         
+        ////////////To find the angular direction of each link
+   
         // find incoming and outgoing links in each direction
         Link northO = null, southO = null, eastO = null, westO = null;
         Link northI = null, southI = null, eastI = null, westI = null;
@@ -148,6 +150,7 @@ public class CreateIntersection
         map.put(51, northI);
         map.put(14, westO);
         map.put(41, westI);
+        
         
         // copy link details to mapped links
         for(LinkRecord record : links)
