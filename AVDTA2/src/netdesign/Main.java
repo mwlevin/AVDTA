@@ -132,9 +132,17 @@ public class Main
         	filein.close();
         	
         	//create new projects for all signal intersections in coacongress
-        	for(int i : signals) {
-        		createTestIntersection(i, sim, 0);
-        	}
+//        	for(int i : signals) {
+//        		createTestIntersection(i, sim, 0);
+//        	}
+        	
+        	//create a single new project for an intersection specified
+        	createTestIntersection(signals.get(0), sim, 1);
+        	DTAProject testIntersection = new DTAProject(new File("AVDTA2/projects/testIntersections/intersection6336_100"));
+        	ReadDTANetwork read2 = new ReadDTANetwork();
+        	read2.prepareDemand(testIntersection, prop);
+        	DTASimulator sim2 = testIntersection.getSimulator();
+        	sim2.msa(5, 1);
     
     }
     
@@ -233,6 +241,7 @@ public class Main
         		//obtain demand in StaticODRecord List (based on counts from coacongress DTA run)
 	        	Link in = linkMap.get(t.getI());
 	        	Link out = linkMap.get(t.getJ());
+	        		//to create centroid nodes, input +100000 to 2nd and 3rd entries in StaticODRecord constructor
 	        	StaticODRecord staticOD = new StaticODRecord(i, 121, in.getSource().getId()+100000, out.getDest().getId()+100000, turnCount.get(t));
 	        	//	check for duplicates
 	        	int j = 0;
@@ -260,8 +269,8 @@ public class Main
 	        if(k == 0)		nodes.add(zoneSink);
 	        
 	        	//add LinkRecords for Centroid Connectors/links
-	        	LinkRecord centIn = new LinkRecord(70000+i, 1000, in.getSource().getId()+100000, in.getSource().getId(), 500.0, 60.0, 30.0, 800, 1);
-	        	LinkRecord centOut = new LinkRecord(80000+i, 1000, out.getDest().getId(), out.getDest().getId()+100000, 500.0, 60.0, 30.0, 800, 1);
+	        	LinkRecord centIn = new LinkRecord(70000+i, 1000, in.getSource().getId()+100000, in.getSource().getId(), 500.0, 60.0, 30.0, 100000, 1);
+	        	LinkRecord centOut = new LinkRecord(80000+i, 1000, out.getDest().getId(), out.getDest().getId()+100000, 500.0, 60.0, 30.0, 100000, 1);
 	        	//	check for duplicates
 	        	int x = 0, y = 0;
 	        	for(LinkRecord l : links) {
