@@ -14,21 +14,36 @@ import java.util.List;
  */
 public class Incident 
 {
-    public static final Incident NULL = new Incident(0, 0, 0, new ArrayList<IncidentEffect>());
+    public static final Incident UNKNOWN = new Incident(0, 0, 0, new ArrayList<IncidentEffect>());
     
     private List<IncidentEffect> effects;
     
     private int id;
     private double pOff, pOn;
     
-    public Incident(int id, double pOn, double pOff, List<IncidentEffect> effects)
+    public Incident(int id, double pOn, double pOff,  List<IncidentEffect> effects)
     {
         this.id = id;
         this.pOff = pOff;
         this.pOn = pOn;
         this.effects = effects;
     }
-
+    
+    public void setProbabilityOn(double p)
+    {
+        pOn = p;
+    }
+    
+    public void setProbabilityOff(double p)
+    {
+        pOff = p;
+    }
+    
+    public String toString()
+    {
+        return ""+id;
+    }
+    
     public double getProbabilityOn()
     {
         return pOn;
@@ -37,8 +52,8 @@ public class Incident
     public double getProbabilityOff()
     {
         return pOff;
-    }    
-   
+    }
+    
     public int getId()
     {
         return id;

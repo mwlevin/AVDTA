@@ -115,144 +115,14 @@ public class Main
         //new FourStepGUI();
         
         //SAVtest();
-        //GUI.main(args);
+        GUI.main(args);
         
         //SAVMain.main(args);
         
         //testAllEmergency();
         
         
-        /*
-        DTAProject project = new DTAProject(new File("projects/coacongress2_100"));
-        DTASimulator sim = project.getSimulator();
-        
-        List<Node> nodes = new ArrayList<>();
-        
-        for(Node n : sim.getNodes())
-        {
-            if(!n.isZone())
-            {
-                nodes.add(n);
-            }
-        }
-        
-        PrintStream fileout = new PrintStream(new FileOutputStream("evs2.txt"), true);
-        for(int i = 0; i < 1000; i++)
-        {
-            Node origin = nodes.get((int)(Math.random() * nodes.size()));
-            Node dest = null;
-            do
-            {
-                dest = nodes.get((int)(Math.random() * nodes.size()));
-                
-                try
-                {
-                    sim.findPath(origin, dest);
-                }
-                catch(Exception ex)
-                {
-                    continue;
-                }
-            }
-            while(origin == dest);
-            
-            int dtime = (int)(Math.random()*3600+1800);
-            
-            fileout.println(origin.getId()+"\t"+dest.getId()+"\t"+dtime);
-        }
-        fileout.close();
-        */
-        
-        /*
-        for(int i = 75; i <= 120; i+= 5)
-        {
-            DTAProject project = new DTAProject(new File("projects/coacongress2_"+i+"_EV_limited"));
-            
-            List<NodeRecord> nodes = new ArrayList<NodeRecord>();
-            
-            Scanner filein = new Scanner(project.getNodesFile());
-            filein.nextLine();
-            
-            while(filein.hasNext())
-            {
-                nodes.add(new NodeRecord(filein.nextLine()));
-            }
-            filein.close();
-            
-            for(NodeRecord n : nodes)
-            {
-                if(n.getType() == 361)
-                {
-                    n.setType(362);
-                }
-            }
-            
-            PrintStream fileout = new PrintStream(new FileOutputStream(project.getNodesFile()), true);
-            
-            fileout.println(ReadNetwork.getNodesFileHeader());
-            
-            for(NodeRecord n : nodes)
-            {
-                fileout.println(n);
-            }
-            
-            fileout.close();
-        }
-        */
-        
-       // testAllEmergency();
-       //testEmergencyVehicle("coacongress2_100_EV",50);
-        /*
-        DUERProject project = new DUERProject(new File("projects/vms_test"));
-        DUERSimulator sim = project.getSimulator();
-        Node dest = sim.createNodeIdsMap().get(-106);
-        sim.test();
-        Hyperpath test = sim.osp(dest, DriverType.AV);
-        System.out.println("--");
-        sim.printStates();
-        System.out.println("--");
-        System.out.println(test.getFirstLink(sim.createNodeIdsMap().get(101)));
-        System.out.println(test.getNextLink(sim.createLinkIdsMap().get(101), Incident.UNKNOWN));
-        */
-        //transitTest3();
-        
-        
-        /*
-        DTAProject test = new DTAProject(new File("projects/coacongress_DTL"));
-        DTASimulator sim = test.getSimulator();
-        sim.msa(50);
-        sim.printLinkTT(1800, 5400);   
 
-        test = new DTAProject(new File("projects/coacongress_CTL"));
-        sim = test.getSimulator();
-        sim.msa(50);
-        sim.printLinkTT(1800, 5400);
-        
-        test = new DTAProject(new File("projects/coacongress"));
-        sim = test.getSimulator();
-        sim.msa(50);
-        sim.printLinkTT(1800, 5400);
-        */
-        
-//        System.out.println(testEmergencyVehicle("coacongress2_"+70, 50));
-
-
-        //DUERProject test = new DUERProject(new File("projects/freeway"));
-        //DUERProject test = new DUERProject(new File("projects/SiouxFalls"));
-        DUERProject test = new DUERProject(new File("projects/coacongress2"));
-        DUERSimulator sim = test.getSimulator();
-        //for (int i = 1; i < 11; i++){
-            for(int j = 1; j < 11; j++){
-                //for (int dest=1; dest<25; dest++){
-                   
-                    ValueIteration VI = new ValueIteration(sim, 0.1*1, 0.1*j);
-                    VI.hardcode();
-                    VI.solve();
-                    //Hyperpath osp = VI.getHyperpath();
-                    
-                //}
-            //}
-        }
 
     }
     

@@ -41,7 +41,7 @@ public class VMS
     
     public double getProbOfInformation(Incident i)
     {
-        if(information == null || information.containsKey(i))
+        if(information != null && information.containsKey(i))
         {
             return information.get(i);
         }
