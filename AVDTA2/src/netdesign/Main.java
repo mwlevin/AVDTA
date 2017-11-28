@@ -97,13 +97,60 @@ import java.io.IOException;
 public class Main 
 {
 	//percentage of total demand simulated
-	static int demand = 100;
+	static int demandprops[] = {10, 30, 50, 75, 85, 100};
+	static int demand;
 	
     public static void main(String[] args) throws IOException
     {
-    		int maxiter = 1;
+
+    	//Load coacongress project and get list of all intersections
+    	DTAProject project = new DTAProject(new File("AVDTA2/projects/coacongress"));
+    	List<Integer> signals = new ArrayList<>();
+    	Scanner filein = new Scanner(project.getSignalsFile());
+    	filein.nextLine();
+    	while(filein.hasNextLine()) {
+    		signals.add(filein.nextInt());
+    		filein.nextLine();
+    	}
+    	filein.close();
+    	
+    	//Create new results folder for each demand scenario (results files currently contain TSTT and AvgTT for SIG and TBR intersections)
+    	for(int d : demandprops) {
+
+	    	PrintStream fileout = new PrintStream(new FileOutputStream(new File("REGresults/results_"+d+"%_demand")), true);
+	    fileout.println("Intersections at "+d+"% demand");
+	    
+    		//Solve DTAUE using MSA on all signalized Test Intersections
+	    	fileout.println("SIGNALIZED:");
+	    fileout.println("Int ID\tTSTT_SIG (min)\tAvgTT_SIG (sec/veh)");
+	    	for(int i : signals) {
+	    		DTAProject SIGtestIntersection = new DTAProject(new File("AVDTA2/projects/testIntersections/SIG_intersection"+i+"_"+d));
+	    		DTASimulator SIGsim = SIGtestIntersection.getSimulator();
+	    		//run MSA and print to results file
+	    		SIGsim.msa(10, 1);
+	    		fileout.println(i+"\t"+String.format("%.2f", SIGsim.getTSTT()/60.0)+"\t"+String.format("%.2f", SIGsim.getTSTT()/SIGsim.getVehicles().size()));
+	    	}
+	    	
+	    	//Solve DTAUE using MSA on all reservation Test Intersections
+	    	fileout.println("RESERVATIONS:");
+	    	fileout.println("Int ID\tTSTT_TBR (min)\tAvgTT_TBR (sec/veh)");
+	    	for(int i : signals) {
+	    		DTAProject TBRtestIntersection = new DTAProject(new File("AVDTA2/projects/testIntersections/TBR_intersection"+i+"_"+d));
+	    		DTASimulator TBRsim = TBRtestIntersection.getSimulator();
+	    		//run MSA and print to results file
+	    		TBRsim.msa(10, 1);
+	    		fileout.println(i+"\t"+String.format("%.2f" , TBRsim.getTSTT()/60.0)+"\t"+String.format("%.2f" , TBRsim.getTSTT()/TBRsim.getVehicles().size()));
+	    	}
+	    	
+	    	fileout.close();
+    	}
+    	
+    	/* 
+    	 * CREATE ALL TEST INTERSECTIONS
+    	 
+    	for(int d : demandprops) {
+    		demand = d;
     		double prop = demand/100.0;
-    		double mingap = 1;
     		
     		//load parent project
         DTAProject project = new DTAProject(new File("AVDTA2/projects/coacongress"));
@@ -116,10 +163,10 @@ public class Main
         DTASimulator sim = project.getSimulator();
         
         	//run MSA
-        	sim.msa(maxiter, mingap);
+        	sim.msa(30, 1);
         
         	//rename coacongress assignment folder for given demand
-        	sim.getAssignment().getAssignmentFolder().renameTo(new File(project.getAssignmentsFolder()+"/"+demand));
+        	sim.getAssignment().getAssignmentFolder().renameTo(new File(project.getAssignmentsFolder()+"/"+demand+"_demand"));
         	
         	//for a list of all signal node IDs
         	List<Integer> signals = new ArrayList<>();
@@ -132,19 +179,27 @@ public class Main
         	filein.close();
         	
         	//create new projects for all signal intersections in coacongress
-//        	for(int i : signals) {
-//        		createTestIntersection(i, sim, 0);
-//        	}
+        	for(int i : signals) {
+        		createTestIntersection(i, sim, 0);
+        	}
+        	for(int i : signals) {
+        		createTestIntersection(i, sim, 1);
+        	}
         	
-        	//create a single new project for an intersection specified
-        	createTestIntersection(signals.get(0), sim, 1);
-        	DTAProject testIntersection = new DTAProject(new File("AVDTA2/projects/testIntersections/intersection6336_100"));
-        	ReadDTANetwork read2 = new ReadDTANetwork();
-        	read2.prepareDemand(testIntersection, prop);
-        	DTASimulator sim2 = testIntersection.getSimulator();
-        	sim2.msa(5, 1);
-    
+//        	//create a single new project for an intersection specified and run DTA
+//        	createTestIntersection(signals.get(0), sim, 1);
+//        	DTAProject testIntersection = new DTAProject(new File("AVDTA2/projects/testIntersections/intersection6336_100"));
+//        	ReadDTANetwork read2 = new ReadDTANetwork();
+//        	read2.prepareDemand(testIntersection, prop);
+//        	DTASimulator sim2 = testIntersection.getSimulator();
+//        	sim2.msa(5, 1);
+    	}
+    	*/
+    	
     }
+    
+
+    
     
     //Creates a new DTA project and network consisting of just one intersection
     //intControl = (0:signal, 1:reservation)
@@ -152,8 +207,17 @@ public class Main
     {
         //Create new project for Test Intersection (in links and nodes lists)
         DTAProject newIntersection = new DTAProject();
-        newIntersection.createProject("intersection"+nodeid+"_"+demand, new File("AVDTA2/projects/testIntersections/intersection"+nodeid+"_"+demand));
-
+        
+        if(intControl == 0) {
+        		newIntersection.createProject("SIG_intersection"+nodeid+"_"+demand, new File("AVDTA2/projects/testIntersections/SIG_intersection"+nodeid+"_"+demand));
+        }
+        else if(intControl == 1) {
+        		newIntersection.createProject("TBR_intersection"+nodeid+"_"+demand, new File("AVDTA2/projects/testIntersections/TBR_intersection"+nodeid+"_"+demand));
+        }
+        else {
+        	System.out.println("Invalid intersection control type");
+        }
+        
         Node Intnode = sim.getNode(nodeid);
         
         //Get nodes and links of newIntersection (Maps = ID:Link or Node)
@@ -191,12 +255,20 @@ public class Main
         for(Node n : nodeMap.values()) {
         		nodes.add(n.createNodeRecord());
         }
-        //TODO check if the below is correct and sufficient in changing the network's control
+        
         //change the intersection control based on input intControl
-        if(intControl == 1) {
+        if(intControl == 0) {
+        		for(NodeRecord r : nodes) {
+        			r.setType(100);
+        		}
+        }
+        else if(intControl == 1) {
         		for(NodeRecord r : nodes) {
         			r.setType(301);
         		}
+        }
+        else {
+        	System.out.println("Invalid intersection control type");
         }
         
         //To get the demand at each Turn/OD (for StaticOD)
@@ -269,8 +341,8 @@ public class Main
 	        if(k == 0)		nodes.add(zoneSink);
 	        
 	        	//add LinkRecords for Centroid Connectors/links
-	        	LinkRecord centIn = new LinkRecord(70000+i, 1000, in.getSource().getId()+100000, in.getSource().getId(), 500.0, 60.0, 30.0, 100000, 1);
-	        	LinkRecord centOut = new LinkRecord(80000+i, 1000, out.getDest().getId(), out.getDest().getId()+100000, 500.0, 60.0, 30.0, 100000, 1);
+	        	LinkRecord centIn = new LinkRecord(70000+i, 1000, in.getSource().getId()+100000, in.getSource().getId(), 50.0, 60.0, 30.0, 100000, 1);
+	        	LinkRecord centOut = new LinkRecord(80000+i, 1000, out.getDest().getId(), out.getDest().getId()+100000, 50.0, 60.0, 30.0, 100000, 1);
 	        	//	check for duplicates
 	        	int x = 0, y = 0;
 	        	for(LinkRecord l : links) {
@@ -372,23 +444,23 @@ public class Main
         fileout.close();
         
         
-        //Write to Signal Results file
-        fileout = new PrintStream(new FileOutputStream(new File("AVDTA2/projects/testIntersections/intersection"+nodeid+"_"+demand+"/results/signalresults.txt")), true);
-        fileout.println("Signal Regression Results: Intersection "+nodeid+"@"+demand+"% demand");
-        fileout.println();
-        fileout.println("time_red\ttime_yellow\ttime_green\tnum_moves\tcapacity\tnum_lanes");
-        //TODO Find how to encapsulate variables for a whole intersection for all phases
-        fileout.println("TSTT = ");
-        fileout.close();
-        
-        //Write to Reservation Results file
-        fileout = new PrintStream(new FileOutputStream(new File("AVDTA2/projects/testIntersections/intersection"+nodeid+"_"+demand+"/results/TBRresults.txt")), true);
-        fileout.println("TBR Regression Results: Intersection "+nodeid+"@"+demand+"% demand");
-        fileout.println();
-        fileout.println("num_moves\tcapacity\tnum_lanes");
-        //TODO Find more variables to use for reservations and how to encapsulate current variables for whole intersection
-        fileout.println("TSTT = ");
-        fileout.close();
+//        //Write to Signal Results file
+//        fileout = new PrintStream(new FileOutputStream(new File("AVDTA2/projects/testIntersections/intersection"+nodeid+"_"+demand+"/results/signalresults.txt")), true);
+//        fileout.println("Signal Regression Results: Intersection "+nodeid+"@"+demand+"% demand");
+//        fileout.println();
+//        fileout.println("time_red\ttime_yellow\ttime_green\tnum_moves\tcapacity\tnum_lanes");
+//        //TODO Find how to encapsulate variables for a whole intersection for all phases
+//        fileout.println("TSTT = ");
+//        fileout.close();
+//        
+//        //Write to Reservation Results file
+//        fileout = new PrintStream(new FileOutputStream(new File("AVDTA2/projects/testIntersections/intersection"+nodeid+"_"+demand+"/results/TBRresults.txt")), true);
+//        fileout.println("TBR Regression Results: Intersection "+nodeid+"@"+demand+"% demand");
+//        fileout.println();
+//        fileout.println("num_moves\tcapacity\tnum_lanes");
+//        //TODO Find more variables to use for reservations and how to encapsulate current variables for whole intersection
+//        fileout.println("TSTT = ");
+//        fileout.close();
 }
     
 }
