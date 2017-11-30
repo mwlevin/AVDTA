@@ -176,7 +176,19 @@ public class DUERSimulator extends DTASimulator
                 break;
             }
         }
+        
+        if(NO_INCIDENT == Incident.UNKNOWN)
+        {
+            NO_INCIDENT = new Incident(0, 0, 0, new ArrayList<IncidentEffect>());
+        
+            double total_p = 0;
+            for(Incident i : incidents)
+            {
+                total_p += i.getProbabilityOn();
+            }
 
+            NO_INCIDENT.setProbabilityOn(1-total_p);
+        }
     }
         
     private void createStates()
@@ -275,11 +287,7 @@ public class DUERSimulator extends DTASimulator
         
         for(Incident i : incidents)
         {
-            if(i == Incident.UNKNOWN)
-            {
-                continue;
-            }
-            
+
             // activate incident
             activate(i);
             super.simulate();
