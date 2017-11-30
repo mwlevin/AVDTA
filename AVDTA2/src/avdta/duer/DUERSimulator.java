@@ -149,23 +149,6 @@ public class DUERSimulator extends DTASimulator
     
     private void initializeTT()
     {
-        Set<Link> links = getLinks();
-        for(Incident i : incidents)
-        {
-            Map<Link, Double[]> temp = new HashMap<>();
-            avgTT.put(i, temp);
-            
-            for(Link l : links)
-            {
-                Double[] temp2 = new Double[Simulator.num_asts];
-                for(int j = 0; j < temp2.length; j++)
-                {
-                    temp2[j] = l.getFFTime();
-                }
-                temp.put(l, temp2);
-            }
-        }
-        
         NO_INCIDENT = Incident.UNKNOWN;
         
         for(Incident i : incidents)
@@ -189,6 +172,28 @@ public class DUERSimulator extends DTASimulator
 
             NO_INCIDENT.setProbabilityOn(1-total_p);
         }
+        
+        incidents.add(NO_INCIDENT);
+        
+        
+        Set<Link> links = getLinks();
+        for(Incident i : incidents)
+        {
+            Map<Link, Double[]> temp = new HashMap<>();
+            avgTT.put(i, temp);
+            
+            for(Link l : links)
+            {
+                Double[] temp2 = new Double[Simulator.num_asts];
+                for(int j = 0; j < temp2.length; j++)
+                {
+                    temp2[j] = l.getFFTime();
+                }
+                temp.put(l, temp2);
+            }
+        }
+        
+        
     }
         
     private void createStates()

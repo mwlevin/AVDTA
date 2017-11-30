@@ -14,7 +14,7 @@ import java.util.List;
  */
 public class Incident 
 {
-    public static final Incident UNKNOWN = new Incident(0, 0, 0, new ArrayList<IncidentEffect>());
+    public static final Incident UNKNOWN = new Incident(-1, 0, 0, new ArrayList<IncidentEffect>());
     
     private List<IncidentEffect> effects;
     
