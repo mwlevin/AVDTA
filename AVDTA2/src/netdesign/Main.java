@@ -82,6 +82,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Scanner;
 import java.util.TreeMap;
 import org.openstreetmap.gui.jmapviewer.Demo;
@@ -98,7 +99,8 @@ import java.io.IOException;
 public class Main 
 {
 	//percentage of total demand simulated
-	static int demandprops[] = {10, 30, 50, 75, 85, 100};
+	static int demandprops[] = {10};
+	//30, 50, 75, 85, 100
 	//static int demandprops[] = {30};
 	static int demand;
 	
@@ -180,7 +182,7 @@ public class Main
     	DTAProject project = new DTAProject(new File("AVDTA2/projects/coacongress"));
 
     	
-    	Map<Integer,  Map<String, Double>> signalTurns = createAllIntersections();
+    	Map<Integer, List<Map<Double, Map<String, Double>>>> signalTurns = createAllIntersections();
     	    	
     	runRegressionDTA(project);
     	
@@ -265,76 +267,92 @@ public class Main
 
      */
     //  PRINT INTERSECTION CHARACTERISTICS
-    public static void printIntersectionChar(Map<Integer, Map<String, Double>> signalDemand, Project project) throws IOException{
-    	//Load downtown_dallas project and get list of all intersections
-    	List<Integer> signals = new ArrayList<>();
-    	Scanner filein = new Scanner(project.getSignalsFile());
-    	filein.nextLine();
-    	while(filein.hasNextLine()) {
-    		signals.add(filein.nextInt());
-    		filein.nextLine();
-    	}
-    	filein.close();
-    	
-    	//Create intersection characteristic file
-	    	PrintStream fileout = new PrintStream(new FileOutputStream(new File("REGresults/" + project.getName() + "_inter_characteristics")), true);
-	    	fileout.println("ID\tnum_phases\ttime_red\ttime_yellow\ttime_green\tnum_moves\tnum_lanes\tavglanecapacity\tthroughturns\tleftturns\trightturns");
-	    	
-	    	for(int i : signals) {
-	    		double avgred = 0;
-	    		double avgyellow = 0;
-	    		double avggreen = 0;
-	    		int nummoves = 0;
-	    		int numphases = 0;
-	    		int numlanes = 0;
-	    		double avglanecapacity = 0;
-	    		List<PhaseRecord> phaserec = new ArrayList<>();
-	    		List<LinkRecord> linkrec = new ArrayList<>();
-	    		
-	    		Scanner phasesfilein = new Scanner(project.getPhasesFile());
-	    		Scanner linksfilein = new Scanner(project.getLinksFile());
-	    		phasesfilein.nextLine();
-	    		linksfilein.nextLine();
-	    		
-	    		while(phasesfilein.hasNextLine()) {
-	    			PhaseRecord temp = new PhaseRecord(phasesfilein.nextLine());
-	    			if(temp.getNode() == i) {
-	    				phaserec.add(temp);
-	    			}
-	    		}
-	    		while(linksfilein.hasNextLine()) {
-	    			LinkRecord temp = new LinkRecord(linksfilein.nextLine());
-	    			if((temp.getType() == 100) && (temp.getDest() == i || temp.getSource() == i)) {
-	    			linkrec.add(temp);
-	    			}
-	    		}
-	    		for(LinkRecord l : linkrec) {
-	    			int lanes = l.getNumLanes();
-	    			numlanes += lanes;
-	    			double capacity = l.getCapacity();
-	    			avglanecapacity += capacity;
-	    		}
-	    		for(PhaseRecord p : phaserec) {
-	    			double red = p.getTimeRed();
-	    			avgred += red;
-	    			double yellow = p.getTimeYellow();
-	    			avgyellow += yellow;
-	    			double green = p.getTimeGreen();
-	    			avggreen += green;
-	    			int moves = p.getTurns().size();
-	    			nummoves += moves;
-	    		}
-	    		avglanecapacity = avglanecapacity/numlanes;
-	    		avgred = avgred/phaserec.size();
-	    		avgyellow = avgyellow/phaserec.size();
-	    		avggreen = avggreen/phaserec.size();
-	    		numphases = phaserec.size();
-	    		
-	    		fileout.println(i+"\t"+numphases+"\t"+avgred+"\t"+avgyellow+"\t"+avggreen+"\t"+nummoves+"\t"+numlanes+"\t"+avglanecapacity+"\t"+signalDemand.get(i).get("through")+"\t"+signalDemand.get(i).get("left")+"\t"+signalDemand.get(i).get("right"));
-	    		
-	    		phasesfilein.close();
-	    		linksfilein.close();
-	    	}
+    public static void printIntersectionChar(Map<Integer, List<Map<Double, Map<String, Double>>>> signalTurns, Project project) throws IOException{
+		// Load downtown_dallas project and get list of all intersections
+		List<Integer> signals = new ArrayList<>();
+		Scanner filein = new Scanner(project.getSignalsFile());
+		filein.nextLine();
+		while (filein.hasNextLine()) {
+			signals.add(filein.nextInt());
+			filein.nextLine();
+		}
+		filein.close();
+
+		// Create intersection characteristic file
+		PrintStream fileout = new PrintStream(
+				new FileOutputStream(new File("REGresults/" + project.getName() + "_inter_characteristics")), true);
+		fileout.println(
+				"ID\tnum_phases\ttime_red\ttime_yellow\ttime_green\tnum_moves\tnum_lanes\tavglanecapacity\tthroughturns\tleftturns\trightturns\tdemandprop");
+
+		for (int d : demandprops) {
+			for (int i : signals) {
+				double avgred = 0;
+				double avgyellow = 0;
+				double avggreen = 0;
+				int nummoves = 0;
+				int numphases = 0;
+				int numlanes = 0;
+				double avglanecapacity = 0;
+				List<PhaseRecord> phaserec = new ArrayList<>();
+				List<LinkRecord> linkrec = new ArrayList<>();
+
+				Scanner phasesfilein = new Scanner(project.getPhasesFile());
+				Scanner linksfilein = new Scanner(project.getLinksFile());
+				phasesfilein.nextLine();
+				linksfilein.nextLine();
+
+				while (phasesfilein.hasNextLine()) {
+					PhaseRecord temp = new PhaseRecord(phasesfilein.nextLine());
+					if (temp.getNode() == i) {
+						phaserec.add(temp);
+					}
+				}
+				while (linksfilein.hasNextLine()) {
+					LinkRecord temp = new LinkRecord(linksfilein.nextLine());
+					if ((temp.getType() == 100) && (temp.getDest() == i || temp.getSource() == i)) {
+						linkrec.add(temp);
+					}
+				}
+				for (LinkRecord l : linkrec) {
+					int lanes = l.getNumLanes();
+					numlanes += lanes;
+					double capacity = l.getCapacity();
+					avglanecapacity += capacity;
+				}
+				for (PhaseRecord p : phaserec) {
+					double red = p.getTimeRed();
+					avgred += red;
+					double yellow = p.getTimeYellow();
+					avgyellow += yellow;
+					double green = p.getTimeGreen();
+					avggreen += green;
+					int moves = p.getTurns().size();
+					nummoves += moves;
+				}
+				avglanecapacity = avglanecapacity / numlanes;
+				avgred = avgred / phaserec.size();
+				avgyellow = avgyellow / phaserec.size();
+				avggreen = avggreen / phaserec.size();
+				numphases = phaserec.size();
+				
+				List<Map<Double, Map<String, Double>>> demandTurns = signalTurns.get(i);
+				Map<String, Double> dTurn = new HashMap<>();
+				for(Map<Double, Map<String, Double>> j : demandTurns){
+					if(j.containsKey((double)d)){
+						dTurn = j.get((double)d);
+						break;
+					}
+				}
+
+				fileout.println(i + "\t" + numphases + "\t" + avgred + "\t" + avgyellow + "\t" + avggreen + "\t"
+						+ nummoves + "\t" + numlanes + "\t" + avglanecapacity + "\t"
+						+ dTurn.get("through") + "\t" + dTurn.get("left") + "\t"
+						+ dTurn.get("right") + "/t" + d);
+
+				phasesfilein.close();
+				linksfilein.close();
+			}
+		}
 	    	fileout.close();
     }
     
@@ -357,7 +375,7 @@ public class Main
     	
     	PrintStream fileout = new PrintStream(new FileOutputStream(new File("REGresults/results")), true);
     	
-	    fileout.println("Int ID\tTSTT_DELTA (min)\tAvgTT_DELTA (sec/veh)");
+	    fileout.println("Int ID\tTSTT_DELTA (min)\tAvgTT_DELTA (sec/veh)\tdemandprop");
     	
     	//Create new results folder for each demand scenario (results files currently contain TSTT and AvgTT for SIG and TBR intersections)
     	for(int d : demandprops) {
@@ -380,7 +398,7 @@ public class Main
 	    		
 	    		System.out.println("You are "+d/100+"through for TBR");
 	    		
-	    		fileout.println(i+"\t"+String.format("%.2f", (SIGsim.getTSTT()-TBRsim.getTSTT())/60.0)+"\t"+String.format("%.2f", ((SIGsim.getTSTT()/SIGsim.getVehicles().size())-(TBRsim.getTSTT()/TBRsim.getVehicles().size()))));
+	    		fileout.println(i+"\t"+String.format("%.2f", (SIGsim.getTSTT()-TBRsim.getTSTT())/60.0)+"\t"+String.format("%.2f", ((SIGsim.getTSTT()/SIGsim.getVehicles().size())-(TBRsim.getTSTT()/TBRsim.getVehicles().size())))+"\t"+d);
 	    	}
 	    	
     	}
@@ -390,8 +408,8 @@ public class Main
     
     
     //CREATE ALL TEST INTERSECTIONS 
-    public static Map<Integer,  Map<String, Double>> createAllIntersections() throws IOException{
-    	Map<Integer, Map<String, Double>> turns = new HashMap<Integer,  Map<String, Double>>();
+    public static Map<Integer, List<Map<Double, Map<String, Double>>>> createAllIntersections() throws IOException{
+    	Map<Integer, List<Map<Double, Map<String, Double>>>> turns = new HashMap<Integer,  List<Map<Double, Map<String, Double>>>>();
     	
 		for (int d : demandprops) {
 			demand = d;
@@ -434,9 +452,22 @@ public class Main
 			
 				// create new projects for all signal intersections in
 				// coacongress
+			Map<Integer, Map<String, Double>> tempTurns = new HashMap<>();
 				for (int i : signals) {
-					turns.put(i, createTestIntersection(i, sim, 0));
+					tempTurns.put(i, createTestIntersection(i, sim, 0));
 					createTestIntersection(i, sim, 1);
+				}
+				
+				for(int i : signals){
+					Map<Double, Map<String,Double>> demandTurns = new HashMap<>();
+					demandTurns.put((double) d, tempTurns.get(i));
+					if(turns.containsKey(i)){
+						turns.get(i).add(demandTurns);
+					}
+					else{
+						turns.put(i, new ArrayList());
+						turns.get(i).add(demandTurns);
+					}
 				}
 			
 		
@@ -621,11 +652,11 @@ public class Main
 	        	
 	        	Link out = linkMap.get(t.getJ());	        	
 	        	double outAngle = out.getDirection();
-	        	
-	        	if(inAngle - outAngle <= -Math.PI/4){
+	        	double theta = in.getDirection() - out.getDirection() > 0 ? in.getDirection() - out.getDirection() : in.getDirection() - out.getDirection() + 2*Math.PI;
+	        	if(inAngle - outAngle >= 5*Math.PI/4){
 	        		leftTurns+=turnCount.get(t);
 	        	}
-	        	else if(inAngle - outAngle >= Math.PI/4){
+	        	else if(inAngle - outAngle <= Math.PI/4){
 	        		rightTurns+=turnCount.get(t);
 	        	}
 	        	else
