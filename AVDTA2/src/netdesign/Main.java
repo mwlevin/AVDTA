@@ -656,7 +656,7 @@ public class Main
 	        	if(theta >= 5*Math.PI/4){
 	        		leftTurns+=turnCount.get(t);
 	        	}
-	        	else if(theta <= Math.PI/4){
+	        	else if(theta <= 3*Math.PI/4){
 	        		rightTurns+=turnCount.get(t);
 	        	}
 	        	else
