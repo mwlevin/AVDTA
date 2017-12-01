@@ -653,10 +653,10 @@ public class Main
 	        	Link out = linkMap.get(t.getJ());	        	
 	        	double outAngle = out.getDirection();
 	        	double theta = out.getDirection() - in.getDirection() > 0 ? out.getDirection() - in.getDirection() : out.getDirection() - in.getDirection() + 2*Math.PI;
-	        	if(theta >= 5*Math.PI/4){
+	        	if(theta >= Math.PI/4 && theta <= Math.PI){
 	        		leftTurns+=turnCount.get(t);
 	        	}
-	        	else if(theta <= 3*Math.PI/4){
+	        	else if(theta >= Math.PI && theta <= 7*Math.PI/4){
 	        		rightTurns+=turnCount.get(t);
 	        	}
 	        	else
