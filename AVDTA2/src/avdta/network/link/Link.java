@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * An abstract DTA link. The flow model is not specified, but defines universal 
@@ -76,6 +77,9 @@ public abstract class Link implements Serializable, Comparable<Link>
     public int tempLanesBlocked;
     
     public double pressure;
+    public Map<Link, Integer> pressure_terms;
+    
+    
     public int lastLinkCheck; 
     
     
@@ -151,6 +155,8 @@ public abstract class Link implements Serializable, Comparable<Link>
         flowin = new int[(int)Math.ceil((double)Simulator.duration / Simulator.ast_duration)+1];
         
     }
+    
+    public abstract Iterable<Vehicle> getVehicles();
     
     public void setVMS(VMS vms)
     {

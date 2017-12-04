@@ -59,6 +59,11 @@ public class LTMLink extends Link
         init = false;
     }
     
+    public Iterable<Vehicle> getVehicles()
+    {
+        return new LTMIterable();
+    }
+    
     /**
      * Initializes this {@link LTMLink} after all data is read.
      * This creates the {@link ChainedArray}s used to store cumulative counts.
@@ -349,4 +354,42 @@ public class LTMLink extends Link
             return N_down.get(Simulator.indexTime(t));
         }
     }
+    
+    class LTMIterable implements Iterable<Vehicle>
+    {
+        public Iterator<Vehicle> iterator()
+        {
+            return new LTMIterator(queue);
+        }
+    }
 }
+
+
+
+class LTMIterator implements Iterator<Vehicle>
+{
+    private Iterator<VehTime> iter;
+    public LTMIterator(LinkedList<VehTime> queue)
+    {
+        this.iter = queue.iterator();
+    }
+    
+    public boolean hasNext()
+    {
+        return iter.hasNext();
+    }
+    
+    public Vehicle next()
+    {
+        VehTime next = iter.next();
+        return next.vehicle;
+    }
+    
+    public void remove()
+    {
+        iter.remove();
+    }
+}
+
+
+

@@ -15,6 +15,7 @@ import avdta.network.Simulator;
 import avdta.network.node.Node;
 import avdta.vehicle.Vehicle;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 
@@ -53,6 +54,12 @@ public class CTMLink extends Link
         
         
                 
+    }
+    
+    
+    public Iterable<Vehicle> getVehicles()
+    {
+        return new CTMIterable();
     }
     
     /**
@@ -475,5 +482,55 @@ public class CTMLink extends Link
             c.update();
         }
         
+    }
+    
+    
+    class CTMIterable implements Iterable<Vehicle>
+    {
+        public Iterator<Vehicle> iterator()
+        {
+            return new CTMIterator(cells);
+        }
+    }
+}
+
+/**
+ * Iterate through vehicles starting in the last cell, but iterate vehicles in order. 
+ * @author mlevin
+ */
+class CTMIterator implements Iterator<Vehicle>
+{
+    private Cell[] cells;
+    
+    
+    private int idx;
+    private Iterator<Vehicle> currIter;
+    
+    public CTMIterator(Cell[] cells)
+    {
+        this.cells = cells;
+        idx = cells.length-1;
+        currIter = cells[idx].getOccupants().iterator();
+    }
+    
+    public Vehicle next()
+    {
+        while(!currIter.hasNext())
+        {
+            idx--;
+            currIter = cells[idx].getOccupants().iterator();
+        }
+        
+        return currIter.next();
+    }
+    
+    public boolean hasNext()
+    {
+        return currIter.hasNext() || idx > 0;
+    }
+    
+    public void remove()
+    {
+        currIter.remove();
     }
 }

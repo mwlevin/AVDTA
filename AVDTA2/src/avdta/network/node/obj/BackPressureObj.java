@@ -18,6 +18,9 @@ import java.util.List;
 
 /**
  * This is the objective function used for the backpressure policy. 
+ * 
+ * WARNING: don't use this with LTM.
+ * 
  * @author Michael
  */
 public class BackPressureObj implements ObjFunction

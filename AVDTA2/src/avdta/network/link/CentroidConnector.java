@@ -38,6 +38,10 @@ public class CentroidConnector extends Link
         queue = new LinkedList<Vehicle>();
     }
 
+    public Iterable<Vehicle> getVehicles()
+    {
+        return queue;
+    }
 
     
     /**
