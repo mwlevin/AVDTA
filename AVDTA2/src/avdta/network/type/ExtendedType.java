@@ -21,7 +21,7 @@ public class ExtendedType extends Type
     
     public Type getBase()
     {
-        return base;
+        return base.getBase();
     }
     
     public int getCode()

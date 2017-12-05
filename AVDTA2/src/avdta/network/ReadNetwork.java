@@ -148,7 +148,7 @@ public class ReadNetwork
     // these are the options that will show up in the GUI.
     public static final Type[] NODE_OPTIONS = new Type[]{SIGNAL, RESERVATION, STOPSIGN}; 
     public static final Type[] NODE_EXT_OPTIONS = new Type[]{FCFS, EMERGENCY_FIRST,
-        EMERGENCY_FIRST_LIMITED, FIFO, AUCTION, VOT, Q2, DE4, PRESSURE, P0, MAX_PRESSURE, TRANSIT_FIRST};
+        FIFO, AUCTION, MAX_PRESSURE, TRANSIT_FIRST};
 
  
 
