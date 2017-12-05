@@ -110,7 +110,6 @@ public class NodesPanel extends GUIPanel
             
             List<Type> temp = new ArrayList<Type>();
             
-            temp.add(ReadNetwork.NODE_OPTIONS[i]);
             
             for(Type type : ReadNetwork.NODE_EXT_OPTIONS)
             {
