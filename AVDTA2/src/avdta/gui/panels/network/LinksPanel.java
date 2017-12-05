@@ -380,65 +380,67 @@ public class LinksPanel extends GUIPanel
                     }
                 }
 
-                ArrayList<LinkRecord> temp = new ArrayList<LinkRecord>();
-
-                LinkBusRule busRule = new LinkBusRule(project);
-                    
-
-                try
+                if(newtype != null)
                 {
+                    ArrayList<LinkRecord> temp = new ArrayList<LinkRecord>();
 
-                    Scanner filein = new Scanner(project.getLinksFile());
-                    filein.nextLine();
+                    LinkBusRule busRule = new LinkBusRule(project);
 
 
-                    while(filein.hasNext())
+                    try
                     {
-                        LinkRecord link = new LinkRecord(filein.nextLine());
+
+                        Scanner filein = new Scanner(project.getLinksFile());
+                        filein.nextLine();
 
 
-
-                        if(link.getType()/100 != ReadNetwork.CENTROID.getCode()/100)
+                        while(filein.hasNext())
                         {
-                            if(newtype.isValid(link))
+                            LinkRecord link = new LinkRecord(filein.nextLine());
+
+
+
+                            if(link.getType()/100 != ReadNetwork.CENTROID.getCode()/100)
                             {
-                                link.setType(newtype);
+                                if(newtype.isValid(link))
+                                {
+                                    link.setType(newtype);
+                                }
+                                else if(newtype instanceof ExtendedType)
+                                {
+                                    link.setType(((ExtendedType)newtype).getBase());
+                                }
                             }
-                            else if(newtype instanceof ExtendedType)
+
+
+                            if(mesodelta > 0)
                             {
-                                link.setType(((ExtendedType)newtype).getBase());
+                                link.setWavespd(link.getFFSpd() * mesodelta);
                             }
+
+                            temp.add(link);
                         }
 
+                        filein.close();
 
-                        if(mesodelta > 0)
+                        PrintStream fileout = new PrintStream(new FileOutputStream(project.getLinksFile()), true);
+
+                        fileout.println(ReadNetwork.getLinksFileHeader());
+
+                        for(LinkRecord x : temp)
                         {
-                            link.setWavespd(link.getFFSpd() * mesodelta);
+                            fileout.println(x);
                         }
 
-                        temp.add(link);
+                        fileout.close();
+
+                        project.loadSimulator();
                     }
-
-                    filein.close();
-
-                    PrintStream fileout = new PrintStream(new FileOutputStream(project.getLinksFile()), true);
-
-                    fileout.println(ReadNetwork.getLinksFileHeader());
-
-                    for(LinkRecord x : temp)
+                    catch(IOException ex)
                     {
-                        fileout.println(x);
+                        GUI.handleException(ex);
                     }
-
-                    fileout.close();
-
-                    project.loadSimulator();
                 }
-                catch(IOException ex)
-                {
-                    GUI.handleException(ex);
-                }
-
             
 
                 parentReset();

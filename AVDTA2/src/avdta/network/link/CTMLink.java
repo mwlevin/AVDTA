@@ -527,7 +527,21 @@ class CTMIterator implements Iterator<Vehicle>
     
     public boolean hasNext()
     {
-        return currIter.hasNext() || idx > 0;
+        if(currIter.hasNext())
+        {
+            return true;
+        }
+        
+        while(!currIter.hasNext())
+        {
+            idx--;
+            if(idx < 0)
+            {
+                return false;
+            }
+            currIter = cells[idx].getOccupants().iterator();
+        }
+        return currIter.hasNext();
     }
     
     public void remove()

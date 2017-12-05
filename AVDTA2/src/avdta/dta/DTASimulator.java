@@ -651,11 +651,11 @@ public class DTASimulator extends Simulator
         fileout.println("VMT:\t"+getTotalVMT());
         fileout.println("MPG:\t"+(getTotalVMT() / (getTotalEnergy() / VehicleClass.E_PER_GALLON)));
         fileout.println();
-        fileout.println("HV TT:\t"+(getAvgTT(DriverType.HV)/60)+"\tmin");
-        fileout.println("AV TT:\t"+(getAvgTT(DriverType.AV)/60)+"\tmin");
+        fileout.println("HV TT:\t"+String.format("%.2f", getAvgTT(DriverType.HV)/60)+"\tmin");
+        fileout.println("AV TT:\t"+String.format("%.2f", getAvgTT(DriverType.AV)/60)+"\tmin");
         fileout.println();
-        fileout.println("DA TT:\t"+(getAvgBusTT(false)/60)+"\tmin");
-        fileout.println("Bus TT:\t"+(getAvgBusTT(true)/60)+"\tmin");
+        fileout.println("DA TT:\t"+String.format("%.2f", getAvgBusTT(false)/60)+"\tmin");
+        fileout.println("Bus TT:\t"+String.format("%.2f", getAvgBusTT(true)/60)+"\tmin");
         fileout.println("Bus TT ratio:\t"+calcAvgBusTimeRatio());
         fileout.println("CPU time: "+String.format("%.1f", actual_time/1.0e9)+"s");
         

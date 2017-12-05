@@ -329,82 +329,92 @@ public class NodesPanel extends GUIPanel
         {
             public void run()
             {
-                ArrayList<NodeRecord> temp = new ArrayList<NodeRecord>();
-        
-                try
-                {
-                    Scanner filein = new Scanner(project.getNodesFile());
-                    filein.nextLine();
-
-                    Type newtype = null;
+                Type newtype = null;
                     
-                    for(int i = 0; i < types.length; i++)
+                for(int i = 0; i < types.length; i++)
+                {
+                    if(types[i].isSelected())
                     {
-                        if(types[i].isSelected())
+                        if(options[i] != null)
                         {
-                            if(options[i] != null)
-                            {
-                                newtype = (Type)options[i].getSelectedItem();
-                            }
-                            else
-                            {
-                                newtype = ReadNetwork.NODE_OPTIONS[i];
-                            }
+                            newtype = (Type)options[i].getSelectedItem();
+                        }
+                        else
+                        {
+                            newtype = ReadNetwork.NODE_OPTIONS[i];
                         }
                     }
+                }
                     
+                if(newtype != null)
+                {
+                    ArrayList<NodeRecord> temp = new ArrayList<NodeRecord>();
 
-                    Map<Integer, Node> nodes = project.getSimulator().createNodeIdsMap();
-                    
-                    while(filein.hasNextInt())
+                    try
                     {
-                        NodeRecord node = new NodeRecord(filein.nextLine());
-                        
-                        Node n = nodes.get(node.getId());
+                        Scanner filein = new Scanner(project.getNodesFile());
+                        filein.nextLine();
 
-                        if(node.getType()/100 != ReadNetwork.CENTROID.getCode()/100)
+
+
+
+                        Map<Integer, Node> nodes = project.getSimulator().createNodeIdsMap();
+
+                        while(filein.hasNextInt())
                         {
-                            if(n.getIncoming().size() == 1)
+                            NodeRecord node = new NodeRecord(filein.nextLine());
+
+                            Node n = nodes.get(node.getId());
+
+                            if(node.getType()/100 != ReadNetwork.CENTROID.getCode()/100)
                             {
-                                if(n.getOutgoing().size() == 1)
+                                if(n.getIncoming().size() == 1)
                                 {
-                                    node.setType(ReadNetwork.CONNECTOR);
+                                    if(n.getOutgoing().size() == 1)
+                                    {
+                                        node.setType(ReadNetwork.CONNECTOR);
+                                    }
+                                    else
+                                    {
+                                        node.setType(ReadNetwork.DIVERGE);
+                                    }
+                                }
+                                else if(n.getOutgoing().size() == 1)
+                                {
+                                    node.setType(ReadNetwork.MERGE);
                                 }
                                 else
                                 {
-                                    node.setType(ReadNetwork.DIVERGE);
+                                    node.setType(newtype);
                                 }
                             }
-                            else if(n.getOutgoing().size() == 1)
-                            {
-                                node.setType(ReadNetwork.MERGE);
-                            }
-                            else
-                            {
-                                node.setType(newtype);
-                            }
+
+                            temp.add(node);
+                        }
+                        filein.close();
+
+                        PrintStream fileout = new PrintStream(new FileOutputStream(project.getNodesFile()), true);
+                        fileout.println(ReadNetwork.getNodesFileHeader());
+
+                        for(NodeRecord x : temp)
+                        {
+                            fileout.println(x);
                         }
 
-                        temp.add(node);
+                        fileout.close();
+                        
+                        project.loadSimulator();
+                        
                     }
-                    filein.close();
-
-                    PrintStream fileout = new PrintStream(new FileOutputStream(project.getNodesFile()), true);
-                    fileout.println(ReadNetwork.getNodesFileHeader());
-
-                    for(NodeRecord x : temp)
+                    catch(IOException ex)
                     {
-                        fileout.println(x);
+                        GUI.handleException(ex);
                     }
-
-                    fileout.close();
                     
-                    project.loadSimulator();
                 }
-                catch(IOException ex)
-                {
-                    GUI.handleException(ex);
-                }
+                    
+                    
+                
                 
                 
                 parentReset();
