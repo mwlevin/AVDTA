@@ -1,22 +1,13 @@
-This is pdfTeX, Version 3.1415926-2.4-1.40.13 (MiKTeX 2.9) (preloaded format=pdflatex 2016.1.20)  4 MAY 2017 11:04
+This is pdfTeX, Version 3.14159265-2.6-1.40.18 (MiKTeX 2.9.6350 64-bit) (preloaded format=pdflatex 2017.8.10)  5 DEC 2017 12:11
 entering extended mode
-**AVDTA.tex
-(C:\Users\ml26893\Documents\avdta2\AVDTA2\documentation\AVDTA.tex
-LaTeX2e <2011/06/27>
-Babel <v3.8m> and hyphenation patterns for english, afrikaans, ancientgreek, ar
-abic, armenian, assamese, basque, bengali, bokmal, bulgarian, catalan, coptic, 
-croatian, czech, danish, dutch, esperanto, estonian, farsi, finnish, french, ga
-lician, german, german-x-2012-05-30, greek, gujarati, hindi, hungarian, iceland
-ic, indonesian, interlingua, irish, italian, kannada, kurmanji, latin, latvian,
- lithuanian, malayalam, marathi, mongolian, mongolianlmc, monogreek, ngerman, n
-german-x-2012-05-30, nynorsk, oriya, panjabi, pinyin, polish, portuguese, roman
-ian, russian, sanskrit, serbian, slovak, slovenian, spanish, swedish, swissgerm
-an, tamil, telugu, turkish, turkmen, ukenglish, ukrainian, uppersorbian, usengl
-ishmax, welsh, loaded.
-("C:\Program Files\MiKTeX 2.9\tex\latex\base\report.cls"
-Document Class: report 2007/10/19 v1.4h Standard LaTeX document class
-("C:\Program Files\MiKTeX 2.9\tex\latex\base\size12.clo"
-File: size12.clo 2007/10/19 v1.4h Standard LaTeX file (size option)
+**./AVDTA.tex
+(AVDTA.tex
+LaTeX2e <2017-04-15>
+Babel <3.10> and hyphenation patterns for 75 language(s) loaded.
+("C:\Users\mlevin\AppData\Local\Programs\MiKTeX 2.9\tex\latex\base\report.cls"
+Document Class: report 2014/09/29 v1.4h Standard LaTeX document class
+("C:\Users\mlevin\AppData\Local\Programs\MiKTeX 2.9\tex\latex\base\size12.clo"
+File: size12.clo 2014/09/29 v1.4h Standard LaTeX file (size option)
 )
 \c@part=\count79
 \c@chapter=\count80
@@ -31,51 +22,63 @@ File: size12.clo 2007/10/19 v1.4h Standard LaTeX file (size option)
 \belowcaptionskip=\skip42
 \bibindent=\dimen102
 )
-("C:\Program Files\MiKTeX 2.9\tex\latex\preprint\fullpage.sty"
+("C:\Users\mlevin\AppData\Local\Programs\MiKTeX 2.9\tex\latex\preprint\fullpage
+.sty"
 Package: fullpage 1999/02/23 1.1 (PWD)
 \FP@margin=\skip43
 )
-("C:\Program Files\MiKTeX 2.9\tex\latex\tools\indentfirst.sty"
+("C:\Users\mlevin\AppData\Local\Programs\MiKTeX 2.9\tex\latex\tools\indentfirst
+.sty"
 Package: indentfirst 1995/11/23 v1.03 Indent first paragraph (DPC)
 )
-("C:\Program Files\MiKTeX 2.9\tex\latex\graphics\graphicx.sty"
-Package: graphicx 1999/02/16 v1.0f Enhanced LaTeX Graphics (DPC,SPQR)
+("C:\Users\mlevin\AppData\Local\Programs\MiKTeX 2.9\tex\latex\graphics\graphicx
+.sty"
+Package: graphicx 2014/10/28 v1.0g Enhanced LaTeX Graphics (DPC,SPQR)
 
-("C:\Program Files\MiKTeX 2.9\tex\latex\graphics\keyval.sty"
-Package: keyval 1999/03/16 v1.13 key=value parser (DPC)
+("C:\Users\mlevin\AppData\Local\Programs\MiKTeX 2.9\tex\latex\graphics\keyval.s
+ty"
+Package: keyval 2014/10/28 v1.15 key=value parser (DPC)
 \KV@toks@=\toks14
 )
-("C:\Program Files\MiKTeX 2.9\tex\latex\graphics\graphics.sty"
-Package: graphics 2009/02/05 v1.0o Standard LaTeX Graphics (DPC,SPQR)
+("C:\Users\mlevin\AppData\Local\Programs\MiKTeX 2.9\tex\latex\graphics\graphics
+.sty"
+Package: graphics 2017/04/14 v1.1b Standard LaTeX Graphics (DPC,SPQR)
 
-("C:\Program Files\MiKTeX 2.9\tex\latex\graphics\trig.sty"
-Package: trig 1999/03/16 v1.09 sin cos tan (DPC)
+("C:\Users\mlevin\AppData\Local\Programs\MiKTeX 2.9\tex\latex\graphics\trig.sty
+"
+Package: trig 2016/01/03 v1.10 sin cos tan (DPC)
 )
-("C:\Program Files\MiKTeX 2.9\tex\latex\00miktex\graphics.cfg"
-File: graphics.cfg 2007/01/18 v1.5 graphics configuration of teTeX/TeXLive
+("C:\Users\mlevin\AppData\Local\Programs\MiKTeX 2.9\tex\latex\graphics-cfg\grap
+hics.cfg"
+File: graphics.cfg 2016/06/04 v1.11 sample graphics configuration
 )
-Package graphics Info: Driver file: pdftex.def on input line 91.
+Package graphics Info: Driver file: pdftex.def on input line 99.
 
-("C:\Program Files\MiKTeX 2.9\tex\latex\pdftex-def\pdftex.def"
-File: pdftex.def 2011/05/27 v0.06d Graphics/color for pdfTeX
+("C:\Users\mlevin\AppData\Local\Programs\MiKTeX 2.9\tex\latex\graphics-def\pdft
+ex.def"
+File: pdftex.def 2017/01/12 v0.06k Graphics/color for pdfTeX
 
-("C:\Program Files\MiKTeX 2.9\tex\generic\oberdiek\infwarerr.sty"
-Package: infwarerr 2010/04/08 v1.3 Providing info/warning/error messages (HO)
+("C:\Users\mlevin\AppData\Local\Programs\MiKTeX 2.9\tex\generic\oberdiek\infwar
+err.sty"
+Package: infwarerr 2016/05/16 v1.4 Providing info/warning/error messages (HO)
 )
-("C:\Program Files\MiKTeX 2.9\tex\generic\oberdiek\ltxcmds.sty"
-Package: ltxcmds 2011/11/09 v1.22 LaTeX kernel commands for general use (HO)
+("C:\Users\mlevin\AppData\Local\Programs\MiKTeX 2.9\tex\generic\oberdiek\ltxcmd
+s.sty"
+Package: ltxcmds 2016/05/16 v1.23 LaTeX kernel commands for general use (HO)
 )
 \Gread@gobject=\count88
 ))
 \Gin@req@height=\dimen103
 \Gin@req@width=\dimen104
 )
-("C:\Program Files\MiKTeX 2.9\tex\latex\caption\caption.sty"
-Package: caption 2013/05/02 v3.3-89 Customizing captions (AR)
+("C:\Users\mlevin\AppData\Local\Programs\MiKTeX 2.9\tex\latex\caption\caption.s
+ty"
+Package: caption 2016/02/21 v3.3-144 Customizing captions (AR)
 
-("C:\Program Files\MiKTeX 2.9\tex\latex\caption\caption3.sty"
-Package: caption3 2013/05/02 v1.6-88 caption3 kernel (AR)
-Package caption3 Info: TeX engine: e-TeX on input line 57.
+("C:\Users\mlevin\AppData\Local\Programs\MiKTeX 2.9\tex\latex\caption\caption3.
+sty"
+Package: caption3 2016/05/22 v1.7-166 caption3 kernel (AR)
+Package caption3 Info: TeX engine: e-TeX on input line 67.
 \captionmargin=\dimen105
 \captionmargin@=\dimen106
 \captionwidth=\dimen107
@@ -86,7 +89,8 @@ Package caption3 Info: TeX engine: e-TeX on input line 57.
 )
 \c@ContinuedFloat=\count89
 )
-("C:\Program Files\MiKTeX 2.9\tex\latex\tocloft\tocloft.sty"
+("C:\Users\mlevin\AppData\Local\Programs\MiKTeX 2.9\tex\latex\tocloft\tocloft.s
+ty"
 Package: tocloft 2013/05/02 v2.3f parameterised ToC, etc., typesetting
 Package tocloft Info: The document has chapter divisions on input line 44.
 \cftparskip=\skip44
@@ -126,126 +130,140 @@ Package tocloft Info: The document has chapter divisions on input line 44.
 \cfttabindent=\skip76
 \cfttabnumwidth=\skip77
 )
-("C:\Program Files\MiKTeX 2.9\tex\latex\tools\enumerate.sty"
-Package: enumerate 1999/03/05 v3.00 enumerate extensions (DPC)
+("C:\Users\mlevin\AppData\Local\Programs\MiKTeX 2.9\tex\latex\tools\enumerate.s
+ty"
+Package: enumerate 2015/07/23 v3.00 enumerate extensions (DPC)
 \@enLab=\toks15
 )
-("C:\Program Files\MiKTeX 2.9\tex\latex\mathalfa\mathalfa.sty"
-Package: mathalfa 2012/07/10 - 1.07mathalfa (License LPPL) Michael Sharpe
+("C:\Users\mlevin\AppData\Local\Programs\MiKTeX 2.9\tex\latex\mathalfa\mathalfa
+.sty"
+Package: mathalfa 2017/02/23 - 1.09mathalfa (License LPPL) Michael Sharpe
 
-("C:\Program Files\MiKTeX 2.9\tex\latex\xkeyval\xkeyval.sty"
-Package: xkeyval 2012/10/14 v2.6b package option processing (HA)
+("C:\Users\mlevin\AppData\Local\Programs\MiKTeX 2.9\tex\latex\xkeyval\xkeyval.s
+ty"
+Package: xkeyval 2014/12/03 v2.7a package option processing (HA)
 
-("C:\Program Files\MiKTeX 2.9\tex\generic\xkeyval\xkeyval.tex"
+("C:\Users\mlevin\AppData\Local\Programs\MiKTeX 2.9\tex\generic\xkeyval\xkeyval
+.tex"
+("C:\Users\mlevin\AppData\Local\Programs\MiKTeX 2.9\tex\generic\xkeyval\xkvutil
+s.tex"
 \XKV@toks=\toks16
 \XKV@tempa@toks=\toks17
+)
 \XKV@depth=\count92
-File: xkeyval.tex 2012/10/14 v2.6b key=value parser (HA)
+File: xkeyval.tex 2014/12/03 v2.7a key=value parser (HA)
 ))
-LaTeX Font Info:    Redeclaring math alphabet \mathcal on input line 282.
+LaTeX Font Info:    Redeclaring math alphabet \mathcal on input line 287.
 LaTeX Font Info:    Overwriting math alphabet `\mathcal' in version `bold'
 (Font)                  U/BOONDOX-calo/m/n --> U/BOONDOX-calo/b/n on input line
- 283.
+ 288.
 )
-("C:\Program Files\MiKTeX 2.9\tex\latex\psnfss\courier.sty"
+("C:\Users\mlevin\AppData\Local\Programs\MiKTeX 2.9\tex\latex\psnfss\courier.st
+y"
 Package: courier 2005/04/12 PSNFSS-v9.2a (WaS) 
 )
-("C:\Program Files\MiKTeX 2.9\tex\latex\hyperref\hyperref.sty"
-Package: hyperref 2012/11/06 v6.83m Hypertext links for LaTeX
+("C:\Users\mlevin\AppData\Local\Programs\MiKTeX 2.9\tex\latex\hyperref\hyperref
+.sty"
+Package: hyperref 2017/03/14 v6.85a Hypertext links for LaTeX
 
-("C:\Program Files\MiKTeX 2.9\tex\generic\oberdiek\hobsub-hyperref.sty"
-Package: hobsub-hyperref 2012/04/25 v1.12 Bundle oberdiek, subset hyperref (HO)
+("C:\Users\mlevin\AppData\Local\Programs\MiKTeX 2.9\tex\generic\oberdiek\hobsub
+-hyperref.sty"
+Package: hobsub-hyperref 2016/05/16 v1.14 Bundle oberdiek, subset hyperref (HO)
 
 
-("C:\Program Files\MiKTeX 2.9\tex\generic\oberdiek\hobsub-generic.sty"
-Package: hobsub-generic 2012/04/25 v1.12 Bundle oberdiek, subset generic (HO)
-Package: hobsub 2012/04/25 v1.12 Construct package bundles (HO)
+("C:\Users\mlevin\AppData\Local\Programs\MiKTeX 2.9\tex\generic\oberdiek\hobsub
+-generic.sty"
+Package: hobsub-generic 2016/05/16 v1.14 Bundle oberdiek, subset generic (HO)
+Package: hobsub 2016/05/16 v1.14 Construct package bundles (HO)
 Package hobsub Info: Skipping package `infwarerr' (already loaded).
 Package hobsub Info: Skipping package `ltxcmds' (already loaded).
-Package: ifluatex 2010/03/01 v1.3 Provides the ifluatex switch (HO)
+Package: ifluatex 2016/05/16 v1.4 Provides the ifluatex switch (HO)
 Package ifluatex Info: LuaTeX not detected.
-Package: ifvtex 2010/03/01 v1.5 Detect VTeX and its facilities (HO)
+Package: ifvtex 2016/05/16 v1.6 Detect VTeX and its facilities (HO)
 Package ifvtex Info: VTeX not detected.
-Package: intcalc 2007/09/27 v1.1 Expandable calculations with integers (HO)
-Package: ifpdf 2011/01/30 v2.3 Provides the ifpdf switch (HO)
-Package ifpdf Info: pdfTeX in PDF mode is detected.
-Package: etexcmds 2011/02/16 v1.5 Avoid name clashes with e-TeX commands (HO)
+Package: intcalc 2016/05/16 v1.2 Expandable calculations with integers (HO)
+Package: ifpdf 2017/03/15 v3.2 Provides the ifpdf switch
+Package: etexcmds 2016/05/16 v1.6 Avoid name clashes with e-TeX commands (HO)
 Package etexcmds Info: Could not find \expanded.
 (etexcmds)             That can mean that you are not using pdfTeX 1.50 or
 (etexcmds)             that some package has redefined \expanded.
 (etexcmds)             In the latter case, load this package earlier.
-Package: kvsetkeys 2012/04/25 v1.16 Key value parser (HO)
-Package: kvdefinekeys 2011/04/07 v1.3 Define keys (HO)
-Package: pdftexcmds 2011/11/29 v0.20 Utility functions of pdfTeX for LuaTeX (HO
+Package: kvsetkeys 2016/05/16 v1.17 Key value parser (HO)
+Package: kvdefinekeys 2016/05/16 v1.4 Define keys (HO)
+Package: pdftexcmds 2017/03/19 v0.25 Utility functions of pdfTeX for LuaTeX (HO
 )
 Package pdftexcmds Info: LuaTeX not detected.
 Package pdftexcmds Info: \pdf@primitive is available.
 Package pdftexcmds Info: \pdf@ifprimitive is available.
 Package pdftexcmds Info: \pdfdraftmode found.
-Package: pdfescape 2011/11/25 v1.13 Implements pdfTeX's escape features (HO)
-Package: bigintcalc 2012/04/08 v1.3 Expandable calculations on big integers (HO
+Package: pdfescape 2016/05/16 v1.14 Implements pdfTeX's escape features (HO)
+Package: bigintcalc 2016/05/16 v1.4 Expandable calculations on big integers (HO
 )
-Package: bitset 2011/01/30 v1.1 Handle bit-vector datatype (HO)
-Package: uniquecounter 2011/01/30 v1.2 Provide unlimited unique counter (HO)
+Package: bitset 2016/05/16 v1.2 Handle bit-vector datatype (HO)
+Package: uniquecounter 2016/05/16 v1.3 Provide unlimited unique counter (HO)
 )
 Package hobsub Info: Skipping package `hobsub' (already loaded).
-Package: letltxmacro 2010/09/02 v1.4 Let assignment for LaTeX macros (HO)
-Package: hopatch 2011/06/24 v1.1 Wrapper for package hooks (HO)
-Package: xcolor-patch 2011/01/30 xcolor patch
-Package: atveryend 2011/06/30 v1.8 Hooks at the very end of document (HO)
+Package: letltxmacro 2016/05/16 v1.5 Let assignment for LaTeX macros (HO)
+Package: hopatch 2016/05/16 v1.3 Wrapper for package hooks (HO)
+Package: xcolor-patch 2016/05/16 xcolor patch
+Package: atveryend 2016/05/16 v1.9 Hooks at the very end of document (HO)
 Package atveryend Info: \enddocument detected (standard20110627).
-Package: atbegshi 2011/10/05 v1.16 At begin shipout hook (HO)
-Package: refcount 2011/10/16 v3.4 Data extraction from label references (HO)
-Package: hycolor 2011/01/30 v1.7 Color options for hyperref/bookmark (HO)
+Package: atbegshi 2016/06/09 v1.18 At begin shipout hook (HO)
+Package: refcount 2016/05/16 v3.5 Data extraction from label references (HO)
+Package: hycolor 2016/05/16 v1.8 Color options for hyperref/bookmark (HO)
 )
-("C:\Program Files\MiKTeX 2.9\tex\generic\ifxetex\ifxetex.sty"
+("C:\Users\mlevin\AppData\Local\Programs\MiKTeX 2.9\tex\generic\ifxetex\ifxetex
+.sty"
 Package: ifxetex 2010/09/12 v0.6 Provides ifxetex conditional
 )
-("C:\Program Files\MiKTeX 2.9\tex\latex\oberdiek\auxhook.sty"
-Package: auxhook 2011/03/04 v1.3 Hooks for auxiliary files (HO)
+("C:\Users\mlevin\AppData\Local\Programs\MiKTeX 2.9\tex\latex\oberdiek\auxhook.
+sty"
+Package: auxhook 2016/05/16 v1.4 Hooks for auxiliary files (HO)
 )
-("C:\Program Files\MiKTeX 2.9\tex\latex\oberdiek\kvoptions.sty"
-Package: kvoptions 2011/06/30 v3.11 Key value format for package options (HO)
+("C:\Users\mlevin\AppData\Local\Programs\MiKTeX 2.9\tex\latex\oberdiek\kvoption
+s.sty"
+Package: kvoptions 2016/05/16 v3.12 Key value format for package options (HO)
 )
 \@linkdim=\dimen112
 \Hy@linkcounter=\count93
 \Hy@pagecounter=\count94
 
-("C:\Program Files\MiKTeX 2.9\tex\latex\hyperref\pd1enc.def"
-File: pd1enc.def 2012/11/06 v6.83m Hyperref: PDFDocEncoding definition (HO)
+("C:\Users\mlevin\AppData\Local\Programs\MiKTeX 2.9\tex\latex\hyperref\pd1enc.d
+ef"
+File: pd1enc.def 2017/03/14 v6.85a Hyperref: PDFDocEncoding definition (HO)
 )
 \Hy@SavedSpaceFactor=\count95
 
-("C:\Program Files\MiKTeX 2.9\tex\latex\00miktex\hyperref.cfg"
+("C:\Users\mlevin\AppData\Local\Programs\MiKTeX 2.9\tex\latex\00miktex\hyperref
+.cfg"
 File: hyperref.cfg 2002/06/06 v1.2 hyperref configuration of TeXLive
 )
-Package hyperref Info: Hyper figures OFF on input line 4443.
-Package hyperref Info: Link nesting OFF on input line 4448.
-Package hyperref Info: Hyper index ON on input line 4451.
-Package hyperref Info: Plain pages OFF on input line 4458.
-Package hyperref Info: Backreferencing OFF on input line 4463.
+Package hyperref Info: Hyper figures OFF on input line 4498.
+Package hyperref Info: Link nesting OFF on input line 4503.
+Package hyperref Info: Hyper index ON on input line 4506.
+Package hyperref Info: Plain pages OFF on input line 4513.
+Package hyperref Info: Backreferencing OFF on input line 4518.
 Package hyperref Info: Implicit mode ON; LaTeX internals redefined.
-Package hyperref Info: Bookmarks ON on input line 4688.
+Package hyperref Info: Bookmarks ON on input line 4751.
 \c@Hy@tempcnt=\count96
-
-("C:\Program Files\MiKTeX 2.9\tex\latex\ltxmisc\url.sty"
+ ("C:\Users\mlevin\AppData\Local\Programs\MiKTeX 2.9\tex\latex\url\url.sty"
 \Urlmuskip=\muskip10
-Package: url 2006/04/12  ver 3.3  Verb mode for urls, etc.
+Package: url 2013/09/16  ver 3.4  Verb mode for urls, etc.
 )
-LaTeX Info: Redefining \url on input line 5041.
+LaTeX Info: Redefining \url on input line 5104.
 \XeTeXLinkMargin=\dimen113
 \Fld@menulength=\count97
 \Field@Width=\dimen114
 \Fld@charsize=\dimen115
-Package hyperref Info: Hyper figures OFF on input line 6295.
-Package hyperref Info: Link nesting OFF on input line 6300.
-Package hyperref Info: Hyper index ON on input line 6303.
-Package hyperref Info: backreferencing OFF on input line 6310.
-Package hyperref Info: Link coloring OFF on input line 6315.
-Package hyperref Info: Link coloring with OCG OFF on input line 6320.
-Package hyperref Info: PDF/A mode OFF on input line 6325.
-LaTeX Info: Redefining \ref on input line 6365.
-LaTeX Info: Redefining \pageref on input line 6369.
+Package hyperref Info: Hyper figures OFF on input line 6358.
+Package hyperref Info: Link nesting OFF on input line 6363.
+Package hyperref Info: Hyper index ON on input line 6366.
+Package hyperref Info: backreferencing OFF on input line 6373.
+Package hyperref Info: Link coloring OFF on input line 6378.
+Package hyperref Info: Link coloring with OCG OFF on input line 6383.
+Package hyperref Info: PDF/A mode OFF on input line 6388.
+LaTeX Info: Redefining \ref on input line 6428.
+LaTeX Info: Redefining \pageref on input line 6432.
 \Hy@abspage=\count98
 \c@Item=\count99
 \c@Hfootnote=\count100
@@ -253,20 +271,24 @@ LaTeX Info: Redefining \pageref on input line 6369.
 
 Package hyperref Message: Driver (autodetected): hpdftex.
 
-("C:\Program Files\MiKTeX 2.9\tex\latex\hyperref\hpdftex.def"
-File: hpdftex.def 2012/11/06 v6.83m Hyperref driver for pdfTeX
+
+("C:\Users\mlevin\AppData\Local\Programs\MiKTeX 2.9\tex\latex\hyperref\hpdftex.
+def"
+File: hpdftex.def 2017/03/14 v6.85a Hyperref driver for pdfTeX
 \Fld@listcount=\count101
 \c@bookmark@seq@number=\count102
 
-("C:\Program Files\MiKTeX 2.9\tex\latex\oberdiek\rerunfilecheck.sty"
-Package: rerunfilecheck 2011/04/15 v1.7 Rerun checks for auxiliary files (HO)
+("C:\Users\mlevin\AppData\Local\Programs\MiKTeX 2.9\tex\latex\oberdiek\rerunfil
+echeck.sty"
+Package: rerunfilecheck 2016/05/16 v1.8 Rerun checks for auxiliary files (HO)
 Package uniquecounter Info: New unique counter `rerunfilecheck' on input line 2
 82.
 )
 \Hy@SectionHShift=\skip78
 )
-("C:\Program Files\MiKTeX 2.9\tex\latex\tools\longtable.sty"
-Package: longtable 2004/02/01 v4.11 Multi-page Table package (DPC)
+("C:\Users\mlevin\AppData\Local\Programs\MiKTeX 2.9\tex\latex\tools\longtable.s
+ty"
+Package: longtable 2014/10/28 v4.11 Multi-page Table package (DPC)
 \LTleft=\skip79
 \LTright=\skip80
 \LTpre=\skip81
@@ -283,41 +305,47 @@ Package: longtable 2004/02/01 v4.11 Multi-page Table package (DPC)
 \c@LT@chunks=\count107
 \LT@p@ftn=\toks18
 )
-("C:\Program Files\MiKTeX 2.9\tex\latex\amsmath\amsmath.sty"
-Package: amsmath 2013/01/14 v2.14 AMS math features
+("C:\Users\mlevin\AppData\Local\Programs\MiKTeX 2.9\tex\latex\amsmath\amsmath.s
+ty"
+Package: amsmath 2016/11/05 v2.16a AMS math features
 \@mathmargin=\skip83
 
 For additional information on amsmath, use the `?' option.
-("C:\Program Files\MiKTeX 2.9\tex\latex\amsmath\amstext.sty"
-Package: amstext 2000/06/29 v2.01
 
-("C:\Program Files\MiKTeX 2.9\tex\latex\amsmath\amsgen.sty"
-File: amsgen.sty 1999/11/30 v2.0
+("C:\Users\mlevin\AppData\Local\Programs\MiKTeX 2.9\tex\latex\amsmath\amstext.s
+ty"
+Package: amstext 2000/06/29 v2.01 AMS text
+
+("C:\Users\mlevin\AppData\Local\Programs\MiKTeX 2.9\tex\latex\amsmath\amsgen.st
+y"
+File: amsgen.sty 1999/11/30 v2.0 generic functions
 \@emptytoks=\toks19
 \ex@=\dimen117
 ))
-("C:\Program Files\MiKTeX 2.9\tex\latex\amsmath\amsbsy.sty"
-Package: amsbsy 1999/11/29 v1.2d
+("C:\Users\mlevin\AppData\Local\Programs\MiKTeX 2.9\tex\latex\amsmath\amsbsy.st
+y"
+Package: amsbsy 1999/11/29 v1.2d Bold Symbols
 \pmbraise@=\dimen118
 )
-("C:\Program Files\MiKTeX 2.9\tex\latex\amsmath\amsopn.sty"
-Package: amsopn 1999/12/14 v2.01 operator names
+("C:\Users\mlevin\AppData\Local\Programs\MiKTeX 2.9\tex\latex\amsmath\amsopn.st
+y"
+Package: amsopn 2016/03/08 v2.02 operator names
 )
 \inf@bad=\count108
-LaTeX Info: Redefining \frac on input line 210.
+LaTeX Info: Redefining \frac on input line 213.
 \uproot@=\count109
 \leftroot@=\count110
-LaTeX Info: Redefining \overline on input line 306.
+LaTeX Info: Redefining \overline on input line 375.
 \classnum@=\count111
 \DOTSCASE@=\count112
-LaTeX Info: Redefining \ldots on input line 378.
-LaTeX Info: Redefining \dots on input line 381.
-LaTeX Info: Redefining \cdots on input line 466.
+LaTeX Info: Redefining \ldots on input line 472.
+LaTeX Info: Redefining \dots on input line 475.
+LaTeX Info: Redefining \cdots on input line 596.
 \Mathstrutbox@=\box30
 \strutbox@=\box31
 \big@size=\dimen119
-LaTeX Font Info:    Redeclaring font encoding OML on input line 566.
-LaTeX Font Info:    Redeclaring font encoding OMS on input line 567.
+LaTeX Font Info:    Redeclaring font encoding OML on input line 712.
+LaTeX Font Info:    Redeclaring font encoding OMS on input line 713.
 \macc@depth=\count113
 \c@MaxMatrixCols=\count114
 \dotsspace@=\muskip11
@@ -338,11 +366,12 @@ LaTeX Font Info:    Redeclaring font encoding OMS on input line 567.
 \multlinegap=\skip84
 \multlinetaggap=\skip85
 \mathdisplay@stack=\toks23
-LaTeX Info: Redefining \[ on input line 2665.
-LaTeX Info: Redefining \] on input line 2666.
+LaTeX Info: Redefining \[ on input line 2817.
+LaTeX Info: Redefining \] on input line 2818.
 )
-("C:\Program Files\MiKTeX 2.9\tex\latex\amscls\amsthm.sty"
-Package: amsthm 2004/08/06 v2.20
+("C:\Users\mlevin\AppData\Local\Programs\MiKTeX 2.9\tex\latex\amscls\amsthm.sty
+"
+Package: amsthm 2015/03/04 v2.20.2
 \thm@style=\toks24
 \thm@bodyfont=\toks25
 \thm@headfont=\toks26
@@ -353,48 +382,54 @@ Package: amsthm 2004/08/06 v2.20
 \thm@headsep=\skip88
 \dth@everypar=\toks29
 )
-("C:\Program Files\MiKTeX 2.9\tex\latex\amsfonts\amssymb.sty"
+("C:\Users\mlevin\AppData\Local\Programs\MiKTeX 2.9\tex\latex\amsfonts\amssymb.
+sty"
 Package: amssymb 2013/01/14 v3.01 AMS font symbols
 
-("C:\Program Files\MiKTeX 2.9\tex\latex\amsfonts\amsfonts.sty"
+("C:\Users\mlevin\AppData\Local\Programs\MiKTeX 2.9\tex\latex\amsfonts\amsfonts
+.sty"
 Package: amsfonts 2013/01/14 v3.01 Basic AMSFonts support
 \symAMSa=\mathgroup4
 \symAMSb=\mathgroup5
 LaTeX Font Info:    Overwriting math alphabet `\mathfrak' in version `bold'
 (Font)                  U/euf/m/n --> U/euf/b/n on input line 106.
 ))
-("C:\Program Files\MiKTeX 2.9\tex\latex\cite\cite.sty"
+("C:\Users\mlevin\AppData\Local\Programs\MiKTeX 2.9\tex\latex\cite\cite.sty"
 LaTeX Info: Redefining \cite on input line 302.
-LaTeX Info: Redefining \nocite on input line 373.
-Package: cite 2010/09/10  v 5.3
+LaTeX Info: Redefining \nocite on input line 332.
+Package: cite 2015/02/27  v 5.5
 )
-("C:\Program Files\MiKTeX 2.9\tex\latex\amsfonts\euscript.sty"
+("C:\Users\mlevin\AppData\Local\Programs\MiKTeX 2.9\tex\latex\amsfonts\euscript
+.sty"
 Package: euscript 2009/06/22 v3.00 Euler Script fonts
 LaTeX Font Info:    Overwriting math alphabet `\EuScript' in version `bold'
 (Font)                  U/eus/m/n --> U/eus/b/n on input line 33.
 )
-("C:\Program Files\MiKTeX 2.9\tex\latex\algorithms\algorithm.sty"
+("C:\Users\mlevin\AppData\Local\Programs\MiKTeX 2.9\tex\latex\algorithms\algori
+thm.sty"
 Package: algorithm 2009/08/24 v0.1 Document Style `algorithm' - floating enviro
 nment
 
-("C:\Program Files\MiKTeX 2.9\tex\latex\float\float.sty"
+("C:\Users\mlevin\AppData\Local\Programs\MiKTeX 2.9\tex\latex\float\float.sty"
 Package: float 2001/11/08 v1.3d Float enhancements (AL)
 \c@float@type=\count120
 \float@exts=\toks30
 \float@box=\box32
 \@float@everytoks=\toks31
 \@floatcapt=\box33
-)
-("C:\Program Files\MiKTeX 2.9\tex\latex\base\ifthen.sty"
-Package: ifthen 2001/05/26 v1.1c Standard LaTeX ifthen package (DPC)
+) ("C:\Users\mlevin\AppData\Local\Programs\MiKTeX 2.9\tex\latex\base\ifthen.sty
+"
+Package: ifthen 2014/09/29 v1.1c Standard LaTeX ifthen package (DPC)
 )
 \@float@every@algorithm=\toks32
 \c@algorithm=\count121
 )
-("C:\Program Files\MiKTeX 2.9\tex\latex\algorithmicx\algpseudocode.sty"
+("C:\Users\mlevin\AppData\Local\Programs\MiKTeX 2.9\tex\latex\algorithmicx\algp
+seudocode.sty"
 Package: algpseudocode 
 
-("C:\Program Files\MiKTeX 2.9\tex\latex\algorithmicx\algorithmicx.sty"
+("C:\Users\mlevin\AppData\Local\Programs\MiKTeX 2.9\tex\latex\algorithmicx\algo
+rithmicx.sty"
 Package: algorithmicx 2005/04/27 v1.2 Algorithmicx
 
 Document Style algorithmicx 1.2 - a greatly improved `algorithmic' style
@@ -410,20 +445,24 @@ Document Style algorithmicx 1.2 - a greatly improved `algorithmic' style
 \ALG@tmplength=\skip91
 )
 Document Style - pseudocode environments for use with the `algorithmicx' style
-) ("C:\Program Files\MiKTeX 2.9\tex\latex\tools\verbatim.sty"
-Package: verbatim 2003/08/22 v1.5q LaTeX2e package for verbatim enhancements
+)
+("C:\Users\mlevin\AppData\Local\Programs\MiKTeX 2.9\tex\latex\tools\verbatim.st
+y"
+Package: verbatim 2014/10/28 v1.5q LaTeX2e package for verbatim enhancements
 \every@verbatim=\toks33
 \verbatim@line=\toks34
 \verbatim@in@stream=\read1
 )
-("C:\Program Files\MiKTeX 2.9\tex\latex\appendix\appendix.sty"
+("C:\Users\mlevin\AppData\Local\Programs\MiKTeX 2.9\tex\latex\appendix\appendix
+.sty"
 Package: appendix 2009/09/02 v1.2b extra appendix facilities
 \c@@pps=\count129
 \c@@ppsavesec=\count130
 \c@@ppsaveapp=\count131
 )
-("C:\Program Files\MiKTeX 2.9\tex\latex\titlesec\titlesec.sty"
-Package: titlesec 2011/12/15 v2.10.0 Sectioning titles
+("C:\Users\mlevin\AppData\Local\Programs\MiKTeX 2.9\tex\latex\titlesec\titlesec
+.sty"
+Package: titlesec 2016/03/21 v2.10.2 Sectioning titles
 \ttl@box=\box34
 \beforetitleunit=\skip92
 \aftertitleunit=\skip93
@@ -434,8 +473,9 @@ Package: titlesec 2011/12/15 v2.10.0 Sectioning titles
 \titlewidthlast=\dimen129
 \titlewidthfirst=\dimen130
 )
-("C:\Program Files\MiKTeX 2.9\tex\latex\base\textcomp.sty"
-Package: textcomp 2005/09/27 v1.99g Standard LaTeX package
+("C:\Users\mlevin\AppData\Local\Programs\MiKTeX 2.9\tex\latex\base\textcomp.sty
+"
+Package: textcomp 2017/04/05 v2.0i Standard LaTeX package
 Package textcomp Info: Sub-encoding information:
 (textcomp)               5 = only ISO-Adobe without \textcurrency
 (textcomp)               4 = 5 + \texteuro
@@ -447,87 +487,88 @@ Package textcomp Info: Sub-encoding information:
 (textcomp)             only a restricted character set as indicated.
 (textcomp)             Family '?' is the default used for unknown fonts.
 (textcomp)             See the documentation for details.
-Package textcomp Info: Setting ? sub-encoding to TS1/1 on input line 71.
-
-("C:\Program Files\MiKTeX 2.9\tex\latex\base\ts1enc.def"
+Package textcomp Info: Setting ? sub-encoding to TS1/1 on input line 79.
+ ("C:\Users\mlevin\AppData\Local\Programs\MiKTeX 2.9\tex\latex\base\ts1enc.def"
 File: ts1enc.def 2001/06/05 v3.0e (jk/car/fm) Standard LaTeX file
 )
-LaTeX Info: Redefining \oldstylenums on input line 266.
-Package textcomp Info: Setting cmr sub-encoding to TS1/0 on input line 281.
-Package textcomp Info: Setting cmss sub-encoding to TS1/0 on input line 282.
-Package textcomp Info: Setting cmtt sub-encoding to TS1/0 on input line 283.
-Package textcomp Info: Setting cmvtt sub-encoding to TS1/0 on input line 284.
-Package textcomp Info: Setting cmbr sub-encoding to TS1/0 on input line 285.
-Package textcomp Info: Setting cmtl sub-encoding to TS1/0 on input line 286.
-Package textcomp Info: Setting ccr sub-encoding to TS1/0 on input line 287.
-Package textcomp Info: Setting ptm sub-encoding to TS1/4 on input line 288.
-Package textcomp Info: Setting pcr sub-encoding to TS1/4 on input line 289.
-Package textcomp Info: Setting phv sub-encoding to TS1/4 on input line 290.
-Package textcomp Info: Setting ppl sub-encoding to TS1/3 on input line 291.
-Package textcomp Info: Setting pag sub-encoding to TS1/4 on input line 292.
-Package textcomp Info: Setting pbk sub-encoding to TS1/4 on input line 293.
-Package textcomp Info: Setting pnc sub-encoding to TS1/4 on input line 294.
-Package textcomp Info: Setting pzc sub-encoding to TS1/4 on input line 295.
-Package textcomp Info: Setting bch sub-encoding to TS1/4 on input line 296.
-Package textcomp Info: Setting put sub-encoding to TS1/5 on input line 297.
-Package textcomp Info: Setting uag sub-encoding to TS1/5 on input line 298.
-Package textcomp Info: Setting ugq sub-encoding to TS1/5 on input line 299.
-Package textcomp Info: Setting ul8 sub-encoding to TS1/4 on input line 300.
-Package textcomp Info: Setting ul9 sub-encoding to TS1/4 on input line 301.
-Package textcomp Info: Setting augie sub-encoding to TS1/5 on input line 302.
-Package textcomp Info: Setting dayrom sub-encoding to TS1/3 on input line 303.
-Package textcomp Info: Setting dayroms sub-encoding to TS1/3 on input line 304.
+LaTeX Info: Redefining \oldstylenums on input line 334.
+Package textcomp Info: Setting cmr sub-encoding to TS1/0 on input line 349.
+Package textcomp Info: Setting cmss sub-encoding to TS1/0 on input line 350.
+Package textcomp Info: Setting cmtt sub-encoding to TS1/0 on input line 351.
+Package textcomp Info: Setting cmvtt sub-encoding to TS1/0 on input line 352.
+Package textcomp Info: Setting cmbr sub-encoding to TS1/0 on input line 353.
+Package textcomp Info: Setting cmtl sub-encoding to TS1/0 on input line 354.
+Package textcomp Info: Setting ccr sub-encoding to TS1/0 on input line 355.
+Package textcomp Info: Setting ptm sub-encoding to TS1/4 on input line 356.
+Package textcomp Info: Setting pcr sub-encoding to TS1/4 on input line 357.
+Package textcomp Info: Setting phv sub-encoding to TS1/4 on input line 358.
+Package textcomp Info: Setting ppl sub-encoding to TS1/3 on input line 359.
+Package textcomp Info: Setting pag sub-encoding to TS1/4 on input line 360.
+Package textcomp Info: Setting pbk sub-encoding to TS1/4 on input line 361.
+Package textcomp Info: Setting pnc sub-encoding to TS1/4 on input line 362.
+Package textcomp Info: Setting pzc sub-encoding to TS1/4 on input line 363.
+Package textcomp Info: Setting bch sub-encoding to TS1/4 on input line 364.
+Package textcomp Info: Setting put sub-encoding to TS1/5 on input line 365.
+Package textcomp Info: Setting uag sub-encoding to TS1/5 on input line 366.
+Package textcomp Info: Setting ugq sub-encoding to TS1/5 on input line 367.
+Package textcomp Info: Setting ul8 sub-encoding to TS1/4 on input line 368.
+Package textcomp Info: Setting ul9 sub-encoding to TS1/4 on input line 369.
+Package textcomp Info: Setting augie sub-encoding to TS1/5 on input line 370.
+Package textcomp Info: Setting dayrom sub-encoding to TS1/3 on input line 371.
+Package textcomp Info: Setting dayroms sub-encoding to TS1/3 on input line 372.
 
-Package textcomp Info: Setting pxr sub-encoding to TS1/0 on input line 305.
-Package textcomp Info: Setting pxss sub-encoding to TS1/0 on input line 306.
-Package textcomp Info: Setting pxtt sub-encoding to TS1/0 on input line 307.
-Package textcomp Info: Setting txr sub-encoding to TS1/0 on input line 308.
-Package textcomp Info: Setting txss sub-encoding to TS1/0 on input line 309.
-Package textcomp Info: Setting txtt sub-encoding to TS1/0 on input line 310.
-Package textcomp Info: Setting lmr sub-encoding to TS1/0 on input line 311.
-Package textcomp Info: Setting lmdh sub-encoding to TS1/0 on input line 312.
-Package textcomp Info: Setting lmss sub-encoding to TS1/0 on input line 313.
-Package textcomp Info: Setting lmssq sub-encoding to TS1/0 on input line 314.
-Package textcomp Info: Setting lmvtt sub-encoding to TS1/0 on input line 315.
-Package textcomp Info: Setting qhv sub-encoding to TS1/0 on input line 316.
-Package textcomp Info: Setting qag sub-encoding to TS1/0 on input line 317.
-Package textcomp Info: Setting qbk sub-encoding to TS1/0 on input line 318.
-Package textcomp Info: Setting qcr sub-encoding to TS1/0 on input line 319.
-Package textcomp Info: Setting qcs sub-encoding to TS1/0 on input line 320.
-Package textcomp Info: Setting qpl sub-encoding to TS1/0 on input line 321.
-Package textcomp Info: Setting qtm sub-encoding to TS1/0 on input line 322.
-Package textcomp Info: Setting qzc sub-encoding to TS1/0 on input line 323.
-Package textcomp Info: Setting qhvc sub-encoding to TS1/0 on input line 324.
-Package textcomp Info: Setting futs sub-encoding to TS1/4 on input line 325.
-Package textcomp Info: Setting futx sub-encoding to TS1/4 on input line 326.
-Package textcomp Info: Setting futj sub-encoding to TS1/4 on input line 327.
-Package textcomp Info: Setting hlh sub-encoding to TS1/3 on input line 328.
-Package textcomp Info: Setting hls sub-encoding to TS1/3 on input line 329.
-Package textcomp Info: Setting hlst sub-encoding to TS1/3 on input line 330.
-Package textcomp Info: Setting hlct sub-encoding to TS1/5 on input line 331.
-Package textcomp Info: Setting hlx sub-encoding to TS1/5 on input line 332.
-Package textcomp Info: Setting hlce sub-encoding to TS1/5 on input line 333.
-Package textcomp Info: Setting hlcn sub-encoding to TS1/5 on input line 334.
-Package textcomp Info: Setting hlcw sub-encoding to TS1/5 on input line 335.
-Package textcomp Info: Setting hlcf sub-encoding to TS1/5 on input line 336.
-Package textcomp Info: Setting pplx sub-encoding to TS1/3 on input line 337.
-Package textcomp Info: Setting pplj sub-encoding to TS1/3 on input line 338.
-Package textcomp Info: Setting ptmx sub-encoding to TS1/4 on input line 339.
-Package textcomp Info: Setting ptmj sub-encoding to TS1/4 on input line 340.
+Package textcomp Info: Setting pxr sub-encoding to TS1/0 on input line 373.
+Package textcomp Info: Setting pxss sub-encoding to TS1/0 on input line 374.
+Package textcomp Info: Setting pxtt sub-encoding to TS1/0 on input line 375.
+Package textcomp Info: Setting txr sub-encoding to TS1/0 on input line 376.
+Package textcomp Info: Setting txss sub-encoding to TS1/0 on input line 377.
+Package textcomp Info: Setting txtt sub-encoding to TS1/0 on input line 378.
+Package textcomp Info: Setting lmr sub-encoding to TS1/0 on input line 379.
+Package textcomp Info: Setting lmdh sub-encoding to TS1/0 on input line 380.
+Package textcomp Info: Setting lmss sub-encoding to TS1/0 on input line 381.
+Package textcomp Info: Setting lmssq sub-encoding to TS1/0 on input line 382.
+Package textcomp Info: Setting lmvtt sub-encoding to TS1/0 on input line 383.
+Package textcomp Info: Setting lmtt sub-encoding to TS1/0 on input line 384.
+Package textcomp Info: Setting qhv sub-encoding to TS1/0 on input line 385.
+Package textcomp Info: Setting qag sub-encoding to TS1/0 on input line 386.
+Package textcomp Info: Setting qbk sub-encoding to TS1/0 on input line 387.
+Package textcomp Info: Setting qcr sub-encoding to TS1/0 on input line 388.
+Package textcomp Info: Setting qcs sub-encoding to TS1/0 on input line 389.
+Package textcomp Info: Setting qpl sub-encoding to TS1/0 on input line 390.
+Package textcomp Info: Setting qtm sub-encoding to TS1/0 on input line 391.
+Package textcomp Info: Setting qzc sub-encoding to TS1/0 on input line 392.
+Package textcomp Info: Setting qhvc sub-encoding to TS1/0 on input line 393.
+Package textcomp Info: Setting futs sub-encoding to TS1/4 on input line 394.
+Package textcomp Info: Setting futx sub-encoding to TS1/4 on input line 395.
+Package textcomp Info: Setting futj sub-encoding to TS1/4 on input line 396.
+Package textcomp Info: Setting hlh sub-encoding to TS1/3 on input line 397.
+Package textcomp Info: Setting hls sub-encoding to TS1/3 on input line 398.
+Package textcomp Info: Setting hlst sub-encoding to TS1/3 on input line 399.
+Package textcomp Info: Setting hlct sub-encoding to TS1/5 on input line 400.
+Package textcomp Info: Setting hlx sub-encoding to TS1/5 on input line 401.
+Package textcomp Info: Setting hlce sub-encoding to TS1/5 on input line 402.
+Package textcomp Info: Setting hlcn sub-encoding to TS1/5 on input line 403.
+Package textcomp Info: Setting hlcw sub-encoding to TS1/5 on input line 404.
+Package textcomp Info: Setting hlcf sub-encoding to TS1/5 on input line 405.
+Package textcomp Info: Setting pplx sub-encoding to TS1/3 on input line 406.
+Package textcomp Info: Setting pplj sub-encoding to TS1/3 on input line 407.
+Package textcomp Info: Setting ptmx sub-encoding to TS1/4 on input line 408.
+Package textcomp Info: Setting ptmj sub-encoding to TS1/4 on input line 409.
 )
-("C:\Program Files\MiKTeX 2.9\tex\latex\tools\array.sty"
-Package: array 2008/09/09 v2.4c Tabular extension package (FMi)
+("C:\Users\mlevin\AppData\Local\Programs\MiKTeX 2.9\tex\latex\tools\array.sty"
+Package: array 2016/10/06 v2.4d Tabular extension package (FMi)
 \col@sep=\dimen131
 \extrarowheight=\dimen132
 \NC@list=\toks36
 \extratabsurround=\skip94
 \backup@length=\skip95
 )
-("C:\Program Files\MiKTeX 2.9\tex\latex\blindtext\blindtext.sty"
+("C:\Users\mlevin\AppData\Local\Programs\MiKTeX 2.9\tex\latex\blindtext\blindte
+xt.sty"
 Package: blindtext 2012/01/06 V2.0 blindtext-Package
 
-("C:\Program Files\MiKTeX 2.9\tex\latex\tools\xspace.sty"
-Package: xspace 2009/10/20 v1.13 Space after command names (DPC,MH)
+("C:\Users\mlevin\AppData\Local\Programs\MiKTeX 2.9\tex\latex\tools\xspace.sty"
+Package: xspace 2014/10/28 v1.13 Space after command names (DPC,MH)
 )
 \c@blindtext=\count132
 \c@Blindtext=\count133
@@ -548,34 +589,40 @@ Package: xspace 2009/10/20 v1.13 Space after command names (DPC,MH)
 \c@blind@pangramcount=\count148
 \c@blind@pangrammax=\count149
 )
-("C:\Program Files\MiKTeX 2.9\tex\latex\oberdiek\pdflscape.sty"
-Package: pdflscape 2008/08/11 v0.10 Display of landscape pages in PDF (HO)
+("C:\Users\mlevin\AppData\Local\Programs\MiKTeX 2.9\tex\latex\oberdiek\pdflscap
+e.sty"
+Package: pdflscape 2016/05/14 v0.11 Display of landscape pages in PDF (HO)
 
-("C:\Program Files\MiKTeX 2.9\tex\latex\graphics\lscape.sty"
+("C:\Users\mlevin\AppData\Local\Programs\MiKTeX 2.9\tex\latex\graphics\lscape.s
+ty"
 Package: lscape 2000/10/22 v3.01 Landscape Pages (DPC)
 )
-Package pdflscape Info: Auto-detected driver: pdftex on input line 80.
+Package pdflscape Info: Auto-detected driver: pdftex on input line 81.
 )
 \c@prop=\count150
 \c@lemma=\count151
 \c@corollary=\count152
 \c@property=\count153
 
-("C:\Program Files\MiKTeX 2.9\tex\latex\titling\titling.sty"
+("C:\Users\mlevin\AppData\Local\Programs\MiKTeX 2.9\tex\latex\titling\titling.s
+ty"
 Package: titling 2009/09/04 v2.1d maketitle typesetting
 \thanksmarkwidth=\skip96
 \thanksmargin=\skip97
 \droptitle=\skip98
 )
-("C:\Program Files\MiKTeX 2.9\tex\latex\graphics\color.sty"
-Package: color 2005/11/14 v1.0j Standard LaTeX Color (DPC)
+("C:\Users\mlevin\AppData\Local\Programs\MiKTeX 2.9\tex\latex\graphics\color.st
+y"
+Package: color 2016/07/10 v1.1e Standard LaTeX Color (DPC)
 
-("C:\Program Files\MiKTeX 2.9\tex\latex\00miktex\color.cfg"
-File: color.cfg 2007/01/18 v1.5 color configuration of teTeX/TeXLive
+("C:\Users\mlevin\AppData\Local\Programs\MiKTeX 2.9\tex\latex\graphics-cfg\colo
+r.cfg"
+File: color.cfg 2016/01/02 v1.6 sample color configuration
 )
-Package color Info: Driver file: pdftex.def on input line 130.
-)
-(C:\Users\ml26893\Documents\avdta2\AVDTA2\documentation\AVDTA.aux)
+Package color Info: Driver file: pdftex.def on input line 147.
+) (AVDTA.aux)
+\openout1 = `AVDTA.aux'.
+
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 64.
 LaTeX Font Info:    ... okay on input line 64.
 LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 64.
@@ -593,12 +640,13 @@ LaTeX Font Info:    ... okay on input line 64.
 LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 64.
 LaTeX Font Info:    Try loading font information for TS1+cmr on input line 64.
 
-("C:\Program Files\MiKTeX 2.9\tex\latex\base\ts1cmr.fd"
-File: ts1cmr.fd 1999/05/25 v2.5h Standard LaTeX font definitions
+("C:\Users\mlevin\AppData\Local\Programs\MiKTeX 2.9\tex\latex\base\ts1cmr.fd"
+File: ts1cmr.fd 2014/09/29 v2.5h Standard LaTeX font definitions
 )
 LaTeX Font Info:    ... okay on input line 64.
 
-("C:\Program Files\MiKTeX 2.9\tex\context\base\supp-pdf.mkii"
+("C:\Users\mlevin\AppData\Local\Programs\MiKTeX 2.9\tex\context\base\supp-pdf.m
+kii"
 [Loading MPS to PDF converter (version 2006.09.02).]
 \scratchcounter=\count154
 \scratchdimen=\dimen133
@@ -612,63 +660,80 @@ LaTeX Font Info:    ... okay on input line 64.
 \makeMPintoPDFobject=\count159
 \everyMPtoPDFconversion=\toks38
 )
+("C:\Users\mlevin\AppData\Local\Programs\MiKTeX 2.9\tex\latex\oberdiek\epstopdf
+-base.sty"
+Package: epstopdf-base 2016/05/15 v2.6 Base part for package epstopdf
+
+("C:\Users\mlevin\AppData\Local\Programs\MiKTeX 2.9\tex\latex\oberdiek\grfext.s
+ty"
+Package: grfext 2016/05/16 v1.2 Manage graphics extensions (HO)
+)
+Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 4
+38.
+Package grfext Info: Graphics extension search list:
+(grfext)             [.png,.pdf,.jpg,.mps,.jpeg,.jbig2,.jb2,.PNG,.PDF,.JPG,.JPE
+G,.JBIG2,.JB2,.eps]
+(grfext)             \AppendGraphicsExtensions on input line 456.
+)
 Package caption Info: Begin \AtBeginDocument code.
 Package caption Info: float package is loaded.
 Package caption Info: hyperref package is loaded.
 Package caption Info: longtable package is loaded.
- ("C:\Program Files\MiKTeX 2.9\tex\latex\caption\ltcaption.sty"
-Package: ltcaption 2013/02/03 v1.3-62 longtable captions (AR)
+
+("C:\Users\mlevin\AppData\Local\Programs\MiKTeX 2.9\tex\latex\caption\ltcaption
+.sty"
+Package: ltcaption 2013/06/09 v1.4-94 longtable captions (AR)
 )
 Package caption Info: End \AtBeginDocument code.
 \AtBeginShipoutBox=\box36
 Package hyperref Info: Link coloring OFF on input line 64.
 
-("C:\Program Files\MiKTeX 2.9\tex\latex\hyperref\nameref.sty"
-Package: nameref 2012/10/27 v2.43 Cross-referencing by name of section
+("C:\Users\mlevin\AppData\Local\Programs\MiKTeX 2.9\tex\latex\hyperref\nameref.
+sty"
+Package: nameref 2016/05/21 v2.44 Cross-referencing by name of section
 
-("C:\Program Files\MiKTeX 2.9\tex\generic\oberdiek\gettitlestring.sty"
-Package: gettitlestring 2010/12/03 v1.4 Cleanup title references (HO)
+("C:\Users\mlevin\AppData\Local\Programs\MiKTeX 2.9\tex\generic\oberdiek\gettit
+lestring.sty"
+Package: gettitlestring 2016/05/16 v1.5 Cleanup title references (HO)
 )
 \c@section@level=\count160
 )
 LaTeX Info: Redefining \ref on input line 64.
 LaTeX Info: Redefining \pageref on input line 64.
 LaTeX Info: Redefining \nameref on input line 64.
-
-(C:\Users\ml26893\Documents\avdta2\AVDTA2\documentation\AVDTA.out)
-(C:\Users\ml26893\Documents\avdta2\AVDTA2\documentation\AVDTA.out)
+ (AVDTA.out) (AVDTA.out)
 \@outlinefile=\write3
+\openout3 = `AVDTA.out'.
+
 LaTeX Font Info:    Try loading font information for U+msa on input line 69.
 
-("C:\Program Files\MiKTeX 2.9\tex\latex\amsfonts\umsa.fd"
+("C:\Users\mlevin\AppData\Local\Programs\MiKTeX 2.9\tex\latex\amsfonts\umsa.fd"
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
 LaTeX Font Info:    Try loading font information for U+msb on input line 69.
-
-("C:\Program Files\MiKTeX 2.9\tex\latex\amsfonts\umsb.fd"
+ ("C:\Users\mlevin\AppData\Local\Programs\MiKTeX 2.9\tex\latex\amsfonts\umsb.fd
+"
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 ) [1
 
-{C:/ProgramData/MiKTeX/2.9/pdftex/config/pdftex.map}]
-(C:\Users\ml26893\Documents\avdta2\AVDTA2\documentation\copyright.tex) [2]
-(C:\Users\ml26893\Documents\avdta2\AVDTA2\documentation\AVDTA.toc
+{C:/Users/mlevin/AppData/Local/MiKTeX/2.9/pdftex/config/pdftex.map}]
+(copyright.tex) [2] (AVDTA.toc
 LaTeX Font Info:    Try loading font information for OT1+pcr on input line 13.
 
-("C:\Program Files\MiKTeX 2.9\tex\latex\psnfss\ot1pcr.fd"
+("C:\Users\mlevin\AppData\Local\Programs\MiKTeX 2.9\tex\latex\psnfss\ot1pcr.fd"
 File: ot1pcr.fd 2001/06/04 font definitions for OT1/pcr.
 ) [3]
 LaTeX Font Info:    Font shape `OT1/pcr/bx/n' in size <12> not available
 (Font)              Font shape `OT1/pcr/b/n' tried instead on input line 68.
  [4] [5])
 \tf@toc=\write4
+\openout4 = `AVDTA.toc'.
 
-[6] (C:\Users\ml26893\Documents\avdta2\AVDTA2\documentation\DTAintro.tex
+ [6] (DTAintro.tex
 Chapter 1.
-) (C:\Users\ml26893\Documents\avdta2\AVDTA2\documentation\DTAProject.tex
-(C:\Users\ml26893\Documents\avdta2\AVDTA2\documentation\Project.tex [1
+) (DTAProject.tex (Project.tex [1
 
-]
-[2]
+] [2]
 Chapter 2.
 <images/project1.png, id=602, 130.23656pt x 116.68594pt>
 File: images/project1.png Graphic file (type png)
@@ -685,7 +750,7 @@ Package pdftex.def Info: images/project2.png used on input line 22.
 (pdftex.def)             Requested size: 375.80544pt x 236.83922pt.
  [3
 
- <C:/Users/ml26893/Documents/avdta2/AVDTA2/documentation/images/project1.png>]
+ <./images/project1.png>]
 <images/project3.png, id=609, 631.60968pt x 398.23781pt>
 File: images/project3.png Graphic file (type png)
 
@@ -699,19 +764,15 @@ File: images/project4.png Graphic file (type png)
 <use images/project4.png>
 Package pdftex.def Info: images/project4.png used on input line 37.
 (pdftex.def)             Requested size: 375.80544pt x 236.81813pt.
- [4 <C:/Users/ml26893/Documents/avdta2/AVDTA2/documentation/images/project2.png
-> <C:/Users/ml26893/Documents/avdta2/AVDTA2/documentation/images/project3.png>]
- [5 <C:/Users/ml26893/Documents/avdta2/AVDTA2/documentation/images/project4.png
->]
+ [4 <./images/project2.png> <./images/project3.png>]
+[5 <./images/project4.png>]
 <images/sql1.png, id=620, 642.14906pt x 404.26031pt>
 File: images/sql1.png Graphic file (type png)
  <use images/sql1.png>
 Package pdftex.def Info: images/sql1.png used on input line 58.
 (pdftex.def)             Requested size: 375.80544pt x 236.59311pt.
 
-[6 <C:/Users/ml26893/Documents/avdta2/AVDTA2/documentation/images/sql1.png>])
-[7] (C:\Users\ml26893\Documents\avdta2\AVDTA2\documentation\Projectfolders.tex)
-
+[6 <./images/sql1.png>]) [7] (Projectfolders.tex)
 Overfull \hbox (10.76973pt too wide) in paragraph at lines 16--17
 [] []\OT1/pcr/b/n/12 assignments \OT1/cmr/bx/n/12 folder[] \OT1/cmr/m/n/12 The 
 \OT1/pcr/m/n/12 assignments \OT1/cmr/m/n/12 folder stores pre-vi-ous as-sign-me
@@ -720,7 +781,7 @@ nts for the project.
 
 ) [8] [9
 
-] (C:\Users\ml26893\Documents\avdta2\AVDTA2\documentation\Network.tex
+] (Network.tex
 Chapter 3.
 LaTeX Font Info:    Font shape `OT1/pcr/bx/n' in size <14.4> not available
 (Font)              Font shape `OT1/pcr/b/n' tried instead on input line 27.
@@ -730,66 +791,59 @@ LaTeX Font Info:    Font shape `OT1/pcr/bx/n' in size <14.4> not available
 File: images/nodes1.png Graphic file (type png)
 
 <use images/nodes1.png>
-Package pdftex.def Info: images/nodes1.png used on input line 99.
+Package pdftex.def Info: images/nodes1.png used on input line 102.
 (pdftex.def)             Requested size: 375.80544pt x 237.8618pt.
  <images/nodes2.png, id=667, 639.89063pt x 405.01312pt>
 File: images/nodes2.png Graphic file (type png)
 
 <use images/nodes2.png>
-Package pdftex.def Info: images/nodes2.png used on input line 104.
+Package pdftex.def Info: images/nodes2.png used on input line 107.
 (pdftex.def)             Requested size: 375.80544pt x 237.8618pt.
- [13 <C:/Users/ml26893/Documents/avdta2/AVDTA2/documentation/images/nodes1.png>
- <C:/Users/ml26893/Documents/avdta2/AVDTA2/documentation/images/nodes2.png>] <i
-mages/nodes3.png, id=673, 639.89063pt x 405.01312pt>
+ [13 <./images/nodes1.png> <./images/nodes2.png>]
+<images/nodes3.png, id=673, 639.89063pt x 405.01312pt>
 File: images/nodes3.png Graphic file (type png)
-
-<use images/nodes3.png>
-Package pdftex.def Info: images/nodes3.png used on input line 109.
+ <use images/nodes3.png>
+Package pdftex.def Info: images/nodes3.png used on input line 112.
 (pdftex.def)             Requested size: 375.80544pt x 237.8618pt.
- [14 <C:/Users/ml26893/Documents/avdta2/AVDTA2/documentation/images/nodes3.png>
-] [15]
+
+[14 <./images/nodes3.png>] [15]
 <images/links1.png, id=688, 639.89063pt x 405.01312pt>
 File: images/links1.png Graphic file (type png)
  <use images/links1.png>
-Package pdftex.def Info: images/links1.png used on input line 177.
+Package pdftex.def Info: images/links1.png used on input line 180.
 (pdftex.def)             Requested size: 375.80544pt x 237.8618pt.
 
 <images/links2.png, id=690, 639.89063pt x 405.01312pt>
 File: images/links2.png Graphic file (type png)
  <use images/links2.png>
-Package pdftex.def Info: images/links2.png used on input line 182.
+Package pdftex.def Info: images/links2.png used on input line 185.
 (pdftex.def)             Requested size: 375.80544pt x 237.8618pt.
 
-[16 <C:/Users/ml26893/Documents/avdta2/AVDTA2/documentation/images/links1.png>]
+[16 <./images/links1.png>]
 <images/network1.png, id=695, 639.89063pt x 405.01312pt>
 File: images/network1.png Graphic file (type png)
 
 <use images/network1.png>
-Package pdftex.def Info: images/network1.png used on input line 190.
+Package pdftex.def Info: images/network1.png used on input line 193.
 (pdftex.def)             Requested size: 375.80544pt x 237.8618pt.
- [17 <C:/Users/ml26893/Documents/avdta2/AVDTA2/documentation/images/links2.png>
- <C:/Users/ml26893/Documents/avdta2/AVDTA2/documentation/images/network1.png>]
+ [17 <./images/links2.png> <./images/network1.png>]
 <images/network2.png, id=700, 639.89063pt x 405.01312pt>
 File: images/network2.png Graphic file (type png)
 
 <use images/network2.png>
-Package pdftex.def Info: images/network2.png used on input line 196.
+Package pdftex.def Info: images/network2.png used on input line 199.
 (pdftex.def)             Requested size: 375.80544pt x 237.8618pt.
  <images/sql2.png, id=702, 639.89063pt x 405.01312pt>
 File: images/sql2.png Graphic file (type png)
 
 <use images/sql2.png>
-Package pdftex.def Info: images/sql2.png used on input line 202.
+Package pdftex.def Info: images/sql2.png used on input line 205.
 (pdftex.def)             Requested size: 375.80544pt x 237.8618pt.
- [18 <C:/Users/ml26893/Documents/avdta2/AVDTA2/documentation/images/network2.pn
-g>])
-(C:\Users\ml26893\Documents\avdta2\AVDTA2\documentation\Transit.tex [19 <C:/Use
-rs/ml26893/Documents/avdta2/AVDTA2/documentation/images/sql2.png>]
+ [18 <./images/network2.png>]) (Transit.tex [19 <./images/sql2.png>]
 Chapter 4.
 [20
 
-] [21])
-(C:\Users\ml26893\Documents\avdta2\AVDTA2\documentation\DTAdemand.tex [22]
+] [21]) (DTAdemand.tex [22]
 Chapter 5.
 [23
 
@@ -806,23 +860,21 @@ File: images/demand2.png Graphic file (type png)
 <use images/demand2.png>
 Package pdftex.def Info: images/demand2.png used on input line 96.
 (pdftex.def)             Requested size: 375.80544pt x 237.78018pt.
- [26 <C:/Users/ml26893/Documents/avdta2/AVDTA2/documentation/images/demand1.png
-> <C:/Users/ml26893/Documents/avdta2/AVDTA2/documentation/images/demand2.png>] 
+ [26 <./images/demand1.png> <./images/demand2.png>]
 <images/sql3.png, id=749, 641.39626pt x 403.5075pt>
 File: images/sql3.png Graphic file (type png)
-
-<use images/sql3.png>
+ <use images/sql3.png>
 Package pdftex.def Info: images/sql3.png used on input line 101.
 (pdftex.def)             Requested size: 375.80544pt x 236.42343pt.
- <images/demand3.png, id=751, 635.37375pt x 402.00188pt>
+
+<images/demand3.png, id=751, 635.37375pt x 402.00188pt>
 File: images/demand3.png Graphic file (type png)
 
 <use images/demand3.png>
 Package pdftex.def Info: images/demand3.png used on input line 108.
 (pdftex.def)             Requested size: 375.80544pt x 237.78018pt.
- [27 <C:/Users/ml26893/Documents/avdta2/AVDTA2/documentation/images/sql3.png> <
-C:/Users/ml26893/Documents/avdta2/AVDTA2/documentation/images/demand3.png>] <im
-ages/demand3b.png, id=757, 635.37375pt x 402.00188pt>
+ [27 <./images/sql3.png> <./images/demand3.png>]
+<images/demand3b.png, id=757, 635.37375pt x 402.00188pt>
 File: images/demand3b.png Graphic file (type png)
 
 <use images/demand3b.png>
@@ -835,10 +887,7 @@ File: images/demand4.png Graphic file (type png)
 <use images/demand4.png>
 Package pdftex.def Info: images/demand4.png used on input line 120.
 (pdftex.def)             Requested size: 375.80544pt x 237.78018pt.
- [28 <C:/Users/ml26893/Documents/avdta2/AVDTA2/documentation/images/demand3b.pn
-g>])
-(C:\Users\ml26893\Documents\avdta2\AVDTA2\documentation\MSA.tex [29 <C:/Users/m
-l26893/Documents/avdta2/AVDTA2/documentation/images/demand4.png>]
+ [28 <./images/demand3b.png>]) (MSA.tex [29 <./images/demand4.png>]
 Chapter 6.
 <images/msa2.png, id=768, 639.89063pt x 402.75468pt>
 File: images/msa2.png Graphic file (type png)
@@ -854,16 +903,13 @@ Package pdftex.def Info: images/msa3.png used on input line 13.
 
 [30
 
- <C:/Users/ml26893/Documents/avdta2/AVDTA2/documentation/images/msa2.png>]
-<images/msa1.png, id=774, 639.89063pt x 402.75468pt>
+ <./images/msa2.png>] <images/msa1.png, id=774, 639.89063pt x 402.75468pt>
 File: images/msa1.png Graphic file (type png)
- <use images/msa1.png>
+
+<use images/msa1.png>
 Package pdftex.def Info: images/msa1.png used on input line 19.
 (pdftex.def)             Requested size: 375.80544pt x 236.53543pt.
-)
-(C:\Users\ml26893\Documents\avdta2\AVDTA2\documentation\Editor.tex [31 <C:/User
-s/ml26893/Documents/avdta2/AVDTA2/documentation/images/msa3.png> <C:/Users/ml26
-893/Documents/avdta2/AVDTA2/documentation/images/msa1.png>]
+) (Editor.tex [31 <./images/msa3.png> <./images/msa1.png>]
 Chapter 7.
 <images/editor1.png, id=781, 974.13937pt x 752.8125pt>
 File: images/editor1.png Graphic file (type png)
@@ -873,15 +919,14 @@ Package pdftex.def Info: images/editor1.png used on input line 6.
 (pdftex.def)             Requested size: 469.75502pt x 363.023pt.
  [32
 
- <C:/Users/ml26893/Documents/avdta2/AVDTA2/documentation/images/editor1.png>]
+ <./images/editor1.png>]
 <images/editor4.png, id=786, 690.32906pt x 706.89093pt>
 File: images/editor4.png Graphic file (type png)
 
 <use images/editor4.png>
 Package pdftex.def Info: images/editor4.png used on input line 18.
 (pdftex.def)             Requested size: 281.85587pt x 288.6191pt.
- [33 <C:/Users/ml26893/Documents/avdta2/AVDTA2/documentation/images/editor4.png
->]
+ [33 <./images/editor4.png>]
 <images/editor3.png, id=792, 137.7647pt x 103.88812pt>
 File: images/editor3.png Graphic file (type png)
 
@@ -895,12 +940,10 @@ File: images/editor2.png Graphic file (type png)
 <use images/editor2.png>
 Package pdftex.def Info: images/editor2.png used on input line 41.
 (pdftex.def)             Requested size: 109.15753pt x 127.22499pt.
- [34 <C:/Users/ml26893/Documents/avdta2/AVDTA2/documentation/images/editor3.png
-> <C:/Users/ml26893/Documents/avdta2/AVDTA2/documentation/images/editor2.png>] 
+ [34 <./images/editor3.png> <./images/editor2.png>]
 <images/editor6.png, id=798, 147.55125pt x 192.72pt>
 File: images/editor6.png Graphic file (type png)
-
-<use images/editor6.png>
+ <use images/editor6.png>
 Package pdftex.def Info: images/editor6.png used on input line 57.
 (pdftex.def)             Requested size: 147.55087pt x 192.71951pt.
 
@@ -910,25 +953,21 @@ File: images/editor6b.png Graphic file (type png)
 <use images/editor6b.png>
 Package pdftex.def Info: images/editor6b.png used on input line 65.
 (pdftex.def)             Requested size: 133.24748pt x 163.3599pt.
- [35 <C:/Users/ml26893/Documents/avdta2/AVDTA2/documentation/images/editor6.png
->]
+ [35 <./images/editor6.png>]
 <images/editor6c.png, id=804, 178.41656pt x 147.55125pt>
 File: images/editor6c.png Graphic file (type png)
 
 <use images/editor6c.png>
 Package pdftex.def Info: images/editor6c.png used on input line 91.
 (pdftex.def)             Requested size: 178.4161pt x 147.55087pt.
- [36 <C:/Users/ml26893/Documents/avdta2/AVDTA2/documentation/images/editor6b.pn
-g>]
+ [36 <./images/editor6b.png>]
 <images/editor6d.png, id=809, 129.48375pt x 164.86594pt>
 File: images/editor6d.png Graphic file (type png)
 
 <use images/editor6d.png>
 Package pdftex.def Info: images/editor6d.png used on input line 99.
 (pdftex.def)             Requested size: 129.48341pt x 164.86551pt.
- [37 <C:/Users/ml26893/Documents/avdta2/AVDTA2/documentation/images/editor6c.pn
-g> <C:/Users/ml26893/Documents/avdta2/AVDTA2/documentation/images/editor6d.png>
-]
+ [37 <./images/editor6c.png> <./images/editor6d.png>]
 <images/editor7.png, id=815, 147.55125pt x 93.34875pt>
 File: images/editor7.png Graphic file (type png)
 
@@ -954,8 +993,7 @@ Overfull \hbox (20.32472pt too wide) in paragraph at lines 135--136
  [] 
  []
 
-[38 <C:/Users/ml26893/Documents/avdta2/AVDTA2/documentation/images/editor7.png>
- <C:/Users/ml26893/Documents/avdta2/AVDTA2/documentation/images/editor7b.png>]
+[38 <./images/editor7.png> <./images/editor7b.png>]
 <images/editor8.png, id=822, 158.84344pt x 108.405pt>
 File: images/editor8.png Graphic file (type png)
  <use images/editor8.png>
@@ -968,20 +1006,16 @@ File: images/editor8b.png Graphic file (type png)
 <use images/editor8b.png>
 Package pdftex.def Info: images/editor8b.png used on input line 150.
 (pdftex.def)             Requested size: 277.78711pt x 350.80975pt.
- [39 <C:/Users/ml26893/Documents/avdta2/AVDTA2/documentation/images/editor7c.pn
-g> <C:/Users/ml26893/Documents/avdta2/AVDTA2/documentation/images/editor8.png>]
-) [40 <C:/Users/ml26893/Documents/avdta2/AVDTA2/documentation/images/editor8b.p
-ng>] [41
+ [39 <./images/editor7c.png> <./images/editor8.png>])
+[40 <./images/editor8b.png>] [41
 
-]
-(C:\Users\ml26893\Documents\avdta2\AVDTA2\documentation\api.tex
+] (api.tex
 Chapter 8.
 LaTeX Font Info:    Font shape `OT1/pcr/bx/n' in size <24.88> not available
 (Font)              Font shape `OT1/pcr/b/n' tried instead on input line 1.
 [42
 
-] (C:\Users\ml26893\Documents\avdta2\AVDTA2\documentation\api_project.tex
-[43]
+] (api_project.tex [43]
 Chapter 9.
 LaTeX Font Info:    Font shape `OT1/pcr/m/it' in size <12> not available
 (Font)              Font shape `OT1/pcr/m/sl' tried instead on input line 15.
@@ -1005,8 +1039,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 80--81
 []\OT1/pcr/m/n/12 DTAProject project =
  []
 
-) (C:\Users\ml26893\Documents\avdta2\AVDTA2\documentation\api_network.tex
-[46]
+) (api_network.tex [46]
 Chapter 10.
 [47
 
@@ -1040,19 +1073,16 @@ Underfull \hbox (badness 10000) in paragraph at lines 211--212
 
 LaTeX Font Info:    Try loading font information for OMS+pcr on input line 214.
 
-("C:\Program Files\MiKTeX 2.9\tex\latex\psnfss\omspcr.fd"
+("C:\Users\mlevin\AppData\Local\Programs\MiKTeX 2.9\tex\latex\psnfss\omspcr.fd"
 File: omspcr.fd 
 )
 LaTeX Font Info:    Font shape `OMS/pcr/m/n' in size <12> not available
 (Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 214.
-)
-(C:\Users\ml26893\Documents\avdta2\AVDTA2\documentation\api_vehicle.tex
-[54]
+) (api_vehicle.tex [54]
 Chapter 11.
 [55
 
-]) (C:\Users\ml26893\Documents\avdta2\AVDTA2\documentation\api_dta.tex
-[56]
+]) (api_dta.tex [56]
 Chapter 12.
 
 Underfull \hbox (badness 10000) in paragraph at lines 9--10
@@ -1061,8 +1091,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 9--10
 
 ) [57
 
-] (C:\Users\ml26893\Documents\avdta2\AVDTA2\documentation\api_gui.tex
-[58]
+] (api_gui.tex [58]
 Chapter 13.
 [59
 
@@ -1085,8 +1114,7 @@ an send up-dates to a cor-re-spond-ing \OT1/pcr/m/n/12 StatusBar\OT1/cmr/m/n/12
  .
  []
 
-) (C:\Users\ml26893\Documents\avdta2\AVDTA2\documentation\tutorials.tex
-[64]
+) (tutorials.tex [64]
 Chapter 14.
 
 Underfull \hbox (badness 10000) in paragraph at lines 8--9
@@ -1175,19 +1203,17 @@ Underfull \hbox (badness 10000) in paragraph at lines 53--54
 )) [66] [67
 
 
-]
-(C:\Users\ml26893\Documents\avdta2\AVDTA2\documentation\glossary.tex
+] (glossary.tex
 Appendix A.
-) (C:\Users\ml26893\Documents\avdta2\AVDTA2\documentation\AVDTA.bbl [68
+) (AVDTA.bbl [68
 
-]
-[69
+] [69
 
 ])
 Package atveryend Info: Empty hook `BeforeClearDocument' on input line 129.
  [70]
 Package atveryend Info: Empty hook `AfterLastShipout' on input line 129.
- (C:\Users\ml26893\Documents\avdta2\AVDTA2\documentation\AVDTA.aux)
+ (AVDTA.aux)
 Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 129.
 Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 129.
 Package rerunfilecheck Info: File `AVDTA.out' has not changed.
@@ -1199,30 +1225,34 @@ LaTeX Warning: There were undefined references.
 Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 129.
  ) 
 Here is how much of TeX's memory you used:
- 10151 strings out of 493921
- 152840 string characters out of 3147276
- 230097 words of memory out of 3000000
- 12977 multiletter control sequences out of 15000+200000
+ 10310 strings out of 493323
+ 156915 string characters out of 3129581
+ 240401 words of memory out of 3000000
+ 13369 multiletter control sequences out of 15000+200000
  17186 words of font info for 65 fonts, out of 3000000 for 9000
- 841 hyphenation exceptions out of 8191
- 36i,7n,40p,1427b,442s stack positions out of 5000i,500n,10000p,200000b,50000s
-{C:/Program Files/MiKTeX 2.9/fonts/enc/dvips/fontname/8r.enc}{C:/Program File
-s/MiKTeX 2.9/fonts/enc/dvips/cm-super/cm-super-ts1.enc}<C:/Program Files/MiKTeX
- 2.9/fonts/type1/public/amsfonts/cm/cmbx12.pfb><C:/Program Files/MiKTeX 2.9/fon
-ts/type1/public/amsfonts/cm/cmcsc10.pfb><C:/Program Files/MiKTeX 2.9/fonts/type
-1/public/amsfonts/cm/cmmi12.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public
-/amsfonts/cm/cmmi8.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts
-/cm/cmr10.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr12
-.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr17.pfb><C:/
-Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr8.pfb><C:/Program Fi
-les/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmsy10.pfb><C:/Program Files/MiKT
-eX 2.9/fonts/type1/public/amsfonts/cm/cmti12.pfb><C:/Program Files/MiKTeX 2.9/f
-onts/type1/public/cm-super/sfrm1200.pfb><C:/Program Files/MiKTeX 2.9/fonts/type
-1/urw/courier/ucrb8a.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/urw/courier/u
-crr8a.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/urw/courier/ucrro8a.pfb>
-Output written on AVDTA.pdf (76 pages, 2793498 bytes).
+ 1141 hyphenation exceptions out of 8191
+ 36i,7n,40p,1429b,442s stack positions out of 5000i,500n,10000p,200000b,50000s
+{C:/Users/mlevin/AppData/Local/Programs/MiKTeX 2.9/fonts/enc/dvips/base/8r.en
+c} <C:\Users\mlevin\AppData\Local\MiKTeX\2.9\fonts\pk\ljfour\jknappen\ec\dpi600
+\tcrm1200.pk><C:/Users/mlevin/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/pub
+lic/amsfonts/cm/cmbx12.pfb><C:/Users/mlevin/AppData/Local/Programs/MiKTeX 2.9/f
+onts/type1/public/amsfonts/cm/cmcsc10.pfb><C:/Users/mlevin/AppData/Local/Progra
+ms/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmmi12.pfb><C:/Users/mlevin/AppDat
+a/Local/Programs/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmmi8.pfb><C:/Users/
+mlevin/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr10.p
+fb><C:/Users/mlevin/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/public/amsfon
+ts/cm/cmr12.pfb><C:/Users/mlevin/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/
+public/amsfonts/cm/cmr17.pfb><C:/Users/mlevin/AppData/Local/Programs/MiKTeX 2.9
+/fonts/type1/public/amsfonts/cm/cmr8.pfb><C:/Users/mlevin/AppData/Local/Program
+s/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmsy10.pfb><C:/Users/mlevin/AppData
+/Local/Programs/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmti12.pfb><C:/Users/
+mlevin/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/urw/courier/ucrb8a.pfb><C:
+/Users/mlevin/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/urw/courier/ucrr8a.
+pfb><C:/Users/mlevin/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/urw/courier/
+ucrro8a.pfb>
+Output written on AVDTA.pdf (76 pages, 2787732 bytes).
 PDF statistics:
- 1104 PDF objects out of 1200 (max. 8388607)
+ 1105 PDF objects out of 1200 (max. 8388607)
  208 named destinations out of 1000 (max. 500000)
  1048 words of extra memory for PDF output out of 10000 (max. 10000000)
 
