@@ -9,6 +9,7 @@ import avdta.network.Simulator;
 import avdta.network.link.Link;
 import avdta.network.node.TBR;
 import avdta.network.node.obj.ObjFunction;
+import avdta.network.type.Type;
 import avdta.vehicle.Vehicle;
 import java.util.List;
 import java.util.Map;
@@ -72,9 +73,9 @@ public class IPTBR extends TBR
      * Returns the type code of {@link IPTBR}
      * @return an int specifying the type code of {@link IPTBR}
      */
-    public int getType()
+    public Type getType()
     {
-        return objfunc.getType() + ReadNetwork.IP;
+        return objfunc.getType();
     }
     
     /**

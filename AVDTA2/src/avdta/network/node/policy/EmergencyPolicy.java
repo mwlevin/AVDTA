@@ -4,9 +4,11 @@
  */
 package avdta.network.node.policy;
 
+import avdta.network.ReadNetwork;
 import avdta.network.Simulator;
 import avdta.network.link.Link;
 import avdta.network.node.TBR;
+import avdta.network.type.Type;
 import avdta.vehicle.EmergencyVehicle;
 import avdta.vehicle.Vehicle;
 import avdta.vehicle.route.FixedPath;
@@ -73,5 +75,10 @@ public class EmergencyPolicy extends FCFSPolicy
             v.reservation_time = Integer.MAX_VALUE;
         }
         
+    }
+    
+    public Type getType()
+    {
+        return ReadNetwork.EMERGENCY_FIRST;
     }
 }

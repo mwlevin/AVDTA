@@ -13,6 +13,7 @@ import java.util.List;
 import avdta.network.node.Node;
 import avdta.network.node.Zone;
 import avdta.network.node.Intersection;
+import avdta.network.type.Type;
 
 /**
  * This represents a centroid connector, which connects a {@link Intersection} to a {@link Zone} or vice versa.
@@ -215,7 +216,7 @@ public class CentroidConnector extends Link
      * Returns the type code of this link
      * @return {@link ReadNetwork#CENTROID}
      */
-    public int getType()
+    public Type getType()
     {
         return ReadNetwork.CENTROID;
     }

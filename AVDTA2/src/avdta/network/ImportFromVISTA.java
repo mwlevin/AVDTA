@@ -210,22 +210,12 @@ public class ImportFromVISTA
             
             if(type == 100)
             {
-                if(vista_centroids.contains(source_id))
-                {
-                    type = ReadNetwork.CENTROID+1;
-                }
-                else if(vista_centroids.contains(dest_id))
-                {
-                    type = ReadNetwork.CENTROID+2;
-                }
-                else
-                {
-                     type = ReadNetwork.CENTROID;
-                }
+                type = ReadNetwork.CENTROID.getCode();
+
             }
             else
             {
-                type = ReadNetwork.CTM;
+                type = ReadNetwork.CTM.getCode();
             }
             
             fileout.println(id+"\t"+type+"\t"+source_id+"\t"+dest_id+"\t"+length+"\t"+ffspd+"\t"+wavespd+"\t"+capacity+"\t"+numLanes);

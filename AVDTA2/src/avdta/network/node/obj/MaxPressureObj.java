@@ -45,10 +45,18 @@ public class MaxPressureObj
         Link i = vehicle.getPrevLink();
         Link j = vehicle.getNextLink();
 
+        double w_ij = i.pressure_terms.get(j).x;
+        
+        for(Link k : j.pressure_terms.keySet())
+        {
+            PressureTerm temp = j.pressure_terms.get(k);
+            
+            w_ij -= temp.x * temp.p;
+        }
         
         double m_ij = Math.min(i.getCapacity(), j.getCapacity());
         
-        return (m_ij * (i.pressure - j.pressure));
+        return (m_ij * w_ij);
     }
     
     
@@ -70,15 +78,32 @@ public class MaxPressureObj
     }
     
     
-    public Map<Link, Integer> calculatePressure(Link i)
+    public Map<Link, PressureTerm> calculatePressure(Link i)
     {
-        Map<Link, Integer> output = new HashMap<>();
+        Map<Link, PressureTerm> output = new HashMap<>();
         
-        for(Link j : i.getDest().getOutgoing())
+        int total_x = 0;
+        
+        for(Vehicle v : i.getVehicles())
         {
-            int x = 0;
+            Link j = v.getNextLink();
             
+            if(output.containsKey(j))
+            {
+                output.get(j).x ++;
+            }
+            else
+            {
+                output.put(j, new PressureTerm(1, 0));
+            }
             
+            total_x++;
+        }
+        
+        for(Link j : output.keySet())
+        {
+            PressureTerm term = output.get(j);
+            term.p = (double)term.x / total_x;
         }
         
         return output;

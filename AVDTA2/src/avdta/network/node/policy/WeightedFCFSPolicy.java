@@ -7,6 +7,7 @@ package avdta.network.node.policy;
 import avdta.network.ReadNetwork;
 import avdta.vehicle.Vehicle;
 import avdta.network.link.Link;
+import avdta.network.type.Type;
 
 /**
  * This is a modified FCFS policy ({@link WeightedFCFSPolicy}) in which intersection delay is weighted by the requested turning movement.
@@ -64,7 +65,7 @@ public class WeightedFCFSPolicy extends FCFSPolicy
      * Returns the type code associated with this policy
      * @return {@link ReadNetwork#WEIGHTED}
      */
-    public int getType()
+    public Type getType()
     {
         return ReadNetwork.WEIGHTED;
     }

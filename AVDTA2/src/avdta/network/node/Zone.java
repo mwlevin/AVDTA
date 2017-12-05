@@ -7,6 +7,7 @@ package avdta.network.node;
 import avdta.network.ReadNetwork;
 import avdta.network.link.CentroidConnector;
 import avdta.network.link.Link;
+import avdta.network.type.Type;
 import avdta.vehicle.Vehicle;
 import avdta.vehicle.PersonalVehicle;
 import avdta.vehicle.DriverType;
@@ -215,7 +216,7 @@ public class Zone extends Node
      * Returns the type code of {@link Zone}.
      * @return {@link ReadNetwork#CENTROID}
      */
-    public int getType()
+    public Type getType()
     {
         return ReadNetwork.CENTROID;
     }

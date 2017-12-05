@@ -9,6 +9,7 @@ import avdta.vehicle.DriverType;
 import avdta.network.link.Link;
 import avdta.vehicle.Vehicle;
 import avdta.network.node.PhaseMovement;
+import avdta.network.type.Type;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,7 +40,7 @@ public class Diverge extends IntersectionControl
      * Returns the type code of {@link TrafficSignal}. Intersections with only 1 incoming link are automatically classified as {@link Diverge}.
      * @return {@link ReadNetwork#SIGNAL}
      */
-    public int getType()
+    public Type getType()
     {
         return ReadNetwork.DIVERGE;
     }

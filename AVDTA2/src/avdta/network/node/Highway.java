@@ -9,6 +9,7 @@ import avdta.network.ReadNetwork;
 import avdta.network.link.Link;
 import avdta.network.node.policy.FIFOPolicy;
 import avdta.network.node.policy.IntersectionPolicy;
+import avdta.network.type.Type;
 import avdta.vehicle.DriverType;
 import avdta.vehicle.Vehicle;
 import java.util.HashMap;
@@ -43,7 +44,7 @@ public class Highway extends IntersectionControl
         return false;
     }
     
-    public int getType()
+    public Type getType()
     {
         return ReadNetwork.HIGHWAY;
     }

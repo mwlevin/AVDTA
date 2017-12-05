@@ -6,6 +6,7 @@ package avdta.network.node;
 
 import avdta.network.ReadNetwork;
 import avdta.network.link.Link;
+import avdta.network.type.Type;
 import avdta.vehicle.DriverType;
 import avdta.vehicle.Vehicle;
 import java.util.List;
@@ -16,7 +17,7 @@ import java.util.List;
  */
 public class Connector extends IntersectionControl
 {
-    public int getType()
+    public Type getType()
     {
         return ReadNetwork.CONNECTOR;
     }

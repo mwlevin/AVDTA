@@ -4,9 +4,11 @@
  */
 package avdta.network.node.policy;
 
+import avdta.network.ReadNetwork;
 import avdta.vehicle.Vehicle;
 import java.util.List;
 import avdta.network.node.Node;
+import avdta.network.type.Type;
 
 /**
  *
@@ -31,6 +33,11 @@ public class RandomPolicy extends AuctionPolicy
      */
     public void onAccept(Vehicle v)
     {
+    }
+    
+    public Type getType()
+    {
+        return ReadNetwork.RANDOM;
     }
 
 }

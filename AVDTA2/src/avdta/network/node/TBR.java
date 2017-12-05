@@ -8,6 +8,7 @@ import avdta.vehicle.DriverType;
 import avdta.network.link.Link;
 import avdta.vehicle.Vehicle;
 import avdta.network.node.TurningMovement;
+import avdta.network.type.Type;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -205,5 +206,5 @@ public abstract class TBR extends IntersectionControl
      * Returns the type code representing this intersection control.
      * @return depends on the subclass
      */
-    public abstract int getType();
+    public abstract Type getType();
 }

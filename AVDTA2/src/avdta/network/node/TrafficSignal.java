@@ -11,6 +11,7 @@ import avdta.network.ReadNetwork;
 import avdta.network.Simulator;
 import avdta.network.link.LTMLink;
 import avdta.network.link.TransitLane;
+import avdta.network.type.Type;
 import avdta.vehicle.Vehicle;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -80,7 +81,7 @@ public class TrafficSignal extends IntersectionControl implements Signalized
         return phases.size();
     }
     
-    public int getType()
+    public Type getType()
     {
         return ReadNetwork.SIGNAL;
     }

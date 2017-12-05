@@ -10,6 +10,7 @@ import avdta.network.node.Intersection;
 import avdta.network.node.Zone;
 import avdta.network.link.transit.TransitLink;
 import avdta.network.link.Link;
+import avdta.network.type.Type;
 import avdta.vehicle.DriverType;
 import java.awt.AlphaComposite;
 import java.awt.Color;
@@ -261,7 +262,7 @@ public abstract class Node extends Location implements Serializable, Comparable<
      */
     public NodeRecord createNodeRecord()
     {
-        return new NodeRecord(getId(), getType(), getX(), getY(), getElevation());
+        return new NodeRecord(getId(), getType().getCode(), getX(), getY(), getElevation());
     }
     
     
@@ -336,7 +337,7 @@ public abstract class Node extends Location implements Serializable, Comparable<
         return transitInc;
     }
     
-    public abstract int getType();
+    public abstract Type getType();
     
     /**
      * Returns the set of outgoing {@link TransitLink}s. {@link TransitLink}s are used to move travelers virtually via transit or walking from transit stops to their destination.

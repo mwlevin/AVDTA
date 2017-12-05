@@ -14,6 +14,7 @@ import avdta.network.link.cell.DLREndCell;
 import avdta.network.link.cell.DLRLinkCell;
 import avdta.network.link.cell.DLRStartCell;
 import avdta.network.node.Node;
+import avdta.network.type.Type;
 import avdta.util.RunningAvg;
 
 /**
@@ -58,9 +59,9 @@ public class DLRCTMLink extends CTMLink
      * @param prev the previous cell
      * @return the appropriate type of end cell
      */
-    public Cell createEndCell(DLRCell prev)
+    public Cell createEndCell(Cell prev)
     {
-        return new DLREndCell(prev, this);
+        return new DLREndCell((DLRCell)prev, this);
     }
     
     /**
@@ -77,9 +78,9 @@ public class DLRCTMLink extends CTMLink
      * @param prev the previous cell
      * @return the appropriate type of link cell
      */
-    public Cell createCell(DLRCell prev)
+    public Cell createCell(Cell prev)
     {
-        return new DLRLinkCell(prev, this);
+        return new DLRLinkCell((DLRCell)prev, this);
     }
     
     /**
@@ -460,8 +461,8 @@ public class DLRCTMLink extends CTMLink
      * Returns the type code of this link
      * @return {@link ReadNetwork#CTM}+{@link ReadNetwork#DLR}
      */
-    public int getType()
+    public Type getType()
     {
-        return ReadNetwork.CTM + ReadNetwork.DLR;
+        return ReadNetwork.DLR;
     }
 }

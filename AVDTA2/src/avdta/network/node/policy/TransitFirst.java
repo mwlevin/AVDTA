@@ -8,6 +8,7 @@ package avdta.network.node.policy;
 import avdta.network.ReadNetwork;
 import avdta.network.node.Node;
 import avdta.network.node.TBR;
+import avdta.network.type.Type;
 import avdta.vehicle.Vehicle;
 
 /**
@@ -84,8 +85,8 @@ public class TransitFirst extends IntersectionPolicy
      * Returns the type code associated with this policy
      * @return {@link ReadNetwork#TRANSIT_FIRST}+ the type of the default policy
      */
-    public int getType()
+    public Type getType()
     {
-        return ReadNetwork.TRANSIT_FIRST + defaultPolicy.getType();
+        return ReadNetwork.TRANSIT_FIRST;
     }
 }

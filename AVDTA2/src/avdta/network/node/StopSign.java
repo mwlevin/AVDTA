@@ -10,6 +10,7 @@ import avdta.network.ReadNetwork;
 import avdta.vehicle.DriverType;
 import avdta.network.link.Link;
 import avdta.network.Simulator;
+import avdta.network.type.Type;
 import avdta.vehicle.Vehicle;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -91,7 +92,7 @@ public class StopSign extends IntersectionControl
      * Returns the type code for {@link StopSign}
      * @return {@link ReadNetwork#STOPSIGN}
      */
-    public int getType()
+    public Type getType()
     {
         return ReadNetwork.STOPSIGN;
     }

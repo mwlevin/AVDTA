@@ -11,6 +11,7 @@ import avdta.network.node.TBR;
 import avdta.network.node.TBR;
 import avdta.network.node.obj.P0Obj;
 import avdta.network.node.policy.RandomPolicy;
+import avdta.network.type.Type;
 import java.util.Comparator;
 import java.util.Collection;
 import java.util.List;
@@ -85,5 +86,5 @@ public abstract class IntersectionPolicy implements Comparator<Vehicle>
      * Returns the type code associated with this policy
      * @return depends on subclass
      */
-    public abstract int getType();
+    public abstract Type getType();
 }

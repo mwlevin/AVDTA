@@ -10,6 +10,7 @@ import avdta.network.node.Node;
 import avdta.vehicle.Vehicle;
 import avdta.network.node.TBR;
 import avdta.network.node.TBR;
+import avdta.network.type.Type;
 
 @Deprecated
 /**
@@ -53,7 +54,7 @@ public class MaxFlowObj implements ObjFunction
         * */
     }
     
-    public int getType()
+    public Type getType()
     {
         return ReadNetwork.Q2;
     }

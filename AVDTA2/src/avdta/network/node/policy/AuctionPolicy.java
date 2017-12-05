@@ -12,6 +12,7 @@ import java.util.Collection;
 import java.util.List;
 import avdta.network.ReadNetwork;
 import avdta.network.node.Node;
+import avdta.network.type.Type;
 
 /**
  * This is an auction policy for reservations. 
@@ -68,7 +69,7 @@ public class AuctionPolicy extends IntersectionPolicy
      * Returns the type code associated with this policy
      * @return {@link ReadNetwork#AUCTION}
      */
-    public int getType()
+    public Type getType()
     {
         return ReadNetwork.AUCTION;
     }

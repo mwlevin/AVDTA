@@ -9,6 +9,7 @@ import avdta.network.node.Node;
 import avdta.vehicle.Vehicle;
 import avdta.network.node.TBR;
 import avdta.network.node.TBR;
+import avdta.network.type.Type;
 
 /**
  * This objective function weights vehicles by their value-of-time.
@@ -47,7 +48,7 @@ public class VOTObj implements ObjFunction
      * Returns the type code associated with the {@link VOTObj}
      * @return {@link ReadNetwork#VOT}
      */
-    public int getType()
+    public Type getType()
     {
         return ReadNetwork.VOT;
     }

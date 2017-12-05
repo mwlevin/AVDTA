@@ -14,6 +14,7 @@ import avdta.network.node.Node;
 import avdta.vehicle.Vehicle;
 import avdta.network.node.TBR;
 import avdta.network.node.TBR;
+import avdta.network.type.Type;
 import java.util.List;
 
 /**
@@ -224,7 +225,7 @@ public class BackPressureObj implements ObjFunction
      * Returns the type code associated with the {@link BackPressureObj}
      * @return {@link ReadNetwork#PRESSURE}
      */
-    public int getType()
+    public Type getType()
     {
         return ReadNetwork.PRESSURE;
     }

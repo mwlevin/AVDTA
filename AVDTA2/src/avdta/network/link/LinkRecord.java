@@ -7,6 +7,7 @@ package avdta.network.link;
 import avdta.network.ReadNetwork;
 import java.util.Scanner;
 import avdta.network.node.Node;
+import avdta.network.type.Type;
 
 
 /**
@@ -106,7 +107,7 @@ public class LinkRecord
      */
     public boolean isCentroidConnector()
     {
-        return type/100 == ReadNetwork.CENTROID/100;
+        return type/100 == ReadNetwork.CENTROID.getCode()/100;
     }
     
     /**
@@ -215,6 +216,11 @@ public class LinkRecord
     public void setType(int type)
     {
         this.type = type;
+    }
+    
+    public void setType(Type type)
+    {
+        this.type = type.getCode();
     }
     
     /**

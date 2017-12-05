@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import avdta.network.node.Node;
+import avdta.network.type.Type;
 import avdta.vehicle.Vehicle;
 
 /**
@@ -148,8 +149,8 @@ public class SignalWeightedTBR extends PriorityTBR implements Signalized, DelayW
      * Returns the type code associated with this policy
      * @return {@link ReadNetwork#RESERVATION}+{@link ReadNetwork#WEIGHTED}
      */
-    public int getType()
+    public Type getType()
     {
-        return ReadNetwork.RESERVATION + ReadNetwork.WEIGHTED;
+        return ReadNetwork.WEIGHTED;
     }
 }

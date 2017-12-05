@@ -9,6 +9,7 @@ import avdta.vehicle.DriverType;
 import avdta.network.link.Link;
 import avdta.vehicle.Vehicle;
 import avdta.network.node.PhaseMovement;
+import avdta.network.type.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -44,7 +45,7 @@ public class Merge extends IntersectionControl
      * Returns an int specifying the type code of Signal. Intersections with only 1 outgoing link are automatically classified as {@link Merge}
      * @return {@link ReadNetwork#SIGNAL}
      */
-    public int getType()
+    public Type getType()
     {
         return ReadNetwork.MERGE;
     }

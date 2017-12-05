@@ -12,6 +12,7 @@ import avdta.network.node.ConflictRegion;
 import avdta.network.node.Node;
 import avdta.network.node.TBR;
 import avdta.network.node.TBR;
+import avdta.network.type.Type;
 
 /**
  * Defines efficiency function to prioritize vehicles when using MCKS greedy heuristic.
@@ -118,8 +119,8 @@ public class MCKSPriority extends IntersectionPolicy
      * Returns the type code associated with this policy
      * @return {@link ReadNetwork#MCKS} + the type of the {@link ObjFunction}
      */
-    public int getType()
+    public Type getType()
     {
-        return func.getType() + ReadNetwork.MCKS;
+        return func.getType();
     }
 }

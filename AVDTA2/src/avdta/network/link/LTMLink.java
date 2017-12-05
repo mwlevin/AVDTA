@@ -14,6 +14,7 @@ import avdta.network.link.Link;
 import avdta.network.node.Highway;
 import avdta.network.node.Intersection;
 import avdta.network.node.IntersectionControl;
+import avdta.network.type.Type;
 import avdta.vehicle.Vehicle;
 import avdta.vehicle.VehTime;
 import java.util.ArrayList;
@@ -121,7 +122,7 @@ public class LTMLink extends Link
      * Returns the type code of this link
      * @return {@link ReadNetwork#LTM}
      */
-    public int getType()
+    public Type getType()
     {
         return ReadNetwork.LTM;
     }

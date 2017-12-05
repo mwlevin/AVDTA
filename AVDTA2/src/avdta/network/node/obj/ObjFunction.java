@@ -9,6 +9,7 @@ import avdta.network.node.Node;
 import avdta.vehicle.Vehicle;
 import avdta.network.node.TBR;
 import avdta.network.node.TBR;
+import avdta.network.type.Type;
 
 /**
  * Objective function for IP for conflict region model
@@ -42,5 +43,5 @@ public interface ObjFunction
      * Returns the type code associated with this objective.
      * @return depends on subclass
      */
-    public int getType();
+    public Type getType();
 }

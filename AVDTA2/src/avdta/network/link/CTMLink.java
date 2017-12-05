@@ -13,6 +13,7 @@ import avdta.network.ReadNetwork;
 import avdta.util.RunningAvg;
 import avdta.network.Simulator;
 import avdta.network.node.Node;
+import avdta.network.type.Type;
 import avdta.vehicle.Vehicle;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -172,7 +173,7 @@ public class CTMLink extends Link
      * Returns the type code for this link
      * @return {@link ReadNetwork#CTM}
      */
-    public int getType()
+    public Type getType()
     {
         return ReadNetwork.CTM;
     }

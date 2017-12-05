@@ -49,7 +49,7 @@ public class TBRGA extends GeneticAlgorithm<TBRIndividual>
         this.max_tbrs = max_tbrs;
         this.checkHV = checkHV;
         
-        type =  ReadNetwork.RESERVATION + ReadNetwork.MCKS + ReadNetwork.PRESSURE;
+        type =  ReadNetwork.PRESSURE.getCode();
         
         if(checkHV)
         {
@@ -85,7 +85,7 @@ public class TBRGA extends GeneticAlgorithm<TBRIndividual>
             
             for(int i = 0; i < controls.length; i++)
             {
-                controls[i] = ReadNetwork.SIGNAL;
+                controls[i] = ReadNetwork.SIGNAL.getCode();
             }
             
             for(int i = 0; i < max_tbrs; i++)
@@ -123,7 +123,7 @@ public class TBRGA extends GeneticAlgorithm<TBRIndividual>
         
         for(int i : org.getControls())
         {
-            if(i % 100 == ReadNetwork.RESERVATION)
+            if(i % 100 == ReadNetwork.RESERVATION.getCode())
             {
                 tbrs++;
             }

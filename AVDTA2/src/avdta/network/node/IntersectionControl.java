@@ -6,6 +6,7 @@ package avdta.network.node;
 
 import avdta.vehicle.DriverType;
 import avdta.network.link.Link;
+import avdta.network.type.Type;
 import avdta.vehicle.Vehicle;
 
 /**
@@ -115,7 +116,7 @@ public abstract class IntersectionControl
      * 
      * @return an int specifying the type code for this {@link IntersectionControl}
      */
-    public abstract int getType();
+    public abstract Type getType();
     
     /**
      * Returns a {@link Signalized} for this intersection, if one exists, to add signal data

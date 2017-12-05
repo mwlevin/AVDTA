@@ -14,6 +14,8 @@ import avdta.network.Simulator;
 import avdta.network.node.Intersection;
 import avdta.network.node.Location;
 import avdta.network.node.TBR;
+import avdta.network.node.obj.PressureTerm;
+import avdta.network.type.Type;
 import avdta.vehicle.DriverType;
 import avdta.vehicle.fuel.ICV;
 import java.awt.Color;
@@ -77,7 +79,7 @@ public abstract class Link implements Serializable, Comparable<Link>
     public int tempLanesBlocked;
     
     public double pressure;
-    public Map<Link, Integer> pressure_terms;
+    public Map<Link, PressureTerm> pressure_terms;
     
     
     public int lastLinkCheck; 
@@ -262,7 +264,7 @@ public abstract class Link implements Serializable, Comparable<Link>
      */
     public LinkRecord createLinkRecord()
     {
-        return new LinkRecord(getId(), getType(), getSource().getId(), getDest().getId(), getLength(), getFFSpeed(), getWaveSpeed(), 
+        return new LinkRecord(getId(), getType().getCode(), getSource().getId(), getDest().getId(), getLength(), getFFSpeed(), getWaveSpeed(), 
                 getCapacityPerLane(), getNumLanes());
     }
     
@@ -339,7 +341,7 @@ public abstract class Link implements Serializable, Comparable<Link>
      * 
      * @return an int corresponding to the type of the link
      */
-    public abstract int getType();
+    public abstract Type getType();
    
     /**
      * Returns the effective queue length on this {@link Link}

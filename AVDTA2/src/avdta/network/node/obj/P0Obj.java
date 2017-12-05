@@ -12,6 +12,7 @@ import avdta.network.node.Node;
 import avdta.vehicle.Vehicle;
 import avdta.network.node.TBR;
 import avdta.network.node.TBR;
+import avdta.network.type.Type;
 import java.util.List;
 
 /**
@@ -61,7 +62,7 @@ public class P0Obj implements ObjFunction
      * Returns the type code associated with the {@link P0Obj}
      * @return {@link ReadNetwork#P0}
      */
-    public int getType()
+    public Type getType()
     {
         return ReadNetwork.P0;
     }

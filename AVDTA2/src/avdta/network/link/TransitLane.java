@@ -7,6 +7,7 @@ package avdta.network.link;
 
 import avdta.network.ReadNetwork;
 import avdta.network.node.Node;
+import avdta.network.type.Type;
 import avdta.vehicle.Bus;
 import avdta.vehicle.DriverType;
 import avdta.vehicle.Vehicle;
@@ -47,9 +48,9 @@ public class TransitLane extends CTMLink
      * Returns the type code of this link
      * @return {@link ReadNetwork#CTM}+{@link ReadNetwork#TRANSIT_LANE}
      */
-    public int getType()
+    public Type getType()
     {
-        return ReadNetwork.CTM + ReadNetwork.TRANSIT_LANE;
+        return ReadNetwork.TRANSIT_LANE;
     }
     
     /**

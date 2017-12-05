@@ -12,6 +12,7 @@ import avdta.network.link.cell.SharedTransitEndCell;
 import avdta.network.link.cell.SharedTransitLinkCell;
 import avdta.network.link.cell.SharedTransitStartCell;
 import avdta.network.node.Node;
+import avdta.network.type.Type;
 
 /**
  * This is a {@link CTMLink} with a dynamic transit lane, which adds lanes to cells when transit is not present.
@@ -56,9 +57,9 @@ public class SharedTransitCTMLink extends CTMLink implements AbstractSplitLink
      * Returns the type code for this link
      * @return {@link ReadNetwork#CTM}+{@link ReadNetwork#SHARED_TRANSIT}
      */
-    public int getType()
+    public Type getType()
     {
-        return ReadNetwork.CTM + ReadNetwork.SHARED_TRANSIT;
+        return ReadNetwork.SHARED_TRANSIT;
     }
     
     /**
@@ -132,7 +133,7 @@ public class SharedTransitCTMLink extends CTMLink implements AbstractSplitLink
      */
     public LinkRecord createLinkRecord()
     {
-        return new LinkRecord(getId(), getType(), getSource().getId(), getDest().getId(), getLength(), getFFSpeed(), getWaveSpeed(), 
+        return new LinkRecord(getId(), getType().getCode(), getSource().getId(), getDest().getId(), getLength(), getFFSpeed(), getWaveSpeed(), 
                 getCapacityPerLane(), getNumLanes()+1);
     }
     

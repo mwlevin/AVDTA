@@ -50,6 +50,8 @@ import avdta.network.node.PhasedTBR;
 import avdta.network.node.SignalRecord;
 import avdta.network.node.TurnRecord;
 import avdta.network.node.policy.TransitFirst;
+import avdta.network.type.ExtendedType;
+import avdta.network.type.Type;
 import avdta.project.Project;
 import avdta.project.TransitProject;
 import avdta.vehicle.Bus;
@@ -78,53 +80,80 @@ import java.util.TreeSet;
  */
 public class ReadNetwork 
 {
-    public static final int LTM = 200;
-    public static final int CTM = 100;
-    public static final int DLR = 2;
-    public static final int SHARED_TRANSIT = 3;
-    public static final int SPLIT_TRANSIT = 4;
+    public static final Type LTM = new Type(200, "LTM");
+    public static final Type CTM = new Type(100, "CTM");
+    public static final ExtendedType DLR = new ExtendedType(2, "DLR", CTM);
+    public static final ExtendedType SHARED_TRANSIT = new ExtendedType(3, "Shared-transit", CTM)
+    {
+        public boolean isValid(LinkRecord link)
+        {
+            return link.getNumLanes() > 1;
+        }
+    };
+    public static final ExtendedType SPLIT_TRANSIT = new ExtendedType(4, "Split-transit", CTM)
+    {
+        public boolean isValid(LinkRecord link)
+        {
+            return link.getNumLanes() > 1;
+        }
+    };
     
-    public static final int CACC = 5;
+    public static final ExtendedType CACC = new ExtendedType(5, "CACC", LTM);
     
-    public static final int TRANSIT_LANE = 10;
-    public static final int CENTROID = 1000;
+    public static final ExtendedType TRANSIT_LANE = new ExtendedType(10, "Transit lane", CTM);
+    public static final Type CENTROID = new Type(1000, "Centroid");
     
+    // arrays of all types for searching purposes
+    public static final Type[] LINK_TYPES = new Type[]{LTM, CTM, CENTROID};
+    public static final ExtendedType[] LINK_EXT_TYPES = new ExtendedType[]{DLR, SHARED_TRANSIT, SPLIT_TRANSIT, CACC, TRANSIT_LANE};
+    
+    // these are the options that will show up in the GUI.
+    public static final Type[] LINK_OPTIONS = new Type[]{LTM, CTM}; 
+    public static final ExtendedType[] LINK_EXT_OPTIONS = new ExtendedType[]{DLR, SHARED_TRANSIT, SPLIT_TRANSIT, CACC};
     
     //public static final int CENTROID = 100;
-    public static final int SIGNAL = 100;
-    public static final int DIVERGE = 110;
-    public static final int MERGE = 120;
-    public static final int CONNECTOR = 130;
-    public static final int STOPSIGN = 190;
+    public static final Type SIGNAL = new Type(100, "Signal");
+    public static final Type DIVERGE = new Type(500, "Diverge");
+    public static final Type MERGE = new Type(600, "Merge");
+    public static final Type CONNECTOR = new Type(700, "Connector");
+    public static final Type STOPSIGN = new Type(800, "Stop sign");
     
     
-    public static final int RESERVATION = 300;
-    public static final int HIGHWAY = 400;
+    public static final Type RESERVATION = new Type(300, "AIM");
+    public static final Type HIGHWAY = new Type(400, "Highway");
     
     // reservation policies
-    public static final int FCFS = 1;
-    public static final int EMERGENCY_FIRST = 61;
-    public static final int EMERGENCY_FIRST_LIMITED = 62;
-    public static final int FIFO = 4;
-    public static final int AUCTION = 8;
-    public static final int RANDOM = 9;
+    public static final ExtendedType FCFS = new ExtendedType(1, "FCFS", RESERVATION);
+    public static final ExtendedType EMERGENCY_FIRST = new ExtendedType(61, "Emergency-first", RESERVATION);
+    public static final ExtendedType EMERGENCY_FIRST_LIMITED = new ExtendedType(62, "Emergency-first ltd", RESERVATION);
+    public static final ExtendedType FIFO = new ExtendedType(4, "FIFO", RESERVATION);
+    public static final ExtendedType AUCTION = new ExtendedType(8, "Auction", RESERVATION);
+    public static final ExtendedType RANDOM = new ExtendedType(9, "Random", RESERVATION);
     
-    public static final int IP = 50;
-    public static final int MCKS = 30;
-    public static final int VOT = 1;
-    public static final int Q2 = 4;
-    public static final int DE4 = 5;
-    public static final int PRESSURE = 2;
-    public static final int P0 = 3;
-    public static final int TRANSIT_FIRST = 40;
+    public static final ExtendedType IP = new ExtendedType(50, "IP", RESERVATION);
+    public static final ExtendedType MCKS = new ExtendedType(30, "MCKS", RESERVATION);
+    public static final ExtendedType VOT = new ExtendedType(1, "VOT", MCKS);
+    public static final ExtendedType Q2 = new ExtendedType(4, "Q2", MCKS);
+    public static final ExtendedType DE4 = new ExtendedType(5, "DE4", MCKS);
+    public static final ExtendedType PRESSURE = new ExtendedType(2, "Backpressure", MCKS);
+    public static final ExtendedType P0 = new ExtendedType(3, "P0", MCKS);
+    public static final ExtendedType MAX_PRESSURE = new ExtendedType(6, "Max-pressure", MCKS);
+    public static final ExtendedType TRANSIT_FIRST = new ExtendedType(41, "Transit-first", RESERVATION);
     
+    // arrays of all types for searching purposes
+    public static final Type[] NODE_TYPES = new Type[]{SIGNAL, RESERVATION, HIGHWAY, DIVERGE, MERGE, CONNECTOR};
+    public static final Type[] NODE_EXT_TYPES = new Type[]{FCFS, EMERGENCY_FIRST,
+        EMERGENCY_FIRST_LIMITED, FIFO, AUCTION, RANDOM, VOT, Q2, DE4, PRESSURE, P0, MAX_PRESSURE, TRANSIT_FIRST};
     
+    // these are the options that will show up in the GUI.
+    public static final Type[] NODE_OPTIONS = new Type[]{SIGNAL, RESERVATION, STOPSIGN}; 
+    public static final Type[] NODE_EXT_OPTIONS = new Type[]{FCFS, EMERGENCY_FIRST,
+        EMERGENCY_FIRST_LIMITED, FIFO, AUCTION, VOT, Q2, DE4, PRESSURE, P0, MAX_PRESSURE, TRANSIT_FIRST};
 
  
-    
-    public static final int SIGNALIZED_RESERVATION = 20;
-    public static final int PHASED = SIGNALIZED_RESERVATION+1;
-    public static final int WEIGHTED = SIGNALIZED_RESERVATION+2;
+
+    public static final ExtendedType PHASED = new ExtendedType(21, "Phased", RESERVATION);
+    public static final ExtendedType WEIGHTED = new ExtendedType(22, "Weighted", RESERVATION);
     
     // travelers
     public static final int HV = 10;
@@ -497,7 +526,7 @@ public class ReadNetwork
                 filein.nextLine();
             }
             
-            if(type/100 == CENTROID/100)
+            if(type/100 == CENTROID.getCode()/100)
             {
                 continue;
             }
@@ -519,89 +548,81 @@ public class ReadNetwork
             BackPressureObj backpressureobj = new BackPressureObj();
             P0Obj p0obj = new P0Obj();
 
-            switch(type/100)
+            if(type/100 == SIGNAL.getCode()/100)
             {
-                case SIGNAL/100:
-
-                    switch(type)
-                    {
-                        case SIGNAL:
-                            node.setControl(new TrafficSignal());
-                            break;
-                        case STOPSIGN:
-                            node.setControl(new StopSign());
-                            break;
-                        case DIVERGE:
-                            node.setControl(new Diverge());
-                            break;
-                        case MERGE:
-                            node.setControl(new Merge());
-                            break;
-                        case CONNECTOR:
-                            node.setControl(new Connector());
-                            break;
-                    }
-                    break;
-                case HIGHWAY/100:
-                    node.setControl(new Highway());
-                    break;
-                case RESERVATION/100:
+                if(type == SIGNAL.getCode())
                 {
-                    switch(type % 100)
-                    {
-                        case FCFS: 
-                            node.setControl(new PriorityTBR(node, IntersectionPolicy.FCFS));
-                            break;
-                        case AUCTION: 
-                            node.setControl(new PriorityTBR(node, IntersectionPolicy.auction));
-                            break;
-                        case RANDOM: 
-                            node.setControl(new PriorityTBR(node, IntersectionPolicy.random));
-                            break;
-                        case EMERGENCY_FIRST:
-                            node.setControl(new PriorityTBR(node, IntersectionPolicy.emergency));
-                            break;
-                        case EMERGENCY_FIRST_LIMITED:
-                            node.setControl(new PriorityTBR(node, IntersectionPolicy.emergency_limited));
-                            break;
-                        case PRESSURE: 
-                            node.setControl(new MCKSTBR(node, backpressureobj));
-                            break;
-                        case P0: 
-                            node.setControl(new MCKSTBR(node, p0obj));
-                            break;
-                        case PHASED:
-                            node.setControl(new PhasedTBR());
-                            break;
-                        case WEIGHTED:
-                            node.setControl(new SignalWeightedTBR());
-                            break;
-                        case TRANSIT_FIRST + FCFS: 
-                            node.setControl(new PriorityTBR(node, new TransitFirst(IntersectionPolicy.FCFS)));
-                            break;
-                        case TRANSIT_FIRST + AUCTION: 
-                            node.setControl(new PriorityTBR(node, new TransitFirst(IntersectionPolicy.auction)));
-                            break;
-                        case TRANSIT_FIRST + RANDOM: 
-                            node.setControl(new PriorityTBR(node, new TransitFirst(IntersectionPolicy.random)));
-                            break;
-                        case TRANSIT_FIRST + PRESSURE: 
-                            node.setControl(new MCKSTBR(node, backpressureobj));
-                            break;
-                        case TRANSIT_FIRST + P0: 
-                            node.setControl(new MCKSTBR(node, p0obj));
-                            break;
-                        default:
-                            throw new RuntimeException("Reservation type not recognized: "+type);
-                    }
-                    break;
+                    node.setControl(new TrafficSignal());
                 }
-                default:
-                    throw new RuntimeException("Node type not recognized: "+type);
+                else if(type == STOPSIGN.getCode())
+                {
+                    node.setControl(new StopSign());
+                }
+                else if(type == DIVERGE.getCode())
+                {
+                    node.setControl(new Diverge());
+                }
+                else if(type == MERGE.getCode())
+                {
+                    node.setControl(new Merge());
+                }
+                else if(type == CONNECTOR.getCode())
+                {
+                    node.setControl(new Connector());
+                }
             }
-            //}
-        
-        
+            else if(type/100 == HIGHWAY.getCode()/100)
+            {
+                node.setControl(new Highway());
+            }
+            else if(type/100 == RESERVATION.getCode()/100)
+            {
+                if(type%100 == FCFS.getCode()%100)
+                {
+                    node.setControl(new PriorityTBR(node, IntersectionPolicy.FCFS));
+                }
+                else if(type%100 == AUCTION.getCode()%100)
+                {
+                    node.setControl(new PriorityTBR(node, IntersectionPolicy.auction));
+                }
+                else if(type%100 == RANDOM.getCode()%100)
+                {
+                    node.setControl(new PriorityTBR(node, IntersectionPolicy.random));
+                }
+                else if(type%100 == EMERGENCY_FIRST.getCode()%100)
+                {
+                    node.setControl(new PriorityTBR(node, IntersectionPolicy.emergency));
+                }
+                else if(type%100 == EMERGENCY_FIRST_LIMITED.getCode()%100)
+                {
+                    node.setControl(new PriorityTBR(node, IntersectionPolicy.emergency_limited));
+                }
+                else if(type%100 == PRESSURE.getCode()%100)
+                {
+                    node.setControl(new MCKSTBR(node, backpressureobj));
+                }
+                else if(type%100 == P0.getCode()%100)
+                {
+                    node.setControl(new MCKSTBR(node, p0obj));
+                }
+                else if(type%100 == PHASED.getCode()%100)
+                {
+                    node.setControl(new PhasedTBR());
+                }
+                else if(type%100 == WEIGHTED.getCode()%100)
+                {
+                    node.setControl(new SignalWeightedTBR());
+                }
+                else if(type%100 == TRANSIT_FIRST.getCode()%100)
+                {
+                    node.setControl(new PriorityTBR(node, new TransitFirst(IntersectionPolicy.FCFS)));
+                }
+            }
+            else
+            {
+                throw new RuntimeException("Node type not recognized: "+type);
+            }
+
         }
     }
     
@@ -634,7 +655,7 @@ public class ReadNetwork
             
             Node node;
 
-            if(type / 100 == CENTROID/100)
+            if(type / 100 == CENTROID.getCode()/100)
             {
                 Zone[] zones = createZones(id, new Location(x, y));
                 
@@ -736,64 +757,61 @@ public class ReadNetwork
                 dest = ((Zone)dest).getLinkedZone();
             }
             
-            switch(type/100)
-            {   
-
-                case CENTROID/100: 
-                    link = new CentroidConnector(id, source, dest);
-                    break;
-                case LTM/100:
-                    if(type % 10 == CACC)
+            
+            if(type/100 == CENTROID.getCode()/100)
+            {
+                link = new CentroidConnector(id, source, dest);
+            }
+            else if(type/100 == LTM.getCode()/100)
+            {
+                if(type == CACC.getCode())
+                {
+                    if(CACCLTMLink.checkK2(capacity, ffspd, length))
                     {
-                        if(CACCLTMLink.checkK2(capacity, ffspd, length))
-                        {
-                            //link = new LTMLink(id, source, dest, capacity, ffspd, w, jamd, length, numLanes);
-                            link = new CACCLTMLink(id, source, dest, capacity, ffspd, w, jamd, length, numLanes);
-                            
-                        }
-                        else
-                        {
-                            link = new LTMLink(id, source, dest, capacity, ffspd, w, jamd, length, numLanes);
-                        }
-                        
-                        
-                        
-                        
+                        //link = new LTMLink(id, source, dest, capacity, ffspd, w, jamd, length, numLanes);
+                        link = new CACCLTMLink(id, source, dest, capacity, ffspd, w, jamd, length, numLanes);
+
                     }
                     else
                     {
                         link = new LTMLink(id, source, dest, capacity, ffspd, w, jamd, length, numLanes);
                     }
-                    break;
-                case CTM/100:
-                    if(type%10 == DLR)
-                    {
-                        Network.dlr = true;
-                        link = new DLRCTMLink(id, source, dest, capacity, ffspd, w, jamd, length, numLanes);
-                    }
-                    else if(type % 10 == SHARED_TRANSIT && numLanes > 1)
-                    {
-                        TransitLane transitLane = new TransitLane(-id, source, dest, capacity, ffspd, w, jamd, length);
-                        links.add(transitLane);
-                        link = new SharedTransitCTMLink(id, source, dest, capacity, 
-                                ffspd, ffspd*mesodelta, jamd, length, numLanes-1, transitLane);
-                    }
-                    else if(type % 10 == SPLIT_TRANSIT && numLanes > 1)
-                    {
-                        TransitLane transitLane = new TransitLane(-id, source, dest, capacity, ffspd, w, jamd, length);
-                        links.add(transitLane);
-                        link = new SplitCTMLink(id, source, dest, capacity, 
-                                ffspd, ffspd*mesodelta, jamd, length, numLanes-1, transitLane);
-                    }
-                    else
-                    {
-                        link = new CTMLink(id, source, dest, capacity, ffspd, w, jamd, length, numLanes);
-                    }
-                    break;
-                default:
-                    throw new RuntimeException("Link type not recognized: "+type);
+                }
+                else
+                {
+                    link = new LTMLink(id, source, dest, capacity, ffspd, w, jamd, length, numLanes);
+                }
             }
-            
+            else if(type/100 == CTM.getCode()/100)
+            {
+                if(type%10 == DLR.getCode()%10)
+                {
+                    Network.dlr = true;
+                    link = new DLRCTMLink(id, source, dest, capacity, ffspd, w, jamd, length, numLanes);
+                }
+                else if(type % 10 == SHARED_TRANSIT.getCode()%10 && numLanes > 1)
+                {
+                    TransitLane transitLane = new TransitLane(-id, source, dest, capacity, ffspd, w, jamd, length);
+                    links.add(transitLane);
+                    link = new SharedTransitCTMLink(id, source, dest, capacity, 
+                            ffspd, ffspd*mesodelta, jamd, length, numLanes-1, transitLane);
+                }
+                else if(type % 10 == SPLIT_TRANSIT.getCode()%10 && numLanes > 1)
+                {
+                    TransitLane transitLane = new TransitLane(-id, source, dest, capacity, ffspd, w, jamd, length);
+                    links.add(transitLane);
+                    link = new SplitCTMLink(id, source, dest, capacity, 
+                            ffspd, ffspd*mesodelta, jamd, length, numLanes-1, transitLane);
+                }
+                else
+                {
+                    link = new CTMLink(id, source, dest, capacity, ffspd, w, jamd, length, numLanes);
+                }
+            }
+            else
+            {
+                throw new RuntimeException("Link type not recognized: "+type);
+            }
             
             links.add(link);
             
@@ -1279,58 +1297,27 @@ public class ReadNetwork
                 // check node type
                 boolean foundType = false;
                 
-                switch(node.getType()/100)
+                for(Type t : NODE_TYPES)
                 {
-                    case CENTROID/100:
-                        foundType = true;
-                        break;
-                    case SIGNAL/100:
-                        foundType = true;
-                        break;
-                    case RESERVATION/100:
+                    if(node.getType() == t.getCode())
                     {
-                        switch(node.getType() % 100)
-                        {
-                            case FCFS: 
-                                foundType = true;
-                                break;
-                            case AUCTION: 
-                                foundType = true;
-                                break;
-                            case RANDOM: 
-                                foundType = true;
-                                break;
-                            case PRESSURE: 
-                                foundType = true;
-                                break;
-                            case P0: 
-                                foundType = true;
-                                break;
-                            case PHASED:
-                                foundType = true;
-                                break;
-                            case WEIGHTED:
-                                foundType = true;
-                                break;
-                            case TRANSIT_FIRST + FCFS: 
-                                foundType = true;
-                                break;
-                            case TRANSIT_FIRST + AUCTION: 
-                                foundType = true;
-                                break;
-                            case TRANSIT_FIRST + RANDOM: 
-                                foundType = true;
-                                break;
-                            case TRANSIT_FIRST + PRESSURE: 
-                                foundType = true;
-                                break;
-                            case TRANSIT_FIRST + P0: 
-                                foundType = true;
-                                break;
-                        }
+                        foundType = true;
                         break;
                     }
                 }
+                
+                if(foundType == false)
+                {
+                    for(Type t : NODE_EXT_TYPES)
+                    {
+                        if(node.getType() == t.getCode())
+                        {
+                            foundType = true;
+                            break;
+                        }
+                    }
+                }
+                
                 
                 if(!foundType)
                 {
@@ -1420,18 +1407,27 @@ public class ReadNetwork
                 // check link type
                 boolean foundType = false;
                 
-                switch(link.getType()/100)
-                {   
-                    case CENTROID/100: 
+                for(Type type : LINK_TYPES)
+                {
+                    if(link.getType() == type.getCode())
+                    {
                         foundType = true;
                         break;
-                    case LTM/100:
-                        foundType = true;
-                        break;
-                    case CTM/100:
-                        foundType = true;
-                        break;
+                    }
                 }
+                
+                if(!foundType)
+                {
+                    for(Type type : LINK_EXT_TYPES)
+                    {
+                        if(link.getType() == type.getCode())
+                        {
+                            foundType = true;
+                            break;
+                        }
+                    }
+                }
+
                 
                 if(!foundType)
                 {

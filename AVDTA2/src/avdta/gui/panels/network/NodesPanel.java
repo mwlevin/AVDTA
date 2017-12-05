@@ -35,8 +35,11 @@ import avdta.network.node.policy.SignalWeightedTBR;
 import avdta.network.node.StopSign;
 import avdta.network.node.TrafficSignal;
 import avdta.network.node.Zone;
+import avdta.network.node.obj.MaxPressureObj;
 import avdta.network.node.policy.EmergencyPolicy;
 import avdta.network.node.policy.TransitFirst;
+import avdta.network.type.ExtendedType;
+import avdta.network.type.Type;
 import avdta.project.DTAProject;
 import avdta.project.Project;
 import avdta.vehicle.Vehicle;
@@ -48,6 +51,7 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 import javax.swing.BorderFactory;
@@ -74,13 +78,16 @@ public class NodesPanel extends GUIPanel
     private JTextArea data;
     
     private JCheckBox HVsUseReservations;
-    private JRadioButton signal, stop, reservation;
+    private JRadioButton[] types;
+    private JComboBox[] options;
+    
+    
     private JButton save, reset, download;
     
     private StatusBar update;
     
     private static final String[] NODE_OPTIONS = new String[]{"FCFS", "backpressure", "P0", "Phased", "Signal-weighted", "Transit-FCFS", "Emergency-FCFS"};
-    private JComboBox<String> nodeOptions;
+
     
     public NodesPanel(NetworkPanel parent)
     {
@@ -88,30 +95,53 @@ public class NodesPanel extends GUIPanel
         data = new JTextArea(5, 20);
         data.setEditable(false);
         
-        nodeOptions = new JComboBox<String>(NODE_OPTIONS);
+
         
         HVsUseReservations = new JCheckBox("HVs use reservations");
         
-        signal = new JRadioButton("Signals");
-        reservation = new JRadioButton("Reservations");
-        stop = new JRadioButton("Stop sign");
-        
-        
+        types =  new JRadioButton[ReadNetwork.NODE_OPTIONS.length];
+        options = new JComboBox[ReadNetwork.NODE_EXT_OPTIONS.length];
         
         ButtonGroup group = new ButtonGroup();
-        group.add(signal);
-        group.add(reservation);
-        group.add(stop);
-        
-        ChangeListener change = new ChangeListener()
+        for(int i = 0; i < types.length; i++)
         {
-            public void stateChanged(ChangeEvent e)
+            types[i] = new JRadioButton(ReadNetwork.NODE_OPTIONS[i].getDescription());
+            group.add(types[i]);
+            
+            List<Type> temp = new ArrayList<Type>();
+            
+            temp.add(ReadNetwork.NODE_OPTIONS[i]);
+            
+            for(Type type : ReadNetwork.NODE_EXT_OPTIONS)
             {
-                nodeOptions.setEnabled(reservation.isSelected());
+                if(type.getBase() == ReadNetwork.NODE_OPTIONS[i])
+                {
+                    temp.add(type);
+                }
             }
-        };
+            
 
-        reservation.addChangeListener(change);
+            if(temp.size() > 1)
+            {
+                options[i] = new JComboBox(temp.toArray());
+            }
+        }
+
+        for(int i = 0; i < types.length; i++)
+        {
+            if(options[i] != null)
+            {
+                final int idx = i;
+
+                types[i].addChangeListener(new ChangeListener()
+                {
+                    public void stateChanged(ChangeEvent e)
+                    {
+                        options[idx].setEnabled(types[idx].isSelected());
+                    }
+                });
+            }
+        }
         
         save = new JButton("Save");
         reset = new JButton("Reset");
@@ -160,10 +190,16 @@ public class NodesPanel extends GUIPanel
         p.setLayout(new GridBagLayout());
         
         constrain(p, new JLabel("Intersection control"), 0, 0, 1, 1);
-        constrain(p, signal, 0, 1, 1, 1);
-        constrain(p, reservation, 0, 2, 1, 1);
-        constrain(p, stop, 0, 3, 1, 1);
-        constrain(p, nodeOptions, 1, 2, 1, 2);
+        
+        for(int i = 0; i < types.length; i++)
+        {
+            constrain(p, types[i], 0, 1+i, 1, 1);
+            if(options[i] != null)
+            {
+                constrain(p, options[i], 1, 1+i, 1, 1);
+            }
+        }
+
         
         constrain(panel, p, 0, 2, 2, 1);
         
@@ -189,9 +225,10 @@ public class NodesPanel extends GUIPanel
  
     public void reset()
     {
-        signal.setSelected(false);
-        stop.setSelected(false);
-        reservation.setSelected(false);
+        for(JRadioButton btn : types)
+        {
+            btn.setSelected(false);
+        }
         
         data.setText("");
         
@@ -199,101 +236,30 @@ public class NodesPanel extends GUIPanel
         {
             HVsUseReservations.setSelected(project.getOption("hvs-use-reservations").equals("true"));
             
-            int signalCount = 0;
-            int stopCount = 0;
-            int reservationCount = 0;
-            int centroidCount = 0;
-            int mergeCount = 0;
-            int divergeCount = 0;
-            int total = project.getSimulator().getNodes().size();
-            
-            int pressureCount = 0;
-            int fcfsCount = 0;
-            int phasedCount = 0;
-            int weightedCount = 0;
-            int p0Count = 0;
-            int auctionCount = 0;
-            int transitFirstCount = 0;
-            int emergencyCount = 0;
+            int total = 0;
+            int[] totals = new int[ReadNetwork.NODE_TYPES.length];
+            int[] counts = new int[ReadNetwork.NODE_EXT_TYPES.length];
             
             for(Node n : project.getSimulator().getNodes())
             {
-                if(n instanceof Zone)
+                total++;
+                
+                Type type = n.getType();
+                
+                for(int i = 0; i < ReadNetwork.NODE_TYPES.length; i++)
                 {
-                    if(n.getId() >= 0)
+                    if(type.getBase() == ReadNetwork.NODE_TYPES[i])
                     {
-                        centroidCount++;
+                        totals[i]++;
                     }
                 }
-                else
+                
+                for(int i = 0; i < ReadNetwork.NODE_EXT_TYPES.length; i++)
                 {
-                    IntersectionControl c = ((Intersection)n).getControl();
-                    
-                    if(c instanceof Merge)
+                    if(type == ReadNetwork.NODE_EXT_TYPES[i])
                     {
-                        mergeCount++;
+                        counts[i]++;
                     }
-                    else if(c instanceof Diverge)
-                    {
-                        divergeCount++;
-                    }
-                    else if(c instanceof StopSign)
-                    {
-                        stopCount++;
-                    }
-                    else if(c instanceof TrafficSignal)
-                    {
-                        signalCount++;
-                    }
-                    else if(c instanceof MCKSTBR)
-                    {
-                        reservationCount++;
-                        ObjFunction func = ((MCKSTBR)c).getObj();
-                     
-                        if(func instanceof BackPressureObj)
-                        {
-                            pressureCount++;
-                        }
-                        else if(func instanceof P0Obj)
-                        {
-                            p0Count++;
-                        }
-                    }
-                    else if(c instanceof PhasedTBR)
-                    {
-                        reservationCount++;
-                        phasedCount++;
-                    }
-                    else if(c instanceof SignalWeightedTBR)
-                    {
-                        reservationCount++;
-                        weightedCount++;
-                    }
-                    else if(c instanceof PriorityTBR)
-                    {
-                        reservationCount++;
-                        
-                        IntersectionPolicy policy = ((PriorityTBR)c).getPolicy();
-                        
-                        if(policy instanceof EmergencyPolicy)
-                        {
-                            emergencyCount++;
-                        }
-                        else if(policy instanceof FCFSPolicy)
-                        {
-                            fcfsCount++;
-                        }
-                        else if(policy instanceof AuctionPolicy)
-                        {
-                            auctionCount++;
-                        }
-                        else if(policy instanceof TransitFirst)
-                        {
-                            transitFirstCount++;
-                        }
-                    }
-                    
-                    
                 }
                
             }
@@ -302,61 +268,21 @@ public class NodesPanel extends GUIPanel
             
             
             data.append(total+"\tnodes\n\n");
-            if(centroidCount > 0)
+            
+            for(int i = 0; i < totals.length; i++)
             {
-                data.append(centroidCount+"\tcentroids\n");
+                if(totals[i] > 0)
+                {
+                    data.append(totals[i]+"\t"+ReadNetwork.NODE_TYPES[i].getDescription()+"\n");
+                }
             }
-            if(signalCount > 0)
+            data.append("\n");
+            
+            for(int i = 0; i < counts.length; i++)
             {
-                data.append(signalCount+"\tsignals\n");
-            }
-            if(divergeCount > 0)
-            {
-                data.append(divergeCount+"\tdiverges\n");
-            }
-            if(mergeCount > 0)
-            {
-                data.append(mergeCount+"\tmerges\n");
-            }
-            if(stopCount > 0)
-            {
-                data.append(stopCount+"\tstop signs\n");
-            }
-            if(reservationCount > 0)
-            {
-                data.append(reservationCount + "\treservations\n\n");
-                
-                if(fcfsCount > 0)
+                if(counts[i] > 0)
                 {
-                    data.append(fcfsCount+"\tFCFS\n");
-                }
-                if(auctionCount > 0)
-                {
-                    data.append(auctionCount+"\tauctions\n");
-                }
-                if(pressureCount > 0)
-                {
-                    data.append(pressureCount+"\tbackpressure\n");
-                }
-                if(p0Count > 0)
-                {
-                    data.append(p0Count+"\tP0\n");
-                }
-                if(weightedCount > 0)
-                {
-                    data.append(weightedCount+"\tweighted\n");
-                }
-                if(phasedCount > 0)
-                {
-                    data.append(phasedCount+"\tphased\n");
-                }
-                if(transitFirstCount > 0)
-                {
-                    data.append(transitFirstCount+"\ttransit first");
-                }
-                if(emergencyCount > 0)
-                {
-                    data.append(emergencyCount + "\temergency first");
+                    data.append(counts[i]+"\t"+ReadNetwork.NODE_EXT_TYPES[i].getDescription()+"\n");
                 }
             }
             
@@ -411,49 +337,23 @@ public class NodesPanel extends GUIPanel
                     Scanner filein = new Scanner(project.getNodesFile());
                     filein.nextLine();
 
-                    int newtype = 0;
-
-                    if(signal.isSelected())
+                    Type newtype = null;
+                    
+                    for(int i = 0; i < types.length; i++)
                     {
-                        newtype = ReadNetwork.SIGNAL;
-                    }
-                    else if(stop.isSelected())
-                    {
-                        newtype = ReadNetwork.STOPSIGN;
-                    }
-                    else if(reservation.isSelected())
-                    {
-                        newtype = ReadNetwork.RESERVATION;
-
-                        if(nodeOptions.getSelectedItem().equals("FCFS"))
+                        if(types[i].isSelected())
                         {
-                            newtype += ReadNetwork.FCFS;
-                        }
-                        else if(nodeOptions.getSelectedItem().equals("backpressure"))
-                        {
-                            newtype += ReadNetwork.PRESSURE;
-                        }
-                        else if(nodeOptions.getSelectedItem().equals("P0"))
-                        {
-                            newtype += ReadNetwork.P0;
-                        }
-                        else if(nodeOptions.getSelectedItem().equals("Phased"))
-                        {
-                            newtype += ReadNetwork.PHASED;
-                        }
-                        else if(nodeOptions.getSelectedItem().equals("Signal-weighted"))
-                        {
-                            newtype += ReadNetwork.WEIGHTED;
-                        }
-                        else if(nodeOptions.getSelectedItem().equals("Transit-FCFS"))
-                        {
-                            newtype += ReadNetwork.TRANSIT_FIRST + ReadNetwork.FCFS;
-                        }
-                        else if(nodeOptions.getSelectedItem().equals("Emergency-FCFS"))
-                        {
-                            newtype += ReadNetwork.EMERGENCY_FIRST;
+                            if(options[i] != null)
+                            {
+                                newtype = (Type)options[i].getSelectedItem();
+                            }
+                            else
+                            {
+                                newtype = ReadNetwork.NODE_OPTIONS[i];
+                            }
                         }
                     }
+                    
 
                     Map<Integer, Node> nodes = project.getSimulator().createNodeIdsMap();
                     
@@ -463,7 +363,7 @@ public class NodesPanel extends GUIPanel
                         
                         Node n = nodes.get(node.getId());
 
-                        if(node.getType()/100 != ReadNetwork.CENTROID/100)
+                        if(node.getType()/100 != ReadNetwork.CENTROID.getCode()/100)
                         {
                             if(n.getIncoming().size() == 1)
                             {
@@ -526,11 +426,19 @@ public class NodesPanel extends GUIPanel
         e = e && project != null;
         save.setEnabled(e);
         reset.setEnabled(e);
-        signal.setEnabled(e);
-        stop.setEnabled(e);
-        reservation.setEnabled(e);
+        
+        for(int i = 0; i < types.length; i++)
+        {
+            types[i].setEnabled(e);
+            
+            if(options[i] != null)
+            {
+                options[i].setEnabled(e && types[i].isSelected());
+            }
+        }
+
         HVsUseReservations.setEnabled(e);
-        nodeOptions.setEnabled(e && reservation.isSelected());
+
         download.setEnabled(e);
         super.setEnabled(e);
     }

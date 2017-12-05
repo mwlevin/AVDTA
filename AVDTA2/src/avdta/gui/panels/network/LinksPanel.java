@@ -19,6 +19,8 @@ import avdta.network.link.Link;
 import avdta.network.link.LinkRecord;
 import avdta.network.link.SharedTransitCTMLink;
 import avdta.network.link.SplitCTMLink;
+import avdta.network.type.ExtendedType;
+import avdta.network.type.Type;
 import avdta.project.DTAProject;
 import avdta.project.Project;
 import avdta.vehicle.Vehicle;
@@ -30,6 +32,7 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 import javax.swing.BorderFactory;
@@ -54,12 +57,10 @@ public class LinksPanel extends GUIPanel
 
     private JTextArea data;
     
-    private static final String[] CTM_LINK_OPTIONS = new String[]{"CTM", "DLR", "Shared transit", "Split transit"};
-    private static final String[] LTM_LINK_OPTIONS = new String[]{"LTM", "CACC"};
+
     
-    private JRadioButton ctm, ltm;
-    private JComboBox<String> ctmOptions;
-    private JComboBox<String> ltmOptions;
+    private JRadioButton[] types;
+    private JComboBox[] options;
     private JButton save, reset;
     
     
@@ -78,18 +79,38 @@ public class LinksPanel extends GUIPanel
         HVtau = new JTextField(5);
         AVtau = new JTextField(5);
         
-        ctmOptions = new JComboBox<String>(CTM_LINK_OPTIONS);
-        ltmOptions = new JComboBox<String>(LTM_LINK_OPTIONS);
+        types = new JRadioButton[ReadNetwork.LINK_OPTIONS.length];
+        options = new JComboBox[ReadNetwork.LINK_OPTIONS.length];
+        
+        ButtonGroup group = new ButtonGroup();
+        for(int i = 0; i < types.length; i++)
+        {
+            types[i] = new JRadioButton(ReadNetwork.LINK_OPTIONS[i].toString());
+            group.add(types[i]);
+            
+            List<Type> temp = new ArrayList<Type>();
+            
+            temp.add(ReadNetwork.LINK_OPTIONS[i]);
+            
+            for(ExtendedType type : ReadNetwork.LINK_EXT_OPTIONS)
+            {
+                if(type.getBase() == ReadNetwork.LINK_OPTIONS[i])
+                {
+                    temp.add(type);
+                }
+            }
+            
+            if(temp.size() > 1)
+            {
+                options[i] = new JComboBox(temp.toArray());
+            }
+        }
+
         
         mesoDelta = new JTextField(5);
         timestep = new JTextField(5);
-        
-        ctm = new JRadioButton("CTM");
-        ltm = new JRadioButton("LTM");
-        
-        ButtonGroup group = new ButtonGroup();
-        group.add(ctm);
-        group.add(ltm);
+
+
         
         
         
@@ -112,22 +133,22 @@ public class LinksPanel extends GUIPanel
             }
         });
         
-        ctm.addChangeListener(new ChangeListener()
+        for(int i = 0; i < types.length; i++)
         {
-           public void stateChanged(ChangeEvent e)
-           {
-               ctmOptions.setEnabled(ctm.isSelected());
-           }
-        });
-        
-        ltm.addChangeListener(new ChangeListener()
-        {
-           public void stateChanged(ChangeEvent e)
-           {
-               ltmOptions.setEnabled(ltm.isSelected());
-           }
-        });
-        
+            if(options[i] != null)
+            {
+                final int idx = i;
+
+                types[i].addChangeListener(new ChangeListener()
+                {
+                    public void stateChanged(ChangeEvent e)
+                    {
+                        options[idx].setEnabled(types[idx].isSelected());
+                    }
+                });
+            }
+        }
+
         
         setLayout(new GridBagLayout());
         
@@ -143,10 +164,18 @@ public class LinksPanel extends GUIPanel
         JPanel p = new JPanel();
         p.setLayout(new GridBagLayout());
         constrain(p, new JLabel("Flow model"), 0, 0, 1, 1);
-        constrain(p, ctm, 0, 1, 1, 1);
-        constrain(p, ltm, 0, 2, 1, 1);
-        constrain(p, ctmOptions, 1, 1, 1, 1);
-        constrain(p, ltmOptions, 1, 2, 1, 1);
+        
+        for(int i = 0; i < types.length; i++)
+        {
+            constrain(p, types[i], 0, 1+i, 1, 1);
+            
+            if(options[i] != null)
+            {
+                constrain(p, options[i], 1, 1+i, 1, 1);
+            }
+        }
+        
+        
         constrain(panel, p, 0, 3, 2, 1);
         
         p = new JPanel();
@@ -178,9 +207,11 @@ public class LinksPanel extends GUIPanel
     {
         data.setText("");
         
-        
-        ctm.setSelected(false);
-        ltm.setSelected(false);
+        for(JRadioButton btn : types)
+        {
+            btn.setSelected(false);
+        }
+
         
         if(project != null)
         {
@@ -192,70 +223,54 @@ public class LinksPanel extends GUIPanel
             
             // count link data
             int total = 0;
-            int ctm = 0;
-            int ltm = 0;
-            int centroid = 0;
             
-            int dlr = 0;
-            int ctl = 0;
-            int dtl = 0;
-            int cacc = 0;
+            int[] totals = new int[ReadNetwork.LINK_TYPES.length];
+            int[] counts = new int[ReadNetwork.LINK_EXT_TYPES.length];
             
             for(Link l : project.getSimulator().getLinks())
             {
-                if(l.isCentroidConnector())
+                Type type = l.getType();
+                Type base = type.getBase();
+                
+                for(int t = 0; t < ReadNetwork.LINK_TYPES.length; t++)
                 {
-                    centroid++;
-                }
-                else if(l instanceof LTMLink)
-                {
-                    ltm++;
-                    
-                    if(l instanceof CACCLTMLink)
+                    if(ReadNetwork.LINK_TYPES[t] == base)
                     {
-                        cacc++;
+                        totals[t]++;
                     }
                 }
-                else if(l instanceof CTMLink)
+                
+                if(type instanceof ExtendedType)
                 {
-                    ctm++;
-                    
-                    if(l instanceof SplitCTMLink)
+                    for(int t = 0; t < ReadNetwork.LINK_EXT_TYPES.length; t++)
                     {
-                        ctl++;
-                    }
-                    else if(l instanceof SharedTransitCTMLink)
-                    {
-                        dtl++;
+                        if(type == ReadNetwork.LINK_EXT_TYPES[t])
+                        {
+                            counts[t] ++;
+                        }
                     }
                 }
+                
                 total ++;
             }
             
             data.append(total+"\tlinks\n\n");
-            if(ctm > 0)
+            
+            for(int i = 0; i < totals.length; i++)
             {
-                data.append(ctm+"\tCTM links\n");
+                if(totals[i] > 0)
+                {
+                    data.append(totals[i]+"\t"+ReadNetwork.LINK_TYPES[i].getDescription()+"\n");
+                }
             }
-            if(ltm > 0)
+            data.append("\n");
+            
+            for(int i = 0; i < counts.length; i++)
             {
-                data.append(ltm+"\tLTM links\n");
-            }
-            if(centroid > 0)
-            {
-                data.append(centroid+"\tcentroid connectors\n\n");
-            }
-            if(dlr > 0)
-            {
-                data.append(dlr+"\tdynamic lane reversal\n");
-            }
-            if(ctl > 0)
-            {
-                data.append(ctl+"\ttransit lanes\n");
-            }
-            if(dtl > 0)
-            {
-                data.append(dtl+"\tdynamic transit lanes\n");
+                if(counts[i] > 0)
+                {
+                    data.append(counts[i]+"\t"+ReadNetwork.LINK_EXT_TYPES[i].getDescription()+"\n");
+                }
             }
             setEnabled(true);
             
@@ -270,16 +285,23 @@ public class LinksPanel extends GUIPanel
     public void setEnabled(boolean e)
     {
         e = e && project != null;
-        ctm.setEnabled(e);
-        ltm.setEnabled(e);
+        
         save.setEnabled(e);
         reset.setEnabled(e);     
         mesoDelta.setEditable(e);
         timestep.setEditable(e);
         HVtau.setEditable(e);
         AVtau.setEditable(e);
-        ctmOptions.setEnabled(e && ctm.isSelected());
-        ltmOptions.setEnabled(e && ltm.isSelected());
+        
+        for(int i = 0; i < options.length; i++)
+        {
+            types[i].setEnabled(e);
+            if(options[i] != null)
+            {
+                options[i].setEnabled(e && types[i].isSelected());
+            }
+        }
+
         super.setEnabled(e);
     }
     
@@ -341,96 +363,83 @@ public class LinksPanel extends GUIPanel
                     GUI.handleException(ex);
                 }
         
-                if(ctm.isSelected() || ltm.isSelected())
+                Type newtype = null;
+                
+                for(int i = 0; i < types.length; i++)
                 {
-                    int newtype = 0;
-
-                    if(ctm.isSelected())
+                    if(types[i].isSelected())
                     {
-                        newtype = ReadNetwork.CTM;
-                    }
-                    else if(ltm.isSelected())
-                    {
-                        newtype = ReadNetwork.LTM;
-                    }
-
-                    if(ctm.isSelected())
-                    {
-                        if(ctmOptions.getSelectedItem().equals("DLR"))
+                        if(options[i] != null)
                         {
-                            newtype += ReadNetwork.DLR;
+                            newtype = (Type)options[i].getSelectedItem();
+                        }
+                        else
+                        {
+                            newtype = ReadNetwork.LINK_OPTIONS[i];
                         }
                     }
-                    else if(ltm.isSelected())
-                    {
-                        if(ltmOptions.getSelectedItem().equals("CACC"))
-                        {
-                            newtype += ReadNetwork.CACC;
-                        }
-                    }
+                }
 
-                    ArrayList<LinkRecord> temp = new ArrayList<LinkRecord>();
-                    
-                    LinkBusRule busRule = new LinkBusRule(project);
+                ArrayList<LinkRecord> temp = new ArrayList<LinkRecord>();
+
+                LinkBusRule busRule = new LinkBusRule(project);
                     
 
-                    try
+                try
+                {
+
+                    Scanner filein = new Scanner(project.getLinksFile());
+                    filein.nextLine();
+
+
+                    while(filein.hasNext())
                     {
-
-                        Scanner filein = new Scanner(project.getLinksFile());
-                        filein.nextLine();
+                        LinkRecord link = new LinkRecord(filein.nextLine());
 
 
-                        while(filein.hasNext())
+
+                        if(link.getType()/100 != ReadNetwork.CENTROID.getCode()/100)
                         {
-                            LinkRecord link = new LinkRecord(filein.nextLine());
-
-
-
-                            if(link.getType()/100 != ReadNetwork.CENTROID/100)
+                            if(newtype.isValid(link))
                             {
                                 link.setType(newtype);
                             }
-
-                            if(ctm.isSelected() && ctmOptions.getSelectedItem().equals("Shared transit") && link.getNumLanes() > 1 && busRule.contains(link.getId()))
+                            else if(newtype instanceof ExtendedType)
                             {
-                                link.setType(link.getType()+ ReadNetwork.SHARED_TRANSIT);
+                                link.setType(((ExtendedType)newtype).getBase());
                             }
-                            
-                            if(ctm.isSelected() && ctmOptions.getSelectedItem().equals("Split transit") && link.getNumLanes() > 1 && busRule.contains(link.getId()))
-                            {
-                                link.setType(link.getType()+ ReadNetwork.SPLIT_TRANSIT);
-                            }
-                            
-                            if(mesodelta > 0)
-                            {
-                                link.setWavespd(link.getFFSpd() * mesodelta);
-                            }
-
-                            temp.add(link);
                         }
 
-                        filein.close();
 
-                        PrintStream fileout = new PrintStream(new FileOutputStream(project.getLinksFile()), true);
-
-                        fileout.println(ReadNetwork.getLinksFileHeader());
-                        
-                        for(LinkRecord x : temp)
+                        if(mesodelta > 0)
                         {
-                            fileout.println(x);
+                            link.setWavespd(link.getFFSpd() * mesodelta);
                         }
 
-                        fileout.close();
-                        
-                        project.loadSimulator();
-                    }
-                    catch(IOException ex)
-                    {
-                        GUI.handleException(ex);
+                        temp.add(link);
                     }
 
+                    filein.close();
+
+                    PrintStream fileout = new PrintStream(new FileOutputStream(project.getLinksFile()), true);
+
+                    fileout.println(ReadNetwork.getLinksFileHeader());
+
+                    for(LinkRecord x : temp)
+                    {
+                        fileout.println(x);
+                    }
+
+                    fileout.close();
+
+                    project.loadSimulator();
                 }
+                catch(IOException ex)
+                {
+                    GUI.handleException(ex);
+                }
+
+            
 
                 parentReset();
 

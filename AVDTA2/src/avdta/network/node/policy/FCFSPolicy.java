@@ -11,6 +11,7 @@ import avdta.network.link.Link;
 import avdta.vehicle.Vehicle;
 import avdta.network.node.TBR;
 import avdta.network.node.TBR;
+import avdta.network.type.Type;
 import avdta.vehicle.EmergencyVehicle;
 import avdta.vehicle.route.FixedPath;
 import java.util.Set;
@@ -69,7 +70,7 @@ public class FCFSPolicy extends IntersectionPolicy
      * Returns the type code associated with this policy
      * @return {@link ReadNetwork#FCFS}
      */
-    public int getType()
+    public Type getType()
     {
         return ReadNetwork.FCFS;
     }

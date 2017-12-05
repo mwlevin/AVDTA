@@ -11,6 +11,7 @@ import avdta.network.ReadNetwork;
 import avdta.network.Simulator;
 import avdta.vehicle.Vehicle;
 import avdta.network.node.TurningMovement;
+import avdta.network.type.Type;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -84,9 +85,9 @@ public class PriorityTBR extends TBR
      * Returns the type code for {@link PriorityTBR}
      * @return {@link ReadNetwork#RESERVATION}+ the type of the {@link IntersectionPolicy}
      */
-    public int getType()
+    public Type getType()
     {
-        return ReadNetwork.RESERVATION + policy.getType();
+        return policy.getType();
     }
     
     /**

@@ -6,6 +6,7 @@ package avdta.network.node;
 
 import avdta.vehicle.DriverType;
 import avdta.network.link.Link;
+import avdta.network.type.Type;
 
 /**
  * An intersection in the traffic network. Each intersection has an {@link IntersectionControl} that specifies vehicle movement
@@ -61,7 +62,7 @@ public class Intersection extends Node
      * 
      * @return the {@link IntersectionControl} type 
      */
-    public int getType()
+    public Type getType()
     {
         return control.getType();
     }

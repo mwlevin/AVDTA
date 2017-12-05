@@ -10,6 +10,7 @@ import avdta.network.Simulator;
 import avdta.vehicle.Vehicle;
 import avdta.network.node.TBR;
 import avdta.network.node.TBR;
+import avdta.network.type.Type;
 
 
 /**
@@ -68,7 +69,7 @@ public class FIFOPolicy extends IntersectionPolicy
      * Returns the type code associated with this policy
      * @return {@link ReadNetwork#FIFO}
      */
-    public int getType()
+    public Type getType()
     {
         return ReadNetwork.FIFO;
     }

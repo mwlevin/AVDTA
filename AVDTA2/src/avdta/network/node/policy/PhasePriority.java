@@ -10,6 +10,7 @@ import avdta.network.node.TBR;
 import avdta.network.node.policy.IntersectionPolicy;
 import avdta.vehicle.Vehicle;
 import avdta.network.node.Node;
+import avdta.network.type.Type;
 
 /**
  * This is the {@link IntersectionPolicy} used with the {@link PhasedTBR} policy. 
@@ -79,7 +80,7 @@ public class PhasePriority extends IntersectionPolicy
      * Returns the type code associated with this policy
      * @return {@link ReadNetwork#PHASED}
      */
-    public int getType()
+    public Type getType()
     {
         return ReadNetwork.PHASED;
     }

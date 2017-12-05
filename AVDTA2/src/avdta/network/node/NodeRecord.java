@@ -6,6 +6,7 @@
 package avdta.network.node;
 
 import avdta.network.ReadNetwork;
+import avdta.network.type.Type;
 import java.util.Scanner;
 
 /**
@@ -33,6 +34,11 @@ public class NodeRecord
         this.longitude = lng;
         this.latitude = lat;
         this.elevation = elevation;
+    }
+    
+    public void setType(Type t)
+    {
+        type = t.getCode();
     }
 
     /**
@@ -83,7 +89,7 @@ public class NodeRecord
      */
     public boolean isZone()
     {
-        return type/100 == ReadNetwork.CENTROID/100;
+        return type/100 == ReadNetwork.CENTROID.getCode()/100;
     }
     
     /**
