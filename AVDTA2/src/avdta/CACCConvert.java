@@ -50,9 +50,9 @@ public class CACCConvert {
             
             
             
-            if(link.getType() != ReadNetwork.CENTROID && CACCLTMLink.checkK2(link.getCapacity(), link.getFFSpd(), link.getLength()) && link.getFFSpd() >= 60)
+            if(link.getType() != ReadNetwork.CENTROID.getCode() && CACCLTMLink.checkK2(link.getCapacity(), link.getFFSpd(), link.getLength()) && link.getFFSpd() >= 60)
             {
-                link.setType(ReadNetwork.LTM + ReadNetwork.CACC);
+                link.setType(ReadNetwork.CACC);
             }
             
             newLinks.add(link);
@@ -103,7 +103,7 @@ public class CACCConvert {
             
             
             
-            if(link.getType() != ReadNetwork.CENTROID && CACCLTMLink.checkK2(link.getCapacity(), link.getFFSpd(), link.getLength()) && link.getFFSpd() >= 60
+            if(link.getType() != ReadNetwork.CENTROID.getCode() && CACCLTMLink.checkK2(link.getCapacity(), link.getFFSpd(), link.getLength()) && link.getFFSpd() >= 60
                     && link.getNumLanes() > 1)
             {
                 int newLanes = link.getNumLanes()/2;
@@ -113,7 +113,7 @@ public class CACCConvert {
                     l2.setNumLanes(newLanes);
                     link.setNumLanes(link.getNumLanes()-newLanes);
                     l2.setId(l2.getId()+100000);
-                    l2.setType(ReadNetwork.LTM+ReadNetwork.CACC);
+                    l2.setType(ReadNetwork.CACC);
                     newLinks.add(l2);
                     
                     nodes.get(l2.getSource()).setType(ReadNetwork.HIGHWAY);
