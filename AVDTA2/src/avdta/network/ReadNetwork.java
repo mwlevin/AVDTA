@@ -49,6 +49,7 @@ import avdta.network.node.PhaseRecord;
 import avdta.network.node.PhasedTBR;
 import avdta.network.node.SignalRecord;
 import avdta.network.node.TurnRecord;
+import avdta.network.node.obj.MaxPressureObj;
 import avdta.network.node.policy.TransitFirst;
 import avdta.network.type.ExtendedType;
 import avdta.network.type.Type;
@@ -547,6 +548,7 @@ public class ReadNetwork
             */
             BackPressureObj backpressureobj = new BackPressureObj();
             P0Obj p0obj = new P0Obj();
+            MaxPressureObj maxpressureobj = new MaxPressureObj();
 
             if(type/100 == SIGNAL.getCode()/100)
             {
@@ -598,6 +600,10 @@ public class ReadNetwork
                 {
                     node.setControl(new MCKSTBR(node, backpressureobj));
                 }
+                else if(type%100 == MAX_PRESSURE.getCode()%100)
+                {
+                    node.setControl(new MCKSTBR(node, maxpressureobj));
+                }
                 else if(type%100 == P0.getCode()%100)
                 {
                     node.setControl(new MCKSTBR(node, p0obj));
@@ -613,6 +619,10 @@ public class ReadNetwork
                 else if(type%100 == TRANSIT_FIRST.getCode()%100)
                 {
                     node.setControl(new PriorityTBR(node, new TransitFirst(IntersectionPolicy.FCFS)));
+                }
+                else
+                {
+                    throw new RuntimeException("Node type not recognized: "+type);
                 }
             }
             else

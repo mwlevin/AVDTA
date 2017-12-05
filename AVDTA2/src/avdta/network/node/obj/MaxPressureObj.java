@@ -5,6 +5,7 @@
  */
 package avdta.network.node.obj;
 
+import avdta.network.ReadNetwork;
 import avdta.network.link.CTMLink;
 import avdta.network.link.CentroidConnector;
 import avdta.network.link.Link;
@@ -14,13 +15,14 @@ import avdta.network.node.TBR;
 import avdta.vehicle.Vehicle;
 import java.util.HashMap;
 import java.util.Map;
+import avdta.network.type.Type;
 
 /**
  * This differs from BackPressureObj: this is based on the max-pressure DLR/AIM control developed in a separate paper.
  * 
  * @author mlevin
  */
-public class MaxPressureObj 
+public class MaxPressureObj implements ObjFunction
 {
     /**
      * Returns whether the IP is trying to minimize the objective function.
@@ -107,5 +109,10 @@ public class MaxPressureObj
         }
         
         return output;
+    }
+    
+    public Type getType()
+    {
+        return ReadNetwork.MAX_PRESSURE;
     }
 }
