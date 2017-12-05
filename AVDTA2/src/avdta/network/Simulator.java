@@ -828,7 +828,10 @@ public class Simulator extends Network
             if(!v.isExited())
             {
                 Link l = v.getCurrLink();
-                l.updateTT(v.enter_time, Simulator.time);
+                if(l != null)
+                {
+                    l.updateTT(v.enter_time, Simulator.time);
+                }
             }
         }
         

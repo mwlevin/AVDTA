@@ -55,12 +55,14 @@ public class Connector extends IntersectionControl
         
         Link i = node.getIncoming().iterator().next();
         
+        Link j = node.getOutgoing().iterator().next();
+        j.R = j.getReceivingFlow();
         
         List<Vehicle> sending = i.getSendingFlow();
 
         for(Vehicle v : sending)
         {
-            Link j = v.getNextLink();
+            Link j2 = v.getNextLink();
             if(j == null)
             {
                 i.removeVehicle(v);
@@ -69,7 +71,10 @@ public class Connector extends IntersectionControl
             }
             else
             {
-
+                if(j2 != j)
+                {
+                    throw new RuntimeException("Connector type not applicable here");
+                }
                 double equiv_flow = v.getDriver().getEquivFlow(i.getFFSpeed());
                 
                 if(j.R >= equiv_flow)
