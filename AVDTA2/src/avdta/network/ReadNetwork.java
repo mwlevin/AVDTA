@@ -550,26 +550,23 @@ public class ReadNetwork
 
             if(type/100 == SIGNAL.getCode()/100)
             {
-                if(type == SIGNAL.getCode())
-                {
-                    node.setControl(new TrafficSignal());
-                }
-                else if(type == STOPSIGN.getCode())
-                {
-                    node.setControl(new StopSign());
-                }
-                else if(type == DIVERGE.getCode())
-                {
-                    node.setControl(new Diverge());
-                }
-                else if(type == MERGE.getCode())
-                {
-                    node.setControl(new Merge());
-                }
-                else if(type == CONNECTOR.getCode())
-                {
-                    node.setControl(new Connector());
-                }
+                node.setControl(new TrafficSignal());
+            }
+            else if(type == STOPSIGN.getCode())
+            {
+                node.setControl(new StopSign());
+            }
+            else if(type == DIVERGE.getCode())
+            {
+                node.setControl(new Diverge());
+            }
+            else if(type == MERGE.getCode())
+            {
+                node.setControl(new Merge());
+            }
+            else if(type == CONNECTOR.getCode())
+            {
+                node.setControl(new Connector());
             }
             else if(type/100 == HIGHWAY.getCode()/100)
             {
