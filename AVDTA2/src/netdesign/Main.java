@@ -197,7 +197,7 @@ public class Main
 		PrintStream fileout = new PrintStream(
 				new FileOutputStream(new File("REGresults/" + project.getName() + "_inter_characteristics")), true);
 		fileout.println(
-				"ID\tnum_phases\ttime_red\ttime_yellow\ttime_green\tnum_moves\tnum_lanes\tavglanecapacity\tthroughturns\tleftturns\trightturns\tdemandprop");
+				"ID\tnum_phases\tcycletime\tnum_moves\tnum_lanes\tavglanecapacity\tthroughturns\tleftturns\trightturns\tdemandprop");
 
 		for (int d : demandprops) {
 			for (int i : signals) {
@@ -245,9 +245,11 @@ public class Main
 					nummoves += moves;
 				}
 				avglanecapacity = avglanecapacity / numlanes;
-				avgred = avgred / phaserec.size();
-				avgyellow = avgyellow / phaserec.size();
-				avggreen = avggreen / phaserec.size();
+				
+//				avgred = avgred / phaserec.size();
+//				avgyellow = avgyellow / phaserec.size();
+//				avggreen = avggreen / phaserec.size();
+				double cycleTime = avgred + avgyellow + avggreen;
 				numphases = phaserec.size();
 				
 				List<Map<Double, Map<String, Double>>> demandTurns = signalTurns.get(i);
@@ -259,7 +261,7 @@ public class Main
 					}
 				}
 
-				fileout.println(i + "\t" + numphases + "\t" + avgred + "\t" + avgyellow + "\t" + avggreen + "\t"
+				fileout.println(i + "\t" + numphases + "\t" + cycleTime + "\t"
 						+ nummoves + "\t" + numlanes + "\t" + avglanecapacity + "\t"
 						+ dTurn.get("through") + "\t" + dTurn.get("left") + "\t"
 						+ dTurn.get("right") + "\t" + d);
