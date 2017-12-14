@@ -327,7 +327,7 @@ public class Network
     public Path findPath(Node o, Node d, int dep_time, double vot, DriverType driver, TravelCost costFunc)
     {
         Path output;
-        
+
         if(link_dijkstras)
         {
             link_dijkstras(o, d, dep_time, vot, driver, costFunc);

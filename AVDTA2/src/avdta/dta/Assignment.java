@@ -388,7 +388,7 @@ public class Assignment implements Comparable<Assignment>
                 //throw new RuntimeException("Missing path when reading assignment - "+path_id);
             }
             
-            if(!p.isValid(v))
+            if(p.isValid(v))
             {
                 v.setPath(p);
             }

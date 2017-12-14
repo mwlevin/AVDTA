@@ -4,6 +4,7 @@
  */
 package avdta.network.node;
 
+import avdta.network.Network;
 import avdta.vehicle.DriverType;
 import avdta.network.link.Link;
 import avdta.vehicle.Vehicle;
@@ -132,7 +133,7 @@ public abstract class TBR extends IntersectionControl
      */
     public boolean canMove(Link i, Link j, DriverType driver)
     {
-        return conflicts.get(i).containsKey(j);
+        return (driver.isAV() || Network.getHVsUseReservations()) && (i.isCentroidConnector() || j.isCentroidConnector() || conflicts.get(i).containsKey(j));
     }
     
     /**
@@ -172,6 +173,8 @@ public abstract class TBR extends IntersectionControl
         
         boolean output = (i.Q - i.q) * (1 - (i.lanes_blocked) / ((double)i.getDsLanes())) >= flow;
 
+        
+        
         for(ConflictRegion cr : conflicts.get(i).get(j))
         {
             if(!cr.canMove(i, j, flow))

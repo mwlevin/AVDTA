@@ -115,10 +115,11 @@ public class Path extends ArrayList<Link> implements Serializable
         {
             return true;
         }
-        
-        
-        DriverType driver = v.getDriver();
-        
+        return isValid(v.getDriver());
+    }
+    
+    public boolean isValid(DriverType driver)
+    {
         Link i = get(0);
         for(int idx = 1; idx < size(); idx++)
         {

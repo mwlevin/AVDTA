@@ -131,7 +131,7 @@ public class DLRCTMLink extends CTMLink
         cells[cells.length-1].setNumLanes(l1_D);
         opposite.cells[0].setNumLanes(l2_D);
         
-        
+
     }
     
     /**

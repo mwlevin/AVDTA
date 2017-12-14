@@ -86,7 +86,7 @@ public class MaxPressureObj implements ObjFunction
         
         int total_x = 0;
         
-        for(Vehicle v : i.getVehicles())
+        for(Vehicle v : i.getSendingFlow())
         {
             Link j = v.getNextLink();
             

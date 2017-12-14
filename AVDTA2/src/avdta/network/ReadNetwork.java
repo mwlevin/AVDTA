@@ -560,15 +560,18 @@ public class ReadNetwork
             }
             else if(type == DIVERGE.getCode())
             {
-                node.setControl(new Diverge());
+                node.setControl(new PriorityTBR(node, IntersectionPolicy.FCFS));
+                //node.setControl(new Diverge());
             }
             else if(type == MERGE.getCode())
             {
-                node.setControl(new Merge());
+                node.setControl(new PriorityTBR(node, IntersectionPolicy.FCFS));
+                //node.setControl(new Merge());
             }
             else if(type == CONNECTOR.getCode())
             {
-                node.setControl(new Connector());
+                node.setControl(new PriorityTBR(node, IntersectionPolicy.FCFS));
+                //node.setControl(new Connector());
             }
             else if(type/100 == HIGHWAY.getCode()/100)
             {
@@ -793,7 +796,7 @@ public class ReadNetwork
             {
                 if(type%10 == DLR.getCode()%10)
                 {
-                    Network.dlr = true;
+                    //Network.dlr = true;
                     link = new DLRCTMLink(id, source, dest, capacity, ffspd, w, jamd, length, numLanes);
                 }
                 else if(type % 10 == SHARED_TRANSIT.getCode()%10 && numLanes > 1)
@@ -1056,6 +1059,7 @@ public class ReadNetwork
                 {
                     Network.setDLR(true);
                 }
+
             }
             filein.close();
         }
