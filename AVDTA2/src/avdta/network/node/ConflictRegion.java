@@ -18,7 +18,6 @@ import java.io.Serializable;
 public class ConflictRegion implements Serializable
 {
     
-    private double capacity;
     public double R;
     
     public double tempR;
@@ -35,11 +34,9 @@ public class ConflictRegion implements Serializable
     
     /**
      * Constructs this {@link ConflictRegion} with the specified capacity
-     * @param capacity the capacity (veh/hr)
      */
     public ConflictRegion(double capacity)
     {
-        this.capacity = capacity;
         this.R = capacity;
 
         this.id = id_count++;
@@ -56,15 +53,6 @@ public class ConflictRegion implements Serializable
     public double getRemainingTimestepFlow()
     {
         return R;
-    }
-
-    /**
-     * Updates the capacity of this {@link ConflictRegion}
-     * @param capacity the new capacity
-     */
-    public void setCapacity(double capacity)
-    {
-        this.capacity = capacity;
     }
 
     /**
@@ -102,12 +90,15 @@ public class ConflictRegion implements Serializable
 
         if(blocked && R>=0)
         {
-            R += capacity * Network.dt / 3600.0;
+            R += 1;
+            //R += capacity * Network.dt / 3600.0;
         }
         else
         {
+            // this is leftover from when conflict regions stored capacity
             R -= Math.max(0, (int)R);
-            R += capacity * Network.dt / 3600.0;
+            //R += capacity * Network.dt / 3600.0;
+            R += 1;
         }
 
         blocked = false;
@@ -118,7 +109,8 @@ public class ConflictRegion implements Serializable
      */
     public void reset()
     {
-        R = capacity * Network.dt / 3600.0;
+        R = Network.dt;
+        //R = capacity * Network.dt / 3600.0;
         blocked = false;
     }
     
@@ -166,7 +158,7 @@ public class ConflictRegion implements Serializable
      */
     public double adjustFlow(Link inc, Link out)
     {
-        return capacity / (inc.getCapacityPerLane() * inc.getDsLanes());
+        return 1 / (inc.getCapacityPerLane() * inc.getDsLanes() * Network.dt/3600.0);
     }
 
     /**
@@ -175,7 +167,7 @@ public class ConflictRegion implements Serializable
      */
     public double getCapacity()
     {
-        return capacity;
+        return 1;
     }
     
     /**

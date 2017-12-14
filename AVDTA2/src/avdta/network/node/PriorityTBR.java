@@ -153,11 +153,7 @@ public class PriorityTBR extends TBR
         
         int moved = 0;
         
-        // if DLR update CR capacity because they shift number of lanes
-        if(Network.isDLR())
-        {
-            updateCRCapacity();
-        }
+
         
         // split to improve performance
         

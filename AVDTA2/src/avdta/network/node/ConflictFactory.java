@@ -4,6 +4,7 @@
  */
 package avdta.network.node;
 
+import avdta.network.Simulator;
 import avdta.network.link.Link;
 import avdta.network.node.TurningMovement;
 import java.util.ArrayList;
@@ -138,7 +139,7 @@ public class ConflictFactory
 
                         ConflictRegion cp = findConflict(division, x, y);
 
-                        cp.setCapacity(Math.max(cp.getCapacity(), Math.min(i.getCapacity(), j.getCapacity())));
+                        //cp.setCapacity(Math.max(cp.getCapacity(), Math.min(i.getCapacity(), j.getCapacity())));
                         conflicts.add(cp);
 
 
@@ -184,11 +185,11 @@ public class ConflictFactory
                     for(double k = 0; k <= 1; k += step)
                     {
                         ConflictRegion cp = findConflict(division, x1, y1);
-                        cp.setCapacity(Math.max(cp.getCapacity(), Math.min(i.getCapacity(), j.getCapacity())));
+                        //cp.setCapacity(Math.max(cp.getCapacity(), Math.min(i.getCapacity(), j.getCapacity())));
                         conflicts.add(cp);
 
                         cp = findConflict(division, x2, y2);
-                        cp.setCapacity(Math.max(cp.getCapacity(), Math.min(i.getCapacity(), j.getCapacity())));
+                        //cp.setCapacity(Math.max(cp.getCapacity(), Math.min(i.getCapacity(), j.getCapacity())));
                         conflicts.add(cp);
 
                         x1 += a1 * t * step;

@@ -25,6 +25,8 @@ import java.util.TreeSet;
  * Vehicles are delayed before they can enter the intersection, and capacity is adjusted based on straight and turning accelerations.
  * Stop signs are modeled via a single conflict region that all turning movements pass through.
  * 
+ * WARNING: capacity may not work. Has been broken.
+ * 
  * @author Michael
  */
 
@@ -276,7 +278,7 @@ public class StopSign extends IntersectionControl
             
         }
         
-        cr.setCapacity(max_capacity);
+        //cr.setCapacity(max_capacity);
         
         //sanityCheck();
     }

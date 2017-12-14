@@ -142,6 +142,7 @@ public abstract class TBR extends IntersectionControl
      */
     public void updateCRCapacity()
     {
+        /*
         for(ConflictRegion cr : allConflicts)
         {
             cr.setCapacity(0);
@@ -159,6 +160,7 @@ public abstract class TBR extends IntersectionControl
                 }
             }
         }
+        */
     }
     
     /**
