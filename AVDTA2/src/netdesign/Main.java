@@ -111,9 +111,9 @@ public class Main
     	
     	/*
     	 * Running DTA on test network with regression results
-    	 * 
- 	PrintStream fileout = new PrintStream(new FileOutputStream(new File("REGresults/coacongress_results/resultsnew.txt"), true), true);
- 	fileout.println("TSTT (hrs) and AvgTT (min/veh) for: 1. 100% Signals\t2. 100% Reservations\t3. Regression Results");
+    	 */
+ 	PrintStream fileout = new PrintStream(new FileOutputStream(new File("REGresults/coacongress_results/resultswithdallasregression.txt"), true), true);
+// 	fileout.println("TSTT (hrs) and AvgTT (min/veh) for: 1. 100% Signals\t2. 100% Reservations\t3. Regression Results");
  	fileout.println();
  	
  	//Change all vehicles to AVs
@@ -124,55 +124,58 @@ public class Main
 	demandread.changeDynamicType(project, proportionmap);
 	demandread.prepareDemand(project, 1.0);
 	
-	//100% Signals
-	changeControlAllInts(project, 100);
-	project.loadSimulator();
-  	DTASimulator sigsim = project.getSimulator();
-    	sigsim.msa(30, 1);
-    	fileout.print("SIG_TSTT\tSIG_AvgTT\t");
-    	fileout.println();
-    	fileout.print(sigsim.getTSTT()/3600.0 + "\t" + sigsim.getTSTT()/60.0/sigsim.getNumVehicles() + "\t\n");
-    	fileout.println();
-    	
-    	//100% Reservations
-    	changeControlAllInts(project, 301);
-    	project.loadSimulator();
-    	DTASimulator tbrsim = project.getSimulator();
-    	tbrsim.msa(30, 1);
-    	fileout.print("TBR_TSTT\tTBR_AvgTT\t");
-    	fileout.println();
-    	fileout.print(tbrsim.getTSTT()/3600.0 + "\t" + tbrsim.getTSTT()/60.0/tbrsim.getNumVehicles() + "\t\n");
-    	fileout.println();
+//	//100% Signals
+//	changeControlAllInts(project, 100);
+//	project.loadSimulator();
+//  	DTASimulator sigsim = project.getSimulator();
+//    	sigsim.msa(30, 1);
+//    	fileout.print("SIG_TSTT\tSIG_AvgTT\t");
+//    	fileout.println();
+//    	fileout.print(sigsim.getTSTT()/3600.0 + "\t" + sigsim.getTSTT()/60.0/sigsim.getNumVehicles() + "\t\n");
+//    	fileout.println();
+//    	
+//    	//100% Reservations
+//    	changeControlAllInts(project, 301);
+//    	project.loadSimulator();
+//    	DTASimulator tbrsim = project.getSimulator();
+//    	tbrsim.msa(30, 1);
+//    	fileout.print("TBR_TSTT\tTBR_AvgTT\t");
+//    	fileout.println();
+//    	fileout.print(tbrsim.getTSTT()/3600.0 + "\t" + tbrsim.getTSTT()/60.0/tbrsim.getNumVehicles() + "\t\n");
+//    	fileout.println();
     	
     	//Regression decided intersections
-    	Map<Integer, ArrayList<Integer>> keepsignals = new HashMap<Integer, ArrayList<Integer>>();
+    	Map<Integer, ArrayList<Integer>> intersections = new HashMap<Integer, ArrayList<Integer>>();
     	//This is a list of TBR intersections (rest signals)
-    	keepsignals.put(100, new ArrayList<Integer>(Arrays.asList(
-    			5453,
-    			5211,
-    			5135,
-    			5215,
-    			6231,
-    			5573,
-    			5659,
-    			6167,
-    			13500,
-    			5452,
-    			5143,
-    			13065,
-    			5577,
-    			5197,
-    			5778,
-    			5544,
-    			5574,
-    			6230,
-    			5685,
-    			5780)));
-    	fileout.println("// Results of changing 20 'best performing' intersections to TBR (rest signals)");
+    	intersections.put(100, new ArrayList<Integer>(Arrays.asList(
+    			13198,
+    			13106,
+    			5727,
+    			5414,
+    			5756,
+    			10488,
+    			5714,
+    			5757,
+    			6333,
+    			5471,
+    			12282,
+    			13109,
+    			5770,
+    			5722,
+    			5431,
+    			10491,
+    			11791,
+    			13019,
+    			5726,
+    			10601,
+    			5731,
+    			13111,
+    			5761)));
+    	fileout.println("// Results of changing 23 'worst performing' intersections to signals (rest TBR)");
     	fileout.print("REG_TSTT\tREG_AvgTT\t");
     	fileout.println();
     	
-    	changeControlSomeInts(project, keepsignals.get(100));
+    	changeControlSomeInts(project, intersections.get(100), true);
     	project.loadSimulator();
     	DTASimulator mixsim = project.getSimulator();
     	mixsim.msa(30, 1);
@@ -180,11 +183,11 @@ public class Main
     	fileout.println();
     	
     	fileout.close();
-		*/
+    	
     	/*
-    	 * TO PRINT INTERCHAR FOR COACONGRESS
+    	 * TO PRINT INTERCHAR
     	 *
-    	DTAProject baseproject = new DTAProject(new File("AVDTA2/projects/coacongress"));
+    	DTAProject baseproject = new DTAProject(new File("AVDTA2/projects/dallas_downtown"));
     	
     	List<Integer> signals = new ArrayList<>();
 	Scanner filein = new Scanner(baseproject.getSignalsFile());
@@ -194,142 +197,143 @@ public class Main
 		filein.nextLine();
 	}
 	filein.close();
-    	printIntersectionChar(getAllDemandTurns(signals), baseproject);
-	*/
+	
+    	printIntersectionChar(getAllDemandTurns(signals, baseproject), baseproject);
+    	*/
     }
     
-    public static 	Map<Integer, List<Map<Double, Map<String, Double>>>> getAllDemandTurns2(DTAProject baseproject) throws IOException {
-
-		DTASimulator sim = baseproject.getSimulator();
-		List<Integer> signals = new ArrayList<>();
-		Scanner filein = new Scanner(baseproject.getSignalsFile());
-		filein.nextLine();
-		while (filein.hasNextLine()) {
-			signals.add(filein.nextInt());
-			filein.nextLine();
-		}
-		filein.close();
-
-		Map<Integer, List<Map<Double, Map<String, Double>>>> turns = new HashMap<Integer, List<Map<Double, Map<String, Double>>>>();
-		// The above Map is of the structure shown below:
-		// <Node ID, (<10%demand, <"through", #turns>> , <30%demand, <"through",
-		// #turns>>)>
-		// <"left" , #turns>> <"left" , #turns>>
-		// <"right" , #turns>> <"right" , #turns>>
-		//
-		// ...continue for all Intersection Node IDs
-
-		for (int d : demandprops) {
-
-			Map<Integer, Map<String, Double>> tempTurns = new HashMap<>();
-			// Map above is of structure:
-			// <Node ID, <"through", #turns>>
-			// <"left" , #turns>>
-			// <"right" , #turns>>
-
-			for (int s : signals) {
-				Double leftTurns = 0.0;
-				Double rightTurns = 0.0;
-				Double throughTurns = 0.0;
-				List<StaticODRecord> odrecord = new ArrayList<StaticODRecord>();
-				DTAProject temp = new DTAProject(
-						new File("AVDTA2/projects/coatestIntersections/SIG_intersection" + s + "_" + d));
-				DTASimulator tempsim = temp.getSimulator();
-
-				// to get a list of staticodrecords for the specified project
-				Scanner staticodfilein = new Scanner(temp.getStaticODFile());
-				staticodfilein.nextLine();
-				while (staticodfilein.hasNextLine()) {
-					StaticODRecord temprecord = new StaticODRecord(staticodfilein.nextLine());
-					odrecord.add(temprecord);
-				}
-				staticodfilein.close();
-
-				// to get a list of all phaserecords (for turning movements)
-				List<PhaseRecord> phaserecord = new ArrayList<PhaseRecord>();
-				Scanner phasefilein = new Scanner(temp.getPhasesFile());
-				phasefilein.nextLine();
-				while (phasefilein.hasNextLine()) {
-					PhaseRecord tempphase = new PhaseRecord(phasefilein.nextLine());
-					phaserecord.add(tempphase);
-				}
-				phasefilein.close();
-
-				for (StaticODRecord r : odrecord) {
-					Link linkin = null;
-					Link linkout = null;
-					// List of centroidlinkin = [0]
-					List<Link> templistincent = new ArrayList<Link>(tempsim.getNode(r.getOrigin()).getOutgoing());
-					// List of linkin = [0]
-					List<Link> templistin = new ArrayList<Link>(tempsim.getNode(templistincent.get(0).getDest().getId()).getOutgoing());
-					for(Link l : templistin) {
-						if(l.isCentroidConnector()) {
-							templistin.remove(l);
-						}
-					}
-					
-
-					// List of centroidlinkout = [0]
-					List<Link> templistoutcent = new ArrayList<Link>(tempsim.getNode(r.getDest()).getIncoming());
-					// List of linkout = [0]
-					List<Link> templistout = new ArrayList<Link>(tempsim.getNode(templistoutcent.get(0).getSource().getId()).getIncoming());
-					for(Link l : templistout) {
-						if(l.isCentroidConnector()) {
-							templistout.remove(l);
-						}
-					}
-
-					linkin = templistin.get(0);
-					linkout = templistout.get(0);
-					List<Link> linkinlinkout = new ArrayList<Link>();
-					linkinlinkout.add(linkin);
-					linkinlinkout.add(linkout);
-					TurnRecord tempturn = new TurnRecord(linkin, linkout);
-
-					for (PhaseRecord p : phaserecord) {
-
-						if (p.getTurns().contains(tempturn)) {
-
-							double theta = linkout.getDirection() - linkin.getDirection() > 0
-									? linkout.getDirection() - linkin.getDirection()
-									: linkout.getDirection() - linkin.getDirection() + 2 * Math.PI;
-							if (theta >= Math.PI / 4 && theta <= Math.PI) {
-								leftTurns += r.getDemand();
-							} else if (theta > Math.PI && theta <= 7 * Math.PI / 4) {
-								rightTurns += r.getDemand();
-							} else {
-								throughTurns += r.getDemand();
-							}
-
-						}
-					}
-
-				}
-				Map<String, Double> turnMap = new HashMap<String, Double>();
-				turnMap.put("through", throughTurns);
-				turnMap.put("left", leftTurns);
-				turnMap.put("right", rightTurns);
-				tempTurns.put(s, turnMap);
-			}
-
-			for (int i : signals) {
-				Map<Double, Map<String, Double>> demandTurns = new HashMap<>();
-				demandTurns.put((double) d, tempTurns.get(i));
-				if (turns.containsKey(i)) {
-					turns.get(i).add(demandTurns);
-				} else {
-					turns.put(i, new ArrayList<>());
-					turns.get(i).add(demandTurns);
-				}
-			}
-		}
-
-		return turns;
-
-    }
+//    public static 	Map<Integer, List<Map<Double, Map<String, Double>>>> getAllDemandTurns2(DTAProject baseproject) throws IOException {
+//
+//		DTASimulator sim = baseproject.getSimulator();
+//		List<Integer> signals = new ArrayList<>();
+//		Scanner filein = new Scanner(baseproject.getSignalsFile());
+//		filein.nextLine();
+//		while (filein.hasNextLine()) {
+//			signals.add(filein.nextInt());
+//			filein.nextLine();
+//		}
+//		filein.close();
+//
+//		Map<Integer, List<Map<Double, Map<String, Double>>>> turns = new HashMap<Integer, List<Map<Double, Map<String, Double>>>>();
+//		// The above Map is of the structure shown below:
+//		// <Node ID, (<10%demand, <"through", #turns>> , <30%demand, <"through",
+//		// #turns>>)>
+//		// <"left" , #turns>> <"left" , #turns>>
+//		// <"right" , #turns>> <"right" , #turns>>
+//		//
+//		// ...continue for all Intersection Node IDs
+//
+//		for (int d : demandprops) {
+//
+//			Map<Integer, Map<String, Double>> tempTurns = new HashMap<>();
+//			// Map above is of structure:
+//			// <Node ID, <"through", #turns>>
+//			// <"left" , #turns>>
+//			// <"right" , #turns>>
+//
+//			for (int s : signals) {
+//				Double leftTurns = 0.0;
+//				Double rightTurns = 0.0;
+//				Double throughTurns = 0.0;
+//				List<StaticODRecord> odrecord = new ArrayList<StaticODRecord>();
+//				DTAProject temp = new DTAProject(
+//						new File("AVDTA2/projects/coatestIntersections/SIG_intersection" + s + "_" + d));
+//				DTASimulator tempsim = temp.getSimulator();
+//
+//				// to get a list of staticodrecords for the specified project
+//				Scanner staticodfilein = new Scanner(temp.getStaticODFile());
+//				staticodfilein.nextLine();
+//				while (staticodfilein.hasNextLine()) {
+//					StaticODRecord temprecord = new StaticODRecord(staticodfilein.nextLine());
+//					odrecord.add(temprecord);
+//				}
+//				staticodfilein.close();
+//
+//				// to get a list of all phaserecords (for turning movements)
+//				List<PhaseRecord> phaserecord = new ArrayList<PhaseRecord>();
+//				Scanner phasefilein = new Scanner(temp.getPhasesFile());
+//				phasefilein.nextLine();
+//				while (phasefilein.hasNextLine()) {
+//					PhaseRecord tempphase = new PhaseRecord(phasefilein.nextLine());
+//					phaserecord.add(tempphase);
+//				}
+//				phasefilein.close();
+//
+//				for (StaticODRecord r : odrecord) {
+//					Link linkin = null;
+//					Link linkout = null;
+//					// List of centroidlinkin = [0]
+//					List<Link> templistincent = new ArrayList<Link>(tempsim.getNode(r.getOrigin()).getOutgoing());
+//					// List of linkin = [0]
+//					List<Link> templistin = new ArrayList<Link>(tempsim.getNode(templistincent.get(0).getDest().getId()).getOutgoing());
+//					for(Link l : templistin) {
+//						if(l.isCentroidConnector()) {
+//							templistin.remove(l);
+//						}
+//					}
+//					
+//
+//					// List of centroidlinkout = [0]
+//					List<Link> templistoutcent = new ArrayList<Link>(tempsim.getNode(r.getDest()).getIncoming());
+//					// List of linkout = [0]
+//					List<Link> templistout = new ArrayList<Link>(tempsim.getNode(templistoutcent.get(0).getSource().getId()).getIncoming());
+//					for(Link l : templistout) {
+//						if(l.isCentroidConnector()) {
+//							templistout.remove(l);
+//						}
+//					}
+//
+//					linkin = templistin.get(0);
+//					linkout = templistout.get(0);
+//					List<Link> linkinlinkout = new ArrayList<Link>();
+//					linkinlinkout.add(linkin);
+//					linkinlinkout.add(linkout);
+//					TurnRecord tempturn = new TurnRecord(linkin, linkout);
+//
+//					for (PhaseRecord p : phaserecord) {
+//
+//						if (p.getTurns().contains(tempturn)) {
+//
+//							double theta = linkout.getDirection() - linkin.getDirection() > 0
+//									? linkout.getDirection() - linkin.getDirection()
+//									: linkout.getDirection() - linkin.getDirection() + 2 * Math.PI;
+//							if (theta >= Math.PI / 4 && theta <= Math.PI) {
+//								leftTurns += r.getDemand();
+//							} else if (theta > Math.PI && theta <= 7 * Math.PI / 4) {
+//								rightTurns += r.getDemand();
+//							} else {
+//								throughTurns += r.getDemand();
+//							}
+//
+//						}
+//					}
+//
+//				}
+//				Map<String, Double> turnMap = new HashMap<String, Double>();
+//				turnMap.put("through", throughTurns);
+//				turnMap.put("left", leftTurns);
+//				turnMap.put("right", rightTurns);
+//				tempTurns.put(s, turnMap);
+//			}
+//
+//			for (int i : signals) {
+//				Map<Double, Map<String, Double>> demandTurns = new HashMap<>();
+//				demandTurns.put((double) d, tempTurns.get(i));
+//				if (turns.containsKey(i)) {
+//					turns.get(i).add(demandTurns);
+//				} else {
+//					turns.put(i, new ArrayList<>());
+//					turns.get(i).add(demandTurns);
+//				}
+//			}
+//		}
+//
+//		return turns;
+//
+//    }
     
     
-    public static 	Map<Integer, List<Map<Double, Map<String, Double>>>> getAllDemandTurns(List<Integer> signals) throws IOException {
+    public static 	Map<Integer, List<Map<Double, Map<String, Double>>>> getAllDemandTurns(List<Integer> signals, DTAProject project) throws IOException {
     	
     	Map<Integer, List<Map<Double, Map<String, Double>>>> turns = new HashMap<Integer,  List<Map<Double, Map<String, Double>>>>();
     	//The above Map is of the structure shown below:
@@ -341,12 +345,12 @@ public class Main
     	
     	Map<Integer, Map<String, Double>> tempTurns = new HashMap<>();
 
-
+    	//Included this because for some reason the code can only load a simulator with assignment's vehicles if all intersections are signal controlled
+    	changeControlAllInts(project, 100);
     	for (int d : demandprops) {
 //    		Assignment assign = new Assignment(new File(project.getAssignmentsFolder() + "/" + d + "_demand"));
 //    		coasim.loadAssignment(assign);
     		//TODO fix nullpointer for vehicles
-        	DTAProject project = new DTAProject(new File("AVDTA2/projects/coacongress"));
         	project.openAssignment(new File(project.getAssignmentsFolder() + "/" + d + "_demand"));
         	DTASimulator coasim = project.getSimulator();
 //    		coasim.openAssignment(new File(project.getAssignmentsFolder() + "/" + d + "_demand"));
@@ -490,7 +494,7 @@ public class Main
 
 		// Create intersection characteristic file
 		PrintStream fileout = new PrintStream(
-				new FileOutputStream(new File("REGresults/" + project.getName() + "_results/" + project.getName() + "_inter_characteristics2")), true);
+				new FileOutputStream(new File("REGresults/" + project.getName() + "_results/" + project.getName() + "_inter_characteristics")), true);
 		fileout.println(
 				"ID\tnum_phases\tcycletime\tnum_moves\tnum_lanes\tavglanecapacity\tthroughturns\tleftturns\trightturns\tdemandprop");
 
@@ -728,32 +732,46 @@ public class Main
         newFile.renameTo(project.getNodesFile());
     }
     
-    //Creates a new Nodes file with the specified List of nodes changed to TBR and the rest changed to signals
-    public static void changeControlSomeInts(DTAProject project, List<Integer> keepsignals) throws IOException
+    //Creates a new Nodes file with the specified List of nodes changed to signals and the rest changed to TBR
+    //boolean listofsignals is true if given list is to be assigned as signal, false if list is to be assigned as TBR
+    public static void changeControlSomeInts(DTAProject project, List<Integer> intersections, boolean listofsignals) throws IOException
     {
-        Scanner filein = new Scanner(project.getNodesFile());
-        File newFile = new File(project.getProjectDirectory()+"/new_nodes.txt");
-        PrintStream fileout = new PrintStream(new FileOutputStream(newFile), true);
-        
-        fileout.println(filein.nextLine());
-        
-        while(filein.hasNextLine())
-        {
-            NodeRecord node = new NodeRecord(filein.nextLine());
-            if(!node.isZone())
-            {
-            		if(keepsignals.contains(node.getId())) {
-            			node.setType(301);
-            		}
-                node.setType(100);
-            }
-            fileout.println(node);
-        }
-        filein.close();
-        fileout.close();
-        
-        project.getNodesFile().delete();
-        newFile.renameTo(project.getNodesFile());
+		Scanner filein = new Scanner(project.getNodesFile());
+		File newFile = new File(project.getProjectDirectory() + "/new_nodes.txt");
+		PrintStream fileout = new PrintStream(new FileOutputStream(newFile), true);
+
+		fileout.println(filein.nextLine());
+
+		while (filein.hasNextLine()) {
+			NodeRecord node = new NodeRecord(filein.nextLine());
+			
+			if (!node.isZone()) {
+				
+				if (listofsignals) {
+					
+					if (intersections.contains(node.getId())) {
+						
+						node.setType(100);
+						
+					} else node.setType(301);
+					
+				} else {
+					
+					if (intersections.contains(node.getId())) {
+						
+						node.setType(301);
+						
+					} else node.setType(100);
+				}
+				
+			}
+			fileout.println(node);
+		}
+		filein.close();
+		fileout.close();
+
+		project.getNodesFile().delete();
+		newFile.renameTo(project.getNodesFile());
     }
     
     //Creates a new DTA project and network consisting of just one intersection (inControl is 0 for signal, 1 for reservation)
