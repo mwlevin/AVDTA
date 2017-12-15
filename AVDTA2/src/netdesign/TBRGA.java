@@ -16,11 +16,13 @@ import avdta.vehicle.DriverType;
 import avdta.vehicle.PersonalVehicle;
 import avdta.vehicle.Vehicle;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
@@ -38,23 +40,33 @@ public class TBRGA extends GeneticAlgorithm<TBRIndividual>
     
     private int max_tbrs;
     private boolean checkHV;
-    
+    private boolean isSO;
     
     private Map<Integer, Set<Integer>> odpairs;
     
     
-    public TBRGA(DTAProject project, int max_tbrs, boolean checkHV)
+    public TBRGA(DTAProject project, int max_tbrs, boolean checkHV, boolean isSO, int population_size, double proportion_kept, double mutate_percent)
     {
+    		super(population_size, proportion_kept, mutate_percent);
+    		
         this.project = project;
         this.max_tbrs = max_tbrs;
         this.checkHV = checkHV;
+        this.isSO = isSO;
+        
+        int counter = 0;
+        DTASimulator sim = project.getSimulator();
+        for(Node n : sim.getNodes()) {
+        		if(!n.isZone()) {
+        			intersections.put(n.getId(), counter);
+            		counter++;
+        		}
+        }
         
         type =  ReadNetwork.RESERVATION + ReadNetwork.MCKS + ReadNetwork.PRESSURE;
         
         if(checkHV)
-        {
-            DTASimulator sim = project.getSimulator();
-            
+        {            
             odpairs = new HashMap<Integer, Set<Integer>>();
             
             for(Vehicle v : sim.getVehicles())
@@ -78,11 +90,11 @@ public class TBRGA extends GeneticAlgorithm<TBRIndividual>
     public TBRIndividual createRandom() throws IOException
     {
         TBRIndividual org;
-        
+        int[] controls = new int[intersections.size()];
+
+        if(!isSO) {
         do
         {
-            int[] controls = new int[intersections.size()];
-            
             for(int i = 0; i < controls.length; i++)
             {
                 controls[i] = ReadNetwork.SIGNAL;
@@ -96,26 +108,44 @@ public class TBRGA extends GeneticAlgorithm<TBRIndividual>
             org = new TBRIndividual(controls);
         }
         while(!isFeasible(org));
+        }
+        else {
+        		for(int i = 0; i < controls.length; i++) {
+        			controls[i] = Math.random() < 0.5 ? type : ReadNetwork.SIGNAL;
+        		}
+        		org = new TBRIndividual(controls);
+        }
         return org;
     }
     
     
     public TBRIndividual cross(TBRIndividual parent1, TBRIndividual parent2) throws IOException
     {
-        TBRIndividual child;
-        
-        do
-        {
-            child = parent1.cross(parent2);
-        }
-        while(!isFeasible(child));
-        
-        return child;
+		TBRIndividual child;
+		
+		if (!isSO) {
+			do {
+				child = parent1.cross(parent2);
+			} while (!isFeasible(child));
+		}
+		else {
+			child = parent1.cross(parent2);
+		}
+		return child;
     }
     
     public void mutate(TBRIndividual org) throws IOException
     {
-        
+    		int[] newcontrols = org.getControls();
+    		
+        for (int i = 0; i < newcontrols.length; i++) {
+        		if(Math.random() < 0.07) {
+        			
+        			if (newcontrols[i] == 0) {
+        				newcontrols[i] = 1;
+        			} else newcontrols[i] = 0;
+        		}
+        }
     }
     
     public boolean isFeasible(TBRIndividual org) throws IOException
@@ -171,7 +201,7 @@ public class TBRGA extends GeneticAlgorithm<TBRIndividual>
         DTASimulator sim = project.getSimulator();
         
         // solve DTA
-        sim.msa(30);
+        sim.msa(30, 2.0);
         
         child.setAssignment(sim.getAssignment());
     }
@@ -199,4 +229,18 @@ public class TBRGA extends GeneticAlgorithm<TBRIndividual>
         project.getNodesFile().delete();
         newFile.renameTo(project.getNodesFile());
     }
+
+	@Override
+	public void print(TBRIndividual best, int iteration, int nummutations) throws FileNotFoundException {
+
+		PrintStream fileout = new PrintStream(new FileOutputStream(new File("GA_results_1"), true), true);
+		fileout.println("Iteration " + iteration);
+		fileout.println("TSTT\t" + best.getObj() + "\tNumber of mutations\t" + nummutations);
+		fileout.println("Node\tControl");
+		for(int node : intersections.keySet()) {
+			fileout.println(node + "\t" + best.getControl(intersections.get(node)));
+		}
+		fileout.println();
+		fileout.close();
+	}
 }

@@ -5,9 +5,14 @@
  */
 package netdesign;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+
 // delete sim.vat, times file, demand file to reduce storage!
 
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -35,6 +40,12 @@ public abstract class GeneticAlgorithm<T extends Individual>
     public abstract T cross(T parent1, T parent2) throws IOException;
     public abstract T createRandom() throws IOException;
     
+    public GeneticAlgorithm(Integer population_size, Double proportion_kept, Double mutate_percent) {
+    		this.population_size = population_size;
+    		this.proportion_kept = proportion_kept;
+    		this.mutate_percent = mutate_percent;
+    }
+    
     public void solve(int max_iters) throws IOException
     {
         List<T> population = new ArrayList<T>();
@@ -46,12 +57,13 @@ public abstract class GeneticAlgorithm<T extends Individual>
             population.add(child);
         }
         
-        Collections.sort(population);
         
         int iteration = 1;
         
         while(iteration <= max_iters)
         {
+        		int count = 0;
+            Collections.sort(population);
             List<T> newPopulation = new ArrayList<T>();
             
             int parents = (int)(population_size * proportion_kept);
@@ -69,13 +81,14 @@ public abstract class GeneticAlgorithm<T extends Individual>
                 {
                     parent2 = newPopulation.get((int)(Math.random()*parents));
                 }
-                while(parent1 != parent2);
+                while(parent1 == parent2);
                 
                 T child = cross(parent1, parent2);
                 
                 if(Math.random() < mutate_percent)
                 {
                     mutate(child);
+                    count++;
                 }
                 
                 calculateObj(child);
@@ -84,8 +97,13 @@ public abstract class GeneticAlgorithm<T extends Individual>
             }
             
             population = newPopulation;
+            print(population.get(0),iteration, count);
+
+            iteration++;
         }
     }
+    
+    public abstract void print(T best, int i, int nummutations) throws FileNotFoundException;
     
     public void calculateObj(T child) throws IOException
     {

@@ -107,77 +107,83 @@ public class Main
 	
     public static void main(String[] args) throws IOException
     { 	
+    	
+    	
     	/*
-    	 * Running DTA on dallas_downtown with regression results */
-// 	PrintStream fileout = new PrintStream(new FileOutputStream(new File("REGresults/coacongress_results/resultsnew.txt"), true), true);
-// 	fileout.println("TSTT (hrs) and AvgTT (min/veh) for: 1. 100% Signals\t2. 100% Reservations\t3. Regression Results");
-// 	fileout.println();
+    	 * Running DTA on test network with regression results
+    	 * 
+ 	PrintStream fileout = new PrintStream(new FileOutputStream(new File("REGresults/coacongress_results/resultsnew.txt"), true), true);
+ 	fileout.println("TSTT (hrs) and AvgTT (min/veh) for: 1. 100% Signals\t2. 100% Reservations\t3. Regression Results");
+ 	fileout.println();
  	
-// 	//Change all vehicles to AVs
-//	DTAProject project = new DTAProject(new File("AVDTA2/projects/coacongress"));
-//	ReadDTANetwork demandread = new ReadDTANetwork();
-//	Map<Integer, Double> proportionmap = new HashMap<Integer, Double>();
-//	proportionmap.put(121, 1.0);
-//	demandread.changeDynamicType(project, proportionmap);
-//	demandread.prepareDemand(project, 1.0);
-//	
-//	//100% Signals
-//	changeControlAllInts(project, 100);
-//	project.loadSimulator();
-//  	DTASimulator sigsim = project.getSimulator();
-//    	sigsim.msa(30, 1);
-//    	fileout.print("SIG_TSTT\tSIG_AvgTT\t");
-//    	fileout.println();
-//    	fileout.print(sigsim.getTSTT()/3600.0 + "\t" + sigsim.getTSTT()/60.0/sigsim.getNumVehicles() + "\t\n");
-//    	fileout.println();
-//    	
-//    	//100% Reservations
-//    	changeControlAllInts(project, 301);
-//    	project.loadSimulator();
-//    	DTASimulator tbrsim = project.getSimulator();
-//    	tbrsim.msa(30, 1);
-//    	fileout.print("TBR_TSTT\tTBR_AvgTT\t");
-//    	fileout.println();
-//    	fileout.print(tbrsim.getTSTT()/3600.0 + "\t" + tbrsim.getTSTT()/60.0/tbrsim.getNumVehicles() + "\t\n");
-//    	fileout.println();
-//    	
-//    	//Regression decided intersections
-//    	Map<Integer, ArrayList<Integer>> keepsignals = new HashMap<Integer, ArrayList<Integer>>();
-//    	//This is a list of TBR intersections (rest signals)
-//    	keepsignals.put(100, new ArrayList<Integer>(Arrays.asList(
-//    			5453,
-//    			5211,
-//    			5135,
-//    			5215,
-//    			6231,
-//    			5573,
-//    			5659,
-//    			6167,
-//    			13500,
-//    			5452,
-//    			5143,
-//    			13065,
-//    			5577,
-//    			5197,
-//    			5778,
-//    			5544,
-//    			5574,
-//    			6230,
-//    			5685,
-//    			5780)));
-//    	fileout.println("// Results of changing 20 'best performing' intersections to TBR (rest signals)");
-//    	fileout.print("REG_TSTT\tREG_AvgTT\t");
-//    	fileout.println();
-//    	
-//    	changeControlSomeInts(project, keepsignals.get(100));
-//    	project.loadSimulator();
-//    	DTASimulator mixsim = project.getSimulator();
-//    	mixsim.msa(30, 1);
-//    	fileout.print(mixsim.getTSTT()/3600.0 + "\t" + mixsim.getTSTT()/60.0/mixsim.getNumVehicles() + "\t\n");
-//    	fileout.println();
-//    	
-//    	fileout.close();
-
+ 	//Change all vehicles to AVs
+	DTAProject project = new DTAProject(new File("AVDTA2/projects/coacongress"));
+	ReadDTANetwork demandread = new ReadDTANetwork();
+	Map<Integer, Double> proportionmap = new HashMap<Integer, Double>();
+	proportionmap.put(121, 1.0);
+	demandread.changeDynamicType(project, proportionmap);
+	demandread.prepareDemand(project, 1.0);
+	
+	//100% Signals
+	changeControlAllInts(project, 100);
+	project.loadSimulator();
+  	DTASimulator sigsim = project.getSimulator();
+    	sigsim.msa(30, 1);
+    	fileout.print("SIG_TSTT\tSIG_AvgTT\t");
+    	fileout.println();
+    	fileout.print(sigsim.getTSTT()/3600.0 + "\t" + sigsim.getTSTT()/60.0/sigsim.getNumVehicles() + "\t\n");
+    	fileout.println();
+    	
+    	//100% Reservations
+    	changeControlAllInts(project, 301);
+    	project.loadSimulator();
+    	DTASimulator tbrsim = project.getSimulator();
+    	tbrsim.msa(30, 1);
+    	fileout.print("TBR_TSTT\tTBR_AvgTT\t");
+    	fileout.println();
+    	fileout.print(tbrsim.getTSTT()/3600.0 + "\t" + tbrsim.getTSTT()/60.0/tbrsim.getNumVehicles() + "\t\n");
+    	fileout.println();
+    	
+    	//Regression decided intersections
+    	Map<Integer, ArrayList<Integer>> keepsignals = new HashMap<Integer, ArrayList<Integer>>();
+    	//This is a list of TBR intersections (rest signals)
+    	keepsignals.put(100, new ArrayList<Integer>(Arrays.asList(
+    			5453,
+    			5211,
+    			5135,
+    			5215,
+    			6231,
+    			5573,
+    			5659,
+    			6167,
+    			13500,
+    			5452,
+    			5143,
+    			13065,
+    			5577,
+    			5197,
+    			5778,
+    			5544,
+    			5574,
+    			6230,
+    			5685,
+    			5780)));
+    	fileout.println("// Results of changing 20 'best performing' intersections to TBR (rest signals)");
+    	fileout.print("REG_TSTT\tREG_AvgTT\t");
+    	fileout.println();
+    	
+    	changeControlSomeInts(project, keepsignals.get(100));
+    	project.loadSimulator();
+    	DTASimulator mixsim = project.getSimulator();
+    	mixsim.msa(30, 1);
+    	fileout.print(mixsim.getTSTT()/3600.0 + "\t" + mixsim.getTSTT()/60.0/mixsim.getNumVehicles() + "\t\n");
+    	fileout.println();
+    	
+    	fileout.close();
+		*/
+    	/*
+    	 * TO PRINT INTERCHAR FOR COACONGRESS
+    	 *
     	DTAProject baseproject = new DTAProject(new File("AVDTA2/projects/coacongress"));
     	
     	List<Integer> signals = new ArrayList<>();
@@ -188,14 +194,8 @@ public class Main
 		filein.nextLine();
 	}
 	filein.close();
-		
-//    	createAllIntersections();
-//    	runRegressionDTA(baseproject);
     	printIntersectionChar(getAllDemandTurns(signals), baseproject);
-
-    	
-//	printIntersectionChar(getAllDemandTurns(signals), testproject);
-	
+	*/
     }
     
     public static 	Map<Integer, List<Map<Double, Map<String, Double>>>> getAllDemandTurns2(DTAProject baseproject) throws IOException {
