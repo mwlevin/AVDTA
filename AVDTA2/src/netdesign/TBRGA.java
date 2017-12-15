@@ -99,6 +99,7 @@ public class TBRGA extends GeneticAlgorithm<TBRIndividual>
         return org;
     }
     
+    
     public TBRIndividual cross(TBRIndividual parent1, TBRIndividual parent2) throws IOException
     {
         TBRIndividual child;
