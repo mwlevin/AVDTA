@@ -90,7 +90,7 @@ public class CTMLink extends Link
     public void initialize()
     {
         
-        cells = new Cell[(int)Math.max(2, Math.round((getTrueLength() / getFFSpeed()) / (Network.dt / 3600.0) ))];
+        cells = new Cell[getNumCells()];
         
         cells[0] = createStartCell();
                 
@@ -137,7 +137,14 @@ public class CTMLink extends Link
      */
     public int getNumCells()
     {
-        return cells.length;
+        if(cells != null)
+        {
+            return cells.length;
+        }
+        else
+        {
+            return (int)Math.max(2, Math.round((getTrueLength() / getFFSpeed()) / (Network.dt / 3600.0) ));
+        }
     }
     
     

@@ -83,7 +83,14 @@ public class ReadNetwork
 {
     public static final Type LTM = new Type(200, "LTM");
     public static final Type CTM = new Type(100, "CTM");
-    public static final ExtendedType DLR = new ExtendedType(2, "DLR", CTM);
+    public static final ExtendedType DLR = new ExtendedType(2, "DLR", CTM)
+    {
+        public boolean isValid(LinkRecord link)
+        {
+            return link.getNumLanes() > 1;
+        }
+    };
+    
     public static final ExtendedType SHARED_TRANSIT = new ExtendedType(3, "Shared-transit", CTM)
     {
         public boolean isValid(LinkRecord link)
@@ -1055,9 +1062,9 @@ public class ReadNetwork
                 {
                     Network.HVs_use_reservations = val.equalsIgnoreCase("true");
                 }
-                else if(key.equals("dynamic-lane-reversal") && val.equalsIgnoreCase("true"))
+                else if(key.equals("dynamic-lane-reversal"))
                 {
-                    Network.setDLR(true);
+                    Network.setDLR(val.equalsIgnoreCase("true"));
                 }
 
             }

@@ -51,6 +51,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import avdta.network.cost.FFTime;
 import avdta.network.link.AbstractSplitLink;
+import avdta.network.link.DLRCTMLink;
 import avdta.network.link.LTMLink;
 import avdta.network.link.TransitLane;
 import avdta.util.RunningAvg;
@@ -806,6 +807,8 @@ public class Simulator extends Network
 
         exit_count = 0;
         
+        
+        
         for(time = 0; time < duration; time += dt)
         {
             // push vehicles onto centroid connectors at departure time
@@ -818,6 +821,35 @@ public class Simulator extends Network
             {
                 break;
             }
+            
+            /*
+            if(time % 600 == 0)
+            {
+                int possible = 0;
+                int count = 0;
+        
+                for(Link l : links)
+                {
+                    if(l instanceof DLRCTMLink)
+                    {
+                        DLRCTMLink link = (DLRCTMLink)l;
+
+                        if(link.getCells()[1].getNumLanes() != link.getNumLanes())
+                        {
+                            count++;
+
+                        }
+
+                        if(link.getOpposite() != null)
+                        {
+                            possible++;
+                        }
+                    }
+                }
+
+                System.out.println(String.format("%.2f", 100.0*count/possible)+"%\t"+(possible/2));
+            }
+            */
         }
         
 

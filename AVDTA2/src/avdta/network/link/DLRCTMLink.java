@@ -23,7 +23,7 @@ import avdta.util.RunningAvg;
  */
 public class DLRCTMLink extends CTMLink
 {
-    private static final double alpha = 0.99;
+    private static final double alpha = 1;
     
     // average sending, receiving flow every 15 min from last assignment
     private RunningAvg[] usSendingFlow, dsReceivingFlow;
@@ -145,22 +145,27 @@ public class DLRCTMLink extends CTMLink
         int l1 = cells[1].getNumLanes();
         int l2 = total_lanes - l1;
         
+
+        
         // estimate over/undersaturation factor
-        int T = (int)Math.round(cells.length * 4);
+        int T = (int)Math.round(cells.length*1);
         //int T = 4;
         
         double demand1 = 0.0;
         double demand2 = 0.0;
         
         // demand
-        for(int i = 0; i < cells.length; i++)
+        for(int i = cells.length-1; i >= 0; i--)
         {
-            demand1 += cells[i].getOccupancy();
+            demand1 += cells[i].getOccupancy()* Math.pow(alpha, cells.length-1-i);
+
         }
         
         for(int i = 0; i < opposite.cells.length; i++)
         {
-            demand2 += opposite.cells[i].getOccupancy();
+            demand2 += opposite.cells[i].getOccupancy()* Math.pow(alpha, i);
+            
+
         }
         
         // queues
@@ -172,10 +177,10 @@ public class DLRCTMLink extends CTMLink
         double incoming1 = 0;
         double incoming2 = 0;
         
-        for(int t_idx = 0; t_idx < T; t_idx++)
+        for(int t_idx = T - cells.length; t_idx < T; t_idx++)
         {
-            incoming1 += getExpUsSendingFlow(Simulator.time + t_idx * Network.dt);
-            incoming2 += opposite.getExpUsSendingFlow(Simulator.time + t_idx * Network.dt);
+            incoming1 += getExpUsSendingFlow(Simulator.time + t_idx * Network.dt)* Math.pow(alpha, t_idx);
+            incoming2 += opposite.getExpUsSendingFlow(Simulator.time + t_idx * Network.dt)* Math.pow(alpha, t_idx);
         }
         
         demand1 += incoming1;
@@ -191,8 +196,8 @@ public class DLRCTMLink extends CTMLink
         
         for(int t_idx = 0; t_idx < T; t_idx++)
         {
-            R1_max += getExpDsReceivingFlow(Simulator.time + t_idx * Network.dt);
-            R2_max += opposite.getExpDsReceivingFlow(Simulator.time + t_idx * Network.dt);
+            R1_max += getExpDsReceivingFlow(Simulator.time + t_idx * Network.dt) * Math.pow(alpha, t_idx);
+            R2_max += opposite.getExpDsReceivingFlow(Simulator.time + t_idx * Network.dt) * Math.pow(alpha, t_idx);
         }
         
         demand1 = Math.min(demand1, R1_max);
@@ -211,19 +216,26 @@ public class DLRCTMLink extends CTMLink
         delta_1 /= T;
         delta_2 /= T;
         
+        
+        
         int l1_new = l1;
         int l2_new = l2;
         
         // if switching a link to 1 improves supply use
-        if(delta_1 > Math.max(0, Q_per_dt + delta_2) && max_lanes_1() >= l1 + 1)
+        if(delta_1 > 0 && delta_1 > Math.max(0, Q_per_dt + delta_2) && max_lanes_1() >= l1 + 1)
         {
             l1_new = l1 + 1;
             l2_new = l2 - 1;
         }
-        else if(delta_2 > Math.max(0, Q_per_dt + delta_1) && max_lanes_2() >= l2 + 1)
+        else if(delta_2 > 0 && delta_2 > Math.max(0, Q_per_dt + delta_1) && max_lanes_2() >= l2 + 1)
         {
             l2_new = l2 + 1;
             l1_new = l1 - 1;
+        }
+        
+        if(l1_new != l1)
+        {
+            //System.out.println(getId()+" "+delta_1+" "+delta_2);
         }
         
         
@@ -301,7 +313,8 @@ public class DLRCTMLink extends CTMLink
     {
         int idx = t / Simulator.ast_duration;
         
-        if(dsReceivingFlow == null || idx < 0 || idx >= dsReceivingFlow.length || dsReceivingFlow[idx].getCount() == 0)
+        if(true)
+        //if(dsReceivingFlow == null || idx < 0 || idx >= dsReceivingFlow.length || dsReceivingFlow[idx].getCount() == 0)
         {
             return getCellCapacityPerLane() * getNumLanes();
         }
@@ -416,6 +429,10 @@ public class DLRCTMLink extends CTMLink
         usSendingFlow_fordt = 0;
     }
     
+    public DLRCTMLink getOpposite()
+    {
+        return opposite;
+    }
     
     /**
      * Adds to the upstream sending flow at the current time step

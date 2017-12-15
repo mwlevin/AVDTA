@@ -256,7 +256,7 @@ public abstract class Cell implements Comparable<Cell>
         max_S = max_S - Math.floor(max_S);
 
         
-        R = Math.min(R+capacity, scaleWaveSpeed(link.getWaveSpeed()) / link.getFFSpeed() * 
+        R += Math.min(R+capacity, scaleWaveSpeed(link.getWaveSpeed()) / link.getFFSpeed() * 
                 (getJamD() - curr.size()));
 
         

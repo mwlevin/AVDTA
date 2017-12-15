@@ -64,6 +64,9 @@ public class Network
     
     public TravelCost costFunc;
     
+    
+    
+    
     /**
      * Constructs an empty {@link Network}
      */
