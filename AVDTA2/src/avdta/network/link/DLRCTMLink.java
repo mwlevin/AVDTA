@@ -92,6 +92,16 @@ public class DLRCTMLink extends CTMLink
         return opposite != null;
     }
     
+    public DLRCell getFirstCell()
+    {
+        return (DLRCell)super.getFirstCell();
+    }
+    
+    public DLRCell getLastCell()
+    {
+        return (DLRCell)super.getLastCell();
+    }
+    
     /**
      * Updates the number of lanes in each cell for the next time step
      */
@@ -126,10 +136,10 @@ public class DLRCTMLink extends CTMLink
         int total_lanes = getTotalLanes();
         
         cells[0].setNumLanes(total_lanes - l2_D);
-        opposite.cells[opposite.cells.length - 1].setNumLanes(total_lanes - l1_D);
+        opposite.cells[opposite.cells.length - 1].setNumLanes(l2_D);
 
         cells[cells.length-1].setNumLanes(l1_D);
-        opposite.cells[0].setNumLanes(l2_D);
+        opposite.cells[0].setNumLanes(total_lanes - l1_D);
         
 
     }
@@ -334,9 +344,10 @@ public class DLRCTMLink extends CTMLink
         int total_lanes = getTotalLanes();
         int output = total_lanes;
         
-        for(Cell c : opposite.cells)
+        for(int i = 0; i < cells.length; i++)
         {
-            output = (int)Math.min(output, total_lanes - ((DLRCell)c).getMinLanes());
+            Cell opposite = ((DLRCell)cells[i]).getOpposite();
+            output = (int)Math.min(Math.min(cells[i].getMaxLanes(), output), total_lanes - opposite.getMinLanes());
         }
         
         //return output;
@@ -389,8 +400,8 @@ public class DLRCTMLink extends CTMLink
         for(int i = 0; i < cells.length; i++)
         {
             
-            ((DLRCell)cells[i]).setOppositeCell(opposite.cells[opposite.cells.length - 1 - i]);
-            ((DLRCell)opposite.cells[i]).setOppositeCell(cells[cells.length - 1 - i]);
+            ((DLRCell)cells[i]).setOppositeCell((DLRCell)opposite.cells[opposite.cells.length - 1 - i]);
+            ((DLRCell)opposite.cells[i]).setOppositeCell((DLRCell)cells[cells.length - 1 - i]);
         }
         
         return true;

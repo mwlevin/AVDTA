@@ -41,7 +41,15 @@ public class CentroidConnector extends Link
 
     public Iterable<Vehicle> getVehicles()
     {
-        return queue;
+        // these vehicles will exit automatically, so don't include them in pressure-based calculations
+        if(getDest().isZone())
+        {
+            return new ArrayList<Vehicle>();
+        }
+        else
+        {
+            return queue;
+        }
     }
 
     
@@ -104,7 +112,7 @@ public class CentroidConnector extends Link
      */
     public double getFFTime()
     {
-        return 0;
+        return Simulator.dt;
     }
     
     /**

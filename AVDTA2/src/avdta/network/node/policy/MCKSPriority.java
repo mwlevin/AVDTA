@@ -18,7 +18,7 @@ import avdta.network.type.Type;
  * Defines efficiency function to prioritize vehicles when using MCKS greedy heuristic.
  * @author Michael
  */
-public class MCKSPriority extends IntersectionPolicy
+public class MCKSPriority extends IntersectionPolicy implements ObjPolicy
 {
     private ObjFunction func;
     

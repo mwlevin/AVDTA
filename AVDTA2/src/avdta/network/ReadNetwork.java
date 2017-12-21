@@ -36,6 +36,7 @@ import avdta.network.link.CACCLTMLink;
 import avdta.network.link.DLRCTMLink;
 import avdta.network.link.SharedTransitCTMLink;
 import avdta.network.link.AbstractSplitLink;
+import avdta.network.link.DLR2CTMLink;
 import avdta.network.link.LinkRecord;
 import avdta.network.link.SplitCTMLink;
 import avdta.network.link.TransitLane;
@@ -91,6 +92,14 @@ public class ReadNetwork
         }
     };
     
+    public static final ExtendedType DLR2 = new ExtendedType(3, "DLR-new", CTM)
+    {
+        public boolean isValid(LinkRecord link)
+        {
+            return link.getNumLanes() > 1;
+        }
+    };
+    
     public static final ExtendedType SHARED_TRANSIT = new ExtendedType(3, "Shared-transit", CTM)
     {
         public boolean isValid(LinkRecord link)
@@ -113,11 +122,11 @@ public class ReadNetwork
     
     // arrays of all types for searching purposes
     public static final Type[] LINK_TYPES = new Type[]{LTM, CTM, CENTROID};
-    public static final ExtendedType[] LINK_EXT_TYPES = new ExtendedType[]{DLR, SHARED_TRANSIT, SPLIT_TRANSIT, CACC, TRANSIT_LANE};
+    public static final ExtendedType[] LINK_EXT_TYPES = new ExtendedType[]{DLR, DLR2, SHARED_TRANSIT, SPLIT_TRANSIT, CACC, TRANSIT_LANE};
     
     // these are the options that will show up in the GUI.
     public static final Type[] LINK_OPTIONS = new Type[]{LTM, CTM}; 
-    public static final ExtendedType[] LINK_EXT_OPTIONS = new ExtendedType[]{DLR, SHARED_TRANSIT, SPLIT_TRANSIT, CACC};
+    public static final ExtendedType[] LINK_EXT_OPTIONS = new ExtendedType[]{DLR, DLR2, SHARED_TRANSIT, SPLIT_TRANSIT, CACC};
     
     //public static final int CENTROID = 100;
     public static final Type SIGNAL = new Type(100, "Signal");
@@ -567,18 +576,15 @@ public class ReadNetwork
             }
             else if(type == DIVERGE.getCode())
             {
-                node.setControl(new PriorityTBR(node, IntersectionPolicy.FCFS));
-                //node.setControl(new Diverge());
+                node.setControl(new Diverge());
             }
             else if(type == MERGE.getCode())
             {
-                node.setControl(new PriorityTBR(node, IntersectionPolicy.FCFS));
-                //node.setControl(new Merge());
+                node.setControl(new Merge());
             }
             else if(type == CONNECTOR.getCode())
             {
-                node.setControl(new PriorityTBR(node, IntersectionPolicy.FCFS));
-                //node.setControl(new Connector());
+                node.setControl(new Connector());
             }
             else if(type/100 == HIGHWAY.getCode()/100)
             {
@@ -805,6 +811,11 @@ public class ReadNetwork
                 {
                     //Network.dlr = true;
                     link = new DLRCTMLink(id, source, dest, capacity, ffspd, w, jamd, length, numLanes);
+                }
+                else if(type%10 == DLR2.getCode()%10)
+                {
+                    //Network.dlr = true;
+                    link = new DLR2CTMLink(id, source, dest, capacity, ffspd, w, jamd, length, numLanes);
                 }
                 else if(type % 10 == SHARED_TRANSIT.getCode()%10 && numLanes > 1)
                 {

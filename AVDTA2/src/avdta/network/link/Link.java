@@ -58,7 +58,7 @@ import java.util.Map;
 public abstract class Link implements Serializable, Comparable<Link>
 {
     
-    
+    public int ds_lanes, us_lanes;
     
     public double dem;
     
@@ -156,6 +156,7 @@ public abstract class Link implements Serializable, Comparable<Link>
         
         flowin = new int[(int)Math.ceil((double)Simulator.duration / Simulator.ast_duration)+1];
         
+        ds_lanes = us_lanes = numLanes;
     }
     
     public abstract Iterable<Vehicle> getVehicles();

@@ -51,6 +51,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import avdta.network.cost.FFTime;
 import avdta.network.link.AbstractSplitLink;
+import avdta.network.link.DLR2CTMLink;
 import avdta.network.link.DLRCTMLink;
 import avdta.network.link.LTMLink;
 import avdta.network.link.TransitLane;
@@ -811,6 +812,7 @@ public class Simulator extends Network
         
         for(time = 0; time < duration; time += dt)
         {
+
             // push vehicles onto centroid connectors at departure time
             addVehicles();
             
@@ -1092,6 +1094,23 @@ public class Simulator extends Network
      */
     protected void propagateFlow()
     {
+        
+        for(Link l : links)
+        {
+            l.pressure_terms = null;
+            
+            if(l instanceof DLR2CTMLink)
+            {
+                DLR2CTMLink link = (DLR2CTMLink)l;
+                
+                if(link.isTied())
+                {
+                    link.ds_lanes = -1;
+                    link.us_lanes = -1;
+                }
+            }
+        }
+        
         for(Link l : links)
         {
             l.prepare();

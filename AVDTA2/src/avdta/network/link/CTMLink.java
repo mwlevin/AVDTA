@@ -266,8 +266,6 @@ public class CTMLink extends Link
         for(Cell c : cells)
         {
             c.reset();
-            
-            c.setNumLanes(getNumLanes());
         }
         
         

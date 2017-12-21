@@ -102,7 +102,31 @@ public abstract class Cell implements Comparable<Cell>
      */
     public void setNumLanes(int n)
     {
-        numLanes = n;
+        if(isValid(n))
+        {
+            numLanes = n;
+        }
+        else
+        {
+            System.out.println("Occupancy: "+getOccupancy()+"\t"+"Jam D: "+getJamDPerLane()+" Num lanes: "+numLanes);
+            System.out.println(link.getId());
+            throw new RuntimeException("Invalid cell # of lanes - lanes: "+n+" link: "+getLink()+" "+getMinLanes()+" "+getMaxLanes());
+        }
+    }
+    
+    public int getMinLanes()
+    {
+        return numLanes;
+    }
+    
+    public int getMaxLanes()
+    {
+        return numLanes;
+    }
+    
+    public boolean isValid(int numLanes)
+    {
+        return true;
     }
     
     
@@ -136,6 +160,7 @@ public abstract class Cell implements Comparable<Cell>
     {
         curr = new ArrayList<Vehicle>();
         next = new ArrayList<Vehicle>();
+        numLanes = link.getNumLanes();
     }
 
     /**

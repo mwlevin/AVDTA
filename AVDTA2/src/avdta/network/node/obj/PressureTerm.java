@@ -20,4 +20,9 @@ public class PressureTerm
         this.x = x;
         this.p = p;
     }
+    
+    public String toString()
+    {
+        return "("+x+", "+p+")";
+    }
 }

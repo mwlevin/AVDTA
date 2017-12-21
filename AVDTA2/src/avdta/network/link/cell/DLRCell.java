@@ -17,7 +17,7 @@ import avdta.vehicle.Vehicle;
  */
 public abstract class DLRCell extends Cell
 {
-    private Cell opposite; 
+    private DLRCell opposite; 
     
     /**
      * Constructs this cell as part of the specified link.
@@ -32,7 +32,7 @@ public abstract class DLRCell extends Cell
      * Sets the opposing cell on the parallel but opposite link (if one exists)
      * @param o the opposing cell
      */
-    public void setOppositeCell(Cell o)
+    public void setOppositeCell(DLRCell o)
     {
         opposite = o;
     }
@@ -41,17 +41,21 @@ public abstract class DLRCell extends Cell
      * Returns the opposing cell on the parallel but opposite link (if one exists)
      * @return the opposing cell
      */
-    public Cell getOpposite()
+    public DLRCell getOpposite()
     {
         return opposite;
     }
     
+    public boolean isValid(int numLanes)
+    {
+        return numLanes >= getMinLanes() && numLanes <= getMaxLanes();
+    }
     /**
      * Returns the maximum number of lanes this cell can have for the next time step. 
      * This depends on the total lanes shared between this cell and its opposite.
      * @return the maximum number of lanes this cell can have for the next time step
      */
-    public double getMaxLanes()
+    public int getMaxLanes()
     {
         int total_road_lanes = getLink().getNumLanes();
         
@@ -62,11 +66,11 @@ public abstract class DLRCell extends Cell
         
         if(curr.size() > 0)
         {
-            return (int)Math.min(getNumLanes() + 1, total_road_lanes);
+            return (int)Math.min(getNumLanes() + 1, total_road_lanes-1);
         }
         else
         {
-            return total_road_lanes;
+            return total_road_lanes-1;
         }
     }
     
@@ -74,13 +78,13 @@ public abstract class DLRCell extends Cell
      * Returns the minimum number of lanes necessary for this time step, which depends on the jam density per lane and the occupancy.
      * @return the minimum number of lanes necessary for this time step
      */
-    public double getMinLanes()
+    public int getMinLanes()
     {
         int numLanes = getNumLanes();
         
         if(curr.size() == 0)
         {
-            return 0;
+            return 1;
         }
         else if(curr.size() > getLink().getCellJamdPerLane() * (numLanes - 1))
         {
