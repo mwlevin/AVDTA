@@ -291,13 +291,14 @@ public class MaxPressureObj implements ObjFunction
     {
         if(i.pressure_terms != null)
         {
-            //return;
+            return;
         }
         
         Map<Link, PressureTerm> output = new HashMap<>();
         
         int total_x = 0;
         
+        /*
         Iterable<Vehicle> iter = null;
         
         if(i instanceof CTMLink)
@@ -318,7 +319,7 @@ public class MaxPressureObj implements ObjFunction
         {
             iter = i.getVehicles();
         }
-
+*/
         for(Vehicle v : i.getVehicles())
         {
             Link j = v.getNextLink();

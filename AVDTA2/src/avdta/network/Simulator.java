@@ -55,6 +55,7 @@ import avdta.network.link.DLR2CTMLink;
 import avdta.network.link.DLRCTMLink;
 import avdta.network.link.LTMLink;
 import avdta.network.link.TransitLane;
+import avdta.network.node.obj.MaxPressureObj;
 import avdta.util.RunningAvg;
 import avdta.vehicle.EmergencyVehicle;
 /**
@@ -1094,20 +1095,15 @@ public class Simulator extends Network
      */
     protected void propagateFlow()
     {
-        
-        for(Link l : links)
+        if(isDLR())
         {
-            l.pressure_terms = null;
-            
-            if(l instanceof DLR2CTMLink)
+            MaxPressureObj pressureCalc = new MaxPressureObj();
+
+            for(Link l : links)
             {
-                DLR2CTMLink link = (DLR2CTMLink)l;
-                
-                if(link.isTied())
-                {
-                    link.ds_lanes = -1;
-                    link.us_lanes = -1;
-                }
+                l.pressure_terms = null;
+
+                pressureCalc.calculatePressure(l, l.getDest());
             }
         }
         

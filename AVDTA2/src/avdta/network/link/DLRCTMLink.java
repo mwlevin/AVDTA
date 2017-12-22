@@ -117,10 +117,11 @@ public class DLRCTMLink extends CTMLink
         
         int[] lane_choices = solveMDP_all();
 
-        int l1 = lane_choices[0];
-        int l2 = lane_choices[1];
+        l1 = lane_choices[0];
+        l2 = lane_choices[1];
         int l1_D = lane_choices[2];
         int l2_D = lane_choices[3];
+        
         
         
         for(int i = 1; i < cells.length-1; i++)
@@ -152,8 +153,7 @@ public class DLRCTMLink extends CTMLink
     {
         
         int total_lanes = getTotalLanes();
-        int l1 = cells[1].getNumLanes();
-        int l2 = total_lanes - l1;
+
         
 
         
@@ -382,6 +382,9 @@ public class DLRCTMLink extends CTMLink
         return getNumLanes() + opposite.getNumLanes();
     }
     
+    
+    protected int l1, l2;
+    
     /**
      * Links cells on this link to the corresponding cell on the opposite and parallel link
      * @param rhs the opposite and parallel link
@@ -403,6 +406,9 @@ public class DLRCTMLink extends CTMLink
             ((DLRCell)cells[i]).setOppositeCell((DLRCell)opposite.cells[opposite.cells.length - 1 - i]);
             ((DLRCell)opposite.cells[i]).setOppositeCell((DLRCell)cells[cells.length - 1 - i]);
         }
+        
+        l1 = getNumLanes();
+        l2 = rhs.getNumLanes();
         
         return true;
 
@@ -427,6 +433,13 @@ public class DLRCTMLink extends CTMLink
         }
 
         usSendingFlow_fordt = 0;
+        
+        l1 = getNumLanes();
+        
+        if(opposite != null)
+        {
+            l2 = opposite.getNumLanes();
+        }
         
         super.reset();
     }

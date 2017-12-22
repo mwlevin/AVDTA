@@ -48,6 +48,7 @@ public class DLR2CTMLink extends DLRCTMLink
         super(id, source, dest, capacity, ffspd, wavespd, jamd, length, numLanes);
     }
     
+    /*
     public void prepare()
     {
         //pressureCalc.calculatePressure(this, getDest());
@@ -63,6 +64,7 @@ public class DLR2CTMLink extends DLRCTMLink
         }
         super.prepare();
     }
+    */
     
     public DLR2CTMLink getOpposite()
     {
@@ -230,13 +232,14 @@ public class DLR2CTMLink extends DLRCTMLink
     
     private static MaxPressureObj pressureCalc = new MaxPressureObj();
     
+    
+    
     public int[] solveMDP_all()
     {
         int total_lanes = getTotalLanes();
-        int l1 = cells[1].getNumLanes();
-        int l2 = total_lanes - l1;
         
         DLRCTMLink opposite = getOpposite();
+        
         
         int l1_new = l1;
         int l2_new = l2;
@@ -331,90 +334,122 @@ public class DLR2CTMLink extends DLRCTMLink
         int l1_D = l1_new;
         int l2_D = l2_new;
         
-        /*
-        double omega_ds_1 = 0.0;
-        double omega_ds_1_a = 0.0;
-        double omega_ds_1_b = 0.0;
+        double best_omega_ds = 0.0;
+        double omega_ds = 0.0;
+        double omega_ds_a = 0.0;
+        double omega_ds_b = 0.0;
         
-        double omega_ds_2 = 0.0;
-        double omega_ds_2_a = 0.0;
-        double omega_ds_2_b = 0.0;
+        DLRCell lastCell = (DLRCell)getCells()[getNumCells()-1];
+        DLRCell oppCell = lastCell.getOpposite();
         
-        if(l1_new <= l1)
+        if(lastCell.getMinLanes() > l1_new)
         {
-            DLRCell lastCell = (DLRCell)getCells()[getNumCells()-1];
-            for(Vehicle v : lastCell.getOccupants())
-            {
-                Link j = v.getNextLink();
-
-                if(!w_ij.containsKey(j))
-                {
-                    w_ij.put(j, pressureCalc.value_DLR(this, j));
-                }
-                omega_ds_1_a += w_ij.get(j);
-            }
-
-            DLRCell oppCell = lastCell.getOpposite();
-
-            for(Vehicle v : oppCell.getOccupants())
-            {
-                Link j = v.getNextLink();
-
-                if(!w_ij.containsKey(j))
-                {
-                    w_ij.put(j, pressureCalc.value_DLR(opposite, j));
-                }
-                omega_ds_1_b += w_ij.get(j);
-            }
-
-            omega_ds_1 = omega_ds_1_a * Math.min(1, getCapacityPerLane() * (l1_new+1) / lastCell.getOccupancy()) -
-                    omega_ds_1_b * Math.min(1, opposite.getCapacityPerLane() * (l2_new-1) / oppCell.getOccupancy());
+            l1_D = l1_new+1;
+        }
+        else if(l1_new <= l1 && l1_new+1 <= lastCell.getMaxLanes() && total_lanes - (l1_new+1) >= oppCell.getMinLanes())
+        {
             
-            if(omega_ds_1 > 0)
+            
+            omega_ds_a = lastCell.getOccupancy();
+            
+            for(Link l : getDest().getIncoming())
+            {
+                if(l == this)
+                {
+                    continue;
+                }
+                
+                Iterable<Vehicle> iter;
+                
+                if(l instanceof CTMLink)
+                {
+                    iter = ((CTMLink)l).getLastCell().getOccupants();
+                }
+                else
+                {
+                    iter = l.getVehicles();
+                }
+                
+                for(Vehicle v : iter)
+                {
+                    if(v.getNextLink() == opposite)
+                    {
+                        omega_ds_b ++;
+                    }
+                }
+                //omega_ds_b -= pressureCalc.value_DLR(l, opposite) * l.pressure_terms.get(opposite).p;
+            }
+
+            best_omega_ds = Math.min(omega_ds_a, getCapacityPerLane() * Network.dt/3600.0 * l1_new) + 
+                    Math.min(omega_ds_b, opposite.getCapacityPerLane() * Network.dt/3600.0 * l2_new);
+            omega_ds = Math.min(omega_ds_a, getCapacityPerLane() * Network.dt/3600.0 * (l1_new+1)) + 
+                    Math.min(omega_ds_b, opposite.getCapacityPerLane() * Network.dt/3600.0 * (l2_new-1));
+            
+            if(omega_ds > best_omega_ds || lastCell.getMinLanes() > l1_new)
             {
                 l1_D = l1_new+1;
             }
         }
         
-        if(l2_new <= l2)
+        
+        lastCell = (DLRCell)opposite.getCells()[getNumCells()-1];
+        oppCell = lastCell.getOpposite();
+        
+        
+        if(lastCell.getMinLanes() > l2_new)
         {
-            DLRCell lastCell = (DLRCell)opposite.getCells()[opposite.getNumCells()-1];
-            for(Vehicle v : lastCell.getOccupants())
-            {
-                Link j = v.getNextLink();
-
-                if(!w_ij.containsKey(j))
-                {
-                    w_ij.put(j, pressureCalc.value_DLR(opposite, j));
-                }
-                omega_ds_2_a += w_ij.get(j);
-            }
-
-            DLRCell oppCell = lastCell.getOpposite();
-
-            for(Vehicle v : oppCell.getOccupants())
-            {
-                Link j = v.getNextLink();
-
-                if(!w_ij.containsKey(j))
-                {
-                    w_ij.put(j, pressureCalc.value_DLR(this, j));
-                }
-                omega_ds_2_b += w_ij.get(j);
-            }
-
-            omega_ds_2 = omega_ds_2_a * Math.min(1, opposite.getCapacityPerLane() * (l2_new+1) / lastCell.getOccupancy()) -
-                    omega_ds_2_b * Math.min(1, getCapacityPerLane() * (l1_new-1) / oppCell.getOccupancy());
+            l2_D = l2_new+1;
+        }
+        else if(l2_new <= l2 && l2_new+1 <= lastCell.getMaxLanes() && total_lanes - (l2_new+1) >= oppCell.getMinLanes())
+        {
             
-            if(omega_ds_2 > 0)
+            
+            omega_ds_a = lastCell.getOccupancy();
+            
+            for(Link l : getSource().getIncoming())
+            {
+                if(l == opposite)
+                {
+                    continue;
+                }
+                
+                Iterable<Vehicle> iter;
+                
+                if(l instanceof CTMLink)
+                {
+                    iter = ((CTMLink)l).getLastCell().getOccupants();
+                }
+                else
+                {
+                    iter = l.getVehicles();
+                }
+                
+                for(Vehicle v : iter)
+                {
+                    if(v.getNextLink() == this)
+                    {
+                        omega_ds_b ++;
+                    }
+                }
+                //omega_ds_b -= pressureCalc.value_DLR(l, opposite) * l.pressure_terms.get(opposite).p;
+            }
+            
+            best_omega_ds = Math.min(omega_ds_a, opposite.getCapacityPerLane() * Network.dt/3600.0 * l2_new) + 
+                    Math.min(omega_ds_b, getCapacityPerLane() * Network.dt/3600.0 * l1_new);
+            
+            omega_ds = Math.min(omega_ds_a, opposite.getCapacityPerLane() * Network.dt/3600.0 * (l2_new+1)) + 
+                    Math.min(omega_ds_b, getCapacityPerLane() * Network.dt/3600.0 * (l1_new-1));
+
+            if(omega_ds > best_omega_ds)
             {
                 l2_D = l2_new+1;
             }
         }
-        */
+        
         
 
-        return new int[]{l1_new, l2_new, l1_new, l2_new};
+
+        return new int[]{l1_new, l2_new, l1_D, l2_D};
     }
     
     

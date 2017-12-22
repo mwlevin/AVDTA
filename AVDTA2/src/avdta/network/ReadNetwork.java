@@ -56,6 +56,7 @@ import avdta.network.type.ExtendedType;
 import avdta.network.type.Type;
 import avdta.project.Project;
 import avdta.project.TransitProject;
+import avdta.util.Util;
 import avdta.vehicle.Bus;
 import avdta.vehicle.DriverType;
 import avdta.vehicle.fuel.VehicleClass;
@@ -127,6 +128,7 @@ public class ReadNetwork
     // these are the options that will show up in the GUI.
     public static final Type[] LINK_OPTIONS = new Type[]{LTM, CTM}; 
     public static final ExtendedType[] LINK_EXT_OPTIONS = new ExtendedType[]{DLR, DLR2, SHARED_TRANSIT, SPLIT_TRANSIT, CACC};
+    public static final Type[] LINK_ALL_OPTIONS = Util.concatenate(LINK_OPTIONS, LINK_EXT_OPTIONS);
     
     //public static final int CENTROID = 100;
     public static final Type SIGNAL = new Type(100, "Signal");
@@ -166,6 +168,7 @@ public class ReadNetwork
     public static final Type[] NODE_OPTIONS = new Type[]{SIGNAL, RESERVATION, STOPSIGN}; 
     public static final Type[] NODE_EXT_OPTIONS = new Type[]{FCFS, EMERGENCY_FIRST,
         FIFO, AUCTION, MAX_PRESSURE, TRANSIT_FIRST};
+    public static final Type[] NODE_ALL_OPTIONS = Util.concatenate(NODE_OPTIONS, NODE_EXT_OPTIONS);
 
  
 
