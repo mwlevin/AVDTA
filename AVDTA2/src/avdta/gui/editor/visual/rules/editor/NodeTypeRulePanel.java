@@ -59,9 +59,9 @@ public abstract class NodeTypeRulePanel extends JPanel implements AbstractNodeRu
         {
             public void itemStateChanged(ItemEvent e)
             {
-                control.setEnabled(type.getSelectedIndex() == EditNode.INTERSECTION);
-                policy.setEnabled(type.getSelectedIndex() == EditNode.INTERSECTION &&
-                        control.getSelectedIndex() == EditNode.RESERVATIONS);
+                control.setEnabled(type.getSelectedItem() == ReadNetwork.INTERSECTION);
+                policy.setEnabled(type.getSelectedItem() == ReadNetwork.INTERSECTION &&
+                        control.getSelectedItem() == ReadNetwork.RESERVATION);
                 save.setEnabled(true);
             }
         });
@@ -70,7 +70,7 @@ public abstract class NodeTypeRulePanel extends JPanel implements AbstractNodeRu
         {
             public void itemStateChanged(ItemEvent e)
             {
-                policy.setEnabled(control.getSelectedIndex() == EditNode.RESERVATIONS);
+                policy.setEnabled(control.getSelectedItem() == ReadNetwork.RESERVATION);
                 save.setEnabled(true);
             }
         });

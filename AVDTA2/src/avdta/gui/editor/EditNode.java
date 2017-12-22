@@ -23,6 +23,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import static avdta.gui.util.GraphicUtils.*;
+import avdta.network.ReadNetwork;
 import avdta.network.node.Connector;
 import avdta.network.node.Diverge;
 import avdta.network.node.Merge;
@@ -32,6 +33,7 @@ import avdta.network.node.StopSign;
 import avdta.network.node.TBR;
 import avdta.network.node.TrafficSignal;
 import avdta.network.node.obj.BackPressureObj;
+import avdta.network.node.obj.MaxPressureObj;
 import avdta.network.node.obj.ObjFunction;
 import avdta.network.node.obj.P0Obj;
 import avdta.network.node.policy.AuctionPolicy;
@@ -41,6 +43,8 @@ import avdta.network.node.policy.MCKSPriority;
 import avdta.network.node.policy.MCKSTBR;
 import avdta.network.node.policy.SignalWeightedTBR;
 import avdta.network.node.policy.TransitFirst;
+import avdta.network.type.Type;
+import avdta.util.Util;
 import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
 import javax.swing.JInternalFrame;
@@ -56,28 +60,17 @@ import javax.swing.event.DocumentListener;
  */
 public class EditNode extends JPanel
 {
-    public static final String[] TYPES = new String[]{"Centroid", "Intersection"};
+    public static final Type[] TYPES = new Type[]{ReadNetwork.CENTROID, ReadNetwork.INTERSECTION};
     
-    public static final int CENTROID = 0;
-    public static final int INTERSECTION = 1;
+
     
-    public static final String[] CONTROLS = new String[]{"Signal", "Stop sign", "Diverge/Merge", "Reservation"};
+    public static final Type[] CONTROLS = ReadNetwork.NODE_OPTIONS;
     
-    public static final int SIGNALS = 0;
-    public static final int STOP_SIGN = 1;
-    public static final int RESERVATIONS = 3;
-    public static final int DIVERGE = 2;
+
     
-    public static final String[] POLICIES = new String[]{"FCFS", "Auction", "Backpressure", "P0", "Phased", "Signal-weighted", "Transit-FCFS"};
+    public static final Type[] POLICIES = ReadNetwork.NODE_EXT_OPTIONS;
     
-    public static final int FCFS = 0;
-    public static final int AUCTION = 1;
-    public static final int BACKPRESSURE = 2;
-    public static final int P0 = 3;
-    public static final int PHASED = 4;
-    public static final int SIGNAL_WEIGHTED = 5;
-    public static final int TRANSIT_FCFS = 6;
-    
+
     private Location loc;
     private Editor editor;
     
@@ -230,7 +223,7 @@ public class EditNode extends JPanel
             {
                 if (e.getStateChange() == ItemEvent.SELECTED) 
                 {
-                    policy.setEnabled(control.getSelectedIndex() == RESERVATIONS);
+                    policy.setEnabled(control.getSelectedItem() == ReadNetwork.RESERVATION);
                 }
                 save.setEnabled(true);
                 
@@ -244,8 +237,8 @@ public class EditNode extends JPanel
             {
                 if (e.getStateChange() == ItemEvent.SELECTED) 
                 {
-                    boolean enable = type.getSelectedIndex() != CENTROID;
-                    policy.setEnabled(enable && control.getSelectedIndex() == RESERVATIONS);
+                    boolean enable = type.getSelectedItem() != ReadNetwork.CENTROID;
+                    policy.setEnabled(enable && control.getSelectedItem() == ReadNetwork.RESERVATION);
                     control.setEnabled(enable);
                 }
                 save.setEnabled(true);
@@ -280,54 +273,19 @@ public class EditNode extends JPanel
         
         if(node instanceof Zone)
         {
-            type.setSelectedIndex(CENTROID);
+            type.setSelectedIndex(Util.indexOf(TYPES, ReadNetwork.CENTROID));
         }
         else
         {
             Intersection i = (Intersection)node;
             
-            type.setSelectedIndex(INTERSECTION);
+            type.setSelectedIndex(Util.indexOf(TYPES, ReadNetwork.INTERSECTION));
             
-            if(i.getControl() instanceof TrafficSignal)
+            control.setSelectedIndex(Util.indexOf(ReadNetwork.NODE_OPTIONS, i.getType().getBase()));
+            
+            if(i.getControl() instanceof TBR)
             {
-                control.setSelectedIndex(SIGNALS);
-            }
-            else if(i.getControl() instanceof StopSign)
-            {
-                control.setSelectedIndex(STOP_SIGN);
-            }
-            else if(i.getControl() instanceof TBR)
-            {
-                control.setSelectedIndex(RESERVATIONS);
-                
-                if(i.getControl() instanceof PriorityTBR)
-                {
-                    IntersectionPolicy poly = ((PriorityTBR)i.getControl()).getPolicy();
-                    
-                    if(poly instanceof FCFSPolicy)
-                    {
-                        policy.setSelectedIndex(FCFS);
-                    }
-                    else if(poly instanceof AuctionPolicy)
-                    {
-                        policy.setSelectedIndex(AUCTION);
-                    }
-                    else if(poly instanceof MCKSPriority)
-                    {
-                        MCKSPriority mcks = (MCKSPriority)poly;
-                        
-                        ObjFunction obj = mcks.getObj();
-                        
-                        if(obj instanceof BackPressureObj)
-                        {
-                            policy.setSelectedIndex(BACKPRESSURE);
-                        }
-                        else if(obj instanceof P0Obj)
-                        {
-                            policy.setSelectedIndex(P0);
-                        }
-                    }
-                }
+                policy.setSelectedIndex(Util.indexOf(ReadNetwork.NODE_EXT_OPTIONS, i.getType()));
             }
         }
         
@@ -343,8 +301,9 @@ public class EditNode extends JPanel
     
     public void checkEditSignal()
     {
-        editSignal.setEnabled(control.getSelectedIndex() == SIGNALS || 
-                        (control.getSelectedIndex() == RESERVATIONS && (policy.getSelectedIndex() == SIGNAL_WEIGHTED || policy.getSelectedIndex() == PHASED)));
+        editSignal.setEnabled(control.getSelectedItem() == ReadNetwork.SIGNAL || 
+                        (control.getSelectedItem() == ReadNetwork.RESERVATION && 
+                                (policy.getSelectedItem() == ReadNetwork.WEIGHTED || policy.getSelectedItem() == ReadNetwork.PHASED)));
     }
     
     public void editSignal()
@@ -485,25 +444,23 @@ public class EditNode extends JPanel
         }
         else
         {
-            switch(type.getSelectedIndex())
+            if(type.getSelectedItem() == ReadNetwork.CENTROID)
             {
-                case CENTROID:
-                    if(prev instanceof Intersection)
-                    {
-                        node = new Zone(id_, loc);
-                        editor.replaceNode(prev, node);
-                    }
-                    break;
-                case INTERSECTION:
-                    if(prev instanceof Zone)
-                    {
-                        node = new Intersection(id_, loc, null);
-                        editor.replaceNode(prev, node);
-                    }
-                    break;
-                default:
-                    return false;
+                if(prev instanceof Intersection)
+                {
+                    node = new Zone(id_, loc);
+                    editor.replaceNode(prev, node);
+                }
             }
+            else if(type.getSelectedItem() == ReadNetwork.INTERSECTION)
+            {
+                if(prev instanceof Zone)
+                {
+                    node = new Intersection(id_, loc, null);
+                    editor.replaceNode(prev, node);
+                }
+            }
+            
         }
         
         saveNode(node);
@@ -518,60 +475,74 @@ public class EditNode extends JPanel
         {
             Intersection i = (Intersection)node;
             
-            switch(control.getSelectedIndex())
+            
+            Type newType = (Type)control.getSelectedItem();
+            if(newType == ReadNetwork.STOPSIGN)
             {
+                i.setControl(new StopSign());
+            } 
+            else if(newType == ReadNetwork.DIVERGE || newType == ReadNetwork.MERGE || newType == ReadNetwork.CONNECTOR)
+            {
+                if(i.getIncoming().size() == 1)
+                {
+                    if(i.getOutgoing().size() == 1)
+                    {
+                        i.setControl(new Connector());
+                    }
+                    else
+                    {
+                        i.setControl(new Diverge());
+                    }
+                }
+                else if(i.getOutgoing().size() == 1)
+                {
+                    i.setControl(new Merge());
+                }
+            }
+            else if(newType == ReadNetwork.SIGNAL)
+            {
+                i.setControl(new TrafficSignal());
+            }
+            else if(newType == ReadNetwork.RESERVATION)
+            {
+                Type p = (Type)policy.getSelectedItem();
                 
-                case STOP_SIGN:
-                    i.setControl(new StopSign());
-                    break;
-                case DIVERGE:
-                    if(i.getIncoming().size() == 1)
-                    {
-                        if(i.getOutgoing().size() == 1)
-                        {
-                            i.setControl(new Connector());
-                            break;
-                        }
-                        else
-                        {
-                            i.setControl(new Diverge());
-                            break;
-                        }
-                    }
-                    else if(i.getOutgoing().size() == 1)
-                    {
-                        i.setControl(new Merge());
-                        break;
-                    }
-                case SIGNALS:
-                    i.setControl(new TrafficSignal());
-                    break;
-                case RESERVATIONS:
-                    switch(policy.getSelectedIndex())
-                    {
-                        case FCFS:
-                            i.setControl(new PriorityTBR(new FCFSPolicy()));
-                            break;
-                        case AUCTION:
-                            i.setControl(new PriorityTBR(new AuctionPolicy()));
-                            break;
-                        case BACKPRESSURE:
-                            i.setControl(new MCKSTBR(new BackPressureObj()));
-                            break;
-                        case P0:
-                            i.setControl(new MCKSTBR(new P0Obj()));
-                            break;
-                        case PHASED:
-                            i.setControl(new PhasedTBR());
-                            break;
-                        case SIGNAL_WEIGHTED:
-                            i.setControl(new SignalWeightedTBR());
-                            break;
-                        case TRANSIT_FCFS:
-                            i.setControl(new PriorityTBR(new TransitFirst(new FCFSPolicy())));
-                            break;
-                    }
-                    break;
+                if(p == ReadNetwork.FCFS)
+                {
+                    i.setControl(new PriorityTBR(new FCFSPolicy()));
+                }
+                else if(p == ReadNetwork.AUCTION)
+                {
+                    i.setControl(new PriorityTBR(new AuctionPolicy()));
+                }
+                else if(p == ReadNetwork.PRESSURE)
+                {
+                    i.setControl(new MCKSTBR(new BackPressureObj()));
+                }
+                else if(p == ReadNetwork.P0)
+                {
+                    i.setControl(new MCKSTBR(new P0Obj()));
+                }
+                else if(p == ReadNetwork.MAX_PRESSURE)
+                {
+                    i.setControl(new MCKSTBR(new MaxPressureObj()));
+                }
+                else if(p == ReadNetwork.PHASED)
+                {
+                    i.setControl(new PhasedTBR());
+                }
+                else if(p == ReadNetwork.WEIGHTED)
+                {
+                    i.setControl(new SignalWeightedTBR());
+                }
+                else if(p == ReadNetwork.TRANSIT_FIRST)
+                {
+                    i.setControl(new PriorityTBR(new TransitFirst(new FCFSPolicy())));
+                }
+            }
+            else
+            {
+                JOptionPane.showMessageDialog(this, "Could not find node type", "Error", JOptionPane.ERROR_MESSAGE);
             }
         }
         

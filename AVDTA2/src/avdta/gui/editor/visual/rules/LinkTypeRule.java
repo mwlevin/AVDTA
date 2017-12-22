@@ -114,6 +114,10 @@ public class LinkTypeRule extends LinkRule
      */
     public boolean matches(Link l, int t)
     {
+        if(type.getDescription().indexOf("DLR") >= 0)
+        {
+            return l.getType() == type && ((DLRCTMLink)l).isTied();
+        }
         return l.getType() == type;
         /*
         switch(type)

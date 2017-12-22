@@ -140,6 +140,7 @@ public class ReadNetwork
     
     public static final Type RESERVATION = new Type(300, "AIM");
     public static final Type HIGHWAY = new Type(400, "Highway");
+    public static final Type INTERSECTION = new Type(0, "Intersection");
     
     // reservation policies
     public static final ExtendedType FCFS = new ExtendedType(1, "FCFS", RESERVATION);
@@ -165,7 +166,7 @@ public class ReadNetwork
         EMERGENCY_FIRST_LIMITED, FIFO, AUCTION, RANDOM, VOT, Q2, DE4, PRESSURE, P0, MAX_PRESSURE, TRANSIT_FIRST};
     
     // these are the options that will show up in the GUI.
-    public static final Type[] NODE_OPTIONS = new Type[]{SIGNAL, RESERVATION, STOPSIGN}; 
+    public static final Type[] NODE_OPTIONS = new Type[]{SIGNAL, RESERVATION, STOPSIGN, HIGHWAY, DIVERGE, MERGE, CONNECTOR}; 
     public static final Type[] NODE_EXT_OPTIONS = new Type[]{FCFS, EMERGENCY_FIRST,
         FIFO, AUCTION, MAX_PRESSURE, TRANSIT_FIRST};
     public static final Type[] NODE_ALL_OPTIONS = Util.concatenate(NODE_OPTIONS, NODE_EXT_OPTIONS);
