@@ -6,6 +6,7 @@
 package avdta.gui.editor.visual.rules.data;
 
 import avdta.network.link.Link;
+import avdta.network.type.Type;
 
 /**
  * This data source returns the link free flow speed.

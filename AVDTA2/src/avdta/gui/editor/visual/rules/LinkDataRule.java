@@ -6,6 +6,7 @@ package avdta.gui.editor.visual.rules;
 
 import avdta.gui.editor.visual.rules.data.LinkDataSource;
 import avdta.network.link.Link;
+import avdta.network.type.Type;
 import avdta.project.Project;
 import java.awt.Color;
 

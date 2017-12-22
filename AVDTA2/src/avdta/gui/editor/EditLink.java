@@ -10,9 +10,11 @@ import javax.swing.JComboBox;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import static avdta.gui.util.GraphicUtils.*;
+import avdta.network.ReadNetwork;
 import avdta.network.link.CACCLTMLink;
 import avdta.network.link.CTMLink;
 import avdta.network.link.CentroidConnector;
+import avdta.network.link.DLR2CTMLink;
 import avdta.network.link.DLRCTMLink;
 import avdta.network.link.LTMLink;
 import avdta.network.link.SharedTransitCTMLink;
@@ -20,6 +22,8 @@ import avdta.network.link.SplitCTMLink;
 import avdta.network.link.TransitLane;
 import avdta.network.node.Location;
 import avdta.network.node.Node;
+import avdta.network.type.Type;
+import avdta.util.Util;
 import avdta.vehicle.Vehicle;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
@@ -50,16 +54,8 @@ import javax.swing.event.ListSelectionListener;
 public class EditLink extends JPanel implements SelectListener
 {
     public static final Integer[] LANE_OPTIONS = new Integer[]{1, 2, 3, 4, 5, 6};
-    public static final String[] FLOW_MODELS = new String[]{"Centroid", "CTM", "LTM", "Shared transit CTM", "Split transit CTM", "DLR CTM", "CACC LTM"};
     
-    public static final int CTM = 1;
-    public static final int LTM = 2;
-    public static final int CENTROID = 0;
-    public static final int SHARED_TRANSIT_CTM = 3;
-    public static final int SPLIT_TRANSIT_CTM = 4;
-    public static final int DLR_CTM = 5;
-    public static final int CACC_LTM = 6;
-    
+
     
     private Editor editor;
     private Link prev;
@@ -134,7 +130,7 @@ public class EditLink extends JPanel implements SelectListener
         length = new JTextField(6);
         
         numLanes = new JComboBox(LANE_OPTIONS);
-        flowModel = new JComboBox(FLOW_MODELS);
+        flowModel = new JComboBox(ReadNetwork.LINK_ALL_OPTIONS);
 
         
         p = new JPanel();
@@ -412,7 +408,7 @@ public class EditLink extends JPanel implements SelectListener
         {
             public void itemStateChanged(ItemEvent e)
             {
-                boolean enable = flowModel.getSelectedIndex() != CENTROID;
+                boolean enable = flowModel.getSelectedItem() != ReadNetwork.CENTROID;
                 capacity.setEnabled(enable);
                 ffspd.setEnabled(enable);
                 wavespd.setEnabled(enable);
@@ -480,30 +476,7 @@ public class EditLink extends JPanel implements SelectListener
             
             refreshCoords();
             
-            if(prev.isCentroidConnector())
-            {
-                flowModel.setSelectedIndex(CENTROID);
-            }
-            else if(prev instanceof SharedTransitCTMLink)
-            {
-                flowModel.setSelectedIndex(SHARED_TRANSIT_CTM);
-            }
-            else if(prev instanceof DLRCTMLink)
-            {
-                flowModel.setSelectedIndex(DLR_CTM);
-            }
-            else if(prev instanceof CTMLink)
-            {
-                flowModel.setSelectedIndex(CTM);
-            }
-            else if(prev instanceof CACCLTMLink)
-            {
-                flowModel.setSelectedIndex(CACC_LTM);
-            }
-            else if(prev instanceof LTMLink)
-            {
-                flowModel.setSelectedIndex(LTM);
-            }
+            flowModel.setSelectedIndex(Util.indexOf(ReadNetwork.LINK_ALL_OPTIONS, prev.getType()));
         }
         
         save.setEnabled(false);
@@ -578,7 +551,7 @@ public class EditLink extends JPanel implements SelectListener
             return false;
         }
         
-        if(flowModel.getSelectedIndex() != CENTROID)
+        if(flowModel.getSelectedItem() != ReadNetwork.CENTROID)
         {
             try
             {
@@ -670,42 +643,56 @@ public class EditLink extends JPanel implements SelectListener
             return false;
         }
         
-        int numLanes_ = numLanes.getSelectedIndex()+1;
+        int numLanes_ = Integer.parseInt(numLanes.getSelectedItem().toString());
         
         double jamd = 5280.0/Vehicle.vehicle_length;
         
         Link newLink = null;
         TransitLane lane;
         
-        switch(flowModel.getSelectedIndex())
+        Type newType = (Type)flowModel.getSelectedItem();
+        
+        
+        if(newType == ReadNetwork.CTM)
         {
-            case CTM:
-                newLink = new CTMLink(id_, source_, dest_, capacity_, ffspd_, wavespd_, jamd, length_, numLanes_);
-                break;
-            case LTM:
-                newLink = new LTMLink(id_, source_, dest_, capacity_, ffspd_, wavespd_, jamd, length_, numLanes_);
-                break;
-            case CENTROID:
-                newLink = new CentroidConnector(id_, source_, dest_);
-                break;
-            case SHARED_TRANSIT_CTM:
-                lane = new TransitLane(-id_, source_, dest_, capacity_, ffspd_, wavespd_, jamd, length_);
-                newLink = new SharedTransitCTMLink(id_, source_, dest_, capacity_, ffspd_, wavespd_, jamd, length_, numLanes_-1, lane);
-                break;
-            case SPLIT_TRANSIT_CTM:
-                lane = new TransitLane(-id_, source_, dest_, capacity_, ffspd_, wavespd_, jamd, length_);
-                newLink = new SplitCTMLink(id_, source_, dest_, capacity_, ffspd_, wavespd_, jamd, length_, numLanes_-1, lane);
-                break;
-            case DLR_CTM:
-                newLink = new DLRCTMLink(id_, source_, dest_, capacity_, ffspd_, wavespd_, jamd, length_, numLanes_);
-                break;
-            case CACC_LTM:
-                newLink = new CACCLTMLink(id_, source_, dest_, capacity_, ffspd_, wavespd_, jamd, length_, numLanes_);
-                break;
-            default:
-                JOptionPane.showMessageDialog(this, "Could not find flow model", "Error", JOptionPane.ERROR_MESSAGE);
-                return false;
+            newLink = new CTMLink(id_, source_, dest_, capacity_, ffspd_, wavespd_, jamd, length_, numLanes_);
         }
+        else if(newType == ReadNetwork.LTM)
+        {
+            newLink = new CTMLink(id_, source_, dest_, capacity_, ffspd_, wavespd_, jamd, length_, numLanes_);
+        }
+        else if(newType == ReadNetwork.CENTROID)
+        {
+            newLink = new CentroidConnector(id_, source_, dest_);
+        }
+        else if(newType == ReadNetwork.SHARED_TRANSIT)
+        {
+            lane = new TransitLane(-id_, source_, dest_, capacity_, ffspd_, wavespd_, jamd, length_);
+            newLink = new SharedTransitCTMLink(id_, source_, dest_, capacity_, ffspd_, wavespd_, jamd, length_, numLanes_-1, lane);
+        }
+        else if(newType == ReadNetwork.SPLIT_TRANSIT)
+        {
+            lane = new TransitLane(-id_, source_, dest_, capacity_, ffspd_, wavespd_, jamd, length_);
+            newLink = new SplitCTMLink(id_, source_, dest_, capacity_, ffspd_, wavespd_, jamd, length_, numLanes_-1, lane);
+        }
+        else if(newType == ReadNetwork.DLR)
+        {
+            newLink = new DLRCTMLink(id_, source_, dest_, capacity_, ffspd_, wavespd_, jamd, length_, numLanes_);
+        }
+        else if(newType == ReadNetwork.DLR2)
+        {
+            newLink = new DLR2CTMLink(id_, source_, dest_, capacity_, ffspd_, wavespd_, jamd, length_, numLanes_);
+        }
+        else if(newType == ReadNetwork.CACC)
+        {
+            newLink = new CACCLTMLink(id_, source_, dest_, capacity_, ffspd_, wavespd_, jamd, length_, numLanes_);
+        }
+        else
+        {
+            JOptionPane.showMessageDialog(this, "Could not find flow model", "Error", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+
         
         Location[] newCoords = new Location[coords.size()+2];
         newCoords[0] = newLink.getSource();

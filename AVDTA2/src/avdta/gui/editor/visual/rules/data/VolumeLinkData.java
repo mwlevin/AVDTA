@@ -7,6 +7,7 @@ package avdta.gui.editor.visual.rules.data;
 
 import avdta.network.Simulator;
 import avdta.network.link.Link;
+import avdta.network.type.Type;
 import avdta.project.Project;
 import avdta.vehicle.Vehicle;
 import java.util.HashMap;

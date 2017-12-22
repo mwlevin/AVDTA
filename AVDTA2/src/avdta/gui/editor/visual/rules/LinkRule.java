@@ -9,6 +9,7 @@ import avdta.network.link.Link;
 import java.awt.Color;
 import java.io.Serializable;
 import avdta.gui.editor.MapViewer;
+import avdta.network.type.Type;
 import avdta.project.Project;
 
 /**

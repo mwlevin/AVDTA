@@ -27,7 +27,10 @@ import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import static avdta.gui.util.GraphicUtils.*;
+import avdta.network.ReadNetwork;
+import avdta.network.type.Type;
 import avdta.project.Project;
+import avdta.util.Util;
 import java.awt.Color;
 import java.awt.GridBagLayout;
 import javax.swing.BorderFactory;
@@ -47,20 +50,26 @@ public abstract class LinkTypeRulePanel extends JPanel implements AbstractLinkRu
     private LinkTypeRule prev;
     
     private Project project;
+    
+    private static Type[] types;
+    
     public LinkTypeRulePanel(Project project)
     {
         this.project = project;
         save = new JButton("Save");
         
-        String[] types = new String[EditLink.FLOW_MODELS.length+2];
-        for(int i = 0; i < EditLink.FLOW_MODELS.length; i++)
+        if(types == null)
         {
-            types[i] = EditLink.FLOW_MODELS[i];
+            types = new Type[ReadNetwork.LINK_ALL_OPTIONS.length+2];
+            for(int i = 0; i < ReadNetwork.LINK_ALL_OPTIONS.length; i++)
+            {
+                types[i] = ReadNetwork.LINK_ALL_OPTIONS[i];
+            }
+            types[types.length-2] = new Type(10000, "Bus");
+            types[types.length-1] = new Type(10001, "DTL");
         }
-        types[types.length-2] = "Bus";
-        types[types.length-1] = "DTL";
         
-        type = new JComboBox(EditLink.FLOW_MODELS);
+        type = new JComboBox(types);
         
         width = new JTextField(3);
         width.setText("3");
@@ -152,7 +161,7 @@ public abstract class LinkTypeRulePanel extends JPanel implements AbstractLinkRu
         
         width.setText(""+prev.getWidth());
         color.setColor(prev.getColor());
-        type.setSelectedIndex(prev.getType());
+        type.setSelectedIndex(Util.indexOf(types, prev.getType()));
         save.setEnabled(false);
     }
     
@@ -181,28 +190,28 @@ public abstract class LinkTypeRulePanel extends JPanel implements AbstractLinkRu
         
         
         
-        if(type.getSelectedIndex() < EditLink.FLOW_MODELS.length)
+        if(type.getSelectedIndex() < ReadNetwork.LINK_ALL_OPTIONS.length)
         {
             if(prev == null)
             {
-                prev = new LinkTypeRule(type.getSelectedIndex(), color.getColor(), width_);
+                prev = new LinkTypeRule((Type)type.getSelectedItem(), color.getColor(), width_);
                 addRule(prev);
             }
             else
             {
                 prev.setWidth(width_);
                 prev.setColor(color.getColor());
-                prev.setType(type.getSelectedIndex());
+                prev.setType((Type)type.getSelectedItem());
                 saveRule(prev);
             }
         }
         else
         {
-            if(type.getSelectedIndex() == EditLink.FLOW_MODELS.length)
+            if(type.getSelectedIndex() == ReadNetwork.LINK_ALL_OPTIONS.length)
             {
                 addRule(new LinkBusRule(project, false));  
             }
-            else if(type.getSelectedIndex() == EditLink.FLOW_MODELS.length+1)
+            else if(type.getSelectedIndex() == ReadNetwork.LINK_ALL_OPTIONS.length+1)
             {
                 addRule(new LinkBusRule(project, true));   
             }

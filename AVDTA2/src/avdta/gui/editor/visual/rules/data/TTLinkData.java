@@ -6,6 +6,7 @@
 package avdta.gui.editor.visual.rules.data;
 
 import avdta.network.link.Link;
+import avdta.network.type.Type;
 
 /**
  * This data source returns the ratio of travel time to free flow travel time.
@@ -21,7 +22,7 @@ public class TTLinkData extends LinkDataSource
      */
     public double getData(Link l, int t)
     {
-        return l.getAvgTT(t) / l.getFFTime();
+        return l.getAvgTT(1800) / l.getFFTime();
     }
     
     

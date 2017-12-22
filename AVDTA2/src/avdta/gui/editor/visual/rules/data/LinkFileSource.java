@@ -6,6 +6,7 @@
 package avdta.gui.editor.visual.rules.data;
 
 import avdta.network.link.Link;
+import avdta.network.type.Type;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;

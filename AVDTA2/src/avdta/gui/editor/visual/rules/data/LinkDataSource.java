@@ -6,6 +6,7 @@ package avdta.gui.editor.visual.rules.data;
 
 import avdta.network.link.Link;
 import avdta.gui.editor.visual.rules.LinkDataRule;
+import avdta.network.type.Type;
 import avdta.project.Project;
 
 /**

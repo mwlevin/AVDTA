@@ -10,6 +10,9 @@ import avdta.gui.editor.visual.rules.NodeRule;
 import avdta.gui.editor.visual.rules.NodeTypeRule;
 import static avdta.gui.util.GraphicUtils.constrain;
 import avdta.gui.util.JColorButton;
+import avdta.network.ReadNetwork;
+import avdta.network.type.Type;
+import avdta.util.Util;
 import java.awt.Color;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
@@ -168,7 +171,7 @@ public abstract class NodeTypeRulePanel extends JPanel implements AbstractNodeRu
         color.setColor(prev.getColor());
         policy.setSelectedIndex(prev.getPolicy());
         control.setSelectedIndex(prev.getControl());
-        type.setSelectedIndex(prev.getType());
+        type.setSelectedIndex(Util.indexOf(ReadNetwork.NODE_ALL_OPTIONS, prev.getType()));
         save.setEnabled(false);
     }
     
@@ -197,7 +200,7 @@ public abstract class NodeTypeRulePanel extends JPanel implements AbstractNodeRu
         
         if(prev == null)
         {
-            prev = new NodeTypeRule(type.getSelectedIndex(), control.getSelectedIndex(), policy.getSelectedIndex(),
+            prev = new NodeTypeRule((Type)type.getSelectedItem(), control.getSelectedIndex(), policy.getSelectedIndex(),
                     color.getColor(), width_);
             addRule(prev);
         }
@@ -205,7 +208,7 @@ public abstract class NodeTypeRulePanel extends JPanel implements AbstractNodeRu
         {
             prev.setRadius(width_);
             prev.setColor(color.getColor());
-            prev.setType(type.getSelectedIndex());
+            prev.setType((Type)type.getSelectedItem());
             prev.setControl(control.getSelectedIndex());
             prev.setPolicy(policy.getSelectedIndex());
             saveRule(prev);

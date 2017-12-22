@@ -6,6 +6,7 @@
 package avdta.gui.editor.visual.rules;
 
 import avdta.gui.editor.EditNode;
+import avdta.network.ReadNetwork;
 import avdta.network.node.Intersection;
 import avdta.network.node.Node;
 import avdta.network.node.PhasedTBR;
@@ -18,6 +19,7 @@ import avdta.network.node.policy.AuctionPolicy;
 import avdta.network.node.policy.FCFSPolicy;
 import avdta.network.node.policy.MCKSTBR;
 import avdta.network.node.policy.SignalWeightedTBR;
+import avdta.network.type.Type;
 import java.awt.Color;
 
 /**
@@ -28,7 +30,8 @@ import java.awt.Color;
  */
 public class NodeTypeRule extends NodeRule
 {
-    private int type, control, policy;
+    private int control, policy;
+    private Type type;
     private Color color;
     private int width;
     
@@ -37,7 +40,7 @@ public class NodeTypeRule extends NodeRule
      */
     public NodeTypeRule()
     {
-        this(EditNode.CENTROID, -1, -1, Color.black, 3);
+        this(ReadNetwork.CENTROID, -1, -1, Color.black, 3);
     }
     
     /**
@@ -47,25 +50,7 @@ public class NodeTypeRule extends NodeRule
      */
     public String getName()
     {
-        if(type == EditNode.CENTROID)
-        {
-            return EditNode.TYPES[type];
-        }
-        else if(type == EditNode.INTERSECTION)
-        {
-            if(control != EditNode.RESERVATIONS)
-            {
-                return EditNode.CONTROLS[control];
-            }
-            else
-            {
-                return EditNode.POLICIES[policy];
-            }
-        }
-        else
-        {
-            return "null";
-        }
+        return type.getDescription();
     }
     
     /**
@@ -77,7 +62,7 @@ public class NodeTypeRule extends NodeRule
      * @param color the fill color used to display these types of nodes
      * @param width the radius (px)
      */
-    public NodeTypeRule(int type, int control, int policy, Color color, int width)
+    public NodeTypeRule(Type type, int control, int policy, Color color, int width)
     {
         this.type = type;
         this.control = control;
@@ -109,7 +94,7 @@ public class NodeTypeRule extends NodeRule
      * See {@link EditNode} for types.
      * @param t the new type
      */
-    public void setType(int t)
+    public void setType(Type t)
     {
         type = t;
     }
@@ -119,7 +104,7 @@ public class NodeTypeRule extends NodeRule
      * See {@link EditNode} for types.
      * @return the type of {@link Node} matched
      */
-    public int getType()
+    public Type getType()
     {
         return type;
     }
@@ -183,54 +168,8 @@ public class NodeTypeRule extends NodeRule
      */
     public boolean matches(Node n, int t)
     {
-        if(type == EditNode.CENTROID)
-        {
-            return n.isZone();
-        }
-        else if(type == EditNode.INTERSECTION)
-        {
-            if(!(n instanceof Intersection))
-            {
-                return false;
-            }
-            Intersection i = (Intersection)n;
-            
-            switch(control)
-            {
-                case EditNode.SIGNALS:
-                    return (i.getControl() instanceof TrafficSignal);
-                case EditNode.STOP_SIGN:
-                    return (i.getControl() instanceof StopSign);
-                case EditNode.RESERVATIONS:
-                    switch(policy)
-                    {
-                        case EditNode.PHASED:
-                            return (i.getControl() instanceof PhasedTBR);
-                        case EditNode.SIGNAL_WEIGHTED:
-                            return (i.getControl() instanceof SignalWeightedTBR);
-                        case EditNode.FCFS:
-                            return (i.getControl() instanceof PriorityTBR) &&
-                                    (((PriorityTBR)i.getControl()).getPolicy() instanceof FCFSPolicy);
-                        case EditNode.AUCTION:
-                            return (i.getControl() instanceof PriorityTBR) &&
-                                    (((PriorityTBR)i.getControl()).getPolicy() instanceof AuctionPolicy);
-                        case EditNode.BACKPRESSURE:
-                            return (i.getControl() instanceof MCKSTBR) &&
-                                    (((MCKSTBR)i.getControl()).getObj() instanceof BackPressureObj);
-                        case EditNode.P0:
-                            return (i.getControl() instanceof MCKSTBR) &&
-                                    (((MCKSTBR)i.getControl()).getObj() instanceof P0Obj);
-                        default:
-                            return false;
-                    }
-                default:
-                    return false;
-            }
-        }
-        else
-        {
-            return false;
-        }
+        return n.getType() == type;
+        
     }
     
     /**

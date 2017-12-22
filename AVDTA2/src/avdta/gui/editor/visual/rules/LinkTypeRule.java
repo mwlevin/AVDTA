@@ -5,6 +5,7 @@
 package avdta.gui.editor.visual.rules;
 
 import avdta.gui.editor.EditLink;
+import avdta.network.ReadNetwork;
 import avdta.network.link.CACCLTMLink;
 import avdta.network.link.CTMLink;
 import avdta.network.link.CentroidConnector;
@@ -12,6 +13,7 @@ import avdta.network.link.DLRCTMLink;
 import avdta.network.link.LTMLink;
 import avdta.network.link.Link;
 import avdta.network.link.SharedTransitCTMLink;
+import avdta.network.type.Type;
 import java.awt.Color;
 
 /**
@@ -21,7 +23,7 @@ import java.awt.Color;
  */
 public class LinkTypeRule extends LinkRule
 {
-    private int type;
+    private Type type;
     private Color color;
     private int width;
     
@@ -30,7 +32,7 @@ public class LinkTypeRule extends LinkRule
      */
     public LinkTypeRule()
     {
-        this(EditLink.CENTROID, Color.black, 3);
+        this(ReadNetwork.CENTROID, Color.black, 3);
     }
     
     /**
@@ -40,7 +42,7 @@ public class LinkTypeRule extends LinkRule
      */
     public String getName()
     {
-        return EditLink.FLOW_MODELS[type];
+        return type.getDescription();
         
     }
     
@@ -50,7 +52,7 @@ public class LinkTypeRule extends LinkRule
      * @param color the color
      * @param width the width (px)
      */
-    public LinkTypeRule(int type, Color color, int width)
+    public LinkTypeRule(Type type, Color color, int width)
     {
         this.type = type;
         this.color = color;
@@ -61,7 +63,7 @@ public class LinkTypeRule extends LinkRule
      * Returns the type code matched.
      * @return the type code matched
      */
-    public int getType()
+    public Type getType()
     {
         return type;
     }
@@ -88,7 +90,7 @@ public class LinkTypeRule extends LinkRule
      * Updates the type matched.
      * @param t the new type code matched
      */
-    public void setType(int t)
+    public void setType(Type t)
     {
         type = t;
     }
@@ -112,6 +114,8 @@ public class LinkTypeRule extends LinkRule
      */
     public boolean matches(Link l, int t)
     {
+        return l.getType() == type;
+        /*
         switch(type)
         {
             case EditLink.CTM:
@@ -129,6 +133,7 @@ public class LinkTypeRule extends LinkRule
             default:
                  return false;
         }
+        */
     }
     
     /**
