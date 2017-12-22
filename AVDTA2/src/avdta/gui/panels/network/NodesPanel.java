@@ -100,7 +100,7 @@ public class NodesPanel extends GUIPanel
         HVsUseReservations = new JCheckBox("HVs use reservations");
         
         types =  new JRadioButton[ReadNetwork.NODE_OPTIONS.length];
-        options = new JComboBox[ReadNetwork.NODE_EXT_OPTIONS.length];
+        options = new JComboBox[ReadNetwork.NODE_OPTIONS.length];
         
         ButtonGroup group = new ButtonGroup();
         for(int i = 0; i < types.length; i++)
