@@ -12,13 +12,18 @@ import static avdta.network.Simulator.rand;
 import avdta.network.link.CentroidConnector;
 import avdta.network.link.Link;
 import avdta.network.node.Node;
+import avdta.network.node.Zone;
 import avdta.project.DTAProject;
 import avdta.project.DUERProject;
+import avdta.util.RunningAvg;
 import avdta.vehicle.DriverType;
 import avdta.vehicle.PersonalVehicle;
 import avdta.vehicle.Vehicle;
 import avdta.vehicle.route.Hyperpath;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -30,278 +35,816 @@ import java.util.Set;
  *
  * @author ml26893
  */
-public class DUERSimulator extends DTASimulator
-{
-    private Map<Incident, Map<Link, Double>> avgTT; // store average travel times per incident state
-    private static final double rationality_bound = 0.5;
-    
-    private Set<Incident> incidents;
-    
-    private Incident activeIncident;
-    private Set<IncidentEffect> null_effects;
-    
-    private List<State> allStates;
-    
-    /**
-     * Constructs this {@link DTASimulator} empty with the given project.
-     * @param project the project
-     */
-    public DUERSimulator(DTAProject project)
-    {
-        super(project);
-        
-        avgTT = new HashMap<Incident, Map<Link, Double>>();
-        incidents = new HashSet<Incident>();
-        null_effects = new HashSet<IncidentEffect>();
-        activeIncident = Incident.NULL;
-    }
-    
-    public DUERSimulator(DUERProject project, Set<Node> nodes, Set<Link> links, Set<Incident> incidents)
-    {
-        super(project, nodes, links);
-        avgTT = new HashMap<Incident, Map<Link, Double>>();
-        this.incidents = incidents;
-        null_effects = new HashSet<IncidentEffect>();
-        activeIncident = Incident.NULL;
-    }
-    
-    
-//    public void setLinks(Set<Link> links)
-//    {
-//        super.setLinks(links);
-//        
-//        allStates = new ArrayList<State>();
-//        
-//        for(Link l : links)
-//        {
-//            for(Incident i : incidents)
-//            {
-//                allStates.add(new State(l, i));
-//            }
-//        }
-//    }
-    
-    public boolean isObservable(Link l, Incident i)
-    {
-        if(i == Incident.NULL)
-        {
-            return false;
-        }
-        
-        for(IncidentEffect effect : i.getEffects())
-        {
-            if(effect.getLink() == l)
-            {
-                return true;
-            }
-        }
-        
-        double normalTT = avgTT.get(Incident.NULL).get(l);
-        double incidentTT = avgTT.get(i).get(l);
-        
-        return incidentTT > (1 + rationality_bound) * normalTT;
-    }
-    
-    public Set<Incident> getIncidents()
-    {
-        return incidents;
-    }
-    
-    public Map<Integer, Incident> createIncidentIdsMap()
-    {
-        Map<Integer, Incident> incidentId = new HashMap<>();
-        for (Incident incident: incidents)
-        {
-            incidentId.put(incident.getId(), incident);
-        }
-        return incidentId;
-    }
-    
-    public void activate(Incident i)
-    {
-        activeIncident = i;
-        for(IncidentEffect e : i.getEffects())
-        {
-            Link link = e.getLink();
-            
-            null_effects.add(new IncidentEffect(link, link.getNumLanes(), link.getCapacityPerLane()));
-            link.setNumLanes(e.getLanesOpen());
-            link.setCapacityPerLane(e.getCapacityPerLane());
-        }
-    }
-    
-    public void deactivate(Incident i)
-    {
-        activeIncident = Incident.NULL;
-        for(IncidentEffect e : null_effects)
-        {
-            Link link = e.getLink();
-            link.setNumLanes(e.getLanesOpen());
-            link.setCapacityPerLane(e.getCapacityPerLane());
-        }
-    }
-    
-    public Incident getIncident()
-    {
-        return activeIncident;
-    }
-    
-    public void simulate() throws IOException
-    {
-        for(Incident i : incidents)
-        {
-            // activate incident
-            activate(i);
-            super.simulate();
+public class DUERSimulator extends DTASimulator {
+	private Incident NO_INCIDENT;
 
-            // store link travel times
-            Map<Link, Double> tt = new HashMap<Link, Double>();
-            for(Link l : getLinks())
-            {
-                double avg = 0;
-                
-                for(int ast = 0; ast < Simulator.num_asts; ast++)
-                {
-                    avg += l.getAvgTT(ast * Simulator.ast_duration);
-                }
-                
-                avg /= Simulator.num_asts;
-                
-                tt.put(l, avg);
-            }
-            
-            avgTT.put(i, tt);
-            
-            deactivate(i);
-        }
-    }
-    
-    /**
-     * Generates new paths and loads 1/stepsize vehicles onto the new paths.
-     * This method also compares minimum travel times with experienced travel times to calculate the gap.
-     * @param stepsize the proportion of vehicles to move onto new paths.
-     * @return the results from simulating the previous assignment
-     * @throws IOException if a file cannot be accessed
-     */
-    public DTAResults pathgen(double stepsize) throws IOException
-    {
-        int error_count = 0;
+	private static final boolean PRINT = false;
 
-        // map dest to new hyperpaths
-        Map<Node, Hyperpath[][]> newpaths = new HashMap<Node, Hyperpath[][]>();
+	private Map<Incident, Map<Link, Double[]>> avgTT; // store average travel
+														// times per incident
+														// state
+	private static final double rationality_bound = 0.5;
 
-        double tstt = 0;
-        double min = 0;
-        int exiting = 0;
+	private Set<Incident> incidents;
 
-        int count = 0;
-        int moved_count = 0;
+	private Incident activeIncident;
+	private Set<IncidentEffect> null_effects;
 
-        for(Vehicle x : vehicles){
-                        
-            PersonalVehicle v = (PersonalVehicle)x;
-            
-            Node o = v.getOrigin();
-            Node d = v.getDest();
-            int ast = v.getAST();
-            int dep_time = v.getDepTime();
+	private Map<Link, List<State>> allStates;
+	private List<NodeState> nodeStates;
 
+	private double expTT;
+	
+	private double p;
+	private double q;
 
-            if(v.getExitTime() < Simulator.duration)
-            {
-                exiting++;
-            }
+	/**
+	 * Constructs this {@link DTASimulator} empty with the given project.
+	 * 
+	 * @param project
+	 *            the project
+	 */
+	public DUERSimulator(DTAProject project) {
+		super(project);
 
+		avgTT = new HashMap<>();
+		incidents = new HashSet<Incident>();
+		null_effects = new HashSet<IncidentEffect>();
 
-            if(x.isTransit())
-            {
-                continue;
-            }
-            
-            Hyperpath[][] newPath; 
-            
-            if(newpaths.containsKey(d))
-            {
-                newPath = newpaths.get(d);
-            }
-            else
-            {
-                newpaths.put(d, newPath = new Hyperpath[Simulator.num_asts][]);
-            }
-            
-            int drivertype = v.getDriver().typeIndex();
-            
-            if(newPath[ast] == null)
-            {
-                newPath[ast] = new Hyperpath[DriverType.num_types];
-            }
-            
-            if(newPath[ast][drivertype] == null)
-            {
-                newPath[ast][drivertype] = osp(d, v.getDriver());
-            }
+		activeIncident = Incident.UNKNOWN;
 
-            
+		initializeTT();
+		createStates();
+		createNodeStates();
+	}
 
-            if(v.getRouteChoice() != null)
-            {
-                tstt += ((Hyperpath)v.getRouteChoice()).getAvgCost(v.getOrigin(), dep_time);
-            }
-            
-            min += newPath[ast][v.getDriver().typeIndex()].getAvgCost(v.getOrigin(), dep_time);
+	public DUERSimulator(DUERProject project, Set<Node> nodes, Set<Link> links, Set<Incident> incidents) {
+		super(project, nodes, links);
+		avgTT = new HashMap<>();
+		this.incidents = incidents;
+		null_effects = new HashSet<IncidentEffect>();
+		activeIncident = Incident.UNKNOWN;
 
+		initializeTT();
+		createStates();
+		createNodeStates();
+	}
 
-            
-            
-            // move vehicle random chance
-            if(v.getRouteChoice() == null || rand.nextDouble() < stepsize)
-            {
+	public double getTSTT() {
+		return expTT;
+	}
 
-                try
-                {
-                    v.setRouteChoice(newPath[ast][drivertype]);
-                    moved_count++;
-                }
-                catch(Exception ex)
-                {
-                    out.println("Path unable: "+o+" "+d);
-                    for(Link l : d.getIncoming())
-                    {
-                        out.println((l instanceof CentroidConnector)+" "+l.getSource());
-                    }
-                    error_count++;
-                }
-            }
-            
+	// this method is used with vms_test network
+	public void test() {
+		Map<Integer, Link> linksMap = createLinkIdsMap();
+		Map<Integer, Incident> incidentsMap = createIncidentIdsMap();
 
-            count ++;
-        }
+		Incident inc = incidentsMap.get(2);
+		Incident none = incidentsMap.get(1);
+		Link AB = linksMap.get(12);
+		Link AC = linksMap.get(13);
+		Link BD = linksMap.get(24);
+		Link CD = linksMap.get(34);
+		Link DE = linksMap.get(46);
+		Link DEtop1 = linksMap.get(45);
+		Link DEtop2 = linksMap.get(56);
 
-        
-        if(error_count > 0)
-        {
-            System.err.println("Unable: "+error_count);
-        }
+		avgTT.get(Incident.UNKNOWN).put(AB, new Double[] { 5.0 });
+		avgTT.get(none).put(AB, new Double[] { 5.0 });
+		avgTT.get(inc).put(AB, new Double[] { 5.0 });
 
-        simulate();
-        
+		avgTT.get(Incident.UNKNOWN).put(AC, new Double[] { 4.0 });
+		avgTT.get(none).put(AC, new Double[] { 4.0 });
+		avgTT.get(inc).put(AC, new Double[] { 4.0 });
 
-        if(tstt == 0)
-        {
-            tstt = min;
-        }
+		avgTT.get(Incident.UNKNOWN).put(CD, new Double[] { 5.0 });
+		avgTT.get(none).put(CD, new Double[] { 5.0 });
+		avgTT.get(inc).put(CD, new Double[] { 5.0 });
 
+		avgTT.get(Incident.UNKNOWN).put(BD, new Double[] { 5.0 });
+		avgTT.get(none).put(BD, new Double[] { 5.0 });
+		avgTT.get(inc).put(BD, new Double[] { 5.0 });
 
-        return new DTAResults(min, tstt, vehicles.size(), exiting);
+		avgTT.get(Incident.UNKNOWN).put(DE, new Double[] { 10.0 });
+		avgTT.get(none).put(DE, new Double[] { 10.0 });
+		avgTT.get(inc).put(DE, new Double[] { 60.0 });
 
-    }
-    
-    
-    public Hyperpath osp(Node dest, DriverType driver)
-    {
-        Hyperpath output = new Hyperpath();
-             
-        
-        return output;
-    }
+		avgTT.get(Incident.UNKNOWN).put(DEtop1, new Double[] { 15.0 });
+		avgTT.get(none).put(DEtop1, new Double[] { 15.0 });
+		avgTT.get(inc).put(DEtop1, new Double[] { 15.0 });
+
+		avgTT.get(Incident.UNKNOWN).put(DEtop2, new Double[] { 15.0 });
+		avgTT.get(none).put(DEtop2, new Double[] { 15.0 });
+		avgTT.get(inc).put(DEtop2, new Double[] { 15.0 });
+
+	}
+
+	public void printStates() {
+		for (Link l : allStates.keySet()) {
+			for (State s : allStates.get(l)) {
+				System.out.println(s.getLink() + "\t" + s.getIncident() + "\t" + s.J + "\t" + s.mu);
+			}
+		}
+	}
+
+	private void initializeTT() {
+		NO_INCIDENT = Incident.UNKNOWN;
+
+		for (Incident i : incidents) {
+			if (i.getId() == 0) {
+				NO_INCIDENT = i;
+				break;
+			}
+		}
+
+		if (NO_INCIDENT == Incident.UNKNOWN) {
+			NO_INCIDENT = new Incident(0, 0, 0, new ArrayList<IncidentEffect>());
+
+			double total_p = 0;
+			for (Incident i : incidents) {
+				total_p += i.getProbabilityOn();
+			}
+
+			NO_INCIDENT.setProbabilityOn(1 - total_p);
+		}
+
+		incidents.add(NO_INCIDENT);
+
+		Set<Link> links = getLinks();
+		for (Incident i : incidents) {
+			Map<Link, Double[]> temp = new HashMap<>();
+			avgTT.put(i, temp);
+
+			for (Link l : links) {
+				Double[] temp2 = new Double[Simulator.num_asts];
+				for (int j = 0; j < temp2.length; j++) {
+					temp2[j] = l.getFFTime();
+				}
+				temp.put(l, temp2);
+			}
+		}
+
+	}
+
+	private void createStates() {
+		allStates = new HashMap<>();
+
+		for (Link l : links) {
+			Set<Link> U = null;
+
+			List<State> temp = new ArrayList<>();
+			allStates.put(l, temp);
+			for (Incident i : incidents) {
+				State state = new State(l, i);
+				if (U == null) {
+					U = state.getActionSpace(DriverType.AV);
+				}
+				state.U = U;
+				temp.add(state);
+			}
+		}
+	}
+
+	private void createNodeStates() {
+
+		nodeStates = new ArrayList();
+
+		for (Node node : nodes) {
+
+			for (Incident incident : incidents) {
+
+				if (incident.getId() == 0) {
+					// Information info = new Information(false);
+					NodeState State = new NodeState(node, incident, false);
+					nodeStates.add(State);
+				} else {
+					// Information info1 = new Information(false);
+					NodeState State1 = new NodeState(node, incident, false);
+					nodeStates.add(State1);
+					// Information info2 = new Information(true);
+					NodeState State2 = new NodeState(node, incident, true);
+					nodeStates.add(State2);
+				}
+			}
+
+		}
+	}
+
+	public boolean isObservable(Link l, Incident i, int time) {
+		if (i == Incident.UNKNOWN) {
+			return false;
+		}
+
+		for (IncidentEffect effect : i.getEffects()) {
+			if (effect.getLink() == l) {
+				return true;
+			}
+		}
+
+		int ast = time / Simulator.ast_duration;
+
+		double normalTT = getAvgTT(l, NO_INCIDENT, ast);
+		double incidentTT = getAvgTT(l, i, ast);
+
+		return incidentTT > (1 + rationality_bound) * normalTT;
+	}
+
+	public double getAvgTT(Link l, Incident i, int ast) {
+		if (i == Incident.UNKNOWN) {
+			i = NO_INCIDENT;
+		}
+
+		return avgTT.get(i).get(l)[ast];
+	}
+
+	public Set<Incident> getIncidents() {
+		return incidents;
+	}
+
+	public void activate(Incident i) {
+		activeIncident = i;
+		for (IncidentEffect e : i.getEffects()) {
+			Link link = e.getLink();
+
+			null_effects.add(new IncidentEffect(link, link.getNumLanes(), link.getCapacityPerLane()));
+			link.setNumLanes(e.getLanesOpen());
+			link.setCapacityPerLane(e.getCapacityPerLane());
+		}
+	}
+
+	public void deactivate(Incident i) {
+		activeIncident = NO_INCIDENT;
+		for (IncidentEffect e : null_effects) {
+			Link link = e.getLink();
+			link.setNumLanes(e.getLanesOpen());
+			link.setCapacityPerLane(e.getCapacityPerLane());
+		}
+	}
+
+	public Incident getIncident() {
+		return activeIncident;
+	}
+
+	public void simulate() throws IOException {
+		expTT = 0;
+
+		for (Incident i : incidents) {
+
+			// activate incident
+			activate(i);
+			super.simulate();
+
+			// store link travel times
+			Map<Link, Double[]> tt = avgTT.get(i);
+
+			for (Link l : getLinks()) {
+				Double[] temp = tt.get(l);
+
+				for (int ast = 0; ast < Simulator.num_asts; ast++) {
+					temp[ast] = l.getAvgTT_ast(ast);
+				}
+
+			}
+
+			deactivate(i);
+
+			double totalTT = super.getTSTT();
+
+			// System.out.println("TSTT="+i+" "+totalTT);
+
+			expTT += i.getProbabilityOn() * totalTT;
+		}
+	}
+
+	/**
+	 * Returns the vehicle arrival times file.
+	 * 
+	 * @return {@link Project#getResultsFolder()}{@code /vat.dat}
+	 */
+	public File getVatFile() {
+		return new File(getProject().getResultsFolder() + "/vat_" + activeIncident.getId() + ".dat");
+	}
+
+	public Map<Integer, Incident> createIncidentIdsMap() {
+		Map<Integer, Incident> output = new HashMap<>();
+
+		for (Incident i : incidents) {
+			output.put(i.getId(), i);
+		}
+		return output;
+	}
+
+	public void printHyperpaths(File file) throws IOException {
+		PrintStream fileout = new PrintStream(new FileOutputStream(file), true);
+
+		fileout.println("vehicle\tincident\tlinks");
+
+		for (Vehicle v : vehicles) {
+			for (Incident i : incidents) {
+				List<Link> links = trace((Hyperpath) v.getRouteChoice(), v.getOrigin(), i);
+
+				fileout.print(v.getId() + "\t" + i.getId() + "\t");
+
+				String string = "";
+
+				if (links.size() > 0) {
+					string += links.get(0);
+
+					for (int j = 1; j < links.size(); j++) {
+						string += "," + links.get(j);
+					}
+				}
+
+				fileout.println("{" + string + "}");
+			}
+		}
+		fileout.close();
+	}
+
+	public double getTT(Hyperpath path, Node origin, Incident incident, int ast) {
+		List<Link> links = trace(path, origin, incident);
+
+		double output = 0.0;
+
+		Map<Link, Double[]> temp = avgTT.get(incident);
+		for (Link l : links) {
+			output += temp.get(l)[ast];
+		}
+
+		return output;
+	}
+
+	public List<Link> trace(Hyperpath path, Node origin, Incident incident) {
+		List<Link> output = new ArrayList<>();
+
+		Link curr = path.getFirstLink(origin);
+		Incident perception = Incident.UNKNOWN;
+
+		while (curr != null) {
+			output.add(curr);
+
+			if (curr.getVMS().getProbOfInformation(incident) > 0) {
+				perception = incident;
+			} else if (isObservable(curr, incident)) {
+				perception = incident;
+			}
+
+			curr = path.getNextLink(curr, perception);
+		}
+
+		return output;
+	}
+
+	/**
+	 * Generates new paths and loads 1/stepsize vehicles onto the new paths.
+	 * This method also compares minimum travel times with experienced travel
+	 * times to calculate the gap.
+	 * 
+	 * @param stepsize
+	 *            the proportion of vehicles to move onto new paths.
+	 * @return the results from simulating the previous assignment
+	 * @throws IOException
+	 *             if a file cannot be accessed
+	 */
+	public DTAResults pathgen(double stepsize) throws IOException {
+		int error_count = 0;
+
+		// map dest to new hyperpaths
+		Map<Node, Hyperpath[][]> newpaths = new HashMap<Node, Hyperpath[][]>();
+
+		double min = 0;
+		int exiting = 0;
+
+		int count = 0;
+		int moved_count = 0;
+
+		double tstt = 0;
+
+		for (Vehicle x : vehicles) {
+
+			PersonalVehicle v = (PersonalVehicle) x;
+
+			Node o = v.getOrigin();
+			Node d = v.getDest();
+			int ast = v.getAST();
+			int dep_time = v.getDepTime();
+
+			if (v.getExitTime() < Simulator.duration) {
+				exiting++;
+			}
+
+			if (x.isTransit()) {
+				continue;
+			}
+
+			Hyperpath[][] newPath;
+
+			if (newpaths.containsKey(d)) {
+				newPath = newpaths.get(d);
+			} else {
+				newpaths.put(d, newPath = new Hyperpath[Simulator.num_asts][]);
+			}
+
+			int drivertype = v.getDriver().typeIndex();
+
+			if (newPath[ast] == null) {
+				newPath[ast] = new Hyperpath[DriverType.num_types];
+			}
+
+			if (newPath[ast][drivertype] == null) {
+				newPath[ast][drivertype] = osp(d, v.getDriver(), (int) ((ast + 0.5) * Simulator.ast_duration));
+			}
+
+			/*
+			 * if(v.getRouteChoice() != null) { tstt +=
+			 * ((Hyperpath)v.getRouteChoice()).getAvgCost(v.getOrigin(),
+			 * dep_time); }
+			 */
+			min += newPath[ast][v.getDriver().typeIndex()].getAvgCost(v.getOrigin(), dep_time);
+
+			// move vehicle random chance
+			if (v.getRouteChoice() == null || rand.nextDouble() < stepsize) {
+
+				try {
+					v.setRouteChoice(newPath[ast][drivertype]);
+					moved_count++;
+				} catch (Exception ex) {
+					out.println("Path unable: " + o + " " + d);
+					for (Link l : d.getIncoming()) {
+						out.println((l instanceof CentroidConnector) + " " + l.getSource());
+					}
+					error_count++;
+				}
+			}
+
+			count++;
+		}
+
+		if (error_count > 0) {
+			System.err.println("Unable: " + error_count);
+		}
+
+		simulate();
+
+		System.out.println(expTT + "\t" + min);
+
+		if (tstt < min) {
+			tstt = min;
+		}
+
+		return new DTAResults(min, expTT, vehicles.size(), exiting);
+
+	}
+
+	public static final double error_bound = 1.0e-4;
+
+	// for simplicity, ignore driver type
+	public Hyperpath osp(Node dest, DriverType driver, int dtime) {
+		ValueIteration vi = new ValueIteration(this, 0, 0); // incident prob,
+															// perception prob
+
+		int ast = dtime / Simulator.ast_duration;
+
+		List<NodeState> stateSpace = vi.getStateSpace();
+		// initialize
+		// for(Link l: allStates.keySet())
+		// {
+		// for(State s : allStates.get(l))
+		// {
+		// s.J = Integer.MAX_VALUE;
+		// s.mu = null;
+		// }
+		// }
+
+		solve(dest, ast);
+
+		// double error = 0.0;
+		//
+		// int iter = 0;
+		// do
+		// {
+		// iter++;
+		// error = vi_iter(dest, ast);
+		//
+		// if(PRINT)
+		// {
+		// System.out.println(iter+"\t"+error);
+		// }
+		// }
+		// while(error >= error_bound);
+		//
+		// // calculate best policy
+		// vi_iter(dest, ast);
+
+		Hyperpath output = new Hyperpath();
+
+		for (NodeState n : nodeStates) {
+			if (n.node.isZone() && n.node.getOutgoing().size() > 0) {
+				output.setNextLink(n.node, n.util, n.bestAction);
+			}
+		}
+
+		// for(Link l : allStates.keySet())
+		// {
+		// for(State s : allStates.get(l))
+		// {
+		// output.setNextLink(s.getLink(), s.getIncident(), s.mu);
+		// }
+		// }
+		//
+		// // origins
+		// for(Node n : getNodes())
+		// {
+		// if(n.isZone() && n.getOutgoing().size() > 0)
+		// {
+		// Link min = null;
+		// double best = Integer.MAX_VALUE;
+		//
+		// for(Link l : n.getOutgoing())
+		// {
+		// State nullI = null;
+		// // find null incident state
+		// for(State s : allStates.get(l))
+		// {
+		// if(s.getIncident() == Incident.UNKNOWN)
+		// {
+		// nullI = s;
+		// break;
+		// }
+		// }
+		//
+		// if(nullI.J < best)
+		// {
+		// best = nullI.J;
+		// min = l;
+		// }
+		// }
+		// // store in hyperpath
+		// output.setNextLink(n, best, min);
+		// }
+		// }
+
+		return output;
+	}
+
+	private double vi_iter(Node dest, int ast) {
+		double error = 0.0;
+		for (Link link : allStates.keySet()) {
+			for (State s : allStates.get(link)) {
+				Incident inc = s.getIncident();
+
+				double newJ = Integer.MAX_VALUE;
+
+				double g = getAvgTT(link, inc, ast);
+
+				if (link.getDest() == dest) {
+					newJ = getAvgTT(link, inc, ast);
+					s.mu = null;
+				} else {
+					Link bestMu = null;
+
+					// look through outgoing links
+					for (Link u : s.U) {
+						double expJ = 0.0;
+
+						// calculate transition
+						if (inc != Incident.UNKNOWN) {
+							for (State sp : allStates.get(u)) {
+								if (sp.getIncident() == inc) {
+									expJ = sp.J;
+									break;
+								}
+							}
+						} else {
+							State nullIncident = null;
+							double totalProb = 0.0;
+
+							for (State sp : allStates.get(u)) {
+								Incident ip = sp.getIncident();
+
+								if (ip == Incident.UNKNOWN) {
+									nullIncident = sp;
+									continue;
+								}
+
+								double prob;
+
+								if (isObservable(u, ip)) {
+									prob = ip.getProbabilityOn();
+								} else {
+									prob = link.getVMS().getProbOfInformation(ip) * ip.getProbabilityOn();
+								}
+
+								totalProb += prob;
+
+								expJ += sp.J * prob;
+
+							}
+
+							// calculate null incident probability separately
+							expJ += nullIncident.J * (1 - totalProb);
+
+						}
+
+						double temp = g + expJ;
+
+						if (temp < newJ) {
+							newJ = temp;
+							bestMu = u;
+						}
+					}
+
+					s.mu = bestMu;
+				}
+
+				error = Math.max(error, Math.abs(newJ - s.J));
+				s.J = newJ;
+			}
+		}
+		return error;
+	}
+
+	double epsilon = 1e-4; /* The error threshold to stop the iteration */
+
+	public List<NodeState> solve(Node dest, int ast) {
+
+		double threshold = epsilon;
+		boolean finished = false;
+		int numIterations = 0;
+
+		while (!finished) {
+			double maxError = -1.;
+
+			for (NodeState State : nodeStates) {
+
+				if (State.node.getId() == dest.getId())
+					continue;
+
+				double utility = State.util;
+				double maxCurrentUtil = -1e30;
+				Link maxAction = null;
+
+				if (State.inci.getId() == 1 && State.info == false) {
+
+					Link action = FindState(State.node, createIncidentIdsMap().get(0), State.info).bestAction;
+
+					double nextUtil = 0;
+
+					for (NodeState s_prime : getNextState(State, action)) {
+						double prob = getProb(State, s_prime);
+						double cost = getCost(State, action, s_prime, ast);
+						// System.out.println(cost);
+						nextUtil += prob * (s_prime.util - cost);
+					}
+
+					maxCurrentUtil = nextUtil;
+					maxAction = action;
+				}
+
+				else {
+					// The following while loop computes \max_μ\sum
+					// P(s'|s,μ)*[-C(s'|s,μ)+V(s')]
+					for (Link action : State.node.getOutgoing()) {
+
+						// System.out.println(action);
+						double nextUtil = 0;
+
+						for (NodeState s_prime : getNextState(State, action)) {
+
+							// System.out.println("Node:" + s_prime.node.getId()
+							// + ", Incident:" + s_prime.inci.getId() + ",
+							// Info:"+ s_prime.info +", Cost:" +
+							// String.format("%.4f", s_prime.util));
+							double prob = getProb(State, s_prime);
+							double cost = getCost(State, action, s_prime, ast);
+							// System.out.println(cost);
+							nextUtil += prob * (s_prime.util - cost);
+
+						}
+
+						// System.out.println(nextUtil);
+						if (nextUtil >= maxCurrentUtil) {
+							maxCurrentUtil = nextUtil;
+							maxAction = action;
+						}
+					}
+				}
+
+				// System.out.println(maxCurrentUtil);
+				// System.out.println(maxAction +"- - - - - -");
+				State.util = maxCurrentUtil;
+				State.bestAction = maxAction;
+
+				double currentError = Math.abs(maxCurrentUtil - utility);
+				if (currentError > maxError)
+					maxError = currentError;
+			}
+
+			numIterations++;
+			if (maxError < threshold) {
+				finished = true;
+			}
+			// System.out.println("Iteration: " + numIterations + " error:" +
+			// String.format("%.1f", maxError));
+		}
+
+		// System.out.println("Incident Probability:"+ p +", Perception
+		// Probability:" + q + ",Destination:"+ dest);
+		double a = 0;
+		for (NodeState State : nodeStates) {
+			if (State.inci.getId() != 0 & State.info == false)
+				continue;
+			else {
+				a += State.util;
+				// System.out.println("Node:" + State.node.getId() + ",
+				// Incident:" + State.inci.getId() + ", Info:"+ State.info +",
+				// Cost:" + String.format("%.4f", State.util) + ", BestAction:"
+				// + State.bestAction);
+			}
+		}
+		System.out.println(3 * a / (2 * nodeStates.size() - 2 * 3));
+
+		return nodeStates;
+
+	}
+
+	public ArrayList<NodeState> getNextState(NodeState State, Link action) {
+
+		ArrayList<NodeState> nextStateSpace = new ArrayList<>();
+
+		// if (State.node.getId() != dest){
+
+		if (State.inci.getId() != 0) { // If there happens one type of incident
+										// in the network.
+
+			if (State.info == true) {
+				nextStateSpace.add(FindState(action.getDest(), State.inci, State.info));
+			} else {
+				// System.out.println(State.node.getId() + ", Incident:" +
+				// State.inci.getId());
+				// System.out.println(action);
+				nextStateSpace.add(FindState(action.getDest(), State.inci, State.info));
+				nextStateSpace.add(FindState(action.getDest(), State.inci, true));
+			}
+		} else { // If there is no incident in the network.
+			for (Incident incident : incidents) {
+				if (incident.getId() == 0) {
+					nextStateSpace.add(FindState(action.getDest(), incident, State.info));
+				} else {
+					nextStateSpace.add(FindState(action.getDest(), incident, State.info));
+					nextStateSpace.add(FindState(action.getDest(), incident, true));
+				}
+			}
+		}
+		// }
+		return nextStateSpace;
+	}
+
+	public NodeState FindState(Node node, Incident incident, boolean info) {
+		for (int i = 0; i < nodeStates.size(); i++) {
+			if (nodeStates.get(i).node == node && nodeStates.get(i).inci == incident
+					&& nodeStates.get(i).info == info) {
+				return nodeStates.get(i);
+			}
+		}
+		return null;
+	}
+
+	public double getProb(NodeState State, NodeState nextState) {
+
+		if (State.inci.getId() != 0) { // If there indeed happens one type of
+										// incident in the network
+			if (State.info == true) { // If the vehicle perceives the
+										// information.
+				return 1.0;
+			} else if (nextState.info == State.info) // If the vehicle does not
+														// perceive the
+														// information at both
+														// current state and
+														// next state.
+				return 1 - q;
+			else // If the vehicle does not perceive the information at current
+					// state, but perceives information at next state.
+				return q;
+		} else { // If there is no incident in the network.
+			if (nextState.inci.getId() != 0) { // No incident happens when the
+												// vehicle gets to the next
+												// state.
+				if (nextState.info == true)
+					return p * q;
+				else
+					return p * (1 - q);
+			} else
+				return 1 - p;
+		}
+	}
+
+	public double getCost(NodeState State, Link action, NodeState nextState, int ast) {
+
+		if (State.inci.getId() != 0) {
+			return getAvgTT(action, State.inci, ast);
+		} else {
+			return getAvgTT(action, nextState.inci, ast);
+		}
+	}
 }

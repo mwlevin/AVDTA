@@ -11,6 +11,7 @@ import avdta.network.link.Link;
 import avdta.network.node.Node;
 import avdta.vehicle.route.Hyperpath;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  *
@@ -275,14 +276,13 @@ public class ValueIteration{
     //private Map<NodeState, Link> bestAction = new HashMap<>();
     private double p; /*Incident happening probability*/
     private double q; /*Perception probability of CAV*/
-    private int dest = 5469; /*ID of destination node*/
     Hyperpath output = new Hyperpath();
         
     public ValueIteration(DUERSimulator coacongress2, double p, double q/*, int dest/*coacongress2*/)
     {
         //this.coacongress2 = coacongress2;
         this.coacongress2 = coacongress2;
-        StateSpace = getStateSpace();
+//        StateSpace = getStateSpace();
         this.p = p;
         this.q = q;
         //this.dest = dest;
@@ -374,7 +374,7 @@ public class ValueIteration{
    
     double epsilon = 1e-4;   /* The error threshold to stop the iteration */
     
-    public int solve() {
+    public List<NodeState> solve(Node dest, int ast) {
               
         double threshold = epsilon;		
         boolean finished = false;
@@ -385,7 +385,7 @@ public class ValueIteration{
             
             for(NodeState State : StateSpace) {
 
-                if (State.node.getId() == dest) continue;
+                if (State.node.getId() == dest.getId()) continue;
                                     
                 double utility = State.util;
                 double maxCurrentUtil = -1e30;
@@ -463,7 +463,7 @@ public class ValueIteration{
         }
         System.out.println(3*a/(2*StateSpace.size()-2*3));
 
-        return numIterations;
+        return StateSpace;
         
     }
     
