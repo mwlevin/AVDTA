@@ -142,9 +142,9 @@ public class TBRGA extends GeneticAlgorithm<TBRIndividual>
         for (int i = 0; i < newcontrols.length; i++) {
         		if(Math.random() < 0.07) {
         			
-        			if (newcontrols[i] == 0) {
-        				newcontrols[i] = 1;
-        			} else newcontrols[i] = 0;
+        			if (newcontrols[i] == ReadNetwork.SIGNAL) {
+        				newcontrols[i] = type;
+        			} else newcontrols[i] = ReadNetwork.SIGNAL;
         		}
         }
     }
@@ -236,7 +236,7 @@ public class TBRGA extends GeneticAlgorithm<TBRIndividual>
 
 		int counttbr = 0;
 		int countsig = 0;
-		PrintStream fileout = new PrintStream(new FileOutputStream(new File("GA_results_1"), true), true);
+		PrintStream fileout = new PrintStream(new FileOutputStream(new File("GA_RESULTS_1")), true);
 		fileout.println("Iteration " + iteration);
 		fileout.println("TSTT\t" + best.getObj() + "\tNumber of mutations\t" + nummutations);
 		for(int node : intersections.keySet()) {
