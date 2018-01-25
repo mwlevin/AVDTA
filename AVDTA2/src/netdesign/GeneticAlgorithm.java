@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -29,7 +30,7 @@ public abstract class GeneticAlgorithm<T extends Individual>
     private double proportion_kept;
     private double mutate_percent;
     
-    private Map<Integer, List<T>> saved;
+    private Map<Integer, List<T>> saved = new HashMap<>();
     
     
     public abstract boolean isFeasible(T org) throws IOException;

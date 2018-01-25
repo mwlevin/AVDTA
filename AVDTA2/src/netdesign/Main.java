@@ -112,7 +112,7 @@ public class Main
     	/*
     	 * Running DTA on test network with regression results
     	 */
- 	PrintStream fileout = new PrintStream(new FileOutputStream(new File("REGresults/coacongress_results/resultswithdallasregression.txt"), true), true);
+ 	PrintStream fileout = new PrintStream(new FileOutputStream(new File("REGresults/coacongress_results/coaresults_w_dalreg.txt"), true), true);
 // 	fileout.println("TSTT (hrs) and AvgTT (min/veh) for: 1. 100% Signals\t2. 100% Reservations\t3. Regression Results");
  	fileout.println();
  	
@@ -148,34 +148,31 @@ public class Main
     	Map<Integer, ArrayList<Integer>> intersections = new HashMap<Integer, ArrayList<Integer>>();
     	//This is a list of TBR intersections (rest signals)
     	intersections.put(100, new ArrayList<Integer>(Arrays.asList(
-    			13198,
-    			13106,
-    			5727,
-    			5414,
-    			5756,
-    			10488,
-    			5714,
-    			5757,
-    			6333,
-    			5471,
-    			12282,
-    			13109,
-    			5770,
-    			5722,
-    			5431,
-    			10491,
-    			11791,
-    			13019,
-    			5726,
-    			10601,
-    			5731,
-    			13111,
-    			5761)));
-    	fileout.println("// Results of changing 23 'worst performing' intersections to signals (rest TBR)");
+    			5780,
+    			5685,
+    			5574,
+    			6230,
+    			5197,
+    			13065,
+    			5674,
+    			5778,
+    			5544,
+    			6354,
+    			6167,
+    			6231,
+    			5143,
+    			5452,
+    			5577,
+    			13500,
+    			5573,
+    			5135,
+    			5215,
+    			5572)));
+    	fileout.println("// Results of changing " + intersections.get(100).size() + " 'best performing' intersections to TBR (rest signals)");
     	fileout.print("REG_TSTT\tREG_AvgTT\t");
     	fileout.println();
     	
-    	changeControlSomeInts(project, intersections.get(100), true);
+    	changeControlSomeInts(project, intersections.get(100), false);
     	project.loadSimulator();
     	DTASimulator mixsim = project.getSimulator();
     	mixsim.msa(30, 1);

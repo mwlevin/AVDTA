@@ -92,7 +92,7 @@ import java.io.IOException;
 public class GAMain {
 
 	public static void main(String[] args) throws IOException {
-		int max_iters = 20;
+		int max_iters = 50;
 		
 		DTAProject project = new DTAProject(new File("AVDTA2/projects/coacongress"));
 		
@@ -102,7 +102,7 @@ public class GAMain {
 		demandread.changeDynamicType(project, proportionmap);
 		demandread.prepareDemand(project, 1.0);
 	
-		TBRGA GA = new TBRGA(project, 0, false, true, 200, 0.75, 0.01);
+		TBRGA GA = new TBRGA(project, 0, false, true, 200, 0.75, 0.1);
 		GA.solve(max_iters);
 
 	}

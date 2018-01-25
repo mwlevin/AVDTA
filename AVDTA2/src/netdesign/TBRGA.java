@@ -54,6 +54,7 @@ public class TBRGA extends GeneticAlgorithm<TBRIndividual>
         this.checkHV = checkHV;
         this.isSO = isSO;
         
+        intersections = new HashMap<Integer, Integer>();
         int counter = 0;
         DTASimulator sim = project.getSimulator();
         for(Node n : sim.getNodes()) {
@@ -63,7 +64,7 @@ public class TBRGA extends GeneticAlgorithm<TBRIndividual>
         		}
         }
         
-        type =  ReadNetwork.RESERVATION + ReadNetwork.MCKS + ReadNetwork.PRESSURE;
+        type =  ReadNetwork.RESERVATION + ReadNetwork.FCFS;//ReadNetwork.MCKS + ReadNetwork.PRESSURE;
         
         if(checkHV)
         {            
@@ -233,9 +234,16 @@ public class TBRGA extends GeneticAlgorithm<TBRIndividual>
 	@Override
 	public void print(TBRIndividual best, int iteration, int nummutations) throws FileNotFoundException {
 
+		int counttbr = 0;
+		int countsig = 0;
 		PrintStream fileout = new PrintStream(new FileOutputStream(new File("GA_results_1"), true), true);
 		fileout.println("Iteration " + iteration);
 		fileout.println("TSTT\t" + best.getObj() + "\tNumber of mutations\t" + nummutations);
+		for(int node : intersections.keySet()) {
+			if(best.getControl(intersections.get(node)) == 100)	countsig++;
+			else		counttbr++;
+		}
+		fileout.println("Num of Signals: " + countsig + "/tNum of Reservations: " + counttbr);
 		fileout.println("Node\tControl");
 		for(int node : intersections.keySet()) {
 			fileout.println(node + "\t" + best.getControl(intersections.get(node)));
