@@ -236,7 +236,7 @@ public class TBRGA extends GeneticAlgorithm<TBRIndividual>
 
 		int counttbr = 0;
 		int countsig = 0;
-		PrintStream fileout = new PrintStream(new FileOutputStream(new File("GA_RESULTS_1")), true);
+		PrintStream fileout = new PrintStream(new FileOutputStream(new File("GA_RESULTS_1"), true), true);
 		fileout.println("Iteration " + iteration);
 		fileout.println("TSTT\t" + best.getObj() + "\tNumber of mutations\t" + nummutations);
 		for(int node : intersections.keySet()) {

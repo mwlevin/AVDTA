@@ -59,12 +59,14 @@ public abstract class GeneticAlgorithm<T extends Individual>
         }
         
         
-        int iteration = 1;
-        
+        int iteration = 0;
+        int count = 0;
         while(iteration <= max_iters)
         {
-        		int count = 0;
             Collections.sort(population);
+            print(population.get(0),iteration, count);
+            count = 0;
+            
             List<T> newPopulation = new ArrayList<T>();
             
             int parents = (int)(population_size * proportion_kept);
@@ -98,7 +100,6 @@ public abstract class GeneticAlgorithm<T extends Individual>
             }
             
             population = newPopulation;
-            print(population.get(0),iteration, count);
 
             iteration++;
         }
