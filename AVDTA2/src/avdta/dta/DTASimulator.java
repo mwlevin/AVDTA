@@ -631,6 +631,7 @@ public class DTASimulator extends Simulator
         actual_time = System.nanoTime() - actual_time;
 
         out.println(String.format("TSTT\t%.1f", getTSTT()/3600.0)+"\thr");
+        out.println("/t simtstt " + output.getTSTT());
         out.println("Avg. TT\t"+String.format("%.2f", getTSTT() / 60 / vehicles.size())+"\tmin/veh");
         out.println("Exiting: "+getNumExited());
         out.println("Energy:\t"+getTotalEnergy());

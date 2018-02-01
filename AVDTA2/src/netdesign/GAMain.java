@@ -92,7 +92,7 @@ import java.io.IOException;
 public class GAMain {
 
 	public static void main(String[] args) throws IOException {
-		int max_iters = 50;
+		/*int max_iters = 50;
 		Long starttime = System.nanoTime();
 		DTAProject project = new DTAProject(new File("projects/coacongress"));
 		
@@ -107,7 +107,29 @@ public class GAMain {
                 
                 Double runtime = (System.nanoTime() - starttime)*Math.pow(2.77778, -13);
                 System.out.println("Runtime: " + runtime + " hrs");
+*/
+		test();
+	}
+	
+	
+	public static void test() throws IOException {
+		
+		DTAProject project = new DTAProject(new File("AVDTA2/projects/1link"));
+		int[] controls = {100, 301};
+		TBRIndividual ind1 = new TBRIndividual(controls);
+				
+		List<TBRIndividual> individuals = new ArrayList<TBRIndividual>();
+		individuals.add(ind1);
+		for(int i=0; i<10; i++) {
+			TBRIndividual newInd = new TBRIndividual(controls);
+			individuals.add(newInd);
+			newInd.setObj(Math.random()*1000);
+		}
+		Collections.sort(individuals);
+		for(TBRIndividual i: individuals) {
+			System.out.println(i.getObj());
 
+		}
 	}
 
 }

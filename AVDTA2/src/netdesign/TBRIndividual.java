@@ -39,7 +39,6 @@ public class TBRIndividual extends Individual<TBRIndividual>
     public void setAssignment(Assignment assign)
     {
         super.setAssignment(assign);
-        setObj(assign.getResults().getTSTT());
     }
     
     protected void computeHash()

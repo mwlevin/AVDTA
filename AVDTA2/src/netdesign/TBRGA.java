@@ -205,6 +205,7 @@ public class TBRGA extends GeneticAlgorithm<TBRIndividual>
         sim.msa(30, 2.0);
         
         child.setAssignment(sim.getAssignment());
+        child.setObj(sim.getTSTT()/3600.0);
     }
     
     public void changeNodes(TBRIndividual org) throws IOException
@@ -243,7 +244,8 @@ public class TBRGA extends GeneticAlgorithm<TBRIndividual>
 			if(best.getControl(intersections.get(node)) == 100)	countsig++;
 			else		counttbr++;
 		}
-		fileout.println("Num of Signals: " + countsig + "/tNum of Reservations: " + counttbr);
+		fileout.println("Num of Signals: " + countsig + "\tNum of Reservations: " + counttbr);
+		fileout.println("Prop of Signals: " + countsig/(countsig + counttbr) + "\tProp of Reservations: " + counttbr/(countsig + counttbr));
 		fileout.println("Node\tControl");
 		for(int node : intersections.keySet()) {
 			fileout.println(node + "\t" + best.getControl(intersections.get(node)));
