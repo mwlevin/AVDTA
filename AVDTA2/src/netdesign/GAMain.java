@@ -38,6 +38,7 @@ import avdta.network.cost.TravelCost;
 import avdta.project.DTAProject;
 import avdta.project.Project;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Set;
@@ -92,9 +93,19 @@ import java.io.IOException;
 public class GAMain {
 
 	public static void main(String[] args) throws IOException {
-		/*int max_iters = 50;
+		int max_iters = 50;
 		Long starttime = System.nanoTime();
 		DTAProject project = new DTAProject(new File("projects/coacongress"));
+		
+		List<Integer> signals = new ArrayList<>();
+		Scanner fileIn = new Scanner(project.getSignalsFile());
+		
+		fileIn.nextLine();
+		while(fileIn.hasNextLine()){
+			SignalRecord signal = new SignalRecord(fileIn.nextLine());
+			signals.add(signal.getNode());
+		}
+		fileIn.close();
 		
 		ReadDTANetwork demandread = new ReadDTANetwork();
 		Map<Integer, Double> proportionmap = new HashMap<Integer, Double>();
@@ -102,13 +113,13 @@ public class GAMain {
 		demandread.changeDynamicType(project, proportionmap);
 		demandread.prepareDemand(project, 1.0);
 	
-		TBRGA GA = new TBRGA(project, 0, false, true, 200, 0.75, 0.1);
+		TBRGA GA = new TBRGA(project, 0, false, true, 5, 0.75, 0.1, signals);
 		GA.solve(max_iters);
                 
                 Double runtime = (System.nanoTime() - starttime)*Math.pow(2.77778, -13);
                 System.out.println("Runtime: " + runtime + " hrs");
-*/
-		test();
+
+		//test();
 	}
 	
 	

@@ -45,7 +45,7 @@ public class TBRGA extends GeneticAlgorithm<TBRIndividual>
     private Map<Integer, Set<Integer>> odpairs;
     
     
-    public TBRGA(DTAProject project, int max_tbrs, boolean checkHV, boolean isSO, int population_size, double proportion_kept, double mutate_percent)
+    public TBRGA(DTAProject project, int max_tbrs, boolean checkHV, boolean isSO, int population_size, double proportion_kept, double mutate_percent, List<Integer> signals)
     {
     		super(population_size, proportion_kept, mutate_percent);
     		
@@ -55,10 +55,11 @@ public class TBRGA extends GeneticAlgorithm<TBRIndividual>
         this.isSO = isSO;
         
         intersections = new HashMap<Integer, Integer>();
+        
         int counter = 0;
         DTASimulator sim = project.getSimulator();
         for(Node n : sim.getNodes()) {
-        		if(!n.isZone()) {
+        		if(!n.isZone() && signals.contains(n.getId())) {
         			intersections.put(n.getId(), counter);
             		counter++;
         		}
@@ -221,7 +222,12 @@ public class TBRGA extends GeneticAlgorithm<TBRIndividual>
             NodeRecord node = new NodeRecord(filein.nextLine());
             if(!node.isZone())
             {
-                node.setType(org.getControl(intersections.get(node.getId())));
+            	if(intersections.containsKey(node.getId())){
+            		node.setType(org.getControl(intersections.get(node.getId())));
+            	}
+            	else {
+            		node.setType(ReadNetwork.SIGNAL);
+            	}
             }
             fileout.println(node);
         }
