@@ -54,10 +54,12 @@ public class TBRIndividual extends Individual<TBRIndividual>
     public TBRIndividual cross(TBRIndividual rhs)
     {
         int[] newControls = new int[controls.length];
+        double diff = rhs.getObj() - this.getObj();
+        double prop = diff/2500.0;
         
         for(int i = 0; i < newControls.length; i++)
         {
-            if(Math.random() < 0.5)
+            if(Math.random() < 0.5*prop + 0.5)
             {
                 newControls[i] = controls[i];
             }

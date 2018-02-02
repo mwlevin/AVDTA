@@ -58,6 +58,7 @@ public abstract class GeneticAlgorithm<T extends Individual>
             population.add(child);
         }
         
+        observeInitial(population);
         
         int iteration = 0;
         int count = 0;
@@ -131,4 +132,7 @@ public abstract class GeneticAlgorithm<T extends Individual>
         }
         saved.get(hash).add(child);
     }
+    
+    public abstract void observeInitial(List<T> population) throws FileNotFoundException;
+    
 }
