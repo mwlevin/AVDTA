@@ -67,6 +67,7 @@ public abstract class GeneticAlgorithm<T extends Individual>
             Collections.sort(population);
             print(population.get(0),iteration, count);
             count = 0;
+            if(iteration == max_iters) break;
             
             List<T> newPopulation = new ArrayList<T>();
             

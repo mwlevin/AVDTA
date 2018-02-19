@@ -93,13 +93,14 @@ import java.io.IOException;
 public class GAMain {
 
 	public static void main(String[] args) throws IOException {
-		int max_iters = 50;
+		int max_iters = 100;
+		
 		Long starttime = System.nanoTime();
 		DTAProject project = new DTAProject(new File("projects/coacongress"));
 		
+		//To obtain a list of signalized intersections
 		List<Integer> signals = new ArrayList<>();
 		Scanner fileIn = new Scanner(project.getSignalsFile());
-		
 		fileIn.nextLine();
 		while(fileIn.hasNextLine()){
 			SignalRecord signal = new SignalRecord(fileIn.nextLine());
@@ -113,11 +114,13 @@ public class GAMain {
 		demandread.changeDynamicType(project, proportionmap);
 		demandread.prepareDemand(project, 1.0);
 	
-		TBRGA GA = new TBRGA(project, 0, false, true, 5, 0.75, 0.1, signals);
+		//Check this before running
+		//Contains model specifications
+		TBRGA GA = new TBRGA(project, 35, false, false, 200, 0.75, 0.1, signals);
 		GA.solve(max_iters);
                 
-                Double runtime = (System.nanoTime() - starttime)*Math.pow(2.77778, -13);
-                System.out.println("Runtime: " + runtime + " hrs");
+        Double runtime = (System.nanoTime() - starttime)*Math.pow(2.77778, -13);
+        System.out.println("Runtime: " + runtime + " hrs");
 
 		//test();
 	}

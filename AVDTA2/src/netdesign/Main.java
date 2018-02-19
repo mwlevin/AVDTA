@@ -112,7 +112,7 @@ public class Main
     	/*
     	 * Running DTA on test network with regression results
     	 */
- 	PrintStream fileout = new PrintStream(new FileOutputStream(new File("REGresults/coacongress_results/TEST1"), true), true);//coaresults_w_dalreg.txt"), true), true);
+ 	PrintStream fileout = new PrintStream(new FileOutputStream(new File("REGresults/coacongress_results/coaresults_w_coareg.txt"), true), true);//coaresults_w_dalreg.txt"), true), true);
  	fileout.println();
  	
  	//Change all vehicles to AVs
@@ -122,215 +122,216 @@ public class Main
 	proportionmap.put(121, 1.0);
 	demandread.changeDynamicType(project, proportionmap);
 	demandread.prepareDemand(project, 1.0);
+	//To obtain a list of signalized intersections
+	List<Integer> signals = new ArrayList<>();
+	Scanner fileIn = new Scanner(project.getSignalsFile());
+	fileIn.nextLine();
+	while(fileIn.hasNextLine()){
+		SignalRecord signal = new SignalRecord(fileIn.nextLine());
+		signals.add(signal.getNode());
+	}
+	fileIn.close();
 	
-//	//100% Signals
-//	changeControlAllInts(project, 100);
-//	project.loadSimulator();
-//  	DTASimulator sigsim = project.getSimulator();
-//    	sigsim.msa(30, 1);
-//    	fileout.print("SIG_TSTT\tSIG_AvgTT\t");
-//    	fileout.println();
-//    	fileout.print(sigsim.getTSTT()/3600.0 + "\t" + sigsim.getTSTT()/60.0/sigsim.getNumVehicles() + "\t\n");
-//    	fileout.println();
-//    	
-//    	//100% Reservations
-//    	changeControlAllInts(project, 301);
-//    	project.loadSimulator();
-//    	DTASimulator tbrsim = project.getSimulator();
-//    	tbrsim.msa(30, 1);
-//    	fileout.print("TBR_TSTT\tTBR_AvgTT\t");
-//    	fileout.println();
-//    	fileout.print(tbrsim.getTSTT()/3600.0 + "\t" + tbrsim.getTSTT()/60.0/tbrsim.getNumVehicles() + "\t\n");
-//    	fileout.println();
-    	
-    	//Regression decided intersections
     	Map<Integer, ArrayList<Integer>> intersections = new HashMap<Integer, ArrayList<Integer>>();
-    	//This is a list of TBR intersections (rest signals)
-    	intersections.put(100, new ArrayList<Integer>(Arrays.asList(
+
+    	ArrayList<Integer> tempints = new ArrayList<Integer>(Arrays.asList(
     			5780,
     			5685,
     			5574,
     			6230,
-    			5197,
-    			13065,
-    			5674,
-    			5778,
     			5544,
-    			6354,
-    			6167,
-    			6231,
-    			5143,
-    			5452,
+    			5778,
+    			5197,
     			5577,
-    			13500,
+    			13065,
+    			5143,
+    			6167,
+    			5452,
     			5573,
-    			5135,
-    			5215,
-    			5572,
     			5659,
-    			12149,
-    			5743,
+    			13500,
+    			6231,
+    			5215,
+    			5135,
+    			5211,
+    			5572,
+    			5453,
     			10460,
+    			12149,
+    			6354,
     			5583,
     			13098,
-    			5453,
-    			5211,
-    			5760,
     			6378,
+    			5674,
+    			5743,
+    			5711,
+    			6346,
     			5654,
     			5210,
-    			5767,
-    			6346,
-    			5711,
-    			5749,
-    			12672,
-    			5205,
     			5107,
-    			5746,
-    			10782,
-    			6328,
+    			5205,
+    			5760,
     			5715,
-    			6332,
-    			5570,
-    			5581,
     			5739,
-    			6304,
-    			6339,
-    			13110,
-    			10611,
-    			5773,
-    			5758,
-    			6376,
-    			6362,
+    			5767,
+    			5749,
+    			5570,
+    			12672,
+    			5746,
+    			6328,
+    			5712,
+    			10782,
     			12671,
-    			6387,
-    			5744,
+    			13110,
     			5772,
-    			5742,
+    			10611,
     			5676,
     			6335,
-    			6349,
+    			5744,
+    			6332,
+    			6339,
     			11381,
+    			6362,
+    			5758,
     			5740,
-    			5712,
-    			5657,
-    			5762,
-    			6326,
-    			6336,
-    			5753,
-    			5789,
-    			5458,
-    			5684,
-    			13082,
-    			5464,
-    			5779,
-    			6305,
-    			12669,
-    			5691,
-    			13009,
-    			5709,
-    			6340,
+    			5742,
     			5718,
-    			13015,
-    			5750,
-    			12261,
-    			12735,
-    			6341,
-    			5713,
-    			5728,
-    			11081,
+    			6326,
+    			5753,
+    			6349,
+    			5581,
+    			6305,
     			5454,
+    			5657,
+    			12669,
+    			6336,
+    			13009,
+    			6387,
+    			6340,
+    			13015,
+    			13082,
     			6191,
-    			5582,
-    			13061,
-    			6357,
-    			13088,
-    			11080,
-    			5748,
-    			13119,
+    			5789,
     			12670,
-    			6356,
-    			13107,
-    			13010,
-    			5472,
-    			5782,
-    			13016,
-    			5455,
-    			5189,
-    			5716,
-    			5212,
-    			5759,
+    			5691,
+    			5762,
+    			5728,
+    			5684,
+    			6304,
+    			11080,
+    			5779,
+    			5773,
+    			12735,
     			5151,
-    			12734,
+    			5189,
+    			5750,
+    			13061,
+    			13088,
+    			5748,
+    			5458,
+    			5709,
+    			5464,
+    			6376,
+    			6341,
+    			13010,
+    			12261,
+    			5759,
+    			6356,
+    			6357,
+    			13119,
+    			5717,
     			13021,
-    			13075,
-    			6311,
-    			11031,
-    			13091,
+    			5472,
+    			5719,
+    			5455,
+    			5716,
+    			12734,
     			5741,
+    			11081,
     			13020,
     			10461,
-    			5465,
-    			13081,
-    			5730,
-    			13103,
-    			10777,
-    			5754,
+    			5582,
+    			6311,
+    			5752,
     			5755,
     			13108,
-    			5717,
-    			10609,
-    			11273,
+    			13081,
+    			10777,
+    			5220,
     			11642,
-    			5752,
+    			13091,
+    			5713,
+    			13075,
+    			5723,
+    			5731,
+    			11273,
+    			5754,
+    			5782,
     			11743,
     			11206,
-    			5719,
-    			13118,
-    			6146,
-    			6320,
-    			5220,
     			5764,
+    			10609,
+    			13016,
+    			13107,
+    			5730,
+    			5212,
+    			6320,
+    			13019,
+    			5726,
     			13013,
     			13018,
-    			5586,
+    			5465,
     			6144,
-    			5732,
-    			6145,
-    			5723,
-    			5761,
-    			13111,
-    			5731,
-    			10601,
-    			5726,
-    			13019,
-    			11791,
     			10491,
-    			5431,
-    			5722,
-    			5770,
-    			13109,
-    			12282,
     			5471,
-    			6333,
+    			13103,
+    			13111,
     			5757,
+    			5586,
+    			10601,
+    			6145,
+    			5732,
     			5714,
-    			10488,
+    			5761,
+    			5722,
+    			13118,
+    			5770,
     			5756,
+    			11031,
+    			6146,
     			5414,
+    			5431,
+    			13109,
+    			6333,
     			5727,
+    			10488,
+    			12282,
+    			11791,
     			13106,
-    			13198)));
-    	//fileout.println("Results of changing " + intersections.get(100).size() + " (100%) 'worst performing' intersections to TBR (rest signals)");
-    	fileout.print("REG_TSTT\tREG_AvgTT\t");
-    	fileout.println();
+    			13198));
     	
-    	changeControlSomeInts(project, intersections.get(100), false);
-    	project.loadSimulator();
-    	DTASimulator mixsim = project.getSimulator();
-    	mixsim.msa(30, 1);
-    	fileout.print(mixsim.getTSTT()/3600.0 + "\t" + mixsim.getTSTT()/60.0/mixsim.getNumVehicles() + "\t\n");
-    	fileout.println();
+    	int temp[] = {35, 70, 105, 140};
+    	for(int t : temp) {
+    		ArrayList<Integer> temp2 = new ArrayList<Integer>();
+    		for(int i = 0; i < t; i++) {
+    			temp2.add(tempints.get(i));
+    		}
+    		intersections.put(t, temp2);
+    	}
+    	
+        //intersections.put(100, new ArrayList<Integer>(Arrays.asList()));
+
+    	for(int t : temp) {
+    		changeControlSomeInts(project, intersections.get(t), false);
+    		project.loadSimulator();
+    		DTASimulator mixsim = project.getSimulator();
+    		mixsim.msa(30, 1);
+    		fileout.println(t + " of the worst performing intersections changed to TBR");
+        	fileout.println("TSTT\tAvgTT\t");
+    		fileout.println(mixsim.getTSTT()/3600.0 + "\t" + mixsim.getTSTT()/60.0/mixsim.getNumVehicles() + "\t\n");
+    		fileout.println();
+    	}
+
     	
     	fileout.close();
     	

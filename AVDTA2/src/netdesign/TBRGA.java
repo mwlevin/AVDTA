@@ -34,6 +34,7 @@ import java.util.Set;
 public class TBRGA extends GeneticAlgorithm<TBRIndividual> {
 	private int type;
 
+	//intersections is map of <nodeID, control>
 	private Map<Integer, Integer> intersections;
 	private DTAProject project;
 
@@ -85,21 +86,24 @@ public class TBRGA extends GeneticAlgorithm<TBRIndividual> {
 
 	public TBRIndividual createRandom() throws IOException {
 		TBRIndividual org;
-		int[] controls = new int[intersections.size()];
 
 		if (!isSO) {
 			do {
+				int[] controls = new int[max_tbrs];
+				
 				for (int i = 0; i < controls.length; i++) {
 					controls[i] = ReadNetwork.SIGNAL;
 				}
 
 				for (int i = 0; i < max_tbrs; i++) {
-					controls[(int) (Math.random() * controls.length)] = type;
+					controls[(int)(Math.random() * controls.length)] = type;
 				}
 
 				org = new TBRIndividual(controls);
 			} while (!isFeasible(org));
 		} else {
+			int[] controls = new int[intersections.size()];
+
 			for (int i = 0; i < controls.length; i++) {
 				controls[i] = Math.random() < 0.5 ? type : ReadNetwork.SIGNAL;
 			}
@@ -131,14 +135,13 @@ public class TBRGA extends GeneticAlgorithm<TBRIndividual> {
 
 	public void mutate(TBRIndividual org) throws IOException {
 		int[] newcontrols = org.getControls();
-
+		
 		for (int i = 0; i < newcontrols.length; i++) {
-			if (Math.random() < 0.07) {
+			if (Math.random() <= 0.07) {
 
 				if (newcontrols[i] == ReadNetwork.SIGNAL) {
 					newcontrols[i] = type;
-				} else
-					newcontrols[i] = ReadNetwork.SIGNAL;
+				} else newcontrols[i] = ReadNetwork.SIGNAL;
 			}
 		}
 	}
@@ -147,7 +150,7 @@ public class TBRGA extends GeneticAlgorithm<TBRIndividual> {
 		int tbrs = 0;
 
 		for (int i : org.getControls()) {
-			if (i % 100 == ReadNetwork.RESERVATION) {
+			if (i == type) {
 				tbrs++;
 			}
 		}
@@ -223,7 +226,7 @@ public class TBRGA extends GeneticAlgorithm<TBRIndividual> {
 
 		int counttbr = 0;
 		int countsig = 0;
-		PrintStream fileout = new PrintStream(new FileOutputStream(new File("GA_RESULTS_1"), true), true);
+		PrintStream fileout = new PrintStream(new FileOutputStream(new File("GA_RESULTS_35TBRs"), true), true);
 		fileout.println("Iteration " + iteration);
 		fileout.println("TSTT\t" + best.getObj() + "\tNumber of mutations\t" + nummutations);
 		for (int node : intersections.keySet()) {
@@ -245,7 +248,7 @@ public class TBRGA extends GeneticAlgorithm<TBRIndividual> {
 
 	public void observeInitial(List<TBRIndividual> population) throws FileNotFoundException {
 		PrintStream fileout = new PrintStream(
-				new FileOutputStream(new File("projects/GA_INITIALPOP_RESULTS.txt"), true), true);
+				new FileOutputStream(new File("GA_INITIALPOP_RESULTS.txt"), true), true);
 		fileout.println("No.\tSignalCount\tTbrCount\tPropOfSig\tPropOfTbr\tTSTT");
 		for (int i = 0; i < population.size(); i++) {
 			int countSig = 0;
