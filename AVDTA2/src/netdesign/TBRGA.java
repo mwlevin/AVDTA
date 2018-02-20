@@ -5,27 +5,28 @@
  */
 package netdesign;
 
-import avdta.dta.DTASimulator;
-import avdta.network.ReadNetwork;
-import avdta.network.cost.TravelCost;
-import avdta.network.node.Node;
-import avdta.network.node.NodeRecord;
-import avdta.network.node.Zone;
-import avdta.project.DTAProject;
-import avdta.vehicle.DriverType;
-import avdta.vehicle.PersonalVehicle;
-import avdta.vehicle.Vehicle;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
+
+import avdta.dta.DTASimulator;
+import avdta.network.ReadNetwork;
+import avdta.network.cost.TravelCost;
+import avdta.network.node.Node;
+import avdta.network.node.NodeRecord;
+import avdta.project.DTAProject;
+import avdta.vehicle.DriverType;
+import avdta.vehicle.PersonalVehicle;
+import avdta.vehicle.Vehicle;
 
 /**
  *
@@ -34,7 +35,7 @@ import java.util.Set;
 public class TBRGA extends GeneticAlgorithm<TBRIndividual> {
 	private int type;
 
-	//intersections is map of <nodeID, control>
+	// intersections is map of <nodeID, control>
 	private Map<Integer, Integer> intersections;
 	private DTAProject project;
 
@@ -57,14 +58,14 @@ public class TBRGA extends GeneticAlgorithm<TBRIndividual> {
 
 		int counter = 0;
 		DTASimulator sim = project.getSimulator();
-		for (Node n : sim.getNodes()) {
-			if (!n.isZone() && signals.contains(n.getId())) {
-				intersections.put(n.getId(), counter);
-				counter++;
-			}
+
+		for (int n : signals) {
+			intersections.put(n, counter);
+			counter++;
 		}
 
-		type = ReadNetwork.RESERVATION + ReadNetwork.FCFS;// ReadNetwork.MCKS + ReadNetwork.PRESSURE;
+		type = ReadNetwork.RESERVATION + ReadNetwork.FCFS;// ReadNetwork.MCKS +
+															// ReadNetwork.PRESSURE;
 
 		if (checkHV) {
 			odpairs = new HashMap<Integer, Set<Integer>>();
@@ -88,18 +89,22 @@ public class TBRGA extends GeneticAlgorithm<TBRIndividual> {
 		TBRIndividual org;
 
 		if (!isSO) {
+
 			do {
-				int[] controls = new int[max_tbrs];
-				
+				int[] controls = new int[intersections.size()];
+				List<Integer> tbrs = new ArrayList<>(max_tbrs);
+
 				for (int i = 0; i < controls.length; i++) {
 					controls[i] = ReadNetwork.SIGNAL;
 				}
 
 				for (int i = 0; i < max_tbrs; i++) {
-					controls[(int)(Math.random() * controls.length)] = type;
+					int loc = (int) (Math.random() * intersections.size());
+					controls[loc] = type;
+					tbrs.add(loc);
 				}
 
-				org = new TBRIndividual(controls);
+				org = new TBRIndividual(controls, tbrs, false);
 			} while (!isFeasible(org));
 		} else {
 			int[] controls = new int[intersections.size()];
@@ -135,13 +140,33 @@ public class TBRGA extends GeneticAlgorithm<TBRIndividual> {
 
 	public void mutate(TBRIndividual org) throws IOException {
 		int[] newcontrols = org.getControls();
-		
-		for (int i = 0; i < newcontrols.length; i++) {
-			if (Math.random() <= 0.07) {
+		List<Integer> tbrs = org.getTbrs();
+		if (isSO) {
+			for (int i = 0; i < newcontrols.length; i++) {
+				if (Math.random() <= 0.07) {
 
-				if (newcontrols[i] == ReadNetwork.SIGNAL) {
-					newcontrols[i] = type;
-				} else newcontrols[i] = ReadNetwork.SIGNAL;
+					if (newcontrols[i] == ReadNetwork.SIGNAL) {
+						newcontrols[i] = type;
+					} else
+						newcontrols[i] = ReadNetwork.SIGNAL;
+				}
+			}
+		}
+		else{
+			
+			for (int i = 0; i<max_tbrs; i++) {
+				if (Math.random() <= 0.07) {
+					int number = 0;	
+					
+					do{
+						number = (int) (Math.random()*intersections.size());
+					}while(tbrs.contains(number));
+					
+					newcontrols[tbrs.get(i)] = ReadNetwork.SIGNAL;
+					newcontrols[number] = type;
+					tbrs.remove(i);
+					tbrs.add(number);
+				}
 			}
 		}
 	}
@@ -247,8 +272,7 @@ public class TBRGA extends GeneticAlgorithm<TBRIndividual> {
 	}
 
 	public void observeInitial(List<TBRIndividual> population) throws FileNotFoundException {
-		PrintStream fileout = new PrintStream(
-				new FileOutputStream(new File("GA_INITIALPOP_RESULTS.txt"), true), true);
+		PrintStream fileout = new PrintStream(new FileOutputStream(new File("GA_INITIALPOP_RESULTS.txt"), true), true);
 		fileout.println("No.\tSignalCount\tTbrCount\tPropOfSig\tPropOfTbr\tTSTT");
 		for (int i = 0; i < population.size(); i++) {
 			int countSig = 0;

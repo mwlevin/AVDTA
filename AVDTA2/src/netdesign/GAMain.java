@@ -116,7 +116,7 @@ public class GAMain {
 	
 		//Check this before running
 		//Contains model specifications
-		TBRGA GA = new TBRGA(project, 35, false, false, 200, 0.75, 0.1, signals);
+		TBRGA GA = new TBRGA(project, 35, false, false, 100, 0.75, 0.1, signals);
 		GA.solve(max_iters);
                 
         Double runtime = (System.nanoTime() - starttime)*Math.pow(2.77778, -13);
