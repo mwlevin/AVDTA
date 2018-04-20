@@ -60,6 +60,7 @@ public class TBRIndividual extends Individual<TBRIndividual> {
 
 	public TBRIndividual cross(TBRIndividual rhs) {
 		int[] newControls = new int[controls.length];
+                List<Integer> childTbrs = new ArrayList<Integer>();
 		double diff = rhs.getObj() - this.getObj();
 		double prop = diff / 2500.0;
 
@@ -71,9 +72,10 @@ public class TBRIndividual extends Individual<TBRIndividual> {
 					newControls[i] = rhs.controls[i];
 				}
 			}
+                        return new TBRIndividual(newControls);
 		} else {
-			List<Integer> parent1Tbr = new ArrayList<>();
-			List<Integer> parent2Tbr = new ArrayList<>();
+			List<Integer> parent1Tbr = new ArrayList<Integer>();
+			List<Integer> parent2Tbr = new ArrayList<Integer>();
 			
 			for(int i :tbrs){
 				if(rhs.tbrs.contains(i)){
@@ -91,33 +93,44 @@ public class TBRIndividual extends Individual<TBRIndividual> {
 			for(int i = 0; i < newControls.length; i++){
 				if(controls[i] == rhs.controls[i]){
 					newControls[i] = controls[i];
+                                        if(controls[i] == ReadNetwork.RESERVATION + ReadNetwork.FCFS){
+                                            childTbrs.add(i);
+                                        }
 				}
 				else{
 					newControls[i] = ReadNetwork.SIGNAL;
 				}
 			}
-			
-			List<Integer> addedControls = new ArrayList<>();
-			while(addedControls.size()<(tbrs.size()-parent1Tbr.size())){
-				int checkP1 = parent1Tbr.get((int) (parent1Tbr.size()*Math.random()));
-				int checkP2 = parent2Tbr.get((int) (parent2Tbr.size()*Math.random()));
+			int toChange = parent1Tbr.size();
+			List<Integer> addedControls = new ArrayList<Integer>();
+			while(addedControls.size() < toChange){
+                                int p1 = (int) ((parent1Tbr.size() - 1)*Math.random());
+                                int p2 = (int) ((parent2Tbr.size() - 1)*Math.random());
+				int checkP1 = parent1Tbr.get(p1);
+				int checkP2 = parent2Tbr.get(p2);
 				
 				if(addedControls.contains(checkP1) || addedControls.contains(checkP2)){
 					continue;
 				}
 				
 				if (Math.random() < 0.5 * prop + 0.5) {
-					newControls[checkP1] = controls[checkP1];
+					newControls[checkP1] = this.controls[checkP1];
 					addedControls.add(checkP1);
+                                        parent1Tbr.remove(p1);
 				} 
 				else {
 					newControls[checkP2] = rhs.controls[checkP2];
 					addedControls.add(checkP2);
+                                        parent2Tbr.remove(p2);
 				}
 			}
+                        for(int c : addedControls){
+                            childTbrs.add(c);
+                        }
+                        return new TBRIndividual(newControls, childTbrs, false);
 		}
 
-		return new TBRIndividual(newControls);
+
 	}
 
 	public boolean equals(TBRIndividual rhs) {
@@ -145,6 +158,10 @@ public class TBRIndividual extends Individual<TBRIndividual> {
 	public int[] getControls() {
 		return controls;
 	}
+        
+        public void setControls(int[] controls) {
+            this.controls = controls;
+        }
 
 	protected void writeToFile(PrintStream out) {
 		super.writeToFile(out);

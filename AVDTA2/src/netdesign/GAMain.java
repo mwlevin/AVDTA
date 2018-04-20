@@ -116,34 +116,13 @@ public class GAMain {
 	
 		//Check this before running
 		//Contains model specifications
-		TBRGA GA = new TBRGA(project, 35, false, false, 100, 0.75, 0.1, signals);
+		TBRGA GA = new TBRGA(project, 10, false, false, 10, 0.75, 0.1, signals);
 		GA.solve(max_iters);
                 
-        Double runtime = (System.nanoTime() - starttime)*Math.pow(2.77778, -13);
+        Double runtime = (System.nanoTime() - starttime)*2.77778 * Math.pow(10, -13);
         System.out.println("Runtime: " + runtime + " hrs");
 
-		//test();
-	}
-	
-	
-	public static void test() throws IOException {
-		
-		DTAProject project = new DTAProject(new File("AVDTA2/projects/1link"));
-		int[] controls = {100, 301};
-		TBRIndividual ind1 = new TBRIndividual(controls);
-				
-		List<TBRIndividual> individuals = new ArrayList<TBRIndividual>();
-		individuals.add(ind1);
-		for(int i=0; i<10; i++) {
-			TBRIndividual newInd = new TBRIndividual(controls);
-			individuals.add(newInd);
-			newInd.setObj(Math.random()*1000);
-		}
-		Collections.sort(individuals);
-		for(TBRIndividual i: individuals) {
-			System.out.println(i.getObj());
 
-		}
 	}
 
 }

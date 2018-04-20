@@ -79,18 +79,18 @@ public abstract class GeneticAlgorithm<T extends Individual>
             
             for(int i = parents; i < population_size; i++)
             {
-                T parent1 = newPopulation.get((int)(Math.random()*parents));
+                T parent1 = newPopulation.get((int)(Math.random()* (parents - 1)));
                 T parent2;
                 
                 do
                 {
-                    parent2 = newPopulation.get((int)(Math.random()*parents));
+                    parent2 = newPopulation.get((int)(Math.random()* (parents - 1)));
                 }
                 while(parent1 == parent2);
                 
                 T child = cross(parent1, parent2);
                 
-                if(Math.random() < mutate_percent)
+                if(Math.random() <= mutate_percent)
                 {
                     mutate(child);
                     count++;
