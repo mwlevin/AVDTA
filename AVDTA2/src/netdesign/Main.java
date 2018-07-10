@@ -76,6 +76,7 @@ import avdta.vehicle.fuel.VehicleClass;
 import avdta.vehicle.route.Hyperpath;
 import java.awt.Color;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -106,13 +107,217 @@ public class Main
 	static int demand;
 	
     public static void main(String[] args) throws IOException
-    { 	
+    {
+
+    	DTAProject project = new DTAProject(new File("AVDTA2/projects/dallas_downtown"));
+    	DTASimulator sim = project.getSimulator();
+    	ReadDTANetwork demandread = new ReadDTANetwork();
+	Map<Integer, Double> proportionmap = new HashMap<Integer, Double>();
+	proportionmap.put(121, 1.0);
+	demandread.changeDynamicType(project, proportionmap);
+	demandread.prepareDemand(project, 1.0);
+	changeControlAllInts(project, 301);
+	
+	sim.msa(60, 2);
+	
+    	/*
+    	 * TESTING COACONGRESS INTERSECTIONS FROM NEW EXPERIMENTS (providing a list of reservations)
+    	 * 
+	    	DTAProject project = new DTAProject(new File("AVDTA2/projects/coacongress"));
+	    	DTASimulator sim = project.getSimulator();
+	    	
+		//To obtain a list of signalized intersections
+		List<Integer> signals = new ArrayList<>();
+		Scanner fileIn = new Scanner(project.getSignalsFile());
+		fileIn.nextLine();
+		while(fileIn.hasNextLine()){
+			SignalRecord signal = new SignalRecord(fileIn.nextLine());
+			signals.add(signal.getNode());
+		}
+		fileIn.close();
+		
+		ReadDTANetwork demandread = new ReadDTANetwork();
+		Map<Integer, Double> proportionmap = new HashMap<Integer, Double>();
+		proportionmap.put(121, 1.0);
+		demandread.changeDynamicType(project, proportionmap);
+		demandread.prepareDemand(project, 1.0);
+		
+		List<Integer> reservations = new ArrayList<Integer>(Arrays.asList(
+				5749,
+				5107,
+				6378,
+				5760,
+				6346,
+				5711,
+				5654,
+				13098,
+				5743,
+				12149,
+				5583,
+				5453,
+				5211,
+				10460,
+				5572,
+				5215,
+				5135,
+				6354,
+				5573,
+				5659,
+				6231,
+				5674,
+				6167,
+				13500,
+				5452,
+				5143,
+				5577,
+				5197,
+				13065,
+				5778,
+				5544,
+				6230,
+				5574,
+				5685,
+				5780));
+		
+		
+		changeControlSomeInts(project, reservations, false);
+		sim.msa(30, 1);
+		*/
     	
+//		int[] iters = new int[11];
+//		for (int i = 0; i < iters.length; i++) {
+//			iters[i] = i * 10;
+//		}
+//    		int[] iters = new int[] {0, 10, 20, 30, 40, 50, 60, 70, 80, 90};
+//		int[] types = new int[] { 100, 301 };
+//		HashMap<Integer, ArrayList<Integer>> sigControls = new HashMap<Integer, ArrayList<Integer>>();
+//		HashMap<Integer, ArrayList<Integer>> tbrControls = new HashMap<Integer, ArrayList<Integer>>();
+//
+//		for (int i : iters) {
+//			Scanner filein = new Scanner(new File("GA_RESULTS_SO.txt"));
+//			ArrayList<Integer> tempSigList = new ArrayList<Integer>();
+//			ArrayList<Integer> tempTbrList = new ArrayList<Integer>();
+//
+//			while (filein.hasNextLine()) {
+//				String strang = filein.nextLine();
+//				System.out.println(strang);
+//				if (strang == "Iteration " + i) {
+//
+//					filein.nextLine();
+//					filein.nextLine();
+//					filein.nextLine();
+//					filein.nextLine();
+//
+//					for (int n = 0; n < 174; n++) {
+//
+//						int tempID = filein.nextInt();
+//						if (filein.nextInt() == 100) {
+//							tempSigList.add(tempID);
+//						} else
+//							tempTbrList.add(tempID);
+//						filein.nextLine();
+//					}
+//
+//					sigControls.put(i, tempSigList);
+//					tbrControls.put(i, tempTbrList);
+//
+//				}
+//
+//			}
+//			filein.close();
+//		}
+//
+//		DTAProject project = new DTAProject(new File("AVDTA2/projects/coacongress"));
+//		DTASimulator sim = project.getSimulator();
+//		Scanner nodesfilein = new Scanner(project.getNodesFile());
+//
+//		Map<Integer, NodeRecord> noderec = new HashMap<Integer, NodeRecord>();
+//		nodesfilein.nextLine();
+//		while (nodesfilein.hasNextLine()) {
+//			NodeRecord temp = new NodeRecord(nodesfilein.nextLine());
+//			noderec.put(temp.getId(), temp);
+//		}
+//		nodesfilein.close();
+//
+//		for (int i : types) {
+//			for (int j : iters) {
+//				PrintStream fileout;
+//				if (i == 100) {
+//					fileout = new PrintStream(new FileOutputStream(new File(
+//							"/Users/rahulpatel/Documents/Graduate School/Research/AVResearch/Optimal smart intersection placement/ArcGIS data inputs/GIS_GA_SO_"
+//									+ j + "_sig.txt")));
+//					fileout.println("ID\tType\tLongitude\tLatitude");
+//					for (int n : sigControls.get(j)) {
+//						fileout.println(n + "\t" + i + "\t" + noderec.get(n).getLongitude() + "\t"
+//								+ noderec.get(n).getLatitude());
+//					}
+//
+//				} else {
+//					fileout = new PrintStream(new FileOutputStream(new File(
+//							"/Users/rahulpatel/Documents/Graduate School/Research/AVResearch/Optimal smart intersection placement/ArcGIS data inputs/GIS_GA_SO_"
+//									+ j + "_tbr.txt")));
+//					fileout.println("ID\tType\tLongitude\tLatitude");
+//					for (int n : tbrControls.get(j)) {
+//						fileout.println(n + "\t" + i + "\t" + noderec.get(n).getLongitude() + "\t"
+//								+ noderec.get(n).getLatitude());
+//					}
+//
+//				}
+//				fileout.close();
+//
+//			}
+//		}
+    	
+    	
+    	/* Getting min, max, avg link lengths and total, min link capacities (more inter. chars)
+    	 * 
+    	DTAProject project = new DTAProject(new File("AVDTA2/projects/dallas_downtown"));
+    	DTASimulator sim = project.getSimulator();
+    	PrintStream fileout = new PrintStream(new FileOutputStream(new File("dallasNewChars.txt")), true);
+    	List<Integer> signals = new ArrayList<>();
+    	Scanner fileIn = new Scanner(project.getSignalsFile());
+    	fileIn.nextLine();
+    	while(fileIn.hasNextLine()){
+    		SignalRecord signal = new SignalRecord(fileIn.nextLine());
+    		signals.add(signal.getNode());
+    	}
+    	fileIn.close();
+    	System.out.println("Node ID\tMin length\tMax length\tAvg length\tMin link capacity\tTotal link capacity");
+    fileout.println("Node ID\tMin length\tMax length\tAvg length\tMin link capacity\\tTotal link capacity");
+
+    	for(int i : signals) {
+    		List<Link> allLinks = new ArrayList<Link>();
+    		List<Link> links = new ArrayList<Link>();
+    		allLinks.addAll(sim.getNode(i).getIncoming());
+    		allLinks.addAll(sim.getNode(i).getOutgoing());
+    		for(Link l : allLinks) {
+    			if(!l.isCentroidConnector()) {
+    				links.add(l);
+    			}
+    		}
+    		List<Double> linkLengths = new ArrayList<Double>();
+    		List<Double> capacities = new ArrayList<Double>();
+    		double avg = 0.0;
+    		double totCap = 0.0;
+    		for(Link l : links) {
+    			linkLengths.add(l.getLength());
+    			avg += l.getLength();
+    			totCap += l.getCapacity();
+    			capacities.add(l.getCapacity());
+    		}
+    		avg = avg/links.size();
+    		Collections.sort(linkLengths);
+    		Collections.sort(capacities);
+    		System.out.println(i + "\t" + (linkLengths.get(0)*5280.0) + "\t" + (linkLengths.get(linkLengths.size() - 1)*5280.0) + "\t" + (avg*5280.0) + "\t" + capacities.get(0) + "\t" + totCap);
+    		fileout.println(i + "\t" + (linkLengths.get(0)*5280.0) + "\t" + (linkLengths.get(linkLengths.size() - 1)*5280.0) + "\t" + (avg*5280.0) + "\t" + capacities.get(0) + "\t" + totCap);
+    	}
+    	fileout.close();
+    	*/
     	
     	/*
     	 * Running DTA on test network with regression results
-    	 */
- 	PrintStream fileout = new PrintStream(new FileOutputStream(new File("REGresults/coacongress_results/coaresults_w_coareg.txt"), true), true);//coaresults_w_dalreg.txt"), true), true);
+    	 *
+ 	PrintStream fileout = new PrintStream(new FileOutputStream(new File("REGresults/REG2_results/predictcoa2_withdal.txt"), true), true);//coaresults_w_dalreg.txt"), true), true);
  	fileout.println();
  	
  	//Change all vehicles to AVs
@@ -134,181 +339,12 @@ public class Main
 	
     	Map<Integer, ArrayList<Integer>> intersections = new HashMap<Integer, ArrayList<Integer>>();
 
-    	ArrayList<Integer> tempints = new ArrayList<Integer>(Arrays.asList(
-    			5780,
-    			5685,
-    			5574,
-    			6230,
-    			5544,
-    			5778,
-    			5197,
-    			5577,
-    			13065,
-    			5143,
-    			6167,
-    			5452,
-    			5573,
-    			5659,
-    			13500,
-    			6231,
-    			5215,
-    			5135,
-    			5211,
-    			5572,
-    			5453,
-    			10460,
-    			12149,
-    			6354,
-    			5583,
-    			13098,
-    			6378,
-    			5674,
-    			5743,
-    			5711,
-    			6346,
-    			5654,
-    			5210,
-    			5107,
-    			5205,
-    			5760,
-    			5715,
-    			5739,
-    			5767,
-    			5749,
-    			5570,
-    			12672,
-    			5746,
-    			6328,
-    			5712,
-    			10782,
-    			12671,
-    			13110,
-    			5772,
-    			10611,
-    			5676,
-    			6335,
-    			5744,
-    			6332,
-    			6339,
-    			11381,
-    			6362,
-    			5758,
-    			5740,
-    			5742,
-    			5718,
-    			6326,
-    			5753,
-    			6349,
-    			5581,
-    			6305,
-    			5454,
-    			5657,
-    			12669,
-    			6336,
-    			13009,
-    			6387,
-    			6340,
-    			13015,
-    			13082,
-    			6191,
-    			5789,
-    			12670,
-    			5691,
-    			5762,
-    			5728,
-    			5684,
-    			6304,
-    			11080,
-    			5779,
-    			5773,
-    			12735,
-    			5151,
-    			5189,
-    			5750,
-    			13061,
-    			13088,
-    			5748,
-    			5458,
-    			5709,
-    			5464,
-    			6376,
-    			6341,
-    			13010,
-    			12261,
-    			5759,
-    			6356,
-    			6357,
-    			13119,
-    			5717,
-    			13021,
-    			5472,
-    			5719,
-    			5455,
-    			5716,
-    			12734,
-    			5741,
-    			11081,
-    			13020,
-    			10461,
-    			5582,
-    			6311,
-    			5752,
-    			5755,
-    			13108,
-    			13081,
-    			10777,
-    			5220,
-    			11642,
-    			13091,
-    			5713,
-    			13075,
-    			5723,
-    			5731,
-    			11273,
-    			5754,
-    			5782,
-    			11743,
-    			11206,
-    			5764,
-    			10609,
-    			13016,
-    			13107,
-    			5730,
-    			5212,
-    			6320,
-    			13019,
-    			5726,
-    			13013,
-    			13018,
-    			5465,
-    			6144,
-    			10491,
-    			5471,
-    			13103,
-    			13111,
-    			5757,
-    			5586,
-    			10601,
-    			6145,
-    			5732,
-    			5714,
-    			5761,
-    			5722,
-    			13118,
-    			5770,
-    			5756,
-    			11031,
-    			6146,
-    			5414,
-    			5431,
-    			13109,
-    			6333,
-    			5727,
-    			10488,
-    			12282,
-    			11791,
-    			13106,
-    			13198));
+    //	ArrayList<Integer> tempints = new ArrayList<Integer>(Arrays.asList());
+    	List<Integer> tempints = new ArrayList<Integer>();
+    	Scanner filein = new Scanner(new File("predictcoa2_withdal.txt"));
+    	while(filein.hasNextInt()) {
+    		tempints.add(filein.nextInt());
+    	}
     	
     	int temp[] = {35, 70, 105, 140};
     	for(int t : temp) {
@@ -326,7 +362,7 @@ public class Main
     		project.loadSimulator();
     		DTASimulator mixsim = project.getSimulator();
     		mixsim.msa(30, 1);
-    		fileout.println(t + " of the worst performing intersections changed to TBR");
+    		fileout.println(t + " TBRs:");
         	fileout.println("TSTT\tAvgTT\t");
     		fileout.println(mixsim.getTSTT()/3600.0 + "\t" + mixsim.getTSTT()/60.0/mixsim.getNumVehicles() + "\t\n");
     		fileout.println();
@@ -334,23 +370,11 @@ public class Main
 
     	
     	fileout.close();
-    	
-    	/*
-    	 * TO PRINT INTERCHAR
-    	 *
-    	DTAProject baseproject = new DTAProject(new File("AVDTA2/projects/dallas_downtown"));
-    	
-    	List<Integer> signals = new ArrayList<>();
-	Scanner filein = new Scanner(baseproject.getSignalsFile());
-	filein.nextLine();
-	while (filein.hasNextLine()) {
-		signals.add(filein.nextInt());
-		filein.nextLine();
-	}
-	filein.close();
-	
-    	printIntersectionChar(getAllDemandTurns(signals, baseproject), baseproject);
     	*/
+    	
+//    	//TO PRINT INTERCHAR
+//    	printIntersectionChar(getAllDemandTurns(signals, baseproject), baseproject);
+    	
     }
     
 //    public static 	Map<Integer, List<Map<Double, Map<String, Double>>>> getAllDemandTurns2(DTAProject baseproject) throws IOException {
