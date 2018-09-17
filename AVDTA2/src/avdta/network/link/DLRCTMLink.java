@@ -267,7 +267,7 @@ public class DLRCTMLink extends CTMLink
             
             double delta_2U = Math.min(S2, opposite.cells[0].getReceivingFlow(l2_new)) - Math.min(S2, opposite.cells[0].getReceivingFlow(l2_new-1));
             
-            if(delta_1D > 0 && delta_1D >= Math.pow(alpha, getNumCells()) * delta_2U)
+            if(opposite.cells[0].getMinLanes() <= l2_new-1 && delta_1D > 0 && delta_1D >= Math.pow(alpha, getNumCells()) * delta_2U)
             {
                 l1_D = l1_new + 1;
             }
@@ -280,7 +280,7 @@ public class DLRCTMLink extends CTMLink
             
             double delta_1U = Math.min(S1, cells[0].getReceivingFlow(l1_new)) - Math.min(S1, cells[0].getReceivingFlow(l1_new-1));
             
-            if(delta_2D > 0 && delta_2D >= Math.pow(alpha, getNumCells()) * delta_1U)
+            if(cells[0].getMinLanes() <= l1_new-1 && delta_2D > 0 && delta_2D >= Math.pow(alpha, getNumCells()) * delta_1U)
             {
                 l2_D = l2_new + 1;
             }

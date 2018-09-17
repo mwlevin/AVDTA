@@ -121,7 +121,7 @@ public abstract class Cell implements Comparable<Cell>
                 }
             }
             System.out.println(link.getId()+" cell "+(cell_num +1)+" of "+link.cells.length);
-            throw new RuntimeException("Invalid cell # of lanes - lanes: "+n+" link: "+getLink()+" "+getMinLanes()+" "+getMaxLanes());
+            throw new RuntimeException("Invalid cell # of lanes - lanes: "+n+" link: "+getLink()+" min lanes: "+getMinLanes()+" max lanes: "+getMaxLanes()+" curr lanes:"+getNumLanes());
         }
     }
     
