@@ -135,7 +135,7 @@ public class DTASimulator extends Simulator
             
             while(iterator.hasNext())
             {
-                if(Math.random() < 1.0 / (iter - i))
+                if(rand.nextDouble() < 1.0 / (iter - i))
                 {
                     vehicles.add(iterator.next());
                     iterator.remove();
@@ -584,7 +584,7 @@ public class DTASimulator extends Simulator
         
         fileout.println("Iter\tStep\tGap %\tAEC\tTSTT\tTrips\tNon-exit\ttime");
         
-        int max_iter_contingency = max_iter + 3;
+        int max_iter_contingency = max_iter *2;
         
         do
         {
