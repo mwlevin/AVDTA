@@ -5,8 +5,10 @@
 package avdta.network.link;
 
 import avdta.network.Network;
+import avdta.network.ReadNetwork;
 import avdta.network.Simulator;
 import avdta.network.node.Node;
+import avdta.network.type.Type;
 import avdta.vehicle.DriverType;
 import avdta.vehicle.VehTime;
 import avdta.vehicle.Vehicle;
@@ -160,5 +162,11 @@ public class CACCLTMLink extends LTMLink
     public boolean canUseLink(DriverType driver)
     {
         return driver.isCV();
+    }
+    
+    
+    public Type getType()
+    {
+        return ReadNetwork.CACC;
     }
 }
