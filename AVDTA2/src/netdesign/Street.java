@@ -22,6 +22,13 @@ public class Street {
         control = ReadNetwork.SIGNAL;
     }
 
+    public Street(String s, int c) {
+        name = s;
+        lights = new HashMap<>();
+        contiguous = true;
+        control = c;
+    }
+
     public boolean addNode(NodeRecord i) {
         if (i.getType() == control) {
             lights.put(i.getId(), i);
@@ -76,7 +83,10 @@ public class Street {
     public HashMap<Integer, NodeRecord> getLights() {
         return lights;
     }
-    
+
+    public int getControl() {
+        return control;
+    }
     @Override
     public int hashCode() {
         return name.hashCode();
@@ -89,8 +99,13 @@ public class Street {
         }
         if (obj instanceof Street) {
             Street otherObj = (Street) obj;
-            return name.equals(otherObj.name);
+            return name.equals(otherObj.name) && control == otherObj.control;
         }
         return false;
+    }
+
+    @Override
+    public String toString() {
+        return name + "=" + control;
     }
 }

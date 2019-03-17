@@ -8,7 +8,7 @@ import java.util.*;
  */
 public abstract class TabuSearch<T extends Individual> {
     private Set<T> tabuList;
-    private T bestSolution;
+    protected T bestSolution;
     private T currentSolution;
     private int maxIterations;
     private double convergence;
@@ -22,8 +22,6 @@ public abstract class TabuSearch<T extends Individual> {
         tabuList = new HashSet<>();
         maxIterations = max;
         convergence = conv;
-        currentSolution = generateRandom();
-        bestSolution = generateRandom();
     }
 
     public TabuSearch(int max, double conv, T warmStartSolution) {
@@ -37,6 +35,7 @@ public abstract class TabuSearch<T extends Individual> {
     public abstract SortedSet<T> generateNeighbor(T currentState);
     public abstract T generateRandom();
     public abstract boolean isNeighborBetter(T current, T neighbor);
+    public abstract void evaluate(T child);
 
     public T getBestNeighbor(SortedSet<T> neighbor) {
         for(T n: neighbor) {
@@ -47,8 +46,10 @@ public abstract class TabuSearch<T extends Individual> {
     }
 
     public T solve() {
+        currentSolution = generateRandom();
+        bestSolution = currentSolution;
         int currentIter = 0;
-        while(didConverge(currentIter++, bestSolution)) {
+        while(!didConverge(currentIter++, bestSolution)) {
             SortedSet<T> neighbors = generateNeighbor(currentSolution);
             T bestNeighbor = getBestNeighbor(neighbors);
             if(isNeighborBetter(bestSolution, bestNeighbor))

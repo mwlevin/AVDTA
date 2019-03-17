@@ -96,7 +96,7 @@ public class GAMain {
 		int max_iters = 100;
 		
 		Long starttime = System.nanoTime();
-		DTAProject project = new DTAProject(new File("projects/coacongress"));
+		DTAProject project = new DTAProject(new File("AVDTA2/projects/coacongress/"));
 		
 		//To obtain a list of signalized intersections
 		List<Integer> signals = new ArrayList<>();
@@ -116,10 +116,11 @@ public class GAMain {
 	
 		//Check this before running
 		//Contains model specifications
-		TBRGA GA = new TBRGA(project, 10, false, false, 10, 0.75, 0.1, signals);
-		GA.solve(max_iters);
-                
-        Double runtime = (System.nanoTime() - starttime)*2.77778 * Math.pow(10, -13);
+//		TBRGA GA = new TBRGA(project, 10, false, false, 10, 0.75, 0.1, signals);
+//		GA.solve(max_iters);
+		TBRTabu tabu = new TBRTabu(project,false, signals, 3);
+        tabu.solve();
+		Double runtime = (System.nanoTime() - starttime)*2.77778 * Math.pow(10, -13);
         System.out.println("Runtime: " + runtime + " hrs");
 
 
