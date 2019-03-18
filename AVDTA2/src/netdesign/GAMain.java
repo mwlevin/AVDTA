@@ -118,7 +118,7 @@ public class GAMain {
 		//Contains model specifications
 //		TBRGA GA = new TBRGA(project, 10, false, false, 10, 0.75, 0.1, signals);
 //		GA.solve(max_iters);
-		TBRTabu tabu = new TBRTabu(project,false, signals, 3);
+		TBRTabu tabu = new TBRTabu(project,false, signals, 30);
         tabu.solve();
 		Double runtime = (System.nanoTime() - starttime)*2.77778 * Math.pow(10, -13);
         System.out.println("Runtime: " + runtime + " hrs");

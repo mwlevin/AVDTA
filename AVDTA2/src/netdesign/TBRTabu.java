@@ -136,15 +136,16 @@ public class TBRTabu extends TabuSearch<TBRIndividual>{
     @Override
     public SortedSet<TBRIndividual> generateNeighbor(TBRIndividual currentState) {
         SortedSet<TBRIndividual> output = new TreeSet<>();
-        System.out.println("Current Best State: " + bestSolution.getObj());
-        System.out.println("Current State: " + currentState.getObj());
+        System.out.println("Current Best State: " + bestSolution.getObj() + " Proportion of Reservations: " + bestSolution.tbrRatio());
+        System.out.println("Current State: " + currentState.getObj() + " Proportion of Reservations: " + currentState.tbrRatio());
         for(int i = 0; i < 5; i ++) {
             TBRIndividual perturbed = currentState.createNeighbor();
 //            System.out.println(perturbed.getStreets());
 //            System.out.println(perturbed.getTbrs());
             System.out.println("Evaluating Neighbor #" + i);
             evaluate(perturbed);
-            System.out.println("Current TSTT:" + currentState.getObj() + ", Neighbor TSTT:" + perturbed.getObj());
+            System.out.println("Current TSTT: " + currentState.getObj() + ", Neighbor TSTT:" + perturbed.getObj());
+            System.out.println("Current Proportion: " + currentState.tbrRatio() +", Neighbor Proportion: " + perturbed.tbrRatio());
             output.add(perturbed);
         }
         System.out.println("Generated and Evaluated Neighbors");
@@ -177,6 +178,7 @@ public class TBRTabu extends TabuSearch<TBRIndividual>{
 //            System.out.println(tbrs);
             org = new TBRIndividual(controls, tbrs, false, streets, intersections);
             System.out.println("Generated Random");
+            System.out.println("Random Proportion of Reservations: " + org.tbrRatio());
             System.out.println("Evaluating Random");
 		} else {
 			int[] controls = new int[intersections.size()];

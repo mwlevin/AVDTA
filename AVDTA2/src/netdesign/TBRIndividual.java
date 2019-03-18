@@ -34,6 +34,9 @@ public class TBRIndividual extends Individual<TBRIndividual> {
 		computeHash();
 	}
 
+	public float tbrRatio() {
+		return (float) tbrs.size() / controls.length;
+	}
 	public TBRIndividual(int[] controls) {
 		this.controls = controls;
 		computeHash();
