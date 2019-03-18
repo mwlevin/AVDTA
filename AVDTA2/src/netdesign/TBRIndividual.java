@@ -7,6 +7,7 @@ package netdesign;
 
 import avdta.dta.Assignment;
 import avdta.network.ReadNetwork;
+import avdta.network.node.Intersection;
 import avdta.network.node.NodeRecord;
 
 import java.io.IOException;
@@ -167,7 +168,7 @@ public class TBRIndividual extends Individual<TBRIndividual> {
 		return true;
 	}
 
-	public TBRIndividual createNeighbor() {
+	public TBRIndividual createNeighbor(int radius) {
 		//TODO: Generate neighbor from current state
 		int[] newControls = new int[controls.length];
 		System.arraycopy(controls, 0, newControls, 0, controls.length);
@@ -185,7 +186,7 @@ public class TBRIndividual extends Individual<TBRIndividual> {
 			neighborStreets.put(s, strCopy);
 		}
 		if (!isSO) {
-			for (int i = 0; i < 10; i ++){
+			for (int i = 0; i < radius; i ++){
 				String randomStreet = "";
 				int size = streets.size();
 				int item = new Random().nextInt(size);
@@ -233,8 +234,10 @@ public class TBRIndividual extends Individual<TBRIndividual> {
 	protected void writeToFile(PrintStream out) {
 		super.writeToFile(out);
 
-		for (int i : controls) {
-			out.println(i);
+		out.println(streets);
+		out.println(tbrs);
+		for (int i : intersections.keySet()) {
+			out.println(i + " " + controls[intersections.get(i)]);
 		}
 	}
 

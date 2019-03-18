@@ -35,11 +35,16 @@ public class TBRTabu extends TabuSearch<TBRIndividual>{
 
     private Map<String, Street> streets;
     private Map<Integer, Pair<String, String>> base;
-    public TBRTabu(DTAProject project, boolean isSO, List<Integer> signals, int max_itr ) {
+    private int radius;
+    private int numNeighbors;
+
+
+    public TBRTabu(DTAProject project, boolean isSO, List<Integer> signals, int max_itr, int rad, int neigh) {
         super(max_itr, 0);
         this.project = project;
         this.isSO = isSO;
-
+        radius = rad;
+        numNeighbors = neigh;
         intersections = new HashMap<>();
 
         int counter = 0;
@@ -90,7 +95,8 @@ public class TBRTabu extends TabuSearch<TBRIndividual>{
             System.exit(1);
         }
         System.out.println("Constructed TBRTabu");
-
+        System.out.println(intersections);
+        System.exit(0);
     }
 
     public void changeNodes(TBRIndividual org) throws IOException {
@@ -126,7 +132,9 @@ public class TBRTabu extends TabuSearch<TBRIndividual>{
             // solve DTA
             sim.msa(30, 2.0);
             child.setAssignment(sim.getAssignment());
+            PrintStream out = new PrintStream(child.getAssignment().getResultsDirectory() + "/assignNodes.txt");
             child.setObj(sim.getTSTT() / 3600.0);
+            child.writeToFile(out);
         } catch (IOException e) {
             child.setObj(Double.MAX_VALUE);
         }
@@ -134,12 +142,25 @@ public class TBRTabu extends TabuSearch<TBRIndividual>{
     }
 
     @Override
+    public TBRIndividual solve() {
+        TBRIndividual out =  super.solve();
+        try {
+            changeNodes(out);
+            System.out.println("Saved best configuration in the network file");
+        } catch (IOException ignored){
+            System.out.println("Couldn't save best configuration in network file");
+        }
+
+        return out;
+    }
+
+    @Override
     public SortedSet<TBRIndividual> generateNeighbor(TBRIndividual currentState) {
         SortedSet<TBRIndividual> output = new TreeSet<>();
         System.out.println("Current Best State: " + bestSolution.getObj() + " Proportion of Reservations: " + bestSolution.tbrRatio());
         System.out.println("Current State: " + currentState.getObj() + " Proportion of Reservations: " + currentState.tbrRatio());
-        for(int i = 0; i < 5; i ++) {
-            TBRIndividual perturbed = currentState.createNeighbor();
+        for(int i = 0; i < numNeighbors; i ++) {
+            TBRIndividual perturbed = currentState.createNeighbor(radius);
 //            System.out.println(perturbed.getStreets());
 //            System.out.println(perturbed.getTbrs());
             System.out.println("Evaluating Neighbor #" + i);
