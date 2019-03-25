@@ -169,17 +169,16 @@ public class TBRIndividual extends Individual<TBRIndividual> {
 	}
 
 	public TBRIndividual createNeighbor(int radius) {
-		//TODO: Generate neighbor from current state
+		// Generate neighbor from current state
 		int[] newControls = new int[controls.length];
 		System.arraycopy(controls, 0, newControls, 0, controls.length);
-		List<Integer> neighborTBRs = new ArrayList<>();
-		for(int i : tbrs) {
-			neighborTBRs.add(i);
-		}
+		List<Integer> neighborTBRs = new ArrayList<>(tbrs);
 		Map<String, Street> neighborStreets = new HashMap<>();
 		for (String s: streets.keySet()) {
 			Street str = streets.get(s);
 			Street strCopy = new Street(s, str.getControl());
+			if (!str.isContiguous())
+				str.allowInterUpdates();
 			for(NodeRecord nr: str.getLights().values()) {
 				strCopy.addNode(new NodeRecord(nr.getId(), nr.getType(), nr.getLongitude(), nr.getLatitude(), 0.0));
 			}
@@ -199,7 +198,7 @@ public class TBRIndividual extends Individual<TBRIndividual> {
 					idx++;
 				}
 				Street rand = neighborStreets.get(randomStreet);
-				rand.flipAllIntersections();
+				rand.flipIntersections();
 				for (NodeRecord nr: rand.getLights().values()) {
 					newControls[intersections.get(nr.getId())] = nr.getType();
 					if(nr.getType() == ReadNetwork.RESERVATION + ReadNetwork.FCFS)

@@ -7,10 +7,10 @@ import java.util.*;
  * @author ribsthakkar
  */
 public abstract class TabuSearch<T extends Individual> {
-    private Set<T> tabuList;
+    protected Set<T> tabuList;
     protected T bestSolution;
-    private T currentSolution;
-    private int maxIterations;
+    protected T currentSolution;
+    protected int maxIterations;
     private double convergence;
 
 
@@ -59,5 +59,24 @@ public abstract class TabuSearch<T extends Individual> {
         }
 
         return bestSolution;
+    }
+
+    public T solve(int numIters) {
+        currentSolution = generateRandom();
+        bestSolution = currentSolution;
+        int currentIter = 0;
+        while(currentIter++ < numIters) {
+            SortedSet<T> neighbors = generateNeighbor(currentSolution);
+            T bestNeighbor = getBestNeighbor(neighbors);
+            if(isNeighborBetter(bestSolution, bestNeighbor))
+                bestSolution = bestNeighbor;
+            tabuList.add(currentSolution);
+            currentSolution = bestNeighbor;
+        }
+
+        return bestSolution;
+    }
+    public void setCurrentSolution(T t) {
+        currentSolution = t;
     }
 }

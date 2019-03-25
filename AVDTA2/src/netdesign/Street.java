@@ -4,6 +4,7 @@ package netdesign;
 import avdta.network.ReadNetwork;
 import avdta.network.node.*;
 import java.util.HashMap;
+import java.util.Random;
 
 
 public class Street {
@@ -37,7 +38,7 @@ public class Street {
         return false;
     }
 
-    public boolean flipAllIntersections() {
+    public boolean flipIntersections() {
         if(contiguous) {
             if(control == ReadNetwork.SIGNAL) {
                 control = ReadNetwork.RESERVATION + ReadNetwork.FCFS;
@@ -48,11 +49,29 @@ public class Street {
                 lights.values().forEach(intersection -> intersection.setType(control));
                 return true;
             }
+            return false;
+        } else {
+            int randLight = -1;
+            int size = lights.keySet().size();
+            int item = new Random().nextInt(size); // In real life, the Random object should be rather more shared than this
+            int i = 0;
+            for(int obj : lights.keySet())
+            {
+                if (i == item) {
+                    randLight = obj;
+                    break;
+                }
+                i++;
+            }
+            return flipIntersection(randLight);
         }
-        return false;
     }
 
-    public boolean flipIntersection(int id) {
+    public boolean isContiguous() {
+        return contiguous;
+    }
+
+    private boolean flipIntersection(int id) {
         if(!contiguous) {
             if (lights.containsKey(id)) {
                 int t = lights.get(id).getType();
