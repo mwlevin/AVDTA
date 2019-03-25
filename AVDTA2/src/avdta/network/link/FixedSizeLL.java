@@ -43,6 +43,13 @@ public class FixedSizeLL extends LinkedList<Integer> implements CumulativeCountS
 
         int difference = Simulator.indexTime(Simulator.time) - t;
         int idx = size() - difference-2;
+        
+        if(idx >= size())
+        {
+            throw new RuntimeException("Looking for time "+(t*Simulator.dt)+" time range is ["+(
+                    t-(size()-1)*Simulator.dt)+","+(Simulator.time+Simulator.dt)
+                    +"]");
+        }
 
         
         return super.get(idx);
