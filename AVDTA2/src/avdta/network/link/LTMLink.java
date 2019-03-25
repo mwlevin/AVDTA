@@ -31,7 +31,7 @@ public class LTMLink extends Link
 {
     private LinkedList<VehTime> queue;
     
-    private ChainedArray N_up, N_down;
+    private CumulativeCountStorage N_up, N_down;
     
     private boolean init;
     
@@ -71,8 +71,8 @@ public class LTMLink extends Link
      */
     public void initialize()
     {
-        N_up = new ChainedArray(getUSLookBehind()+2);
-        N_down = new ChainedArray(getDSLookBehind()+2);
+        N_up = new FixedSizeLL(getUSLookBehind()+2);
+        N_down = new FixedSizeLL(getDSLookBehind()+2);
 
         this.capacityUp = getCapacity() * Network.dt / 3600.0;
         this.capacityDown = getCapacity() * Network.dt / 3600.0;
@@ -133,8 +133,8 @@ public class LTMLink extends Link
     public void reset()
     {
         queue.clear();
-        N_up = new ChainedArray(getUSLookBehind()+2);
-        N_down = new ChainedArray(getDSLookBehind()+2);
+        N_up.clear();
+        N_down.clear();
 
         
         super.reset();
@@ -156,6 +156,12 @@ public class LTMLink extends Link
         capacityDown += getCapacity() * Network.dt / 3600.0;
         
 
+    }
+    
+    public void update()
+    {
+        N_up.nextTimeStep();
+        N_down.nextTimeStep();
     }
     
     /**
@@ -199,9 +205,11 @@ public class LTMLink extends Link
      */
     public int getNumSendingFlow()
     {
+        
         return (int)Math.min(getN_up(Simulator.time - getLength()/getFFSpeed()*3600 + Network.dt) - 
                 getN_down(Simulator.time), getCurrentDownstreamCapacity());
     }
+    
     
     /**
      * Returns the set of {@link Vehicle}s that could exit this link
@@ -308,7 +316,7 @@ public class LTMLink extends Link
      */
     public void addN_up(double t, int val)
     {
-        N_up.add(Simulator.indexTime(t), val);
+        N_up.addCC(Simulator.indexTime(t), val);
     }
     
     /**
@@ -318,7 +326,7 @@ public class LTMLink extends Link
      */
     public void addN_down(double t, int val)
     {
-        N_down.add(Simulator.indexTime(t), val);
+        N_down.addCC(Simulator.indexTime(t), val);
     }
     
 
@@ -335,7 +343,7 @@ public class LTMLink extends Link
         }
         else
         {
-            return N_up.get(Simulator.indexTime(t));
+            return N_up.getCC(Simulator.indexTime(t));
         }
     }
     
@@ -352,7 +360,7 @@ public class LTMLink extends Link
         }
         else
         {
-            return N_down.get(Simulator.indexTime(t));
+            return N_down.getCC(Simulator.indexTime(t));
         }
     }
     

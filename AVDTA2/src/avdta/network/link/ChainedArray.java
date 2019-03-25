@@ -12,7 +12,7 @@ package avdta.network.link;
  * A single fixed size array is used, and indexing arithmetic is used to determine which value to access.
  * @author Michael
  */
-public class ChainedArray 
+public class ChainedArray implements CumulativeCountStorage
 {
     private int[] array;
     private int start;
@@ -34,7 +34,7 @@ public class ChainedArray
      * @param idx the time step to be added
      * @param val the value (cumulative count)
      */
-    public void add(int idx, int val)
+    public void addCC(int idx, int val)
     {
         index(idx);
         
@@ -49,9 +49,16 @@ public class ChainedArray
      * @param idx the time step
      * @return the cumulative count
      */
-    public int get(int idx)
+    public int getCC(int idx)
     {
         return array[index(idx)];
+    }
+    
+
+    
+    public void nextTimeStep()
+    {
+        
     }
     
     /**
