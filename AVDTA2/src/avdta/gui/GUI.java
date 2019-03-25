@@ -133,7 +133,7 @@ public abstract class GUI extends JFrame
     {
         System.out.println("Error occurred: "+ex);
         ex.printStackTrace(System.err);
-        JOptionPane.showMessageDialog(frame, ex.getMessage(),
+        JOptionPane.showMessageDialog(frame, ex.toString()+" "+ex.getMessage(),
                             "Error", JOptionPane.ERROR_MESSAGE);
     }
     
