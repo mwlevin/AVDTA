@@ -102,411 +102,53 @@ public class Main
 {
 	//percentage of total demand simulated
 	static int demandprops[] = {10, 30, 50, 75, 85, 100};
+	static int numTBRs[] = {35, 70, 105, 140, 172};
 	//,30, 50, 75, 85, 100
 	//static int demandprops[] = {30};
 	static int demand;
 	
     public static void main(String[] args) throws IOException
     {
+        	DTAProject project = new DTAProject(new File("AVDTA2/projects/coacongress"));
+        	DTASimulator sim = new DTASimulator(project);
+        	sim.msa(30, 1);
+        	
+        	DTAProject project2 = new DTAProject(new File("AVDTA2/projects/coacongress"));
+        	DTASimulator sim2 = new DTASimulator(project2);
+        	sim2.msa(30, 2);
 
-    	DTAProject project = new DTAProject(new File("AVDTA2/projects/dallas_downtown"));
-    	DTASimulator sim = project.getSimulator();
+//    	List<Integer> reservations = new ArrayList<Integer>();
+//    	Scanner fileIn = new Scanner(new File("trbRevisionTest.txt"));
+//    	while(fileIn.hasNextLine()) {
+//    		reservations.add(fileIn.nextInt());
+//    	}
+//    	fileIn.close();
+//    	
+//    	DTASimulator sim = placementTest(reservations, project);
+//    	
+//    	Map<String, Double> testDemands = new HashMap<String, Double>();
+//    	testDemands = createTestIntersection(5107, sim, 0);
+//    	System.out.println(testDemands);
+    	
+    }
+    
+    public static DTASimulator placementTest(List<Integer> reservations, DTAProject project) throws IOException {
+    	
     	ReadDTANetwork demandread = new ReadDTANetwork();
-	Map<Integer, Double> proportionmap = new HashMap<Integer, Double>();
-	proportionmap.put(121, 1.0);
-	demandread.changeDynamicType(project, proportionmap);
-	demandread.prepareDemand(project, 1.0);
-	changeControlAllInts(project, 301);
-	
-	sim.msa(60, 2);
-	
-    	/*
-    	 * TESTING COACONGRESS INTERSECTIONS FROM NEW EXPERIMENTS (providing a list of reservations)
-    	 * 
-	    	DTAProject project = new DTAProject(new File("AVDTA2/projects/coacongress"));
-	    	DTASimulator sim = project.getSimulator();
-	    	
-		//To obtain a list of signalized intersections
-		List<Integer> signals = new ArrayList<>();
-		Scanner fileIn = new Scanner(project.getSignalsFile());
-		fileIn.nextLine();
-		while(fileIn.hasNextLine()){
-			SignalRecord signal = new SignalRecord(fileIn.nextLine());
-			signals.add(signal.getNode());
-		}
-		fileIn.close();
-		
-		ReadDTANetwork demandread = new ReadDTANetwork();
 		Map<Integer, Double> proportionmap = new HashMap<Integer, Double>();
 		proportionmap.put(121, 1.0);
 		demandread.changeDynamicType(project, proportionmap);
 		demandread.prepareDemand(project, 1.0);
+		project.loadSimulator();
 		
-		List<Integer> reservations = new ArrayList<Integer>(Arrays.asList(
-				5749,
-				5107,
-				6378,
-				5760,
-				6346,
-				5711,
-				5654,
-				13098,
-				5743,
-				12149,
-				5583,
-				5453,
-				5211,
-				10460,
-				5572,
-				5215,
-				5135,
-				6354,
-				5573,
-				5659,
-				6231,
-				5674,
-				6167,
-				13500,
-				5452,
-				5143,
-				5577,
-				5197,
-				13065,
-				5778,
-				5544,
-				6230,
-				5574,
-				5685,
-				5780));
-		
-		
-		changeControlSomeInts(project, reservations, false);
-		sim.msa(30, 1);
-		*/
+    	changeControlSomeInts(project, reservations, false);
     	
-//		int[] iters = new int[11];
-//		for (int i = 0; i < iters.length; i++) {
-//			iters[i] = i * 10;
-//		}
-//    		int[] iters = new int[] {0, 10, 20, 30, 40, 50, 60, 70, 80, 90};
-//		int[] types = new int[] { 100, 301 };
-//		HashMap<Integer, ArrayList<Integer>> sigControls = new HashMap<Integer, ArrayList<Integer>>();
-//		HashMap<Integer, ArrayList<Integer>> tbrControls = new HashMap<Integer, ArrayList<Integer>>();
-//
-//		for (int i : iters) {
-//			Scanner filein = new Scanner(new File("GA_RESULTS_SO.txt"));
-//			ArrayList<Integer> tempSigList = new ArrayList<Integer>();
-//			ArrayList<Integer> tempTbrList = new ArrayList<Integer>();
-//
-//			while (filein.hasNextLine()) {
-//				String strang = filein.nextLine();
-//				System.out.println(strang);
-//				if (strang == "Iteration " + i) {
-//
-//					filein.nextLine();
-//					filein.nextLine();
-//					filein.nextLine();
-//					filein.nextLine();
-//
-//					for (int n = 0; n < 174; n++) {
-//
-//						int tempID = filein.nextInt();
-//						if (filein.nextInt() == 100) {
-//							tempSigList.add(tempID);
-//						} else
-//							tempTbrList.add(tempID);
-//						filein.nextLine();
-//					}
-//
-//					sigControls.put(i, tempSigList);
-//					tbrControls.put(i, tempTbrList);
-//
-//				}
-//
-//			}
-//			filein.close();
-//		}
-//
-//		DTAProject project = new DTAProject(new File("AVDTA2/projects/coacongress"));
-//		DTASimulator sim = project.getSimulator();
-//		Scanner nodesfilein = new Scanner(project.getNodesFile());
-//
-//		Map<Integer, NodeRecord> noderec = new HashMap<Integer, NodeRecord>();
-//		nodesfilein.nextLine();
-//		while (nodesfilein.hasNextLine()) {
-//			NodeRecord temp = new NodeRecord(nodesfilein.nextLine());
-//			noderec.put(temp.getId(), temp);
-//		}
-//		nodesfilein.close();
-//
-//		for (int i : types) {
-//			for (int j : iters) {
-//				PrintStream fileout;
-//				if (i == 100) {
-//					fileout = new PrintStream(new FileOutputStream(new File(
-//							"/Users/rahulpatel/Documents/Graduate School/Research/AVResearch/Optimal smart intersection placement/ArcGIS data inputs/GIS_GA_SO_"
-//									+ j + "_sig.txt")));
-//					fileout.println("ID\tType\tLongitude\tLatitude");
-//					for (int n : sigControls.get(j)) {
-//						fileout.println(n + "\t" + i + "\t" + noderec.get(n).getLongitude() + "\t"
-//								+ noderec.get(n).getLatitude());
-//					}
-//
-//				} else {
-//					fileout = new PrintStream(new FileOutputStream(new File(
-//							"/Users/rahulpatel/Documents/Graduate School/Research/AVResearch/Optimal smart intersection placement/ArcGIS data inputs/GIS_GA_SO_"
-//									+ j + "_tbr.txt")));
-//					fileout.println("ID\tType\tLongitude\tLatitude");
-//					for (int n : tbrControls.get(j)) {
-//						fileout.println(n + "\t" + i + "\t" + noderec.get(n).getLongitude() + "\t"
-//								+ noderec.get(n).getLatitude());
-//					}
-//
-//				}
-//				fileout.close();
-//
-//			}
-//		}
-    	
-    	
-    	/* Getting min, max, avg link lengths and total, min link capacities (more inter. chars)
-    	 * 
-    	DTAProject project = new DTAProject(new File("AVDTA2/projects/dallas_downtown"));
+    	project.loadSimulator();
     	DTASimulator sim = project.getSimulator();
-    	PrintStream fileout = new PrintStream(new FileOutputStream(new File("dallasNewChars.txt")), true);
-    	List<Integer> signals = new ArrayList<>();
-    	Scanner fileIn = new Scanner(project.getSignalsFile());
-    	fileIn.nextLine();
-    	while(fileIn.hasNextLine()){
-    		SignalRecord signal = new SignalRecord(fileIn.nextLine());
-    		signals.add(signal.getNode());
-    	}
-    	fileIn.close();
-    	System.out.println("Node ID\tMin length\tMax length\tAvg length\tMin link capacity\tTotal link capacity");
-    fileout.println("Node ID\tMin length\tMax length\tAvg length\tMin link capacity\\tTotal link capacity");
-
-    	for(int i : signals) {
-    		List<Link> allLinks = new ArrayList<Link>();
-    		List<Link> links = new ArrayList<Link>();
-    		allLinks.addAll(sim.getNode(i).getIncoming());
-    		allLinks.addAll(sim.getNode(i).getOutgoing());
-    		for(Link l : allLinks) {
-    			if(!l.isCentroidConnector()) {
-    				links.add(l);
-    			}
-    		}
-    		List<Double> linkLengths = new ArrayList<Double>();
-    		List<Double> capacities = new ArrayList<Double>();
-    		double avg = 0.0;
-    		double totCap = 0.0;
-    		for(Link l : links) {
-    			linkLengths.add(l.getLength());
-    			avg += l.getLength();
-    			totCap += l.getCapacity();
-    			capacities.add(l.getCapacity());
-    		}
-    		avg = avg/links.size();
-    		Collections.sort(linkLengths);
-    		Collections.sort(capacities);
-    		System.out.println(i + "\t" + (linkLengths.get(0)*5280.0) + "\t" + (linkLengths.get(linkLengths.size() - 1)*5280.0) + "\t" + (avg*5280.0) + "\t" + capacities.get(0) + "\t" + totCap);
-    		fileout.println(i + "\t" + (linkLengths.get(0)*5280.0) + "\t" + (linkLengths.get(linkLengths.size() - 1)*5280.0) + "\t" + (avg*5280.0) + "\t" + capacities.get(0) + "\t" + totCap);
-    	}
-    	fileout.close();
-    	*/
     	
-    	/*
-    	 * Running DTA on test network with regression results
-    	 *
- 	PrintStream fileout = new PrintStream(new FileOutputStream(new File("REGresults/REG2_results/predictcoa2_withdal.txt"), true), true);//coaresults_w_dalreg.txt"), true), true);
- 	fileout.println();
- 	
- 	//Change all vehicles to AVs
-	DTAProject project = new DTAProject(new File("AVDTA2/projects/coacongress"));
-	ReadDTANetwork demandread = new ReadDTANetwork();
-	Map<Integer, Double> proportionmap = new HashMap<Integer, Double>();
-	proportionmap.put(121, 1.0);
-	demandread.changeDynamicType(project, proportionmap);
-	demandread.prepareDemand(project, 1.0);
-	//To obtain a list of signalized intersections
-	List<Integer> signals = new ArrayList<>();
-	Scanner fileIn = new Scanner(project.getSignalsFile());
-	fileIn.nextLine();
-	while(fileIn.hasNextLine()){
-		SignalRecord signal = new SignalRecord(fileIn.nextLine());
-		signals.add(signal.getNode());
-	}
-	fileIn.close();
-	
-    	Map<Integer, ArrayList<Integer>> intersections = new HashMap<Integer, ArrayList<Integer>>();
-
-    //	ArrayList<Integer> tempints = new ArrayList<Integer>(Arrays.asList());
-    	List<Integer> tempints = new ArrayList<Integer>();
-    	Scanner filein = new Scanner(new File("predictcoa2_withdal.txt"));
-    	while(filein.hasNextInt()) {
-    		tempints.add(filein.nextInt());
-    	}
-    	
-    	int temp[] = {35, 70, 105, 140};
-    	for(int t : temp) {
-    		ArrayList<Integer> temp2 = new ArrayList<Integer>();
-    		for(int i = 0; i < t; i++) {
-    			temp2.add(tempints.get(i));
-    		}
-    		intersections.put(t, temp2);
-    	}
-    	
-        //intersections.put(100, new ArrayList<Integer>(Arrays.asList()));
-
-    	for(int t : temp) {
-    		changeControlSomeInts(project, intersections.get(t), false);
-    		project.loadSimulator();
-    		DTASimulator mixsim = project.getSimulator();
-    		mixsim.msa(30, 1);
-    		fileout.println(t + " TBRs:");
-        	fileout.println("TSTT\tAvgTT\t");
-    		fileout.println(mixsim.getTSTT()/3600.0 + "\t" + mixsim.getTSTT()/60.0/mixsim.getNumVehicles() + "\t\n");
-    		fileout.println();
-    	}
-
-    	
-    	fileout.close();
-    	*/
-    	
-//    	//TO PRINT INTERCHAR
-//    	printIntersectionChar(getAllDemandTurns(signals, baseproject), baseproject);
-    	
+    	sim.msa(30, 2);
+    	return sim;
     }
-    
-//    public static 	Map<Integer, List<Map<Double, Map<String, Double>>>> getAllDemandTurns2(DTAProject baseproject) throws IOException {
-//
-//		DTASimulator sim = baseproject.getSimulator();
-//		List<Integer> signals = new ArrayList<>();
-//		Scanner filein = new Scanner(baseproject.getSignalsFile());
-//		filein.nextLine();
-//		while (filein.hasNextLine()) {
-//			signals.add(filein.nextInt());
-//			filein.nextLine();
-//		}
-//		filein.close();
-//
-//		Map<Integer, List<Map<Double, Map<String, Double>>>> turns = new HashMap<Integer, List<Map<Double, Map<String, Double>>>>();
-//		// The above Map is of the structure shown below:
-//		// <Node ID, (<10%demand, <"through", #turns>> , <30%demand, <"through",
-//		// #turns>>)>
-//		// <"left" , #turns>> <"left" , #turns>>
-//		// <"right" , #turns>> <"right" , #turns>>
-//		//
-//		// ...continue for all Intersection Node IDs
-//
-//		for (int d : demandprops) {
-//
-//			Map<Integer, Map<String, Double>> tempTurns = new HashMap<>();
-//			// Map above is of structure:
-//			// <Node ID, <"through", #turns>>
-//			// <"left" , #turns>>
-//			// <"right" , #turns>>
-//
-//			for (int s : signals) {
-//				Double leftTurns = 0.0;
-//				Double rightTurns = 0.0;
-//				Double throughTurns = 0.0;
-//				List<StaticODRecord> odrecord = new ArrayList<StaticODRecord>();
-//				DTAProject temp = new DTAProject(
-//						new File("AVDTA2/projects/coatestIntersections/SIG_intersection" + s + "_" + d));
-//				DTASimulator tempsim = temp.getSimulator();
-//
-//				// to get a list of staticodrecords for the specified project
-//				Scanner staticodfilein = new Scanner(temp.getStaticODFile());
-//				staticodfilein.nextLine();
-//				while (staticodfilein.hasNextLine()) {
-//					StaticODRecord temprecord = new StaticODRecord(staticodfilein.nextLine());
-//					odrecord.add(temprecord);
-//				}
-//				staticodfilein.close();
-//
-//				// to get a list of all phaserecords (for turning movements)
-//				List<PhaseRecord> phaserecord = new ArrayList<PhaseRecord>();
-//				Scanner phasefilein = new Scanner(temp.getPhasesFile());
-//				phasefilein.nextLine();
-//				while (phasefilein.hasNextLine()) {
-//					PhaseRecord tempphase = new PhaseRecord(phasefilein.nextLine());
-//					phaserecord.add(tempphase);
-//				}
-//				phasefilein.close();
-//
-//				for (StaticODRecord r : odrecord) {
-//					Link linkin = null;
-//					Link linkout = null;
-//					// List of centroidlinkin = [0]
-//					List<Link> templistincent = new ArrayList<Link>(tempsim.getNode(r.getOrigin()).getOutgoing());
-//					// List of linkin = [0]
-//					List<Link> templistin = new ArrayList<Link>(tempsim.getNode(templistincent.get(0).getDest().getId()).getOutgoing());
-//					for(Link l : templistin) {
-//						if(l.isCentroidConnector()) {
-//							templistin.remove(l);
-//						}
-//					}
-//					
-//
-//					// List of centroidlinkout = [0]
-//					List<Link> templistoutcent = new ArrayList<Link>(tempsim.getNode(r.getDest()).getIncoming());
-//					// List of linkout = [0]
-//					List<Link> templistout = new ArrayList<Link>(tempsim.getNode(templistoutcent.get(0).getSource().getId()).getIncoming());
-//					for(Link l : templistout) {
-//						if(l.isCentroidConnector()) {
-//							templistout.remove(l);
-//						}
-//					}
-//
-//					linkin = templistin.get(0);
-//					linkout = templistout.get(0);
-//					List<Link> linkinlinkout = new ArrayList<Link>();
-//					linkinlinkout.add(linkin);
-//					linkinlinkout.add(linkout);
-//					TurnRecord tempturn = new TurnRecord(linkin, linkout);
-//
-//					for (PhaseRecord p : phaserecord) {
-//
-//						if (p.getTurns().contains(tempturn)) {
-//
-//							double theta = linkout.getDirection() - linkin.getDirection() > 0
-//									? linkout.getDirection() - linkin.getDirection()
-//									: linkout.getDirection() - linkin.getDirection() + 2 * Math.PI;
-//							if (theta >= Math.PI / 4 && theta <= Math.PI) {
-//								leftTurns += r.getDemand();
-//							} else if (theta > Math.PI && theta <= 7 * Math.PI / 4) {
-//								rightTurns += r.getDemand();
-//							} else {
-//								throughTurns += r.getDemand();
-//							}
-//
-//						}
-//					}
-//
-//				}
-//				Map<String, Double> turnMap = new HashMap<String, Double>();
-//				turnMap.put("through", throughTurns);
-//				turnMap.put("left", leftTurns);
-//				turnMap.put("right", rightTurns);
-//				tempTurns.put(s, turnMap);
-//			}
-//
-//			for (int i : signals) {
-//				Map<Double, Map<String, Double>> demandTurns = new HashMap<>();
-//				demandTurns.put((double) d, tempTurns.get(i));
-//				if (turns.containsKey(i)) {
-//					turns.get(i).add(demandTurns);
-//				} else {
-//					turns.put(i, new ArrayList<>());
-//					turns.get(i).add(demandTurns);
-//				}
-//			}
-//		}
-//
-//		return turns;
-//
-//    }
-    
     
     public static 	Map<Integer, List<Map<Double, Map<String, Double>>>> getAllDemandTurns(List<Integer> signals, DTAProject project) throws IOException {
     	
@@ -914,7 +556,8 @@ public class Main
 		Scanner filein = new Scanner(project.getNodesFile());
 		File newFile = new File(project.getProjectDirectory() + "/new_nodes.txt");
 		PrintStream fileout = new PrintStream(new FileOutputStream(newFile), true);
-
+		
+//		changeControlAllInts(project, 100);
 		fileout.println(filein.nextLine());
 
 		while (filein.hasNextLine()) {
@@ -957,10 +600,10 @@ public class Main
         DTAProject newIntersection = new DTAProject();
         
         if(intControl == 0) {
-        		newIntersection.createProject("SIG_intersection"+nodeid+"_"+demand, new File("AVDTA2/projects/testIntersections/SIG_intersection"+nodeid+"_"+demand));
+        		newIntersection.createProject("TEST_SIG_intersection"+nodeid+"_"+demand, new File("AVDTA2/projects/TEST_SIG_intersection"+nodeid+"_"+demand));
         }
         else if(intControl == 1) {
-        		newIntersection.createProject("TBR_intersection"+nodeid+"_"+demand, new File("AVDTA2/projects/testIntersections/TBR_intersection"+nodeid+"_"+demand));
+        		newIntersection.createProject("TEST_TBR_intersection"+nodeid+"_"+demand, new File("AVDTA2/projects/TEST_TBR_intersection"+nodeid+"_"+demand));
         }
         else {
         	System.out.println("Invalid intersection control type");

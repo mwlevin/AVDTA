@@ -93,21 +93,21 @@ public class TBRGA extends GeneticAlgorithm<TBRIndividual> {
 			do {
 				int[] controls = new int[intersections.size()];
 				List<Integer> tbrs = new ArrayList<>(max_tbrs);
-                                List<Integer> temptbrs = new ArrayList<Integer>();
-                                for(int i = 0; i < intersections.size(); i++){
-                                    temptbrs.add(i);
-                                }
+				List<Integer> temptbrs = new ArrayList<Integer>();
+				for (int i = 0; i < intersections.size(); i++) {
+					temptbrs.add(i);
+				}
 
 				for (int i = 0; i < controls.length; i++) {
 					controls[i] = ReadNetwork.SIGNAL;
 				}
 
 				for (int i = 0; i < max_tbrs; i++) {
-					int loc = (int)(Math.random() * (temptbrs.size() - 1));
-                                        
+					int loc = (int) (Math.random() * (temptbrs.size() - 1));
+
 					controls[temptbrs.get(loc)] = type;
 					tbrs.add(temptbrs.get(loc));
-                                        temptbrs.remove(loc);
+					temptbrs.remove(loc);
 				}
 
 				org = new TBRIndividual(controls, tbrs, false);
@@ -157,30 +157,29 @@ public class TBRGA extends GeneticAlgorithm<TBRIndividual> {
 						newcontrols[i] = ReadNetwork.SIGNAL;
 				}
 			}
-                        org.setControls(newcontrols);
-		}
-		else{
-                        List<Integer> removedTbrs = new ArrayList<Integer>();
-			
-			for (int i = 0; i<max_tbrs; i++) {
+			org.setControls(newcontrols);
+		} else {
+			List<Integer> removedTbrs = new ArrayList<Integer>();
+
+			for (int i = 0; i < max_tbrs; i++) {
 				if (Math.random() <= 0.07) {
-					int number = 0;	
-					
-					do{
-						number = (int)(Math.random()*(intersections.size() -1));
-					}while(tbrs.contains(number));
-					
+					int number = 0;
+
+					do {
+						number = (int) (Math.random() * (intersections.size() - 1));
+					} while (tbrs.contains(number));
+
 					newcontrols[tbrs.get(i)] = ReadNetwork.SIGNAL;
 					newcontrols[number] = type;
-//					tbrs.remove(i);
-                                        removedTbrs.add(tbrs.get(i));
+					// tbrs.remove(i);
+					removedTbrs.add(tbrs.get(i));
 					tbrs.add(number);
 				}
 			}
-                        tbrs.removeAll(removedTbrs);
-                        org.setTbrs(tbrs);
+			tbrs.removeAll(removedTbrs);
+			org.setTbrs(tbrs);
 		}
-                
+
 	}
 
 	public boolean isFeasible(TBRIndividual org) throws IOException {
@@ -192,12 +191,12 @@ public class TBRGA extends GeneticAlgorithm<TBRIndividual> {
 			}
 		}
 
-//		if (tbrs > max_tbrs) {
-//			return false;
-//		}
-                if (tbrs != max_tbrs) {
-                    return false;
-                }
+		// if (tbrs > max_tbrs) {
+		// return false;
+		// }
+		if (tbrs != max_tbrs) {
+			return false;
+		}
 
 		if (checkHV) {
 			changeNodes(org);
@@ -234,8 +233,8 @@ public class TBRGA extends GeneticAlgorithm<TBRIndividual> {
 
 		child.setAssignment(sim.getAssignment());
 		child.setObj(sim.getTSTT() / 3600.0);
-                
-//                child.setObj(Math.random() * 6000.0);
+
+		// child.setObj(Math.random() * 6000.0);
 	}
 
 	public void changeNodes(TBRIndividual org) throws IOException {
@@ -268,7 +267,8 @@ public class TBRGA extends GeneticAlgorithm<TBRIndividual> {
 
 		int counttbr = 0;
 		int countsig = 0;
-		PrintStream fileout = new PrintStream(new FileOutputStream(new File("GA_RESULTS_" + max_tbrs + "TBRs"), true), true);
+		PrintStream fileout = new PrintStream(new FileOutputStream(new File("GA_RESULTS_" + max_tbrs + "TBRs"), true),
+				true);
 		fileout.println("Iteration " + iteration);
 		fileout.println("TSTT\t" + best.getObj() + "\tNumber of mutations\t" + nummutations);
 		for (int node : intersections.keySet()) {
@@ -289,7 +289,8 @@ public class TBRGA extends GeneticAlgorithm<TBRIndividual> {
 	}
 
 	public void observeInitial(List<TBRIndividual> population) throws FileNotFoundException {
-		PrintStream fileout = new PrintStream(new FileOutputStream(new File("GA_INITIALPOP_RESULTS_" + max_tbrs + "TBRs.txt"), true), true);
+		PrintStream fileout = new PrintStream(
+				new FileOutputStream(new File("GA_INITIALPOP_RESULTS_" + max_tbrs + "TBRs.txt"), true), true);
 		fileout.println("No.\tSignalCount\tTbrCount\tPropOfSig\tPropOfTbr\tTSTT");
 		for (int i = 0; i < population.size(); i++) {
 			int countSig = 0;

@@ -96,6 +96,9 @@ public class Main
     public static void main(String[] args) throws Exception
     {
 
+    	DTAProject project = new DTAProject(new File("AVDTA2/projects/coacongress"));
+    	DTASimulator sim = project.getSimulator();
+    	sim.msa(30, 2);
        // double[] output = emergencyTest1(1500);
         //System.out.println(output[0]+" "+output[1]);
         
@@ -239,20 +242,20 @@ public class Main
 
         //DUERProject test = new DUERProject(new File("projects/freeway"));
         //DUERProject test = new DUERProject(new File("projects/SiouxFalls"));
-        DUERProject test = new DUERProject(new File("projects/coacongress2"));
-        DUERSimulator sim = test.getSimulator();
-        //for (int i = 1; i < 11; i++){
-            for(int j = 1; j < 11; j++){
-                //for (int dest=1; dest<25; dest++){
-                   
-                    ValueIteration VI = new ValueIteration(sim, 0.1*1, 0.1*j);
-                    VI.hardcode();
-                    VI.solve();
+//        DUERProject test = new DUERProject(new File("projects/coacongress2"));
+//        DUERSimulator sim = test.getSimulator();
+//        //for (int i = 1; i < 11; i++){
+//            for(int j = 1; j < 11; j++){
+//                //for (int dest=1; dest<25; dest++){
+//                   
+//                    ValueIteration VI = new ValueIteration(sim, 0.1*1, 0.1*j);
+//                    VI.hardcode();
+//                    VI.solve();
                     //Hyperpath osp = VI.getHyperpath();
                     
                 //}
             //}
-        }
+//        }
 
     }
     
