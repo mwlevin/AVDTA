@@ -119,7 +119,7 @@ public class GAMain {
 //		TBRGA GA = new TBRGA(project, 10, false, false, 10, 0.75, 0.1, signals);
 //		GA.solve(max_iters);
 		TBRTabu tabu = new TBRTabu(project,false, signals, 30, 10, 5);
-        TBRIndividual output = tabu.solve();
+        TBRIndividual output = tabu.solve(1,3,5,5);
 		System.out.println("Output Best State: " + output.getObj() + " Proportion of Reservations: " + output.tbrRatio());
 		Double runtime = (System.nanoTime() - starttime)*2.77778 * Math.pow(10, -13);
         System.out.println("Runtime: " + runtime + " hrs");

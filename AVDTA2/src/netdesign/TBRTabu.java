@@ -95,8 +95,8 @@ public class TBRTabu extends TabuSearch<TBRIndividual>{
             System.exit(1);
         }
         System.out.println("Constructed TBRTabu");
-        System.out.println(intersections);
-        System.exit(0);
+//        System.out.println(intersections);
+//        System.exit(0);
     }
 
     public TBRTabu(DTAProject project, boolean isSO, List<Integer> signals, int max_itr, int rad, int neigh, TBRIndividual warm) {
@@ -155,8 +155,8 @@ public class TBRTabu extends TabuSearch<TBRIndividual>{
             System.exit(1);
         }
         System.out.println("Constructed TBRTabu");
-        System.out.println(intersections);
-        System.exit(0);
+//        System.out.println(intersections);
+//        System.exit(0);
     }
 
     public void changeNodes(TBRIndividual org) throws IOException {
@@ -216,6 +216,7 @@ public class TBRTabu extends TabuSearch<TBRIndividual>{
 
     public TBRIndividual solve(int baseIterations, int microIterations, int microRadius, int microNeighbors) {
         currentSolution = solve(baseIterations);
+        System.out.println("Finished execution of big Tabu steps and moving to small steps");
         currentSolution.getStreets().values().forEach(Street::allowInterUpdates);
         TBRTabu t = new TBRTabu(project,false, signals, microIterations, microRadius, microNeighbors, currentSolution);
         return t.solve();
