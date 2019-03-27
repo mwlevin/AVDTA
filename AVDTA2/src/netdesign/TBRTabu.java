@@ -218,8 +218,10 @@ public class TBRTabu extends TabuSearch<TBRIndividual>{
         currentSolution = solve(baseIterations);
         System.out.println("Finished execution of big Tabu steps and moving to small steps");
         currentSolution.getStreets().values().forEach(Street::allowInterUpdates);
-        TBRTabu t = new TBRTabu(project,false, signals, microIterations, microRadius, microNeighbors, currentSolution);
-        return t.solve();
+        maxIterations = microIterations;
+        radius = microRadius;
+        numNeighbors = microNeighbors;
+        return this.solve();
     }
 
     @Override

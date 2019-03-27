@@ -46,8 +46,10 @@ public abstract class TabuSearch<T extends Individual> {
     }
 
     public T solve() {
-        currentSolution = generateRandom();
-        bestSolution = currentSolution;
+        if(currentSolution == null) {
+            currentSolution = generateRandom();
+            bestSolution = currentSolution;
+        }
         int currentIter = 0;
         while(!didConverge(currentIter++, bestSolution)) {
             SortedSet<T> neighbors = generateNeighbor(currentSolution);
@@ -62,8 +64,10 @@ public abstract class TabuSearch<T extends Individual> {
     }
 
     public T solve(int numIters) {
-        currentSolution = generateRandom();
-        bestSolution = currentSolution;
+        if(currentSolution == null) {
+            currentSolution = generateRandom();
+            bestSolution = currentSolution;
+        }
         int currentIter = 0;
         while(currentIter++ < numIters) {
             SortedSet<T> neighbors = generateNeighbor(currentSolution);
