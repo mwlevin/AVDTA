@@ -36,6 +36,8 @@ public class TBRIndividual extends Individual<TBRIndividual> {
 	}
 
 	public float tbrRatio() {
+		System.out.println("Num in tbrs array " + tbrs.size());
+		System.out.println("Total number of controls " + controls.length);
 		return (float) tbrs.size() / controls.length;
 	}
 	public TBRIndividual(int[] controls) {
