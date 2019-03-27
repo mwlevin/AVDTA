@@ -210,9 +210,9 @@ public class TBRIndividual extends Individual<TBRIndividual> {
 				rand.flipIntersections();
 				for (NodeRecord nr: rand.getLights().values()) {
 					newControls[intersections.get(nr.getId())] = nr.getType();
-					if(nr.getType() == ReadNetwork.RESERVATION + ReadNetwork.FCFS && !neighborTBRs.contains(nr.getId()))
+					if(nr.getType() == ReadNetwork.RESERVATION + ReadNetwork.FCFS && !neighborTBRs.contains(intersections.get(nr.getId())))
 						neighborTBRs.add(intersections.get(nr.getId()));
-					else {
+					if(nr.getType() != ReadNetwork.RESERVATION + ReadNetwork.FCFS) {
 						neighborTBRs.remove(intersections.get(nr.getId()));
 					}
 				}
@@ -240,9 +240,9 @@ public class TBRIndividual extends Individual<TBRIndividual> {
 
 			for (NodeRecord nr: rand.getLights().values()) {
 				newControls[intersections.get(nr.getId())] = nr.getType();
-				if(nr.getType() == ReadNetwork.RESERVATION + ReadNetwork.FCFS && !neighborTBRs.contains(nr.getId()))
+				if(nr.getType() == ReadNetwork.RESERVATION + ReadNetwork.FCFS && !neighborTBRs.contains(intersections.get(nr.getId())))
 					neighborTBRs.add(intersections.get(nr.getId()));
-				else {
+				else if (nr.getType() != ReadNetwork.RESERVATION + ReadNetwork.FCFS){
 					neighborTBRs.remove(intersections.get(nr.getId()));
 				}
 			}

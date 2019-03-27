@@ -257,13 +257,15 @@ public class TBRTabu extends TabuSearch<TBRIndividual>{
             }
             for (NodeRecord nr: s.getLights().values()) {
                 controls[intersections.get(nr.getId())] = nr.getType();
-                if(nr.getType() == type && !tbrs.contains(nr.getId()))
+                if(nr.getType() == type && !tbrs.contains(intersections.get(nr.getId()))) {
                     tbrs.add(intersections.get(nr.getId()));
-                else {
+                }
+                if(nr.getType() != type) {
                     tbrs.remove(intersections.get(nr.getId()));
                 }
             }
         }
+
 //            System.out.println(streets);
 //            System.out.println(tbrs);
         org = new TBRIndividual(controls, tbrs, false, streets, intersections);
