@@ -257,7 +257,7 @@ public class TBRTabu extends TabuSearch<TBRIndividual>{
             }
             for (NodeRecord nr: s.getLights().values()) {
                 controls[intersections.get(nr.getId())] = nr.getType();
-                if(nr.getType() == type)
+                if(nr.getType() == type && !tbrs.contains(nr.getId()))
                     tbrs.add(intersections.get(nr.getId()));
                 else {
                     tbrs.remove(intersections.get(nr.getId()));

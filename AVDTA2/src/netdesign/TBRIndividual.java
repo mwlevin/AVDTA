@@ -210,7 +210,7 @@ public class TBRIndividual extends Individual<TBRIndividual> {
 				rand.flipIntersections();
 				for (NodeRecord nr: rand.getLights().values()) {
 					newControls[intersections.get(nr.getId())] = nr.getType();
-					if(nr.getType() == ReadNetwork.RESERVATION + ReadNetwork.FCFS)
+					if(nr.getType() == ReadNetwork.RESERVATION + ReadNetwork.FCFS && !neighborTBRs.contains(nr.getId()))
 						neighborTBRs.add(intersections.get(nr.getId()));
 					else {
 						neighborTBRs.remove(intersections.get(nr.getId()));
@@ -220,24 +220,27 @@ public class TBRIndividual extends Individual<TBRIndividual> {
 //			System.out.println(streets.equals(neighborStreets));
 			return new TBRIndividual(newControls, neighborTBRs, false, neighborStreets, intersections);
 		} else {
+			Street rand;
 			String randomStreet = "";
-			int size = streets.size();
-			int item = new Random().nextInt(size);
-			int idx = 0;
-			for(String obj : streets.keySet()) {
-				if (idx == item) {
-					randomStreet = obj;
-					break;
+			do {
+				int size = streets.size();
+				int item = new Random().nextInt(size);
+				int idx = 0;
+				for (String obj : streets.keySet()) {
+					if (idx == item) {
+						randomStreet = obj;
+						break;
+					}
+					idx++;
 				}
-				idx++;
-			}
-			Street rand = neighborStreets.get(randomStreet);
+				rand = neighborStreets.get(randomStreet);
+			} while(rand.getControl() != ReadNetwork.FCFS + ReadNetwork.RESERVATION);
 			for(int i = 0; i < radius;i++)
 				rand.flipIntersections();
 
 			for (NodeRecord nr: rand.getLights().values()) {
 				newControls[intersections.get(nr.getId())] = nr.getType();
-				if(nr.getType() == ReadNetwork.RESERVATION + ReadNetwork.FCFS)
+				if(nr.getType() == ReadNetwork.RESERVATION + ReadNetwork.FCFS && !neighborTBRs.contains(nr.getId()))
 					neighborTBRs.add(intersections.get(nr.getId()));
 				else {
 					neighborTBRs.remove(intersections.get(nr.getId()));
