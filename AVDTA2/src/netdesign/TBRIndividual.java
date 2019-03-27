@@ -173,18 +173,21 @@ public class TBRIndividual extends Individual<TBRIndividual> {
 		int[] newControls = new int[controls.length];
 		System.arraycopy(controls, 0, newControls, 0, controls.length);
 		List<Integer> neighborTBRs = new ArrayList<>(tbrs);
+		boolean allowsInter = false;
 		Map<String, Street> neighborStreets = new HashMap<>();
 		for (String s: streets.keySet()) {
 			Street str = streets.get(s);
 			Street strCopy = new Street(s, str.getControl());
-			if (!str.isContiguous())
+			if (!str.isContiguous()) {
 				str.allowInterUpdates();
+				allowsInter = true;
+			}
 			for(NodeRecord nr: str.getLights().values()) {
 				strCopy.addNode(new NodeRecord(nr.getId(), nr.getType(), nr.getLongitude(), nr.getLatitude(), 0.0));
 			}
 			neighborStreets.put(s, strCopy);
 		}
-		if (!isSO) {
+		if (!allowsInter) {
 			for (int i = 0; i < radius; i ++){
 				String randomStreet = "";
 				int size = streets.size();
@@ -210,8 +213,33 @@ public class TBRIndividual extends Individual<TBRIndividual> {
 			}
 //			System.out.println(streets.equals(neighborStreets));
 			return new TBRIndividual(newControls, neighborTBRs, false, neighborStreets, intersections);
+		} else {
+			String randomStreet = "";
+			int size = streets.size();
+			int item = new Random().nextInt(size);
+			int idx = 0;
+			for(String obj : streets.keySet()) {
+				if (idx == item) {
+					randomStreet = obj;
+					break;
+				}
+				idx++;
+			}
+			Street rand = neighborStreets.get(randomStreet);
+			for(int i = 0; i < radius;i++)
+				rand.flipIntersections();
+
+			for (NodeRecord nr: rand.getLights().values()) {
+				newControls[intersections.get(nr.getId())] = nr.getType();
+				if(nr.getType() == ReadNetwork.RESERVATION + ReadNetwork.FCFS)
+					neighborTBRs.add(intersections.get(nr.getId()));
+				else {
+					neighborTBRs.remove(intersections.get(nr.getId()));
+				}
+			}
+//			System.out.println(streets.equals(neighborStreets));
+			return new TBRIndividual(newControls, neighborTBRs, false, neighborStreets, intersections);
 		}
-		return null;
 	}
 
 	public int hashCode() {
