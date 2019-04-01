@@ -118,8 +118,19 @@ public class GAMain {
 		//Contains model specifications
 //		TBRGA GA = new TBRGA(project, 10, false, false, 10, 0.75, 0.1, signals);
 //		GA.solve(max_iters);
-		TBRTabu tabu = new TBRTabu(project,false, signals, 30, 10, 5);
-        TBRIndividual output = tabu.solve(1,3,5,5);
+		int num_iterations = 40;
+
+		try {
+			num_iterations = Integer.parseInt(args[0]);
+		}catch (IndexOutOfBoundsException ignored){}
+
+		int base = (int) (num_iterations * 0.15);
+		int micro = (int) (num_iterations * 0.85);
+
+		System.out.println("Running with " + base + " iterations big steps");
+		System.out.println("Running with " + micro + " iterations of small steps");
+		TBRTabu tabu = new TBRTabu(project,false, signals, 30, 4, 5);
+        TBRIndividual output = tabu.solve(base, micro,5,8, false);
 		System.out.println("Output Best State: " + output.getObj() + " Proportion of Reservations: " + output.tbrRatio());
 		Double runtime = (System.nanoTime() - starttime)*2.77778 * Math.pow(10, -13);
         System.out.println("Runtime: " + runtime + " hrs");

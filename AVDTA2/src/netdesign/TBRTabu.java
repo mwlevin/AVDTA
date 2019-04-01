@@ -214,14 +214,38 @@ public class TBRTabu extends TabuSearch<TBRIndividual>{
         return out;
     }
 
-    public TBRIndividual solve(int baseIterations, int microIterations, int microRadius, int microNeighbors) {
-        currentSolution = solve(baseIterations);
+    public TBRIndividual solve(int baseIterations, int microIterations, int microRadius, int microNeighbors, boolean annealing) {
+        if(annealing) {
+            annealingStep(baseIterations);
+        } else {
+            currentSolution = solve(baseIterations);
+        }
         System.out.println("Finished execution of big Tabu steps and moving to small steps");
         currentSolution.getStreets().values().forEach(Street::allowInterUpdates);
         maxIterations = microIterations;
         radius = microRadius;
         numNeighbors = microNeighbors;
-        return this.solve();
+        if(annealing) {
+            annealingStep(maxIterations);
+            return bestSolution;
+        } else {
+            return this.solve();
+        }
+    }
+
+    private void annealingStep(int remaininingIterations) {
+        while (remaininingIterations > 0) {
+            if (remaininingIterations <= remaininingIterations * .8)
+                radius = (int) (radius * .8);
+            else if (remaininingIterations <= remaininingIterations * .6)
+                radius = (int) (radius * .6);
+            else if (remaininingIterations <= remaininingIterations * .4)
+                radius = (int) (radius * .4);
+            else if (remaininingIterations <= remaininingIterations * .2)
+                radius = (int) (radius * .2);
+            currentSolution = solve(1);
+            remaininingIterations--;
+        }
     }
 
     @Override

@@ -234,7 +234,7 @@ public class TBRIndividual extends Individual<TBRIndividual> {
 					idx++;
 				}
 				rand = neighborStreets.get(randomStreet);
-			} while(rand.getControl() != ReadNetwork.FCFS + ReadNetwork.RESERVATION);
+			} while(false);
 			for(int i = 0; i < radius;i++)
 				rand.flipIntersections();
 
