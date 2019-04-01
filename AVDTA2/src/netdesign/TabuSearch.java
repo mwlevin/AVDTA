@@ -1,7 +1,7 @@
 package netdesign;
 
 import java.util.*;
-
+import java.lang.Math;
 /**
  *
  * @author ribsthakkar
@@ -80,6 +80,35 @@ public abstract class TabuSearch<T extends Individual> {
 
         return bestSolution;
     }
+
+    public T simulatedAnnealingSolve(int numIters) {
+        if(currentSolution == null) {
+            currentSolution = generateRandom();
+            bestSolution = currentSolution;
+        }
+        int currentIter = 0;
+        double t = 1.0;
+        double alpha = 0.9;
+
+        while(currentIter++ < numIters) {
+            SortedSet<T> neighbors = generateNeighbor(currentSolution);
+            T bestNeighbor = getBestNeighbor(neighbors);
+            double p = acceptanceProb(bestSolution, bestNeighbor, t);
+            if (p > Math.random()) {
+                bestSolution = bestNeighbor;
+            }
+            tabuList.add(currentSolution);
+            currentSolution = bestNeighbor;
+            t = t * alpha;
+        }
+
+        return bestSolution;
+    }
+
+    private double acceptanceProb(T currSolution, T neighbor, double t) {
+        return Math.exp((Math.abs(currSolution.getObj() - neighbor.getObj())) / t);
+    }
+
     public void setCurrentSolution(T t) {
         currentSolution = t;
     }
