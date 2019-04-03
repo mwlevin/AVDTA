@@ -234,6 +234,11 @@ public class TBRTabu extends TabuSearch<TBRIndividual>{
             TBRIndividual perturbed = currentState.createNeighbor(radius);
 //            System.out.println(perturbed.getStreets());
 //            System.out.println(perturbed.getTbrs());
+            if(tabuList.contains(perturbed)) {
+                System.out.println("Generated configuration that exists in Tabu List");
+                i--;
+                continue;
+            }
             System.out.println("Evaluating Neighbor #" + i);
             evaluate(perturbed);
             System.out.println("Current TSTT: " + currentState.getObj() + ", Neighbor TSTT:" + perturbed.getObj());
