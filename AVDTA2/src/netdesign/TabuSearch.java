@@ -93,12 +93,15 @@ public abstract class TabuSearch<T extends Individual> {
         while(currentIter++ < numIters) {
             SortedSet<T> neighbors = generateNeighbor(currentSolution);
             T bestNeighbor = getBestNeighbor(neighbors);
-            double p = acceptanceProb(bestSolution, bestNeighbor, t);
+            double p = acceptanceProb(currentSolution, bestNeighbor, t);
             if (p > Math.random()) {
-                bestSolution = bestNeighbor;
+                currentSolution = bestNeighbor;
+            } else {
+                currentSolution = getWorseNeighbor(neighbors);
             }
+            if(isNeighborBetter(bestSolution, bestNeighbor))
+                bestSolution = bestNeighbor;
             tabuList.add(currentSolution);
-            currentSolution = bestNeighbor;
             t = t * alpha;
         }
 
@@ -107,6 +110,14 @@ public abstract class TabuSearch<T extends Individual> {
 
     private double acceptanceProb(T currSolution, T neighbor, double t) {
         return Math.exp((Math.abs(currSolution.getObj() - neighbor.getObj())) / t);
+    }
+
+    private T getWorseNeighbor(Set<T> neighbor) {
+        for(T n: neighbor) {
+            if(!tabuList.contains(n) && n.getObj() > currentSolution.getObj())
+                return n;
+        }
+        return currentSolution;
     }
 
     public void setCurrentSolution(T t) {

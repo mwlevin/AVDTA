@@ -23,6 +23,14 @@ public class Street {
         control = ReadNetwork.SIGNAL;
     }
 
+    public Street(String street_name, NodeRecord i, int control) {
+        name = street_name;
+        lights = new HashMap<>();
+        i.setType(control);
+        lights.put(i.getId(), i);
+        contiguous = true;
+    }
+
     public Street(String s, int c) {
         name = s;
         lights = new HashMap<>();
@@ -36,6 +44,12 @@ public class Street {
             return true;
         }
         return false;
+    }
+
+    public boolean addNode(NodeRecord i, int c) {
+        lights.put(i.getId(), i);
+        i.setType(c);
+        return true;
     }
 
     public boolean flipIntersections() {

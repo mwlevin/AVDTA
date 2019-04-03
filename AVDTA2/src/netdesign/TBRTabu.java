@@ -99,14 +99,14 @@ public class TBRTabu extends TabuSearch<TBRIndividual>{
 //        System.exit(0);
     }
 
-    public TBRTabu(DTAProject project, boolean isSO, List<Integer> signals, int max_itr, int rad, int neigh, TBRIndividual warm) {
-        super(max_itr, 0, warm);
+    public TBRTabu(DTAProject project, boolean isSO, List<Integer> signals, int max_itr, int rad, int neigh, String warmNodes) {
+        super(max_itr, 0);
         this.project = project;
         this.isSO = isSO;
         radius = rad;
         numNeighbors = neigh;
         intersections = new HashMap<>();
-
+        TBRIndividual warm;
         int counter = 0;
 
         for (int n : signals) {
@@ -117,6 +117,7 @@ public class TBRTabu extends TabuSearch<TBRIndividual>{
         type = ReadNetwork.RESERVATION + ReadNetwork.FCFS;
         base = new HashMap<>();
         streets = new HashMap<>();
+        HashMap<Integer, Integer> temp = new HashMap<>();
         try {
             Scanner intersections = new Scanner(new File("AVDTA2/src/netdesign/intersections.txt"));
             intersections.nextLine();
@@ -130,21 +131,33 @@ public class TBRTabu extends TabuSearch<TBRIndividual>{
             }
 
             Scanner filein = new Scanner(project.getNodesFile());
+            Scanner warmStart = new Scanner(new File(warmNodes));
+            warmStart.nextLine();
+            while(warmStart.hasNextLine()) {
+                String[] details = warmStart.nextLine().split("\\s+");
+                int id = Integer.parseInt(details[0]);
+                int setting = Integer.parseInt(details[1]);
+                temp.put(id, setting);
+            }
+            System.out.println(temp);
             filein.nextLine();
             while(filein.hasNextLine()) {
                 NodeRecord n = new NodeRecord(filein.nextLine());
                 if(!n.isZone() && base.containsKey(n.getId())) {
                     Pair<String, String> s = base.get(n.getId());
                     if(streets.containsKey(s.first())) {
-                        streets.get(s.first()).addNode(n);
+                        streets.get(s.first()).addNode(n, temp.get(n.getId()));
                     } else {
-                        Street str = new Street(s.first(), n);
+                        Street str = new Street(s.first(), n, temp.get(n.getId()));
+                        str.allowInterUpdates();;
                         streets.put(s.first(), str);
                     }
                     if(streets.containsKey(s.second())) {
                         streets.get(s.second()).addNode(n);
+                        n.setType(temp.get(n.getId()));
                     } else {
-                        Street str = new Street(s.second(), n);
+                        Street str = new Street(s.second(), n, temp.get(n.getId()));
+                        str.allowInterUpdates();
                         streets.put(s.second(), str);
                     }
                 }
@@ -154,9 +167,9 @@ public class TBRTabu extends TabuSearch<TBRIndividual>{
             System.out.println(new File(".").getAbsolutePath());
             System.exit(1);
         }
-        System.out.println("Constructed TBRTabu");
-//        System.out.println(intersections);
-//        System.exit(0);
+        System.out.println("Constructed TBRTabu from Warm Start");
+        currentSolution = generateWarm();
+        bestSolution = currentSolution;
     }
 
     public void changeNodes(TBRIndividual org) throws IOException {
@@ -282,6 +295,34 @@ public class TBRTabu extends TabuSearch<TBRIndividual>{
 		return org;
     }
 
+    public TBRIndividual generateWarm() {
+        TBRIndividual org;
+        int[] controls = new int[intersections.size()];
+        for (int i = 0; i < controls.length; i++) {
+            controls[i] = ReadNetwork.SIGNAL;
+        }
+        List<Integer> tbrs = new ArrayList<>(max_tbrs);
+        for(Street s: streets.values()) {
+            for (NodeRecord nr: s.getLights().values()) {
+                controls[intersections.get(nr.getId())] = nr.getType();
+                if(nr.getType() == type && !tbrs.contains(intersections.get(nr.getId()))) {
+                    tbrs.add(intersections.get(nr.getId()));
+                }
+                if(nr.getType() != type) {
+                    tbrs.remove(intersections.get(nr.getId()));
+                }
+            }
+        }
+
+//        System.out.println(Arrays.toString(controls));
+//        System.out.println(tbrs);
+        org = new TBRIndividual(controls, tbrs, false, streets, intersections);
+        System.out.println("Using Warm Start");
+        System.out.println("Warm Proportion of Reservations: " + org.tbrRatio());
+        System.out.println("Evaluating Warm");
+        evaluate(org);
+        return org;
+    }
 //    public boolean isFeasible(TBRIndividual org) {
 //        int tbrs = 0;
 //
