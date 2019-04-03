@@ -235,7 +235,16 @@ public class TBRTabu extends TabuSearch<TBRIndividual>{
         radius = microRadius;
         numNeighbors = microNeighbors;
         return this.solve();
+    }
 
+    public TBRIndividual solveAnnealed(int baseIterations, int microIterations, int microRadius, int microNeighbors) {
+        currentSolution = simulatedAnnealingSolve(baseIterations);
+        System.out.println("Finished execution of big Tabu steps and moving to small steps");
+        currentSolution.getStreets().values().forEach(Street::allowInterUpdates);
+        maxIterations = microIterations;
+        radius = microRadius;
+        numNeighbors = microNeighbors;
+        return this.simulatedAnnealingSolve(maxIterations);
     }
 
     @Override
