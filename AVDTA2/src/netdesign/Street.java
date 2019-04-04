@@ -28,6 +28,7 @@ public class Street {
         lights = new HashMap<>();
         i.setType(control);
         lights.put(i.getId(), i);
+        this.control = control;
         contiguous = true;
     }
 
@@ -63,6 +64,7 @@ public class Street {
                 lights.values().forEach(intersection -> intersection.setType(control));
                 return true;
             }
+            System.out.println(control);
             return false;
         } else {
             int randLight = -1;

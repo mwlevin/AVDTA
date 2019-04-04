@@ -99,7 +99,7 @@ public class TBRTabu extends TabuSearch<TBRIndividual>{
 //        System.exit(0);
     }
 
-    public TBRTabu(DTAProject project, boolean isSO, List<Integer> signals, int max_itr, int rad, int neigh, String warmNodes) {
+    public TBRTabu(DTAProject project, boolean isSO, List<Integer> signals, int max_itr, int rad, int neigh, String warmNodes, boolean contiguous) {
         super(max_itr, 0);
         this.project = project;
         this.isSO = isSO;
@@ -149,7 +149,8 @@ public class TBRTabu extends TabuSearch<TBRIndividual>{
                         streets.get(s.first()).addNode(n, temp.get(n.getId()));
                     } else {
                         Street str = new Street(s.first(), n, temp.get(n.getId()));
-                        str.allowInterUpdates();;
+                        if(!contiguous)
+                            str.allowInterUpdates();
                         streets.put(s.first(), str);
                     }
                     if(streets.containsKey(s.second())) {
@@ -157,7 +158,8 @@ public class TBRTabu extends TabuSearch<TBRIndividual>{
                         n.setType(temp.get(n.getId()));
                     } else {
                         Street str = new Street(s.second(), n, temp.get(n.getId()));
-                        str.allowInterUpdates();
+                        if(!contiguous)
+                            str.allowInterUpdates();
                         streets.put(s.second(), str);
                     }
                 }
