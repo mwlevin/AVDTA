@@ -129,8 +129,10 @@ public class GAMain {
 
 		System.out.println("Running with " + base + " iterations big steps");
 		System.out.println("Running with " + micro + " iterations of small steps");
-		TBRTabu tabu = new TBRTabu(project,false, signals, 30, 4, 5);
-        TBRIndividual output = tabu.solve(base, micro,5,8);
+		TBRTabu tabu = new TBRTabu(project,false, signals, 30, 3, 5);
+		TBRIndividual output = tabu.solveAnnealed(base, micro, 4, 8);
+//		TBRTabu tabu2 = new  TBRTabu(project,false, signals, 60, 4, 8, "AVDTA2/src/netdesign/gawarm.txt");
+//		TBRIndividual output = tabu2.solve();
 		System.out.println("Output Best State: " + output.getObj() + " Proportion of Reservations: " + output.tbrRatio());
 		Double runtime = (System.nanoTime() - starttime)*2.77778 * Math.pow(10, -13);
         System.out.println("Runtime: " + runtime + " hrs");
