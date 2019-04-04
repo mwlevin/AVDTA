@@ -240,6 +240,7 @@ public class TBRTabu extends TabuSearch<TBRIndividual>{
     }
 
     public TBRIndividual solveAnnealed(int baseIterations, int microIterations, int microRadius, int microNeighbors) {
+        System.out.println("Running simulated Annealing implementation");
         currentSolution = simulatedAnnealingSolve(baseIterations);
         System.out.println("Finished execution of big Tabu steps and moving to small steps");
         currentSolution.getStreets().values().forEach(Street::allowInterUpdates);
