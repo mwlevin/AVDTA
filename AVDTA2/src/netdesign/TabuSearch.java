@@ -89,9 +89,9 @@ public abstract class TabuSearch<T extends Individual> {
         }
         int currentIter = 0;
         double t = 1.0;
-        double alpha = 0.9;
+        double alpha = 0.95;
 
-        while(currentIter++ < numIters) {
+        while(currentIter++ < numIters && t > ) {
             SortedSet<T> neighbors = generateNeighbor(currentSolution);
             T bestNeighbor = getBestNeighbor(neighbors);
             double p = acceptanceProb(currentSolution, bestNeighbor, t);
@@ -112,7 +112,7 @@ public abstract class TabuSearch<T extends Individual> {
     }
 
     private double acceptanceProb(T currSolution, T neighbor, double t) {
-        return Math.exp((Math.abs(currSolution.getObj() - neighbor.getObj())) / t);
+        return Math.exp(-1 * Math.abs((currSolution.getObj() - neighbor.getObj())) * t);
     }
 
     private T getWorseNeighbor(Set<T> neighbor) {
