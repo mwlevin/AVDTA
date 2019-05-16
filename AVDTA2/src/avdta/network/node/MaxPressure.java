@@ -38,6 +38,20 @@ public class MaxPressure extends IntersectionControl
     public void initialize()
     {
         // need to create phases here
+        
+        turns = new ArrayList<>();
+        
+        for(Link i : node.getIncoming())
+        {
+            for(Link j : node.getOutgoing())
+            {
+                if(canMove(i, j, DriverType.HV))
+                {
+                    turns.add(new MPTurn(i, j));
+                }
+            }
+        }
+        
         phases =  new ArrayList<>();
         
         
