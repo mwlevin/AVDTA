@@ -97,7 +97,7 @@ public class ReadDemandNetwork extends ReadNetwork
             
             for(int i = 0; i < num_vehicles; i++)
             {
-                int dtime = ast.getStart() + (i+1) * dtime_interval;
+                int dtime = ast.getStart() + (int)Math.round(Math.random() * ast.getDuration());
                 
                 vehicles.add(new VehicleRecord(new_id++, type, origin, dest, dtime, avdta.vehicle.VOT.dagum_rand(rand)));
             }

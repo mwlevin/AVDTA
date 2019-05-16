@@ -15,6 +15,7 @@ import avdta.network.link.CentroidConnector;
 import avdta.network.link.Link;
 import avdta.network.link.MPLink;
 import avdta.vehicle.DriverType;
+import java.util.Map;
 
 
 
@@ -52,10 +53,21 @@ public class MaxPressure extends IntersectionControl
             }
         }
         
+        Map<Link, Map<Link, TurningMovement>> conflicts = ConflictFactory.generate(getNode());
+        
         phases =  new ArrayList<>();
         
-        
-        // need to set up turning proportions here too
+        // look for compatible combinations of turns
+        for(int i = 0; i < turns.size()-1; i++)
+        {
+            
+        }
+
+    }
+    
+    public boolean hasConflicts (Turn t1, Turn t2, Map<Link, Map<Link, TurningMovement>> conflicts)
+    {
+        return false;
     }
     
     public boolean canMove(Link i, Link j, DriverType driver)
