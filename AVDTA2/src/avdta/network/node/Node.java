@@ -106,7 +106,7 @@ public abstract class Node extends Location implements Serializable, Comparable<
         
     }
     
-    
+    public void prepare(){}
     
     
     /**

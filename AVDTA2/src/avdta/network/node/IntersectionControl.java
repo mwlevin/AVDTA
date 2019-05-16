@@ -49,6 +49,8 @@ public abstract class IntersectionControl
         }
     }
 
+    public void prepare(){}
+    
     /**
      * Returns the name of the instance of the {@link IntersectionControl} class.
      * @return A String which has the name of the instance of the intersection 
@@ -118,11 +120,5 @@ public abstract class IntersectionControl
      */
     public abstract Type getType();
     
-    /**
-     * Returns a {@link Signalized} for this intersection, if one exists, to add signal data
-     * 
-     * @return a {@link Signalized} which signal timing data may be added to, if one exists. Returns null if this intersection is not a signal.
-     * @see Signalized
-     */
-    public abstract Signalized getSignal();
+    
 }

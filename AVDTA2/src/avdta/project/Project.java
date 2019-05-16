@@ -487,7 +487,7 @@ public abstract class Project
         setOption("hvs-use-reservations","false");
         setOption("dynamic-lane-reversal","true");
         setOption("simulation-mesoscopic-step","6");
-        
+        setOption("vehicle-length", "19");
         
     }
     

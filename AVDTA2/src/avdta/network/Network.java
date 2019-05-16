@@ -958,10 +958,12 @@ public class Network
             if(n instanceof Intersection)
             {
                 Intersection i = (Intersection)n;
-                Signalized signal = i.getControl().getSignal();
+                
                    
-                if(signal != null)
+                if(i.getControl() instanceof Signalized)
                 {
+                    Signalized signal = ((Signalized)i.getControl());
+                    
                     int count = 1;
                     for(Phase p : signal.getPhases())
                     {

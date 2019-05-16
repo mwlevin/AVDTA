@@ -42,6 +42,7 @@ import avdta.network.link.SplitCTMLink;
 import avdta.network.link.TransitLane;
 import avdta.network.node.Connector;
 import avdta.network.node.Highway;
+import avdta.network.node.MaxPressure;
 import avdta.network.node.obj.BackPressureObj;
 import avdta.network.node.obj.P0Obj;
 import avdta.project.DTAProject;
@@ -157,7 +158,7 @@ public class ReadNetwork
     public static final ExtendedType DE4 = new ExtendedType(5, "DE4", MCKS);
     public static final ExtendedType PRESSURE = new ExtendedType(2, "Backpressure", MCKS);
     public static final ExtendedType P0 = new ExtendedType(3, "P0", MCKS);
-    public static final ExtendedType MAX_PRESSURE = new ExtendedType(6, "Max-pressure", MCKS);
+    public static final ExtendedType MAX_PRESSURE = new ExtendedType(36, "Max-pressure", SIGNAL);
     public static final ExtendedType TRANSIT_FIRST = new ExtendedType(41, "Transit-first", RESERVATION);
     
     // arrays of all types for searching purposes
@@ -573,6 +574,11 @@ public class ReadNetwork
             if(type/100 == SIGNAL.getCode()/100)
             {
                 node.setControl(new TrafficSignal());
+                
+                if(type%100 == MAX_PRESSURE.getCode())
+                {
+                    node.setControl(new MaxPressure(node));
+                }
             }
             else if(type == STOPSIGN.getCode())
             {
@@ -651,6 +657,36 @@ public class ReadNetwork
             }
 
         }
+    }
+    
+    public void relabelMergeDiverge(Project project) throws IOException
+    {
+        Simulator sim = project.getSimulator();
+        
+        PrintStream fileout =  new PrintStream(new FileOutputStream(project.getNodesFile()), true);
+        
+        fileout.println(getNodesFileHeader());
+        
+        for(Node n : sim.getNodes())
+        {
+            NodeRecord record = n.createNodeRecord();
+            
+            if(!n.isZone())
+            {
+                if(n.getIncoming().size() == 1)
+                {
+                    record.setType(ReadNetwork.DIVERGE);
+                }
+                else if(n.getOutgoing().size() == 1)
+                {
+                    record.setType(ReadNetwork.MERGE);
+                }
+            }
+            
+            fileout.println(record);
+        }
+        
+        fileout.close();
     }
     
     /**
@@ -797,7 +833,6 @@ public class ReadNetwork
                     {
                         //link = new LTMLink(id, source, dest, capacity, ffspd, w, jamd, length, numLanes);
                         link = new CACCLTMLink(id, source, dest, capacity, ffspd, w, jamd, length, numLanes);
-
                     }
                     else
                     {
@@ -1081,7 +1116,10 @@ public class ReadNetwork
                 {
                     Network.setDLR(val.equalsIgnoreCase("true"));
                 }
-
+                else if(key.equals("vehicle-length"))
+                {
+                    Vehicle.vehicle_length = Double.parseDouble(val);
+                }
             }
             filein.close();
         }

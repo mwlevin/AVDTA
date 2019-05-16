@@ -28,7 +28,7 @@ import java.util.Scanner;
  * {@link Path}s are hashed according to origin, destination, and size to reduce the number of {@link Path} to {@link Path} comparisons. 
  * @author Michael
  */
-public class PathList
+public class PathList implements Iterable<Path>
 {
     private Map<Node, Map<Node, Map<Integer, List<Path>>>> paths;
     
@@ -58,6 +58,33 @@ public class PathList
         {
             
         }
+    }
+    
+    public Iterator<Path> iterator()
+    {
+        return new PathListIterator();
+    }
+    
+    public List<Path> getPaths(Node origin, Node dest)
+    {
+        List<Path> output = new ArrayList<Path>();
+        
+        if(!paths.containsKey(origin) || !paths.get(origin).containsKey(dest))
+        {
+            return output;
+        }
+        
+        Map<Integer, List<Path>> temp = paths.get(origin).get(dest);
+        
+        for(int k : temp.keySet())
+        {
+            for(Path p : temp.get(k))
+            {
+                output.add(p);
+            }
+        }
+        
+        return output;
     }
     
     /**
@@ -158,7 +185,7 @@ public class PathList
                 {
                     for(Path p : temp2.get(h))
                     {
-                        fileout.print(p.getId()+"\t"+p.size());
+                        fileout.print(p.getId()+"\t"+p.size()+"\t"+p.proportion);
                         
                         for(Link l : p)
                         {
@@ -198,6 +225,11 @@ public class PathList
             
             Path p = new Path(id);
             int size = filein.nextInt();
+            
+            if(!filein.hasNextInt())
+            {
+                p.proportion = filein.nextDouble();
+            }
             
             for(int i = 0; i < size; i++)
             {
@@ -283,5 +315,111 @@ public class PathList
         }
         
         return output;
+    }
+    
+    public void updatePathFlowProportions()
+    {
+        for(Node o : paths.keySet())
+        {
+            Map<Node, Map<Integer, List<Path>>> temp = paths.get(o);
+            
+            for(Node d : temp.keySet())
+            {
+                double total = 0.0;
+                
+                Map<Integer, List<Path>> temp2 = temp.get(d);
+                
+                for(int i : temp2.keySet())
+                {
+                    for(Path p : temp2.get(i))
+                    {
+                        total += p.flow;
+                    }
+                }
+                
+                for(int i : temp2.keySet())
+                {
+                    for(Path p : temp2.get(i))
+                    {
+                       p.proportion = p.flow / total;
+                    }
+                }
+            }
+        }
+    }
+    
+    class PathListIterator implements Iterator<Path>
+    {
+        private Iterator<Node> origins, dests;
+        private Iterator<Integer> hashcodes;
+        private Iterator<Path> list;
+        
+        private Node o, d;
+        private int h;
+        
+        public PathListIterator()
+        {
+            origins = paths.keySet().iterator();
+        }
+        
+        public boolean hasNext()
+        {
+            if(list.hasNext())
+            {
+                return true;
+            }
+            else if(hashcodes != null && hashcodes.hasNext())
+            {
+                h = hashcodes.next();
+                list = paths.get(o).get(d).get(h).iterator();
+                return hasNext();
+            }
+            else if(dests != null && dests.hasNext())
+            {
+                d = dests.next();
+                list = paths.get(o).get(d).get(h).iterator();
+                hashcodes = paths.get(o).get(d).keySet().iterator();
+                return hasNext();
+            }
+            else if(origins != null && origins.hasNext())
+            {
+                o = origins.next();
+                dests = paths.get(o).keySet().iterator();
+                list = paths.get(o).get(d).get(h).iterator();
+                hashcodes = paths.get(o).get(d).keySet().iterator();
+                return hasNext();
+            }
+            return false;
+        }
+        
+        public Path next()
+        {
+            if(list.hasNext())
+            {
+                return list.next();
+            }
+            else if(hashcodes != null && hashcodes.hasNext())
+            {
+                h = hashcodes.next();
+                list = paths.get(o).get(d).get(h).iterator();
+                return next();
+            }
+            else if(dests != null && dests.hasNext())
+            {
+                d = dests.next();
+                list = paths.get(o).get(d).get(h).iterator();
+                hashcodes = paths.get(o).get(d).keySet().iterator();
+                return next();
+            }
+            else if(origins != null && origins.hasNext())
+            {
+                o = origins.next();
+                dests = paths.get(o).keySet().iterator();
+                list = paths.get(o).get(d).get(h).iterator();
+                hashcodes = paths.get(o).get(d).keySet().iterator();
+                return next();
+            }
+            return null;
+        }
     }
 }

@@ -22,20 +22,20 @@ import java.util.Scanner;
  * Note that the class references assignment intervals in the project's demand profile table (see {@link DemandProfile}).
  * @author Michael
  */
-public class DynamicODTable implements Iterable<DynamicODRecord>
+public class StaticODTable implements Iterable<StaticODRecord>
 {
     // the order is origin, dest, type, ast
-    private Map<Integer, Map<Integer, Map<Integer, Map<Integer, Double>>>> table;
+    private Map<Integer, Map<Integer, Map<Integer, Double>>> table;
     
     /**
      * Constructs an empty dynamic OD table.
      */
-    public DynamicODTable()
+    public StaticODTable()
     {
-        table = new HashMap<Integer, Map<Integer, Map<Integer, Map<Integer, Double>>>>();
+        table = new HashMap<Integer, Map<Integer, Map<Integer, Double>>>();
     }
     
-    public Iterator<DynamicODRecord> iterator()
+    public Iterator<StaticODRecord> iterator()
     {
         return new TableIterator();
     }
@@ -53,11 +53,11 @@ public class DynamicODTable implements Iterable<DynamicODRecord>
      * @param project the project
      * @throws IOException if a file cannot be accessed
      */
-    public DynamicODTable(DemandProject project) throws IOException
+    public StaticODTable(DemandProject project) throws IOException
     {
         this();
         
-        Scanner filein = new Scanner(project.getDynamicODFile());
+        Scanner filein = new Scanner(project.getStaticODFile());
         filein.nextLine();
         
         while(filein.hasNextInt())
@@ -66,53 +66,23 @@ public class DynamicODTable implements Iterable<DynamicODRecord>
             int type = filein.nextInt();
             int o = filein.nextInt();
             int d = (int)Math.abs(filein.nextInt());
-            int ast = filein.nextInt();
             double dem = filein.nextDouble();
             filein.nextLine();
             
-            addDemand(o, d, ast, type, dem);
+            addDemand(o, d, type, dem);
         }
         
         filein.close();
     }
     
-    public int getMaxAST()
-    {
-        int output = 0;
-        
-        for(int o : table.keySet())
-        {
-            Map<Integer, Map<Integer, Map<Integer, Double>>> temp = table.get(o);
-            
-            for(int d : temp.keySet())
-            {
-                Map<Integer, Map<Integer, Double>> temp2 = temp.get(d);
-                
-                for(int type : temp2.keySet())
-                {
-                    Map<Integer, Double> temp3 = temp2.get(type);
-                    
-                    for(int ast : temp3.keySet())
-                    {
-                        if(ast > output)
-                        {
-                            output = ast;
-                        }
-                    }
-                }
-            }
-        }
-        
-        return output;
-    }
     
     /**
      * Adds the specified {@link DynamicODRecord} to the table.
      * @param odt the {@link DynamicODRecord} to be added
      */
-    public void addDemand(DynamicODRecord odt)
+    public void addDemand(StaticODRecord odt)
     {
-        addDemand(odt.getOrigin(), odt.getDest(), odt.getAST(), odt.getType(), odt.getDemand());
+        addDemand(odt.getOrigin(), odt.getDest(), odt.getType(), odt.getDemand());
     }
     
     /**
@@ -123,9 +93,9 @@ public class DynamicODTable implements Iterable<DynamicODRecord>
      * @param type the type code of the vehicle
      * @param dem the amount of demand
      */
-    public void addDemand(Zone origin, Zone dest, int ast, int type, double dem)
+    public void addDemand(Zone origin, Zone dest,int type, double dem)
     {
-        addDemand(origin.getId(), dest.getId(), ast, type, dem);
+        addDemand(origin.getId(), dest.getId(),type, dem);
     }
     
     /**
@@ -136,9 +106,9 @@ public class DynamicODTable implements Iterable<DynamicODRecord>
      * @param type the type code of the vehicle
      * @param dem the amount of demand
      */
-    public void setDemand(Zone origin, Zone dest, int ast, int type, double dem)
+    public void setDemand(Zone origin, Zone dest, int type, double dem)
     {
-        setDemand(origin.getId(), dest.getId(), ast, type, dem);
+        setDemand(origin.getId(), dest.getId(),type, dem);
     }
     
     /**
@@ -149,7 +119,7 @@ public class DynamicODTable implements Iterable<DynamicODRecord>
      * @param type the type code of the vehicle
      * @param dem the amount of demand
      */
-    public void setDemand(int origin, int dest, int ast, int type, double dem)
+    public void setDemand(int origin, int dest, int type, double dem)
     {
         if(dem <= 0.0)
         {
@@ -157,12 +127,9 @@ public class DynamicODTable implements Iterable<DynamicODRecord>
         }
         
         dest = (int)Math.abs(dest);
-        if(ast < 0)
-        {
-            throw new RuntimeException("AST is "+ast);
-        }
+
         
-        Map<Integer, Map<Integer, Map<Integer, Double>>> temp1;
+        Map<Integer, Map<Integer, Double>> temp1;
         
         if(table.containsKey(origin))
         {
@@ -170,10 +137,10 @@ public class DynamicODTable implements Iterable<DynamicODRecord>
         }
         else
         {
-            table.put(origin, temp1 = new HashMap<Integer, Map<Integer, Map<Integer, Double>>>());
+            table.put(origin, temp1 = new HashMap<Integer, Map<Integer, Double>>());
         }
         
-        Map<Integer, Map<Integer, Double>> temp2;
+        Map<Integer, Double> temp2;
         
         if(temp1.containsKey(dest))
         {
@@ -181,87 +148,76 @@ public class DynamicODTable implements Iterable<DynamicODRecord>
         }
         else
         {
-            temp1.put(dest, temp2 = new HashMap<Integer, Map<Integer, Double>>());
+            temp1.put(dest, temp2 = new HashMap<Integer, Double>());
+        }
+        
+        
+
+        
+        if(temp2.containsKey(type))
+        {
+            temp2.put(type, temp2.get(type) + dem);
+        }
+        else
+        {
+            temp2.put(type, dem);
+        }
+
+        
+    }
+    
+    /**
+     * Adds the specified amount of demand.
+     * @param origin the origin
+     * @param dest the destination
+     * @param ast the assignment interval
+     * @param type the type code of the vehicle
+     * @param dem the amount of demand
+     */
+    public void addDemand(int origin, int dest, int type, double dem)
+    {
+        if(dem <= 0.0)
+        {
+            return;
+        }
+        
+        dest = (int)Math.abs(dest);
+   
+        
+        Map<Integer, Map<Integer, Double>> temp1;
+        
+        if(table.containsKey(origin))
+        {
+            temp1 = table.get(origin);
+        }
+        else
+        {
+            table.put(origin, temp1 = new HashMap<Integer, Map<Integer, Double>>());
+        }
+        
+        Map<Integer, Double> temp2;
+        
+        if(temp1.containsKey(dest))
+        {
+            temp2 = temp1.get(dest);
+        }
+        else
+        {
+            temp1.put(dest, temp2 = new HashMap<Integer, Double>());
         }
         
         Map<Integer, Double> temp3;
         
         if(temp2.containsKey(type))
         {
-            temp3 = temp2.get(type);
+            temp2.put(type, temp2.get(type) + dem);
         }
         else
         {
-            temp2.put(type, temp3 = new HashMap<Integer, Double>());
+            temp2.put(type, dem);
         }
         
 
-        temp3.put(ast, dem);
-        
-    }
-    
-    /**
-     * Adds the specified amount of demand.
-     * @param origin the origin
-     * @param dest the destination
-     * @param ast the assignment interval
-     * @param type the type code of the vehicle
-     * @param dem the amount of demand
-     */
-    public void addDemand(int origin, int dest, int ast, int type, double dem)
-    {
-        if(dem <= 0.0)
-        {
-            return;
-        }
-        
-        dest = (int)Math.abs(dest);
-        if(ast < 0)
-        {
-            throw new RuntimeException("AST is "+ast);
-        }
-        
-        Map<Integer, Map<Integer, Map<Integer, Double>>> temp1;
-        
-        if(table.containsKey(origin))
-        {
-            temp1 = table.get(origin);
-        }
-        else
-        {
-            table.put(origin, temp1 = new HashMap<Integer, Map<Integer, Map<Integer, Double>>>());
-        }
-        
-        Map<Integer, Map<Integer, Double>> temp2;
-        
-        if(temp1.containsKey(dest))
-        {
-            temp2 = temp1.get(dest);
-        }
-        else
-        {
-            temp1.put(dest, temp2 = new HashMap<Integer, Map<Integer, Double>>());
-        }
-        
-        Map<Integer, Double> temp3;
-        
-        if(temp2.containsKey(type))
-        {
-            temp3 = temp2.get(type);
-        }
-        else
-        {
-            temp2.put(type, temp3 = new HashMap<Integer, Double>());
-        }
-        
-        if(temp3.containsKey(ast))
-        {
-            temp3.put(ast, temp3.get(ast)+dem);
-        }
-        else
-        {
-            temp3.put(ast, dem);
-        }
     }
     
     /**
@@ -269,9 +225,9 @@ public class DynamicODTable implements Iterable<DynamicODRecord>
      * @param trip the trip
      * @param profile the demand profile
      */
-    public void addDemand(VehicleRecord trip, DemandProfile profile)
+    public void addDemand(VehicleRecord trip)
     {
-        addDemand(trip.getOrigin(), trip.getDestination(), profile.getAST(trip.getDepTime()), trip.getType(), 1);
+        addDemand(trip.getOrigin(), trip.getDestination(), trip.getType(), 1);
     }
     
     /**
@@ -279,7 +235,7 @@ public class DynamicODTable implements Iterable<DynamicODRecord>
      * @param project the project
      * @throws IOException if a file cannot be accessed
      */
-    public void printDynamicOD(DemandProject project) throws IOException
+    public void printStaticOD(DemandProject project) throws IOException
     {
         PrintStream fileout = new PrintStream(new FileOutputStream(project.getDynamicODFile()), true);
         
@@ -289,20 +245,15 @@ public class DynamicODTable implements Iterable<DynamicODRecord>
         
         for(int o : table.keySet())
         {
-            Map<Integer, Map<Integer, Map<Integer, Double>>> temp1 = table.get(o);
+            Map<Integer, Map<Integer, Double>> temp1 = table.get(o);
             
             for(int d : temp1.keySet())
             {
-                Map<Integer, Map<Integer, Double>> temp2 = temp1.get(d);
+                Map<Integer, Double> temp2 = temp1.get(d);
                 
                 for(int type : temp2.keySet())
                 {
-                    Map<Integer, Double> temp3 = temp2.get(type);
-                    
-                    for(int ast : temp3.keySet())
-                    {
-                        fileout.println((id++)+"\t"+type+"\t"+o+"\t"+d+"\t"+ast+"\t"+temp3.get(ast));
-                    }
+                    fileout.println((id++)+"\t"+type+"\t"+o+"\t"+d+"\t"+temp2.get(type));                   
                 }
             }
         }
@@ -314,45 +265,7 @@ public class DynamicODTable implements Iterable<DynamicODRecord>
     {
         return table.isEmpty();
     }
-    /**
-     * Prints the static OD file for the specified project by aggregating over assignment intervals (see {@link DemandProject#getStaticODFile()}).
-     * @param project the project
-     * @throws IOException if a file cannot be accessed
-     */
-    public void printStaticOD(DemandProject project) throws IOException
-    {
-        PrintStream fileout = new PrintStream(new FileOutputStream(project.getStaticODFile()), true);
-        
-        fileout.println(ReadDemandNetwork.getStaticODFileHeader());
-        
-        int id = 1;
-        
-        for(int o : table.keySet())
-        {
-            Map<Integer, Map<Integer, Map<Integer, Double>>> temp1 = table.get(o);
-            
-            for(int d : temp1.keySet())
-            {
-                Map<Integer, Map<Integer, Double>> temp2 = temp1.get(d);
-                
-                for(int type : temp2.keySet())
-                {
-                    Map<Integer, Double> temp3 = temp2.get(type);
-                    
-                    double total = 0.0;
-                    
-                    for(int ast : temp3.keySet())
-                    {
-                        total += temp3.get(ast);
-                    }
-                    
-                    fileout.println((id++)+"\t"+type+"\t"+o+"\t"+d+"\t"+total);
-                }
-            }
-        }
-        
-        fileout.close();
-    }
+    
     
 
     /**
@@ -363,9 +276,9 @@ public class DynamicODTable implements Iterable<DynamicODRecord>
      * @param type the type
      * @return the number of trips
      */
-    public double getTrips(Node origin, Node dest, int ast, int type)
+    public double getTrips(Node origin, Node dest, int type)
     {
-        return getTrips(origin.getId(), dest.getId(), ast, type);
+        return getTrips(origin.getId(), dest.getId(), type);
     }
     
     /**
@@ -376,12 +289,12 @@ public class DynamicODTable implements Iterable<DynamicODRecord>
      * @param type the type
      * @return the number of trips
      */
-    public double getTrips(int origin, int dest, int ast, int type)
+    public double getTrips(int origin, int dest, int type)
     {
         dest = (int)Math.abs(dest);
         try
         {
-            return table.get(origin).get(dest).get(type).get(ast);
+            return table.get(origin).get(dest).get(type);
         }
         catch(NullPointerException ex)
         {
@@ -389,37 +302,23 @@ public class DynamicODTable implements Iterable<DynamicODRecord>
         }
     }
     
-    /**
-     * Returns the number of trips for the specified parameters, aggregating over assignment intervals
-     * @param origin the origin
-     * @param dest the destination
-     * @param type the type
-     * @return the number of trips
-     */
-    public double getTrips(Node origin, Node dest, int type)
+    public double getTrips(Node origin, Node dest)
     {
-        return getTrips(origin.getId(), dest.getId(), type);
+        return getTrips(origin.getId(), dest.getId());
     }
     
-    /**
-     * Returns the number of trips for the specified parameters, aggregating over assignment intervals
-     * @param origin the origin id
-     * @param dest the destination id
-     * @param type the type
-     * @return the number of trips
-     */
-    public double getTrips(int origin, int dest, int type)
+    public double getTrips(int origin, int dest)
     {
         dest = (int)Math.abs(dest);
+        
         try
         {
-            Map<Integer, Double> allTimes = table.get(origin).get(dest).get(type);
+            Map<Integer, Double> temp = table.get(origin).get(dest);
             
             double output = 0.0;
-            
-            for(int ast : allTimes.keySet())
+            for(int type : temp.keySet())
             {
-                output += allTimes.get(output);
+                output += temp.get(type);
             }
             
             return output;
@@ -429,23 +328,20 @@ public class DynamicODTable implements Iterable<DynamicODRecord>
             return 0.0;
         }
     }
+   
     
-    private void delete(int o, int d, int ast, int type)
+    
+    private void delete(int o, int d, int type)
     {
-        remove(o, d, ast, type);
+        remove(o, d, type);
     }
     
-    public void remove(int o, int d, int ast, int type)
+    public void remove(int o, int d, int type)
     {
         d = (int)Math.abs(d);
         
-        table.get(o).get(d).get(type).remove(ast);
-        
-        if(table.get(o).get(d).get(type).isEmpty())
-        {
-            table.get(o).get(d).remove(type);
-        }
-        
+        table.get(o).get(d).remove(type);
+
         if(table.get(o).get(d).isEmpty())
         {
             table.get(o).remove(d);
@@ -457,45 +353,37 @@ public class DynamicODTable implements Iterable<DynamicODRecord>
         }
     }
     
-    class TableIterator implements Iterator<DynamicODRecord> 
+    class TableIterator implements Iterator<StaticODRecord> 
     {
-        private int o, d, ast, type;
+        private int o, d, type;
 
         private Iterator<Integer> origins;
         private Iterator<Integer> destinations;
-        private Iterator<Integer> asts;
+
         private Iterator<Integer> types;
 
         public TableIterator() 
         {
             origins = table.keySet().iterator();
             destinations = null;
-            asts = null;
+     
             types = null;
         }
         
         public boolean hasNext()
         {
-            if(asts != null && asts.hasNext())
+            if(types != null && types.hasNext())
             {
                 return true;
             }
             
-            if(types != null && types.hasNext())
-            {
-                type = types.next();
-                
-                asts = table.get(o).get(d).get(type).keySet().iterator();
-                
-                return hasNext();
-            }
+
             
             if(destinations != null && destinations.hasNext())
             {
                 d = destinations.next();
                 
                 types = table.get(o).get(d).keySet().iterator();
-                asts = table.get(o).get(d).get(type).keySet().iterator();
                 
                 return hasNext();
             }
@@ -506,7 +394,6 @@ public class DynamicODTable implements Iterable<DynamicODRecord>
                 
                 destinations = table.get(o).keySet().iterator();
                 types = table.get(o).get(d).keySet().iterator();
-                asts = table.get(o).get(d).get(type).keySet().iterator();
                 
                 return hasNext();
             }
@@ -515,31 +402,22 @@ public class DynamicODTable implements Iterable<DynamicODRecord>
         }
         
 
-        public DynamicODRecord next()
+        public StaticODRecord next()
         {
-            if(asts != null && asts.hasNext())
-            {
-                ast = asts.next();
-                double trips = table.get(o).get(d).get(type).get(ast);
-                
-                return new DynamicODRecord(0, type, o, d, ast, trips);
-            }
-            
             if(types != null && types.hasNext())
             {
                 type = types.next();
+                double trips = table.get(o).get(d).get(type);
                 
-                asts = table.get(o).get(d).get(type).keySet().iterator();
-                
-                return next();
+                return new StaticODRecord(0, type, o, d, trips);
             }
+
             
             if(destinations != null && destinations.hasNext())
             {
                 d = destinations.next();
                 
                 types = table.get(o).get(d).keySet().iterator();
-                asts = table.get(o).get(d).get(type).keySet().iterator();
                 
                 return next();
             }
@@ -550,7 +428,6 @@ public class DynamicODTable implements Iterable<DynamicODRecord>
                 
                 destinations = table.get(o).keySet().iterator();
                 types = table.get(o).get(d).keySet().iterator();
-                asts = table.get(o).get(d).get(type).keySet().iterator();
                 
                 return next();
             }
@@ -561,7 +438,7 @@ public class DynamicODTable implements Iterable<DynamicODRecord>
         
         public void remove()
         {
-            delete(o, d, ast, type);
+            delete(o, d, type);
         }
 
     }

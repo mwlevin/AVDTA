@@ -37,4 +37,6 @@ public interface Signalized
      * @return the {@link List} of {@link Phase}s used in this signal
      */
     public List<Phase> getPhases();
+    
+
 }

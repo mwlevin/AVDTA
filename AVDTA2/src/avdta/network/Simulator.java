@@ -4,6 +4,7 @@
  */
 package avdta.network; 
 
+import avdta.demand.StaticODTable;
 import avdta.dta.DTAResults;
 import avdta.duer.Incident;
 import avdta.duer.IncidentEffect;
@@ -27,6 +28,7 @@ import avdta.network.node.TrafficSignal;
 import avdta.project.Project;
 import avdta.vehicle.Bus;
 import java.io.File;
+import avdta.project.DemandProject;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileWriter; 
@@ -58,6 +60,10 @@ import avdta.network.link.TransitLane;
 import avdta.network.node.obj.MaxPressureObj;
 import avdta.util.RunningAvg;
 import avdta.vehicle.EmergencyVehicle;
+import avdta.dta.Assignment;
+import avdta.network.node.MPTurn;
+import avdta.network.node.MaxPressure;
+
 /**
  * A {@link Simulator} extends {@link Network} in adding {@link Vehicle}s and dynamic network loading. 
  * Where the {@link Network} works with {@link Node}s and {@link Link}s, {@link Simulator} methods are focused on {@link Vehicle}s.
@@ -65,7 +71,7 @@ import avdta.vehicle.EmergencyVehicle;
  */
 public class Simulator extends Network 
 {
-
+    public boolean recurred;
     
     public static int time;
     
@@ -199,6 +205,88 @@ public class Simulator extends Network
         return Incident.UNKNOWN;
     }
     
+    
+    /**
+     * This method calculates turning proportions for nodes when max-pressure is used.
+     */
+    public void calculateTurningProportionsMP(Assignment assign) throws IOException
+    {
+        PathList paths = new PathList(this, assign.getPathsFile());
+        
+        StaticODTable table = new StaticODTable((DemandProject)getProject());
+        
+        for(Path p : paths)
+        {
+            p.flow = p.proportion * table.getTrips(p.getOrigin(), p.getDest());
+            
+        }
+        
+        table = null;
+        
+        PrintStream fileout = new PrintStream(new FileOutputStream(new File(assign.getResultsDirectory()+"/turning_proportions.txt")), true);
+        
+        for(Node n : nodes)
+        {
+            if(n instanceof Intersection)
+            {
+                MaxPressure control = (MaxPressure)((Intersection)n).getControl();
+                
+                for(MPTurn turn : control.getTurns())
+                {
+                    for(Path p : paths)
+                    {
+                        int idx = p.indexOf(turn.i);
+                        if(idx >= 0)
+                        {
+                            turn.denom += p.flow;
+                            
+                            if(p.get(idx+1) == turn.j)
+                            {
+                                turn.num += p.flow;
+                            }
+                        }
+                    }
+                    
+                    turn.setTurningProportion(turn.num / turn.denom);
+                    
+                    fileout.println(turn.i.getId()+"\t"+turn.j.getId()+"\t"+turn.getTurningProportion());
+                }
+            }
+        }
+        fileout.close();
+    }
+    
+    public void loadTurningProportionsMP(Assignment assign) throws IOException
+    {
+        Scanner filein = new Scanner(new File(assign.getResultsDirectory()+"/turning_proportions.txt"));
+        
+        Map<Integer, Link> linksmap = createLinkIdsMap();
+        
+        while(filein.hasNextInt())
+        {
+            int i_id = filein.nextInt();
+            int j_id = filein.nextInt();
+            double p_ij = filein.nextDouble();
+            
+            Link i = linksmap.get(i_id);
+            Link j = linksmap.get(j_id);
+            
+            Node node = i.getDest();
+            MaxPressure control = (MaxPressure)((Intersection)node).getControl();
+            for(MPTurn t : control.getTurns())
+            {
+                if(t.i == i && t.j == j)
+                {
+                    t.setTurningProportion(p_ij);
+                    break;
+                }
+            }
+        }
+        filein.close();
+    }
+    
+    
+    
     public boolean isObservable(Link l, Incident i)
     {
         return false;
@@ -305,6 +393,17 @@ public class Simulator extends Network
     public int getNumVehicles()
     {
         return vehicles.size();
+    }
+    
+    public int getNumVehiclesInSystem()
+    {
+        int output = 0;
+        for(Link l : links)
+        {
+            output += l.getOccupancy();
+        }
+        
+        return output;
     }
     
     /**
@@ -798,6 +897,10 @@ public class Simulator extends Network
      */
     public void simulate() throws IOException
     {   
+        recurred = false;
+        
+        int occupancy_900 = 0;
+        
         resetSim();
 
         
@@ -813,9 +916,21 @@ public class Simulator extends Network
         
         for(time = 0; time < duration; time += dt)
         {
-
+            //System.out.println(time+"\t"+getNumVehiclesInSystem()+"\t"+occupancy_900);
             // push vehicles onto centroid connectors at departure time
             addVehicles();
+            
+            if(time == 900)
+            {
+                occupancy_900 = getNumVehiclesInSystem();
+            }
+            if(time >= 7200-900)
+            {
+                if(getNumVehiclesInSystem() <= 1.1*occupancy_900)
+                {
+                    recurred = true;
+                }
+            }
             
             
             propagateFlow();
@@ -1093,7 +1208,7 @@ public class Simulator extends Network
      * This executes one time step of simulation.
      * This calls {@link Link#prepare()}, {@link Link#step()}, {@link Node#step}, then {@link Link#update()} for all {@link Link}s and {@link Node}s.
      */
-    protected void propagateFlow()
+    public void propagateFlow()
     {
         if(isDLR())
         {
@@ -1105,6 +1220,11 @@ public class Simulator extends Network
 
                 pressureCalc.calculatePressure(l, l.getDest());
             }
+        }
+        
+        for(Node n : nodes)
+        {
+            n.prepare();
         }
         
         for(Link l : links)

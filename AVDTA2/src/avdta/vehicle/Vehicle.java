@@ -34,7 +34,7 @@ import java.util.Random;
  */
 public abstract class Vehicle implements Serializable, Comparable<Vehicle>
 {   
-    public static final double vehicle_length = 19;
+    public static double vehicle_length = 19;
     
     
     private Wallet wallet;
@@ -290,6 +290,11 @@ public abstract class Vehicle implements Serializable, Comparable<Vehicle>
         
         
         
+    }
+    
+    public int getDelayInCell()
+    {
+        return Simulator.time - cell_enter;
     }
     
     /**

@@ -303,6 +303,23 @@ public class Assignment implements Comparable<Assignment>
     {
         writePropertiesFile();
         
+        // calculate proportions.
+        
+        PathList paths = project.getSimulator().getPaths();
+        
+        for(Path p : paths)
+        {
+            p.flow = 0;
+        }
+        
+        for(Vehicle v : vehicles)
+        {
+            v.getPath().flow++;
+        }
+        
+        paths.updatePathFlowProportions();
+        paths.writeToFile(this);
+        
         PrintStream fileout = new PrintStream(new FileOutputStream(getVehiclesFile()), true);
         
         for(Vehicle v : vehicles)

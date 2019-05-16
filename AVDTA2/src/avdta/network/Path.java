@@ -25,7 +25,10 @@ public class Path extends ArrayList<Link> implements Serializable
     
     private double cost;
 
-    public Traveler traveler;
+    //public Traveler traveler;
+    
+    public double proportion;
+    public double flow;
     
     /**
      * Constructs an empty {@link Path} with an id of -1.

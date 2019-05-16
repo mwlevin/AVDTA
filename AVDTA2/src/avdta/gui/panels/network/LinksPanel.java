@@ -239,7 +239,7 @@ public class LinksPanel extends GUIPanel
                         totals[t]++;
                     }
                 }
-                
+
                 if(type instanceof ExtendedType)
                 {
                     for(int t = 0; t < ReadNetwork.LINK_EXT_TYPES.length; t++)

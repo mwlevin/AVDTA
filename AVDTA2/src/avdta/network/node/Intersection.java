@@ -47,6 +47,11 @@ public class Intersection extends Node
         }
     }
     
+    public void prepare()
+    {
+        control.prepare();
+    }
+    
     /**
      * Returns the {@link Signalized} form of the {@link IntersectionControl}, if it exists
      * 
@@ -54,7 +59,14 @@ public class Intersection extends Node
      */
     public Signalized getSignal()
     {
-        return control.getSignal();
+        if(control instanceof Signalized)
+        {
+            return ((Signalized)control);
+        }
+        else
+        {
+            return null;
+        }
     }
     
     /**
