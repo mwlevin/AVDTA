@@ -71,8 +71,8 @@ public class LTMLink extends Link
      */
     public void initialize()
     {
-        N_up = new FixedSizeLL(getUSLookBehind()+2);
-        N_down = new FixedSizeLL(getDSLookBehind()+2);
+        N_up = new ChainedArray(getUSLookBehind()+2);
+        N_down = new ChainedArray(getDSLookBehind()+2);
 
         this.capacityUp = getCapacity() * Network.dt / 3600.0;
         this.capacityDown = getCapacity() * Network.dt / 3600.0;

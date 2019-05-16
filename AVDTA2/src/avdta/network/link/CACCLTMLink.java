@@ -1,3 +1,6 @@
+
+
+
 /*
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
@@ -132,17 +135,79 @@ public class CACCLTMLink extends LTMLink
      * Returns the receiving flow, which is based on a piecewise concave fundamental diagram.
      * @return the receiving flow
      */
-    public double getReceivingFlow()
+
+    
+    
+       public double getReceivingFlow()
     {
+        double A =Math.round(getN_down(Simulator.time - getLength()/(0.7143/1609.344*3600) + Network.dt) 
+                + 1.08988*1609.344* getLength() - getN_up(Simulator.time));
+        double B =Math.round(getN_down(Simulator.time - getLength()/(2.2373/1609.344*3600) + Network.dt) 
+                + 0.42967*1609.344 * getLength()- getN_up(Simulator.time));
+        double inner=  Math.min(A,B);
         
-        double output = 
-         Math.min(Math.min(Math.round(getN_down(Simulator.time - getLength()/wavespd2*3600 + Network.dt) 
-                + getJamDensity() * getLength() - getN_up(Simulator.time)),
-                Math.round(getN_down(Simulator.time - getLength()/wavespd1*3600 + Network.dt) 
-                + k2 * getLength() - getN_up(Simulator.time))),
-                Math.min(getJamDensity() * getLength() - getOccupancy(), getCurrentUpstreamCapacity()));
-        
+        double output =Math.min(inner,getCurrentUpstreamCapacity());
+                /*Math.min(getJamDensity() * getLength() - getOccupancy(), getCurrentUpstreamCapacity()));*/
+                /*
+        System.out.println("inner = "+inner);
+        System.out.println("A = "+ A);
+        System.out.println("B = "+ B);
+          System.out.println("output for receiving ="+output);*/
         return output;
+    }
+       
+        public int getNumSendingFlow()
+    {
+        double A=Math.round(getN_up(Simulator.time - getLength()/(21.213/1609.344) + Network.dt) - getN_down(Simulator.time));
+        double B=Math.round(getN_up(Simulator.time - getLength()/(7.0711/1609.344) + Network.dt) +0.04*1609.344 * getLength() - getN_down(Simulator.time));
+        double value1 =Math.min(A,B);
+        //System.out.println(getN_up(Simulator.time - getLength()/21.213*3600 + Network.dt) - getN_up(Simulator.time));
+        
+        //System.out.println("A=" +A);
+        //System.out.println("B=" +B);
+        
+        
+        double value2 =Math.min( value1, Math.round(getN_up(Simulator.time - getLength()/(4.1194/1609.344)+Network.dt) +0.0973*1609.344*getLength()- getN_down(Simulator.time)));
+        
+        
+        double value3 = Math.min( value2,Math.round(getN_up(Simulator.time - getLength()/(2.2373/1609.344)+Network.dt) + 0.2297*1609.344 *getLength()- getN_down(Simulator.time)));
+        
+        double inner = Math.min( value3,Math.round(getN_up(Simulator.time - getLength()/(0.7143/1609.344)+Network.dt) +0.89*1609.344*getLength()- getN_down(Simulator.time)));
+     
+        int output = (int)Math.min(inner ,getCurrentDownstreamCapacity());
+        //System.out.println(inner);
+        if(getId() == 23)
+        {
+            System.out.println("A=" +A);
+            System.out.println("B=" +B);
+            System.out.println("Value1 = "+value1);
+            System.out.println("Value2 ="+value2);
+            System.out.println("Value3 ="+value3);
+            System.out.println("Occupancy = "+getOccupancy());
+            System.out.println("getCurrentDownstreamCapacity() ="+getCurrentDownstreamCapacity());
+            
+                    /*Math.min(getJamDensity() * getLength() - getOccupancy(), getCurrentUpstreamCapacity()));*/
+            System.out.println("output for sending ="+output);
+        }
+        return output;
+    }
+       
+    /**
+     * Returns how far to look backwards in time for the downstream end
+     * @return {@link Link#getLength()}/{@link Link#getWaveSpeed()} (s)
+     */
+    /* old :public int getDSLookBehind()
+    {
+        return (int)Math.ceil(Math.max(getLength()/wavespd1*3600, getLength()/wavespd2*3600) / Network.dt);
+    }
+    
+        /**
+     * Returns how far to look backwards in time for the upstream end
+     * @return {@link Link#getLength()}/{@link Link#getFFSpeed()} (s)
+     */
+    public int getUSLookBehind()
+    {
+        return (int)Math.ceil(getLength()/(0.7143/1609.344)/ Network.dt);
     }
     
     /**
@@ -151,8 +216,9 @@ public class CACCLTMLink extends LTMLink
      */
     public int getDSLookBehind()
     {
-        return (int)Math.ceil(Math.max(getLength()/wavespd1*3600, getLength()/wavespd2*3600) / Network.dt);
+        return (int)Math.ceil(getLength()/(0.7143/1609.344) / Network.dt);
     }
+    
     
     /**
      * Returns whether the given {@link DriverType} can use this link.
@@ -163,7 +229,6 @@ public class CACCLTMLink extends LTMLink
     {
         return driver.isCV();
     }
-    
     
     public Type getType()
     {
