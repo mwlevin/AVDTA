@@ -575,7 +575,7 @@ public class ReadNetwork
             {
                 node.setControl(new TrafficSignal());
                 
-                if(type%100 == MAX_PRESSURE.getCode())
+                if(type == MAX_PRESSURE.getCode())
                 {
                     node.setControl(new MaxPressure(node));
                 }

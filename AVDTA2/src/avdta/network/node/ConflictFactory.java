@@ -59,37 +59,43 @@ public class ConflictFactory
             }
         }
         
-        Collections.sort(links, new Comparator<Node>()
+        if(links.size() > 0)
         {
-            public int compare(Node lhs, Node rhs)
+            Collections.sort(links, new Comparator<Node>()
             {
-                double d1 = node.angleTo(lhs);
-                double d2 = node.angleTo(rhs);
-                
-                if(d1 < d2)
+                public int compare(Node lhs, Node rhs)
                 {
-                    return -1;
+                    double d1 = node.angleTo(lhs);
+                    double d2 = node.angleTo(rhs);
+
+                    if(d1 < d2)
+                    {
+                        return -1;
+                    }
+                    else if(d1 > d2)
+                    {
+                        return 1;
+                    }
+                    else
+                    {
+                        return 0;
+                    }
                 }
-                else if(d1 > d2)
-                {
-                    return 1;
-                }
-                else
-                {
-                    return 0;
-                }
+            });
+
+
+            directions.put(links.get(0), 0.0);
+            
+            for(int i = 1; i < links.size(); i++)
+            {
+                double angle = node.angleTo(links.get(i)) - node.angleTo(links.get(0));
+                angle = Math.PI/2 * Math.round(angle / (Math.PI/2));
+                directions.put(links.get(i), angle);
             }
-        });
-        
-        
-        directions.put(links.get(0), 0.0);
-        
-        for(int i = 1; i < links.size(); i++)
-        {
-            double angle = node.angleTo(links.get(i)) - node.angleTo(links.get(0));
-            angle = Math.PI/2 * Math.round(angle / (Math.PI/2));
-            directions.put(links.get(i), angle);
         }
+        
+        
+        
         
 
         
@@ -159,11 +165,18 @@ public class ConflictFactory
 
         for(Link i : node.getIncoming())
         {
+
             Map<Link, TurningMovement> temp;
             output1.put(i, temp = new HashMap<Link, TurningMovement>());
 
             // find starting point
-            double start_dir = directions.get(i.getSource());
+
+            double start_dir = 0.0;
+            
+            if(!i.isCentroidConnector())
+            {
+                start_dir = directions.get(i.getSource());
+            }
             
             if(start_dir >= 2*Math.PI)
             {
@@ -180,7 +193,7 @@ public class ConflictFactory
                 TurningMovement conflicts;
                 temp.put(j, conflicts = new TurningMovement());
 
-                if(i.isCentroidConnector() || j.isCentroidConnector())
+                if(j.isCentroidConnector())
                 {
                     continue;
                 }

@@ -39,6 +39,11 @@ public class Assignment implements Comparable<Assignment>
     private String name;
     private String directory;
  
+    public Assignment(String name, DTAProject project) throws IOException
+    {
+        this(new File(project.getAssignmentsFolder()+"/"+name));
+    }
+    
     /**
      * Constructs this {@link Assignment} from the specified directory and reads the properties ({@link Assignment#readAssignment(Scanner)}).
      * @param dir the directory

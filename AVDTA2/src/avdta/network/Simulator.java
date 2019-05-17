@@ -61,6 +61,7 @@ import avdta.network.node.obj.MaxPressureObj;
 import avdta.util.RunningAvg;
 import avdta.vehicle.EmergencyVehicle;
 import avdta.dta.Assignment;
+import avdta.network.node.IntersectionControl;
 import avdta.network.node.MPTurn;
 import avdta.network.node.MaxPressure;
 
@@ -229,7 +230,14 @@ public class Simulator extends Network
         {
             if(n instanceof Intersection)
             {
-                MaxPressure control = (MaxPressure)((Intersection)n).getControl();
+                IntersectionControl c = ((Intersection)n).getControl();
+                
+                if(!(c instanceof MaxPressure))
+                {
+                    continue;
+                }
+                
+                MaxPressure control = (MaxPressure)c;
                 
                 for(MPTurn turn : control.getTurns())
                 {
@@ -247,7 +255,14 @@ public class Simulator extends Network
                         }
                     }
                     
-                    turn.setTurningProportion(turn.num / turn.denom);
+                    if(turn.denom > 0)
+                    {
+                        turn.setTurningProportion(turn.num / turn.denom);
+                    }
+                    else
+                    {
+                        turn.setTurningProportion(0);
+                    }
                     
                     fileout.println(turn.i.getId()+"\t"+turn.j.getId()+"\t"+turn.getTurningProportion());
                 }

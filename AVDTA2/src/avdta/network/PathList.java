@@ -233,16 +233,24 @@ public class PathList implements Iterable<Path>
             
             for(int i = 0; i < size; i++)
             {
-                p.add(links.get(filein.nextInt()));
+                int link_id = filein.nextInt();
                 
-                addUnrestricted(p);
+                p.add(links.get(link_id));
             }
+            
+
+            addUnrestricted(p);
         }
     }
     
     public Path randomPath(Node origin, Node dest)
     {
         Map<Integer, List<Path>> hashtable = paths.get(origin).get(dest);
+        
+        if(hashtable == null)
+        {
+            return null;
+        }
         
         double rand = Math.random();
         

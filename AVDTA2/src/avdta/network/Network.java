@@ -1,5 +1,6 @@
 package avdta.network;
 
+import avdta.dta.Assignment;
 import avdta.dta.DTASimulator;
 import avdta.network.cost.TravelCost;
 import avdta.network.link.CTMLink;
@@ -241,6 +242,12 @@ public class Network
     {
         return paths;
     }
+    
+    public void setPaths(Assignment assign)
+    {
+        setPaths(new PathList(this, assign.getPathsFile()));
+    }
+    
     
     /**
      * Updates the list of {@link Path}s.

@@ -98,13 +98,25 @@ public class Main
 {
     public static void main(String[] args) throws Exception
     {
-
-        DTAProject project = new DTAProject(new File("projects/coacongress2"));
+        /*
+        DTAProject msa = new DTAProject(new File("projects/coacongress2"));
+        DTASimulator sim = msa.getSimulator();
+        sim.msa(5);
+        */
+        
+        
+        
+        
+        
+        DTAProject project = new DTAProject(new File("projects/coacongress2_ttmp"));
     
-        project.loadSimulator();
-        DTASimulator sim = project.getSimulator();
-        sim.msa(50, 1);
-
+        Simulator sim = MaxPressureTest.createMPSimulator(project, 10000, 3600);
+        
+        
+        
+        
+        
+        
         //new DTAGUI();
         //new FourStepGUI();
         
@@ -118,31 +130,7 @@ public class Main
     }
     
     
-    public static Simulator createMPSimulator(DTAProject project, double vph, int duration) throws IOException
-    {
-        ReadDemandNetwork read = new ReadDemandNetwork();
-        DemandProfile profile = new DemandProfile();
-        profile.add(new AST(1, 0, duration, 1.0));
-        profile.save(project);
-        
-        StaticODTable staticOd = new StaticODTable(project);
-        read.createDynamicOD(project, vph / staticOd.getTotal());
-        
-        read.prepareDemand(project);
-        
-        
-        
-        Simulator sim = project.getSimulator();
-        
-        PathList paths = sim.getPaths();
-        
-        for(Vehicle v : sim.getVehicles())
-        {
-            v.setPath(paths.randomPath(v.getOrigin(), v.getDest()));
-        }
-        
-        return sim;
-    }
+    
     
     
     public static void fixConnectivity2() throws Exception
