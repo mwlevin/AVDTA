@@ -393,8 +393,7 @@ public class StaticODTable implements Iterable<StaticODRecord>
                 o = origins.next();
                 
                 destinations = table.get(o).keySet().iterator();
-                types = table.get(o).get(d).keySet().iterator();
-                
+      
                 return hasNext();
             }
             
@@ -427,8 +426,7 @@ public class StaticODTable implements Iterable<StaticODRecord>
                 o = origins.next();
                 
                 destinations = table.get(o).keySet().iterator();
-                types = table.get(o).get(d).keySet().iterator();
-                
+
                 return next();
             }
             

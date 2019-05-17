@@ -364,7 +364,7 @@ public class PathList implements Iterable<Path>
         
         public boolean hasNext()
         {
-            if(list.hasNext())
+            if(list != null && list.hasNext())
             {
                 return true;
             }
@@ -377,16 +377,16 @@ public class PathList implements Iterable<Path>
             else if(dests != null && dests.hasNext())
             {
                 d = dests.next();
-                list = paths.get(o).get(d).get(h).iterator();
                 hashcodes = paths.get(o).get(d).keySet().iterator();
+         
+                
                 return hasNext();
             }
             else if(origins != null && origins.hasNext())
             {
                 o = origins.next();
                 dests = paths.get(o).keySet().iterator();
-                list = paths.get(o).get(d).get(h).iterator();
-                hashcodes = paths.get(o).get(d).keySet().iterator();
+                
                 return hasNext();
             }
             return false;
@@ -394,7 +394,7 @@ public class PathList implements Iterable<Path>
         
         public Path next()
         {
-            if(list.hasNext())
+            if(list != null && list.hasNext())
             {
                 return list.next();
             }
@@ -408,15 +408,14 @@ public class PathList implements Iterable<Path>
             {
                 d = dests.next();
                 list = paths.get(o).get(d).get(h).iterator();
-                hashcodes = paths.get(o).get(d).keySet().iterator();
+
                 return next();
             }
             else if(origins != null && origins.hasNext())
             {
                 o = origins.next();
                 dests = paths.get(o).keySet().iterator();
-                list = paths.get(o).get(d).get(h).iterator();
-                hashcodes = paths.get(o).get(d).keySet().iterator();
+      
                 return next();
             }
             return null;

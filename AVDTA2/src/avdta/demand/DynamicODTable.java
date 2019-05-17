@@ -495,7 +495,7 @@ public class DynamicODTable implements Iterable<DynamicODRecord>
                 d = destinations.next();
                 
                 types = table.get(o).get(d).keySet().iterator();
-                asts = table.get(o).get(d).get(type).keySet().iterator();
+            
                 
                 return hasNext();
             }
@@ -505,8 +505,7 @@ public class DynamicODTable implements Iterable<DynamicODRecord>
                 o = origins.next();
                 
                 destinations = table.get(o).keySet().iterator();
-                types = table.get(o).get(d).keySet().iterator();
-                asts = table.get(o).get(d).get(type).keySet().iterator();
+       
                 
                 return hasNext();
             }
@@ -539,7 +538,7 @@ public class DynamicODTable implements Iterable<DynamicODRecord>
                 d = destinations.next();
                 
                 types = table.get(o).get(d).keySet().iterator();
-                asts = table.get(o).get(d).get(type).keySet().iterator();
+
                 
                 return next();
             }
@@ -549,8 +548,7 @@ public class DynamicODTable implements Iterable<DynamicODRecord>
                 o = origins.next();
                 
                 destinations = table.get(o).keySet().iterator();
-                types = table.get(o).get(d).keySet().iterator();
-                asts = table.get(o).get(d).get(type).keySet().iterator();
+
                 
                 return next();
             }
