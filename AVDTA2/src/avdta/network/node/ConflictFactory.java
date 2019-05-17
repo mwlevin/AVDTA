@@ -70,7 +70,17 @@ public class ConflictFactory
                     direction -= 2*Math.PI;
                 }
 
-                if(!division.containsKey(direction))
+                boolean contains = false;
+                
+                for(double dir : division.keySet())
+                {
+                    if(Math.abs(dir - direction) < 0.01)
+                    {
+                        contains = true;
+                        break;
+                    }
+                }
+                if(!contains)
                 {
                     division.put(direction, new ConflictRegion(0));
                     // update capacities later depending on which turning movements pass through
@@ -79,10 +89,14 @@ public class ConflictFactory
         }
 
 
+        if(node.getId() == 13043)
+        {
+            System.out.println(division.size());
+            System.out.println(division);
+        }
 
 
-
-        double shift_epsilon = 0.01;
+        double shift_epsilon = 0.1;
         double step = 1.0/3;
 
         for(Link i : node.getIncoming())
@@ -92,6 +106,11 @@ public class ConflictFactory
 
             // find starting point
             double start_dir = i.getDirection() + Math.PI;
+            
+            if(start_dir >= 2*Math.PI)
+            {
+                start_dir -= 2*Math.PI;
+            }
             // shift by epsilon
             double shift_dir = start_dir + Math.PI/2;
 
@@ -125,9 +144,21 @@ public class ConflictFactory
                 double x = start_x;
                 double y = start_y;
                 
+                
+                
+                
+                
                 // straight line
-                if(end_dir + Math.PI == start_dir)
+                System.out.println("--");
+                System.out.println(i.getSource()+" "+j.getDest());
+                System.out.println(i.getDirection() +" "+j.getDirection());
+                System.out.println(start_dir+" "+end_dir);
+                System.out.println(start_x+"\t"+start_y);
+                System.out.println(end_x+"\t"+end_y);
+                
+                if(Math.abs(i.getDirection() - j.getDirection()) < 0.01)
                 {
+                    System.out.println("straight");
                     double a = end_x - start_x;
                     double b = end_y - start_y;
 
@@ -159,11 +190,11 @@ public class ConflictFactory
                     double dir1 = i.getDirection();
                     double dir2 = j.getDirection() + Math.PI;
 
-                    double a1 = Math.cos(dir1);
-                    double b1 = Math.sin(dir1);
+                    double a1 = start_x + 2*Math.cos(dir1);
+                    double b1 = start_y + 2*Math.sin(dir1);
 
-                    double a2 = Math.cos(dir2);
-                    double b2 = Math.sin(dir2);
+                    double a2 = end_x + 2*Math.cos(dir2);
+                    double b2 = end_y + 2*Math.sin(dir2);
 
                     // solve system of equations
                     double s = (y1 + b1/a1*x2 - b1/a1*x1 - y2) / (b2 - b1/a1*a2);

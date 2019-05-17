@@ -123,6 +123,33 @@ public class Phase implements Comparable<Phase>
     }
     
     /**
+     * Returns true if the allowed turning movements are the same.
+     * @param rhs
+     * @return 
+     */
+    public boolean equals(Phase rhs)
+    {
+        if(allowed.length != rhs.allowed.length)
+        {
+            return false;
+        }
+        
+        outer:for(Turn t : allowed)
+        {
+            for(Turn t2 : rhs.allowed)
+            {
+                if(t.i == t2.i && t.j == t2.j)
+                {
+                    continue outer;
+                }
+            }
+            return false;
+        }
+        
+        return true;
+    }
+    
+    /**
      * Returns the all red time
      * @return the all red time
      */

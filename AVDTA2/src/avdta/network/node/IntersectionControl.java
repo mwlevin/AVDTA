@@ -65,7 +65,7 @@ public abstract class IntersectionControl
      * @return A {@link Node} where the intersection control has been 
      * implemented.
      */
-    public Node getNode()
+    public Intersection getNode()
     {
         return node;
     }
