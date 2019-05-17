@@ -240,6 +240,31 @@ public class PathList implements Iterable<Path>
         }
     }
     
+    public Path randomPath(Node origin, Node dest)
+    {
+        Map<Integer, List<Path>> hashtable = paths.get(origin).get(dest);
+        
+        double rand = Math.random();
+        
+        for(int i : hashtable.keySet())
+        {
+            for(Path p : hashtable.get(i))
+            {
+                if(rand < p.proportion)
+                {
+                    return p;
+                }
+                else
+                {
+                    rand -= p.proportion;
+                }
+            }
+        }
+        
+        return null;
+        
+    }
+    
     /**
      * This method adds the {@link Path} without checking for duplicates.
      * It should not be used outside of the {@link PathList}, therefore it is marked private.

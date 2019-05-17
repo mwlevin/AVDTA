@@ -29,6 +29,8 @@ import java.util.Set;
  */
 public class MaxPressure extends IntersectionControl 
 {
+    public static final double LOST_TIME = 2.0;
+    
     private List<Phase> phases;
     private List<MPTurn> turns;
     
@@ -91,7 +93,7 @@ public class MaxPressure extends IntersectionControl
                         allowed.add(t);
                     }
                     
-                    Phase p = new Phase(0, allowed, Simulator.dt-2, 0, 2);
+                    Phase p = new Phase(0, allowed, Simulator.dt-LOST_TIME, 0, LOST_TIME);
                     phases.add(p);
                 }
             }

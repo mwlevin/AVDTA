@@ -26,6 +26,7 @@ public class StaticODTable implements Iterable<StaticODRecord>
 {
     // the order is origin, dest, type, ast
     private Map<Integer, Map<Integer, Map<Integer, Double>>> table;
+    private double total;
     
     /**
      * Constructs an empty dynamic OD table.
@@ -46,6 +47,7 @@ public class StaticODTable implements Iterable<StaticODRecord>
     public void clear()
     {
         table.clear();
+        total = 0;
     }
     
     /**
@@ -70,9 +72,15 @@ public class StaticODTable implements Iterable<StaticODRecord>
             filein.nextLine();
             
             addDemand(o, d, type, dem);
+            total += dem;
         }
         
         filein.close();
+    }
+    
+    public double getTotal()
+    {
+        return total;
     }
     
     
@@ -83,6 +91,7 @@ public class StaticODTable implements Iterable<StaticODRecord>
     public void addDemand(StaticODRecord odt)
     {
         addDemand(odt.getOrigin(), odt.getDest(), odt.getType(), odt.getDemand());
+        total += odt.getDemand();
     }
     
     /**
@@ -162,6 +171,8 @@ public class StaticODTable implements Iterable<StaticODRecord>
         {
             temp2.put(type, dem);
         }
+        
+        total += dem;
 
         
     }
@@ -210,11 +221,13 @@ public class StaticODTable implements Iterable<StaticODRecord>
         
         if(temp2.containsKey(type))
         {
+            total += dem - temp2.get(type);
             temp2.put(type, temp2.get(type) + dem);
         }
         else
         {
             temp2.put(type, dem);
+            total += dem;
         }
         
 

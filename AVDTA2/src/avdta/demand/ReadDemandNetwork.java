@@ -38,6 +38,13 @@ public class ReadDemandNetwork extends ReadNetwork
         
     }
     
+    
+    
+    public int prepareDemand(DemandProject project) throws IOException
+    {
+        return prepareDemand(project, 1.0);
+    }
+    
     /**
      * This generates the demand file using the demand_profile and dynamic_od files.
      * The demand file will be overwritten.
@@ -123,6 +130,11 @@ public class ReadDemandNetwork extends ReadNetwork
         
     }
     
+    public void createDynamicOD(DemandProject project) throws IOException
+    {
+        createDynamicOD(project, 1.0);
+    }
+    
     /**
      * This generates the dynamic_od file from the static_od and demand_profile files.
      * Note that the dynamic_od file will be overwritten.
@@ -130,7 +142,7 @@ public class ReadDemandNetwork extends ReadNetwork
      * @param project the project
      * @throws IOException if a file cannot be accessed.
      */
-    public void createDynamicOD(DemandProject project) throws IOException
+    public void createDynamicOD(DemandProject project, double prop) throws IOException
     {
         DemandProfile profile = readDemandProfile(project);
         
@@ -164,7 +176,7 @@ public class ReadDemandNetwork extends ReadNetwork
             {
                 AST ast = profile.get(t);
                 
-                fileout.println((new_id++)+"\t"+type+"\t"+origin+"\t"+dest+"\t"+ast.getId() + "\t" + demand * ast.getWeight());
+                fileout.println((new_id++)+"\t"+type+"\t"+origin+"\t"+dest+"\t"+ast.getId() + "\t" + (prop * demand * ast.getWeight()));
             }
         }
         

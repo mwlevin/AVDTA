@@ -71,6 +71,7 @@ public class DemandProfile extends TreeMap<Integer, AST>
     public void add(AST a)
     {
         put(a.getId(), a);
+        
     }
     
     /**
