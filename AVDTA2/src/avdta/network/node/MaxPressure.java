@@ -56,16 +56,7 @@ public class MaxPressure extends IntersectionControl
         }
         
         Map<Link, Map<Link, TurningMovement>> conflicts = ConflictFactory.generate(node);
-        
-        for(Link i : conflicts.keySet())
-        {
-            for(Link j : conflicts.get(i).keySet())
-            {
-                if(conflicts.get(i).get(j).size() > 0)
-                System.out.println(i.getSource()+"\t"+j.getDest()+" - "+conflicts.get(i).get(j).size());
-            }
-            System.out.println();
-        }
+
         
         phases =  new ArrayList<>();
         

@@ -5,9 +5,12 @@
 package avdta.network.node;
 
 import avdta.network.Simulator;
+import avdta.network.link.CentroidConnector;
 import avdta.network.link.Link;
 import avdta.network.node.TurningMovement;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -32,6 +35,66 @@ public class ConflictFactory
     */
     public static Map<Link, Map<Link, TurningMovement>> generate(Node node)
     {
+        
+        Map<Node, Double> directions = new HashMap<>();
+        
+        List<Node> links = new ArrayList<>();
+        
+        for(Link l : node.getIncoming())
+        {
+            if(!(l instanceof CentroidConnector))
+            {
+                links.add(l.getSource());
+            }
+        }
+        
+        for(Link l : node.getOutgoing())
+        {
+            if(!(l instanceof CentroidConnector))
+            {
+                if(!links.contains(l.getDest()))
+                {
+                    links.add(l.getDest());
+                }
+            }
+        }
+        
+        Collections.sort(links, new Comparator<Node>()
+        {
+            public int compare(Node lhs, Node rhs)
+            {
+                double d1 = node.angleTo(lhs);
+                double d2 = node.angleTo(rhs);
+                
+                if(d1 < d2)
+                {
+                    return -1;
+                }
+                else if(d1 > d2)
+                {
+                    return 1;
+                }
+                else
+                {
+                    return 0;
+                }
+            }
+        });
+        
+        
+        directions.put(links.get(0), 0.0);
+        
+        for(int i = 1; i < links.size(); i++)
+        {
+            double angle = node.angleTo(links.get(i)) - node.angleTo(links.get(0));
+            angle = Math.PI/2 * Math.round(angle / (Math.PI/2));
+            directions.put(links.get(i), angle);
+        }
+        
+
+        
+        
+        
         Map<Link, Map<Link, TurningMovement>> output1 = new HashMap<Link, Map<Link, TurningMovement>>();
         
 
@@ -41,7 +104,7 @@ public class ConflictFactory
         {
             if(!l.isCentroidConnector())
             {
-                double direction = l.getDirection();
+                double direction = directions.get(l.getSource()) + Math.PI;
 
                 if(direction < 0)
                 {
@@ -60,7 +123,7 @@ public class ConflictFactory
         {
             if(!l.isCentroidConnector())
             {
-                double direction = l.getDirection();
+                double direction = directions.get(l.getDest());
 
                 // reverse it
                 direction += Math.PI;
@@ -89,12 +152,7 @@ public class ConflictFactory
         }
 
 
-        if(node.getId() == 13043)
-        {
-            System.out.println(division.size());
-            System.out.println(division);
-        }
-
+  
 
         double shift_epsilon = 0.1;
         double step = 1.0/3;
@@ -105,7 +163,7 @@ public class ConflictFactory
             output1.put(i, temp = new HashMap<Link, TurningMovement>());
 
             // find starting point
-            double start_dir = i.getDirection() + Math.PI;
+            double start_dir = directions.get(i.getSource());
             
             if(start_dir >= 2*Math.PI)
             {
@@ -133,7 +191,13 @@ public class ConflictFactory
                     continue;
                 }
 
-                double end_dir = j.getDirection();
+                double end_dir = directions.get(j.getDest());
+                
+                end_dir = start_dir + Math.PI /2 * Math.round( (end_dir - start_dir) / (Math.PI/2));
+                   
+                
+                
+                
                 shift_dir = end_dir - Math.PI/2;
 
                 double end_x = Math.cos(end_dir) + Math.cos(shift_dir)*shift_epsilon;
@@ -149,16 +213,16 @@ public class ConflictFactory
                 
                 
                 // straight line
-                System.out.println("--");
-                System.out.println(i.getSource()+" "+j.getDest());
-                System.out.println(i.getDirection() +" "+j.getDirection());
-                System.out.println(start_dir+" "+end_dir);
-                System.out.println(start_x+"\t"+start_y);
-                System.out.println(end_x+"\t"+end_y);
+  
                 
-                if(Math.abs(i.getDirection() - j.getDirection()) < 0.01)
+                double start_dir_opp = start_dir + Math.PI;
+                
+                if(start_dir_opp >= 2*Math.PI)
                 {
-                    System.out.println("straight");
+                    start_dir_opp -= 2* Math.PI;
+                }
+                if(Math.abs(start_dir_opp -end_dir) < 0.01)
+                {
                     double a = end_x - start_x;
                     double b = end_y - start_y;
 
@@ -187,8 +251,8 @@ public class ConflictFactory
                     double x2 = end_x;
                     double y2 = end_y;
 
-                    double dir1 = i.getDirection();
-                    double dir2 = j.getDirection() + Math.PI;
+                    double dir1 = start_dir + Math.PI;
+                    double dir2 = end_dir + Math.PI;
 
                     double a1 = start_x + 2*Math.cos(dir1);
                     double b1 = start_y + 2*Math.sin(dir1);
