@@ -5,7 +5,9 @@
  */
 package avdta.network.link;
 
+import avdta.network.ReadNetwork;
 import avdta.network.node.Node;
+import avdta.network.type.Type;
 
 /**
  * This class implements the max-pressure type link network. 
@@ -22,5 +24,10 @@ public class MPLink extends CTMLink
     public MPLink(int id, Node source, Node dest, double capacity, double ffspd, double wavespd, double jamd, double length, int numLanes)
     {
         super(id, source, dest, capacity, ffspd, ffspd, Integer.MAX_VALUE, length, numLanes);
+    }
+    
+    public Type getType()
+    {
+        return ReadNetwork.MP_LINK;
     }
 }

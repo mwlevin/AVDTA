@@ -55,8 +55,12 @@ public class MPTurn extends Turn
         return weight;
     }
     
+
+    
     public void calculateQueue()
     {
+        int queue = 0;
+        
         Iterable<Vehicle> sending;
         
         if(i instanceof CentroidConnector)

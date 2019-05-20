@@ -16,6 +16,8 @@ import java.util.List;
  */
 public class Phase implements Comparable<Phase>
 {
+
+    
     private double start_time;
     
     private double green_time, yellow, red;

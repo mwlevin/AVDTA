@@ -31,6 +31,11 @@ public class Turn implements java.io.Serializable, Comparable<Turn>
         return Math.min(i.getCapacity(), j.getCapacity());
     }
     
+    public double getCapacityPerTimestep()
+    {
+        return Math.min(i.getCapacityPerTimestep(), j.getCapacityPerTimestep());
+    }
+    
     public int compareTo(Turn rhs)
     {
         if(rhs.i != i)

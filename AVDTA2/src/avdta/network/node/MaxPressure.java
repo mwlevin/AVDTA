@@ -57,6 +57,8 @@ public class MaxPressure extends IntersectionControl
             }
         }
         
+        Set<Turn> matched = new HashSet<Turn>();
+        
         Map<Link, Map<Link, TurningMovement>> conflicts = ConflictFactory.generate(node);
 
         
@@ -93,12 +95,28 @@ public class MaxPressure extends IntersectionControl
                         allowed.add(t);
                     }
                     
+                    for(Turn t : allowed)
+                    {
+                        matched.add(t);
+                    }
                     Phase p = new Phase(0, allowed, Simulator.dt-LOST_TIME, 0, LOST_TIME);
                     phases.add(p);
                 }
             }
         }
         
+        
+        for(Turn t : turns)
+        {
+            if(!matched.contains(t))
+            {
+                Phase p = new Phase(0, new Turn[]{t}, Simulator.dt-LOST_TIME, 0, LOST_TIME);
+                phases.add(p);
+            }
+        }
+        
+
+       
         // remove duplicate phases
         List<Phase> duplicates = new ArrayList<>();
         for(int i = 0; i < phases.size()-1; i++)
@@ -111,11 +129,14 @@ public class MaxPressure extends IntersectionControl
                 }
             }
         }
-        
+
         for(Phase p : duplicates)
         {
             phases.remove(p);
         }
+        
+        
+
 
     }
     
@@ -132,6 +153,10 @@ public class MaxPressure extends IntersectionControl
             return false;
         }
         
+        if(t1.j == t2.j && getNode().getOutgoing().size() == 2)
+        {
+            return false;
+        }
         
         
         Set<ConflictRegion> c1 = conflicts.get(t1.i).get(t1.j);
@@ -190,19 +215,25 @@ public class MaxPressure extends IntersectionControl
         return ReadNetwork.MAX_PRESSURE;
     }
     
+    double max_pressure;
+    
     public Phase choosePhase()
     {
         Phase best = null;
-        double max_pressure = Integer.MIN_VALUE;
+        max_pressure = Integer.MIN_VALUE;
+        
+
         
         for(Phase p : phases)
         {
             double pressure = 0;
+
             
             for(Turn t : p.getTurns())
             {
-                pressure += ((MPTurn)t).getWeight() * t.getCapacity();
+                pressure += ((MPTurn)t).getWeight() * t.getCapacityPerTimestep();
             }
+
             
             if(pressure > max_pressure)
             {
@@ -210,6 +241,7 @@ public class MaxPressure extends IntersectionControl
                 best = p;
             }
         }
+        
         
         
         return best;
@@ -232,66 +264,100 @@ public class MaxPressure extends IntersectionControl
     {
         Phase phase = choosePhase();
         
+        List<Vehicle> moved = new ArrayList<>();
+
+        Node node = getNode();
         
+        int waiting = 0;
+        
+        // move vehicles to centroid connectors
+        for(Link i : node.getIncoming())
+        {
+            Iterable<Vehicle> sending;
+            
+            if(i instanceof CentroidConnector)
+            {
+                sending = i.getVehicles();
+            }
+            else
+            {
+                // t.i is MPLink
+                sending = ((MPLink)i).getLastCell().getOccupants();
+            }
+            
+            for(Vehicle v : sending)
+            {
+                if(v.getNextLink() == null || v.getNextLink().isCentroidConnector())
+                {
+                    moved.add(v);
+                }
+                waiting++;
+            }
+        }
         
 
         int exiting = 0;
 
         
-        // move vehicles according to selected phase
-        for(Turn t : phase.getTurns())
+
+        if(phase != null)
         {
-            double usable = (Simulator.dt - phase.getRedTime()) / Simulator.dt;
-            
-            int max_y = (int)Math.round(usable * Math.min(t.i.getCapacityPerTimestep(), t.j.getCapacityPerTimestep()));
-            
-            Iterable<Vehicle> sending;
-            
-            
-            List<Vehicle> moved = new ArrayList<>();
-            
-            if(t.i instanceof CentroidConnector)
+        
+            // move vehicles according to selected phase
+            for(Turn t : phase.getTurns())
             {
-                sending = t.i.getVehicles();
-            }
-            else
-            {
-                // t.i is MPLink
-                sending = ((MPLink)t.i).getLastCell().getOccupants();
-            }
-            
-            for(Vehicle v : sending)
-            {
-                if(v.getNextLink() == null)
+                double usable = (Simulator.dt - phase.getRedTime()) / Simulator.dt;
+
+                int max_y = (int)Math.round(usable * Math.min(t.i.getCapacityPerTimestep(), t.j.getCapacityPerTimestep()));
+
+                Iterable<Vehicle> sending;
+
+
+
+
+                if(t.i instanceof CentroidConnector)
                 {
-                    moved.add(v);
-                }
-                
-                else if(max_y > 0 && v.getNextLink() == t.j)
-                {
-                    moved.add(v);
-                    max_y--;
-                }
-                
-                
-            }
-            
-            for(Vehicle v : moved)
-            {
-                Link j = v.getNextLink();
-                Link i = v.getCurrLink();
-                
-                i.removeVehicle(v);
-                
-                if(j == null)
-                {
-                    exiting++;
-                    v.exited();
+                    sending = t.i.getVehicles();
                 }
                 else
                 {
-                    j.addVehicle(v);
+                    // t.i is MPLink
+                    sending = ((MPLink)t.i).getLastCell().getOccupants();
                 }
+
+                for(Vehicle v : sending)
+                {
+
+
+                    if(max_y > 0 && v.getNextLink() == t.j)
+                    {
+                        moved.add(v);
+                        max_y--;
+                    }
+
+
+                }
+
+
+            }
+        }
+        
+            
+        for(Vehicle v : moved)
+        {
+            Link j = v.getNextLink();
+            Link i = v.getCurrLink();
+
+            i.removeVehicle(v);
+
+            if(j == null)
+            {
+                exiting++;
+                v.exited();
+            }
+            else
+            {
+                j.addVehicle(v);
             }
         }
         

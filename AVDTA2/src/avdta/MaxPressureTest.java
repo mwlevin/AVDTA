@@ -37,7 +37,7 @@ public class MaxPressureTest
         
         
         
-        Simulator.duration = duration;
+        
         project.loadSimulator();
         Simulator sim = project.getSimulator();
 
@@ -61,6 +61,9 @@ public class MaxPressureTest
         }
         
         sim.calculateTurningProportionsMP(assign);
+        
+        
+        Simulator.duration = duration;
         
         return sim;
     }

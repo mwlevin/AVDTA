@@ -72,7 +72,7 @@ import avdta.network.node.MaxPressure;
  */
 public class Simulator extends Network 
 {
-    public boolean recurred;
+
     
     public static int time;
     
@@ -147,6 +147,7 @@ public class Simulator extends Network
     private boolean postProcessed;
     
 
+    private boolean printQueueLength;
     
     protected StatusUpdate statusUpdate;
     
@@ -194,6 +195,12 @@ public class Simulator extends Network
         lastExit = duration;
         
         emergency = new HashSet<>();
+    }
+    
+    
+    public void recordQueueLengths()
+    {
+        printQueueLength = true;
     }
     
     public Set<EmergencyVehicle> getEmergencyVehicles()
@@ -912,10 +919,7 @@ public class Simulator extends Network
      */
     public void simulate() throws IOException
     {   
-        recurred = false;
-        
-        int occupancy_900 = 0;
-        
+ 
         resetSim();
 
         
@@ -929,22 +933,27 @@ public class Simulator extends Network
         
         
         
+        PrintStream queueLengthOut = null;
+        
+        if(printQueueLength)
+        {
+            queueLengthOut = new PrintStream(new FileOutputStream(new File(project.getResultsFolder()+"/queue_lengths.txt")), true);
+            queueLengthOut.println("Time (s)\tTotal queue");
+        }
+        
+        
+        
         for(time = 0; time < duration; time += dt)
         {
             //System.out.println(time+"\t"+getNumVehiclesInSystem()+"\t"+occupancy_900);
             // push vehicles onto centroid connectors at departure time
             addVehicles();
             
-            if(time == 900)
+
+            
+            if(printQueueLength)
             {
-                occupancy_900 = getNumVehiclesInSystem();
-            }
-            if(time >= 7200-900)
-            {
-                if(getNumVehiclesInSystem() <= 1.1*occupancy_900)
-                {
-                    recurred = true;
-                }
+                queueLengthOut.println(time+"\t"+getNumVehiclesInSystem());
             }
             
             
@@ -955,34 +964,9 @@ public class Simulator extends Network
                 break;
             }
             
-            /*
-            if(time % 600 == 0)
-            {
-                int possible = 0;
-                int count = 0;
-        
-                for(Link l : links)
-                {
-                    if(l instanceof DLRCTMLink)
-                    {
-                        DLRCTMLink link = (DLRCTMLink)l;
-
-                        if(link.getCells()[1].getNumLanes() != link.getNumLanes())
-                        {
-                            count++;
-
-                        }
-
-                        if(link.getOpposite() != null)
-                        {
-                            possible++;
-                        }
-                    }
-                }
-
-                System.out.println(String.format("%.2f", 100.0*count/possible)+"%\t"+(possible/2));
-            }
-            */
+            
+            
+            
         }
         
 
@@ -1005,6 +989,11 @@ public class Simulator extends Network
         simulationFinished();
          
         vat.close();
+        
+        if(printQueueLength)
+        {
+            queueLengthOut.close();
+        }
         
         
     }
