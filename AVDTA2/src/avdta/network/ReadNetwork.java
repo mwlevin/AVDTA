@@ -38,6 +38,7 @@ import avdta.network.link.SharedTransitCTMLink;
 import avdta.network.link.AbstractSplitLink;
 import avdta.network.link.DLR2CTMLink;
 import avdta.network.link.LinkRecord;
+import avdta.network.link.MPLink;
 import avdta.network.link.SplitCTMLink;
 import avdta.network.link.TransitLane;
 import avdta.network.node.Connector;
@@ -116,6 +117,8 @@ public class ReadNetwork
             return link.getNumLanes() > 1;
         }
     };
+    
+    public static final ExtendedType MP_LINK = new ExtendedType(36, "MP-LINK", CTM);
     
     public static final ExtendedType CACC = new ExtendedType(5, "CACC", LTM);
     
@@ -869,6 +872,10 @@ public class ReadNetwork
                     links.add(transitLane);
                     link = new SplitCTMLink(id, source, dest, capacity, 
                             ffspd, ffspd*mesodelta, jamd, length, numLanes-1, transitLane);
+                }
+                else if(type % 100 == MP_LINK.getCode()%100)
+                {
+                    link = new MPLink(id, source, dest, capacity, ffspd, w, jamd, length, numLanes);
                 }
                 else
                 {
