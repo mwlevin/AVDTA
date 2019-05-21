@@ -110,8 +110,8 @@ public class Main
         
         DTAProject project = new DTAProject(new File("projects/coacongress2_ttmp"));
     
-        Simulator sim = MaxPressureTest.createMPSimulator(project, 1000, 3600);
-        sim.recordQueueLengths();
+        Simulator sim = MaxPressureTest.createMPSimulator(project, 5000, 3600);
+        sim.recordQueueLengths(1800);
 
         Simulator.duration = 3600*3;
         sim.simulate();

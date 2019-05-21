@@ -198,9 +198,14 @@ public class Simulator extends Network
     }
     
     
-    public void recordQueueLengths()
+    private int queue_time_delay;
+    private RunningAvg queue_length;
+    
+    public void recordQueueLengths(int time_delay)
     {
         printQueueLength = true;
+        queue_time_delay = time_delay;
+        queue_length = new RunningAvg();
     }
     
     public Set<EmergencyVehicle> getEmergencyVehicles()
@@ -953,7 +958,14 @@ public class Simulator extends Network
             
             if(printQueueLength)
             {
-                queueLengthOut.println(time+"\t"+getNumVehiclesInSystem());
+                int queue = getNumVehiclesInSystem();
+                
+                queueLengthOut.println(time+"\t"+queue);
+                
+                if(time >= queue_time_delay)
+                {
+                    queue_length.add(queue);
+                }
             }
             
             
@@ -993,6 +1005,7 @@ public class Simulator extends Network
         if(printQueueLength)
         {
             queueLengthOut.close();
+            System.out.println("Average queue length: "+queue_length.getAverage());
         }
         
         
