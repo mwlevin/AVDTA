@@ -33,7 +33,7 @@ public class MPTurn extends Turn
         p_ij = p;
     }
     
-    public double getWeight()
+    public double getWeight(MPWeight func)
     {
         double weight = queue;
         

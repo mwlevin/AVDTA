@@ -110,11 +110,32 @@ public class Main
         
         DTAProject project = new DTAProject(new File("projects/coacongress2_ttmp"));
     
-        Simulator sim = MaxPressureTest.createMPSimulator(project, 5000, 3600);
+        // this is Varaiya's function
+        MaxPressure.weight_function = new MPWeight()
+        {
+            public double calcMPWeight(MPTurn turn)
+            {
+                return turn.getQueue();
+            }
+        };
+        
+        /*
+        // this is the travel time function
+        MaxPressure.weight_function = new MPWeight()
+        {
+            public double calcMPWeight(MPTurn turn)
+            {
+                return turn.getQueue() / turn.getCapacity();
+            }
+        };
+        */
+        
+        Simulator sim = MaxPressureTest.createMPSimulator(project, 5000, 3600*3);
         sim.recordQueueLengths(1800);
 
         Simulator.duration = 3600*3;
         sim.simulate();
+        System.out.println(sim.getAvgTT(DriverType.HV));
         
         
         

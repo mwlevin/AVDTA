@@ -29,10 +29,14 @@ import java.util.Set;
  */
 public class MaxPressure extends IntersectionControl 
 {
+
     public static final double LOST_TIME = 2.0;
     
     private List<Phase> phases;
     private List<MPTurn> turns;
+    
+    
+    public static MPWeight weight_function;
     
     public MaxPressure(Intersection node) 
     {
@@ -231,7 +235,7 @@ public class MaxPressure extends IntersectionControl
             
             for(Turn t : p.getTurns())
             {
-                pressure += ((MPTurn)t).getWeight() * t.getCapacityPerTimestep();
+                pressure += ((MPTurn)t).getWeight(weight_function) * t.getCapacityPerTimestep();
             }
 
             
