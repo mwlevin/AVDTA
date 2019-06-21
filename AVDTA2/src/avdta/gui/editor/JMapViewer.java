@@ -29,6 +29,7 @@ public class JMapViewer extends org.openstreetmap.gui.jmapviewer.JMapViewer
     public void setDisplayOSM(boolean d)
     {
         displayOSM = d;
+        
         repaint();
     }
     
@@ -40,6 +41,7 @@ public class JMapViewer extends org.openstreetmap.gui.jmapviewer.JMapViewer
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
+
 
         int iMove = 0;
 
@@ -124,6 +126,12 @@ public class JMapViewer extends org.openstreetmap.gui.jmapviewer.JMapViewer
                 }
             }
         }
+        else
+        {
+            g.setColor(getBackground());
+            g.fillRect(0, 0, getWidth(), getHeight());
+        }
+        
         // outer border of the map
         int mapSize = tilesize << zoom;
         if (scrollWrapEnabled) {
