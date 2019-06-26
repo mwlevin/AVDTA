@@ -5,7 +5,10 @@
 package avdta.gui.editor;
 
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.image.BufferedImage;
+import java.io.File;
 import org.openstreetmap.gui.jmapviewer.Tile;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapMarker;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapPolygon;
@@ -23,7 +26,7 @@ public class JMapViewer extends org.openstreetmap.gui.jmapviewer.JMapViewer
     
     public JMapViewer()
     {
-        setTileSource(new OfflineOsmTileSource("osm/tiles/",1,9));
+        //setTileSource(new OfflineOsmTileSource("osm/tiles/",1,9));
         displayOSM = true;
     }
     
@@ -111,6 +114,8 @@ public class JMapViewer extends org.openstreetmap.gui.jmapviewer.JMapViewer
                                 tile = tileController.getTile(tilex, tiley, zoom);
                             }
                             if (tile != null) {
+                                
+
                                 tile.paint(g, posx, posy, tilesize, tilesize);
                                 if (tileGridVisible) {
                                     g.drawRect(posx, posy, tilesize, tilesize);
