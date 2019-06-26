@@ -10,7 +10,7 @@ import org.openstreetmap.gui.jmapviewer.Tile;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapMarker;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapPolygon;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapRectangle;
-
+import org.openstreetmap.gui.jmapviewer.OsmTileLoader;
 /**
  *
  * @author ml26893
@@ -23,6 +23,7 @@ public class JMapViewer extends org.openstreetmap.gui.jmapviewer.JMapViewer
     
     public JMapViewer()
     {
+        setTileSource(new OfflineOsmTileSource("osm/tiles/",1,9));
         displayOSM = true;
     }
     
@@ -41,6 +42,7 @@ public class JMapViewer extends org.openstreetmap.gui.jmapviewer.JMapViewer
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
+
 
 
         int iMove = 0;
