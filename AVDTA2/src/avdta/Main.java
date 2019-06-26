@@ -130,7 +130,9 @@ public class Main
         };
         */
         
-        Simulator sim = MaxPressureTest.createMPSimulator(project, 5000, 3600*3);
+        int demand = 5000; // vehicles per hour
+        int duration = 3600 * 3; // 3 hours * 3600 seconds
+        Simulator sim = MaxPressureTest.createMPSimulator(project, demand, duration);
         sim.recordQueueLengths(1800);
 
         Simulator.duration = 3600*3;

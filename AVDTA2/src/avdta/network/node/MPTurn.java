@@ -35,7 +35,7 @@ public class MPTurn extends Turn
     
     public double getWeight(MPWeight func)
     {
-        double weight = queue;
+        double weight = func.calcMPWeight(this); // x_ij or T_ij
         
         Node n = j.getDest();
         
@@ -47,7 +47,7 @@ public class MPTurn extends Turn
             {
                 if(t.i == j)
                 {
-                    weight -= t.getTurningProportion() * t.getQueue();
+                    weight -= t.getTurningProportion() * func.calcMPWeight(t); // - p_jk x_jk or -p_jk T_jk
                 }
             }
         }
