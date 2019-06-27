@@ -10,12 +10,17 @@ import avdta.demand.DemandProfile;
 import avdta.demand.ReadDemandNetwork;
 import avdta.demand.StaticODTable;
 import avdta.dta.Assignment;
+import avdta.dta.DTASimulator;
+import avdta.dta.ReadDTANetwork;
 import avdta.network.Path;
 import avdta.network.PathList;
 import avdta.network.Simulator;
+import avdta.network.link.Link;
+import avdta.network.node.Node;
 import avdta.project.DTAProject;
 import avdta.vehicle.Vehicle;
 import java.io.IOException;
+import java.util.Set;
 
 /**
  *
@@ -23,9 +28,9 @@ import java.io.IOException;
  */
 public class MaxPressureTest 
 {
-    public static Simulator createMPSimulator(DTAProject project, double vph, int duration) throws IOException
+    public static MPSimulator createMPSimulator(DTAProject project, double vph, int duration) throws IOException
     {
-        ReadDemandNetwork read = new ReadDemandNetwork();
+        ReadDTANetwork read = new ReadDTANetwork();
         DemandProfile profile = new DemandProfile();
         profile.add(new AST(1, 0, duration, 1.0));
         profile.save(project);
@@ -38,8 +43,19 @@ public class MaxPressureTest
         
         
         
-        project.loadSimulator();
-        Simulator sim = project.getSimulator();
+        read.readOptions(project);
+        Set<Node> nodes = read.readNodes(project);
+        Set<Link> links = read.readLinks(project);
+        
+        read.readIntersections(project);
+        read.readPhases(project);
+        
+        
+        MPSimulator sim = new MPSimulator(project, nodes, links);
+
+        read.readVehicles(project, sim);
+        
+        sim.initialize();
 
                 
                 
