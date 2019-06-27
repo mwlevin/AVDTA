@@ -5,6 +5,7 @@
 package avdta.vehicle;
 
 import avdta.dta.DTASimulator;
+import avdta.duer.DUERSimulator;
 import avdta.duer.Incident;
 import avdta.duer.VMS;
 import avdta.vehicle.wallet.Wallet;
@@ -637,19 +638,22 @@ public abstract class Vehicle implements Serializable, Comparable<Vehicle>
         
         Link i = getPrevLink();
 
-        
-        Incident actual = Simulator.active.getIncident();
-        
-        if(actual != incident)
+        if(Simulator.active instanceof DUERSimulator)
         {
-            VMS vms = l.getVMS();
-            if(Math.random() < vms.getProbOfInformation(actual))
+            DUERSimulator sim = (DUERSimulator)Simulator.active;
+            Incident actual = sim.getIncident();
+
+            if(actual != incident)
             {
-                incident = actual;
-            }
-            else if(Simulator.active.isObservable(l, actual))
-            {
-                incident = actual;
+                VMS vms = l.getVMS();
+                if(Math.random() < vms.getProbOfInformation(actual))
+                {
+                    incident = actual;
+                }
+                else if(sim.isObservable(l, actual, Simulator.time))
+                {
+                    incident = actual;
+                }
             }
         }
         

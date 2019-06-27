@@ -213,10 +213,7 @@ public class Simulator extends Network
         return emergency;
     }
     
-    public Incident getIncident()
-    {
-        return Incident.UNKNOWN;
-    }
+ 
     
     
     
@@ -225,10 +222,6 @@ public class Simulator extends Network
     
     
     
-    public boolean isObservable(Link l, Incident i)
-    {
-        return false;
-    }
     
     /**
      * Sets the {@link StatusUpdate}, which is used for visualizing progress

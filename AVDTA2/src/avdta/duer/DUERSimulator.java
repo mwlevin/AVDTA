@@ -352,7 +352,7 @@ public class DUERSimulator extends DTASimulator
         {
             for(Incident i : incidents)
             {
-                List<Link> links = trace((Hyperpath)v.getRouteChoice(), v.getOrigin(), i);
+                List<Link> links = trace((Hyperpath)v.getRouteChoice(), v.getOrigin(), i, v.getAST());
                 
                 fileout.print(v.getId()+"\t"+i.getId()+"\t");
                 
@@ -376,7 +376,7 @@ public class DUERSimulator extends DTASimulator
     
     public double getTT(Hyperpath path, Node origin, Incident incident, int ast)
     {
-        List<Link> links = trace(path, origin, incident);
+        List<Link> links = trace(path, origin, incident, ast);
         
         double output = 0.0;
         
@@ -388,7 +388,7 @@ public class DUERSimulator extends DTASimulator
         
         return output;
     }
-    public List<Link> trace(Hyperpath path, Node origin, Incident incident)
+    public List<Link> trace(Hyperpath path, Node origin, Incident incident, int ast)
     {
         List<Link> output = new ArrayList<>();
         
@@ -403,7 +403,7 @@ public class DUERSimulator extends DTASimulator
             {
                 perception = incident;
             }
-            else if(isObservable(curr, incident))
+            else if(isObservable(curr, incident, ast * ast_duration))
             {
                 perception = incident;
             }
@@ -674,7 +674,7 @@ public class DUERSimulator extends DTASimulator
 
                                 double prob;
 
-                                if(isObservable(u, ip))
+                                if(isObservable(u, ip, ast * ast_duration))
                                 {
                                     prob = ip.getProbabilityOn();
                                 }
