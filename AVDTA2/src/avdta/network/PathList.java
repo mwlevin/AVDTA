@@ -252,7 +252,7 @@ public class PathList implements Iterable<Path>
             return null;
         }
         
-        double rand = Math.random();
+        double rand = Simulator.active.getProject().getRandom().nextDouble();
         
         for(int i : hashtable.keySet())
         {
