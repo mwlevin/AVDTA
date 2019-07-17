@@ -178,7 +178,7 @@ public class DTAProject extends DemandProject
      */
     public String getAssignmentsFolder()
     {
-        return getProjectDirectory()+"/assignments";
+        return getProjectDirectory()+"/assignments/";
     }
     
     /**

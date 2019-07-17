@@ -138,8 +138,7 @@ public class MaxPressure extends IntersectionControl
         {
             phases.remove(p);
         }
-        
-        
+
 
 
     }

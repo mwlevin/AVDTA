@@ -201,6 +201,35 @@ public class PathList implements Iterable<Path>
         fileout.close();
     }
     
+
+    
+    public boolean contains(Path rhs)
+    {
+        Map<Integer, List<Path>> temp = paths.get(rhs.getOrigin()).get(rhs.getDest());
+        
+        for(int i : temp.keySet())
+        {
+            for(Path p : temp.get(i))
+            {
+                if(p == rhs)
+                {
+                    return true;
+                }
+            }
+        }
+        
+        return false;
+    }
+    
+    public void clearProportions()
+    {
+        for(Path p : this)
+        {
+            p.flow = 0;
+            p.proportion = 0;
+        }
+    }
+    
     /**
      * This method constructs this {@link PathList} from the specified {@link File}. 
      * {@link Path}s in the file are converted to a list of {@link Link}s via the specified {@link Network}.
@@ -350,8 +379,10 @@ public class PathList implements Iterable<Path>
         return output;
     }
     
-    public void updatePathFlowProportions()
+    public void calculateProportions()
     {
+
+        
         for(Node o : paths.keySet())
         {
             Map<Node, Map<Integer, List<Path>>> temp = paths.get(o);
@@ -362,19 +393,27 @@ public class PathList implements Iterable<Path>
                 
                 Map<Integer, List<Path>> temp2 = temp.get(d);
                 
-                for(int i : temp2.keySet())
+                for(int hash : temp2.keySet())
                 {
-                    for(Path p : temp2.get(i))
+                    for(Path p : temp2.get(hash))
                     {
                         total += p.flow;
                     }
                 }
                 
-                for(int i : temp2.keySet())
+                for(int hash : temp2.keySet())
                 {
-                    for(Path p : temp2.get(i))
+                    for(Path p : temp2.get(hash))
                     {
-                       p.proportion = p.flow / total;
+                        if(total > 0)
+                        {
+                            p.proportion = (double) p.flow / total;
+                        }
+                        else
+                        {
+                            p.proportion = 0;
+                        }
+
                     }
                 }
             }

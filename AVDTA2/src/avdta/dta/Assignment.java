@@ -311,7 +311,7 @@ public class Assignment implements Comparable<Assignment>
         // calculate proportions.
         
         PathList paths = project.getSimulator().getPaths();
-        
+
         for(Path p : paths)
         {
             p.flow = 0;
@@ -322,7 +322,7 @@ public class Assignment implements Comparable<Assignment>
             v.getPath().flow++;
         }
         
-        paths.updatePathFlowProportions();
+        paths.calculateProportions();
         paths.writeToFile(this);
         
         PrintStream fileout = new PrintStream(new FileOutputStream(getVehiclesFile()), true);
@@ -390,6 +390,7 @@ public class Assignment implements Comparable<Assignment>
         {
             vehMap.put(v.getId(), v);
         }
+
         
         Map<Integer, Path> paths = pathlist.createPathIdsMap();
         

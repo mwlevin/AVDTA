@@ -177,6 +177,8 @@ public class DTASimulator extends Simulator
      */
     public DTAResults pathgen(double stepsize) throws IOException
     {
+
+        
         int error_count = 0;
 
         Map<Node, Map<Node, Path[][]>> newpaths = new HashMap<Node, Map<Node, Path[][]>>();
@@ -247,14 +249,20 @@ public class DTASimulator extends Simulator
 
 
             
+            double r = rand.nextDouble();
             
             // move vehicle random chance
-            if(v.getRouteChoice() == null || (rand.nextDouble() < stepsize && !(v instanceof EmergencyVehicle)))
+            if(v.getRouteChoice() == null || r <= stepsize)
             {
+
 
                 try
                 {
+                    
+                    
                     v.setPath(temp2[ast][v.getDriver().typeIndex()]);
+                    
+                    
                     moved_count++;
                 }
                 catch(Exception ex)
@@ -274,6 +282,7 @@ public class DTASimulator extends Simulator
             
 
         }
+        
 
         
         if(error_count > 0)
@@ -317,12 +326,15 @@ public class DTASimulator extends Simulator
         folder.mkdirs();
         
         PathList paths = getPaths();
+        
+        
         paths.writeToFile(assign.getPathsFile());
         
         assign.writeToFile(vehicles, (DTAProject)getProject());
         
         FileTransfer.copy(project.getDemandFile(), assign.getDemandFile());
     }
+
     
     /**
      * Opens an {@link Assignment} from the given {@link Assignment} folder and assigns vehicles as specified.
@@ -347,6 +359,7 @@ public class DTASimulator extends Simulator
     {
         DTAProject project = getProject();
         PathList paths = new PathList(this, assign.getPathsFile());
+        setPaths(paths);
         
         assign.readFromFile(project, getVehicles(), paths);
         
