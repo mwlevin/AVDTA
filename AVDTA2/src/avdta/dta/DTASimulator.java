@@ -168,6 +168,9 @@ public class DTASimulator extends Simulator
         return output;
     }
     
+    private int count;
+    private int moved_count;
+        
     /**
      * Generates new paths and loads 1/stepsize vehicles onto the new paths.
      * This method also compares minimum travel times with experienced travel times to calculate the gap.
@@ -186,8 +189,8 @@ public class DTASimulator extends Simulator
         double tstt = 0;
         double min = 0;
 
-        int count = 0;
-        int moved_count = 0;
+        count = 0;
+        moved_count = 0;
 
         for(Vehicle v : vehicles)
         {
@@ -255,11 +258,8 @@ public class DTASimulator extends Simulator
             if(v.getRouteChoice() == null || r <= stepsize)
             {
 
-
                 try
                 {
-                    
-                    
                     v.setPath(temp2[ast][v.getDriver().typeIndex()]);
                     
                     
@@ -592,10 +592,10 @@ public class DTASimulator extends Simulator
         if(print_status)
         {
             out.println(getProject().getName());
-            out.println("Iter\tStep\tGap %\tAEC\tTSTT\tTrips\tNon-exit\ttime");
+            out.println("Iter\tStep\tMoved\tGap %\tAEC\tTSTT\tTrips\tNon-exit\ttime");
         }
         
-        fileout.println("Iter\tStep\tGap %\tAEC\tTSTT\tTrips\tNon-exit\ttime");
+        fileout.println("Iter\tStep\tMoved\tGap %\tAEC\tTSTT\tTrips\tNon-exit\ttime");
         
         int max_iter_contingency = max_iter *2;
         
@@ -616,11 +616,11 @@ public class DTASimulator extends Simulator
 
             if(print_status)
             {
-                out.println(iteration+"\t"+String.format("%.4f", stepsize)+"\t"+String.format("%.2f", output.getGapPercent())+"%\t"+
+                out.println(iteration+"\t"+String.format("%.4f", stepsize)+"\t"+moved_count+"\t"+String.format("%.2f", output.getGapPercent())+"%\t"+
                         String.format("%.1f", output.getAEC())+"\t"+String.format("%.1f", output.getTSTT())+"\t"+output.getTrips()+"\t"+
                         output.getNonExiting()+"\t"+String.format("%.2f", time / 1.0e9));
             }
-            fileout.println(iteration+"\t"+String.format("%.4f", stepsize)+"\t"+String.format("%.2f", output.getGapPercent())+"%\t"+
+            fileout.println(iteration+"\t"+String.format("%.4f", stepsize)+"\t"+moved_count+"\t"+String.format("%.2f", output.getGapPercent())+"%\t"+
                         String.format("%.1f", output.getAEC())+"\t"+String.format("%.1f", output.getTSTT())+"\t"+output.getTrips()+"\t"+
                         output.getNonExiting()+"\t"+String.format("%.2f", time / 1.0e9));
 
