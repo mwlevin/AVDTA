@@ -262,7 +262,6 @@ public class DTASimulator extends Simulator
                 {
                     v.setPath(temp2[ast][v.getDriver().typeIndex()]);
                     
-                    
                     moved_count++;
                 }
                 catch(Exception ex)
