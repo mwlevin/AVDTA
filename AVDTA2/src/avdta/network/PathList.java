@@ -171,6 +171,8 @@ public class PathList implements Iterable<Path>
      */
     public void writeToFile(File file) throws IOException
     {
+        calculateProportions();
+        
         PrintStream fileout = new PrintStream(new FileOutputStream(file), true);
         
         for(Node o : paths.keySet())
@@ -185,6 +187,10 @@ public class PathList implements Iterable<Path>
                 {
                     for(Path p : temp2.get(h))
                     {
+                        if(p.proportion == 0)
+                        {
+                            continue;
+                        }
                         fileout.print(p.getId()+"\t"+p.size()+"\t"+p.proportion);
                         
                         for(Link l : p)
@@ -259,6 +265,10 @@ public class PathList implements Iterable<Path>
             {
                 p.proportion = filein.nextDouble();
             }
+            else
+            {
+                p.proportion = 1.0;
+            }
             
             for(int i = 0; i < size; i++)
             {
@@ -267,8 +277,10 @@ public class PathList implements Iterable<Path>
                 p.add(links.get(link_id));
             }
             
-
-            addUnrestricted(p);
+            if(p.proportion > 0)
+            {
+                addUnrestricted(p);
+            }
         }
     }
     
