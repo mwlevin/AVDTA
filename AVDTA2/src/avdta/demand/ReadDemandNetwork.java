@@ -130,6 +130,12 @@ public class ReadDemandNetwork extends ReadNetwork
         
     }
     
+    public void createStaticOD(DemandProject project) throws IOException
+    {
+        DynamicODTable table = new DynamicODTable(project);
+        table.printStaticOD(project);
+    }
+    
     public void createDynamicOD(DemandProject project) throws IOException
     {
         createDynamicOD(project, 1.0);
