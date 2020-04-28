@@ -343,7 +343,17 @@ public class LTMLink extends Link
         }
         else
         {
-            return N_up.getCC(Simulator.indexTime(t));
+            int t_1 = (int)Math.floor(t / Network.dt);
+            int t_2 = (int)Math.ceil(t / Network.dt);
+            
+            if(t_1 != t_2)
+            {
+                return (N_up.getCC(t_1) + N_up.getCC(t_2))/2;
+            }
+            else
+            {
+                return N_up.getCC(t_1);
+            }
         }
     }
     
@@ -360,7 +370,17 @@ public class LTMLink extends Link
         }
         else
         {
-            return N_down.getCC(Simulator.indexTime(t));
+            int t_1 = (int)Math.floor(t / Network.dt);
+            int t_2 = (int)Math.ceil(t / Network.dt);
+            
+            if(t_1 != t_2)
+            {
+                return (N_down.getCC(t_1) + N_down.getCC(t_2))/2;
+            }
+            else
+            {
+                return N_down.getCC(t_1);
+            }
         }
     }
     
