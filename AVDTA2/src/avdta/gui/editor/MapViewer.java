@@ -266,7 +266,7 @@ public class MapViewer extends avdta.gui.editor.JMapViewer implements MouseListe
     }
     
     public void setZoomControlsVisible(boolean visible) {
-        super.setZoomContolsVisible(visible);
+        super.setZoomControlsVisible(visible);
     }
     
     protected void paintComponent(Graphics window) 
