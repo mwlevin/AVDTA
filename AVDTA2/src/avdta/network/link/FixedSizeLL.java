@@ -42,7 +42,7 @@ public class FixedSizeLL extends LinkedList<Integer> implements CumulativeCountS
     {
 
         int difference = Simulator.indexTime(Simulator.time) - t;
-        int idx = size() - difference-2;
+        int idx = size() - difference-1;
         
         if(idx >= size())
         {
@@ -59,14 +59,14 @@ public class FixedSizeLL extends LinkedList<Integer> implements CumulativeCountS
     public void nextTimeStep()
     {
         removeFirst();
-        add(0);
+        add(this.getLast());
     }
     
     
     public void addCC(int t, int value)
     {
         int difference = Simulator.indexTime(Simulator.time) - t;
-        int idx = size() - difference-2;
+        int idx = size() - difference-1;
 
         set(idx, get(idx)+value);
         
