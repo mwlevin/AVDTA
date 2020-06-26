@@ -39,6 +39,7 @@ import avdta.network.link.AbstractSplitLink;
 import avdta.network.link.DLR2CTMLink;
 import avdta.network.link.LinkRecord;
 import avdta.network.link.MPLink;
+import avdta.network.link.MulticlassLTMLink;
 import avdta.network.link.SplitCTMLink;
 import avdta.network.link.TransitLane;
 import avdta.network.node.Connector;
@@ -121,6 +122,7 @@ public class ReadNetwork
     public static final ExtendedType MP_LINK = new ExtendedType(36, "MP-LINK", CTM);
     
     public static final ExtendedType CACC = new ExtendedType(5, "CACC", LTM);
+    public static final ExtendedType MULTICLASS_LTM = new ExtendedType(1, "Multiclass LTM", LTM);
     
     public static final ExtendedType TRANSIT_LANE = new ExtendedType(10, "Transit lane", CTM);
     public static final Type CENTROID = new Type(1000, "Centroid");
@@ -841,6 +843,10 @@ public class ReadNetwork
                     {
                         link = new LTMLink(id, source, dest, capacity, ffspd, w, jamd, length, numLanes);
                     }
+                }
+                else if(type == MULTICLASS_LTM.getCode())
+                {
+                    link = new MulticlassLTMLink(id, source, dest, capacity, ffspd, w, jamd, length, numLanes);
                 }
                 else
                 {

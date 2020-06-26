@@ -6,6 +6,8 @@ package avdta.network.link;
 
 import avdta.network.Network;
 import avdta.network.Simulator;
+import avdta.network.link.multiclassnewell.BoundaryCondition;
+import avdta.network.link.multiclassnewell.Region;
 import java.util.LinkedList;
 
 
@@ -13,12 +15,12 @@ import java.util.LinkedList;
  *
  * @author Michael
  */
-public class FixedSizeLL extends LinkedList<Integer> implements CumulativeCountStorage
+public class FixedSizeAVRegionLL extends LinkedList<BoundaryCondition> implements CumulativeCountStorage
 {
     private int max_size;
 
     
-    public FixedSizeLL(int size)
+    public FixedSizeAVRegionLL(int size)
     {
         this.max_size = size+1;
         
@@ -31,9 +33,10 @@ public class FixedSizeLL extends LinkedList<Integer> implements CumulativeCountS
     {
         super.clear();
         
+        
         for(int i = 0; i < max_size; i++)
         {
-            add(0);
+            add(new BoundaryCondition(i*Simulator.dt, (i+1)*Simulator.dt, 0, 0));
         }
     }
     
@@ -46,21 +49,24 @@ public class FixedSizeLL extends LinkedList<Integer> implements CumulativeCountS
         
         if(idx >= size())
         {
-            System.err.println(Simulator.indexTime(Simulator.time)+" "+t);
             throw new RuntimeException("Looking for time "+(t*Simulator.dt)+" time range is ["+(
                     Simulator.time-(size()-1)*Simulator.dt)+","+(Simulator.time+Simulator.dt)
                     +"]");
         }
 
         
-        return super.get(idx);
+        return super.get(idx).getFinalC();
     }
     
     
     public void nextTimeStep()
     {
         removeFirst();
-        add(this.getLast());
+        
+        BoundaryCondition r = getLast();
+        BoundaryCondition next = new BoundaryCondition(Simulator.time, Simulator.time+Simulator.dt, 0, r.getFinalC());
+        
+        add(next);
     }
     
     
@@ -69,8 +75,10 @@ public class FixedSizeLL extends LinkedList<Integer> implements CumulativeCountS
         int difference = Simulator.indexTime(Simulator.time) - t;
         int idx = size() - difference-1;
 
-        set(idx, get(idx)+value);
+        BoundaryCondition r = get(idx);
+        r.setFinalC(r.getFinalC()+value);
         
     }
+
     
 }

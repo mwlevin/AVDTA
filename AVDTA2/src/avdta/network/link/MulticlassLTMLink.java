@@ -11,6 +11,8 @@ import avdta.network.ReadNetwork;
 import avdta.network.node.Node;
 import avdta.network.Simulator;
 import avdta.network.link.Link;
+import avdta.network.link.multiclassnewell.LaxHopf;
+import avdta.network.link.multiclassnewell.Region;
 import avdta.network.node.Highway;
 import avdta.network.node.Intersection;
 import avdta.network.node.IntersectionControl;
@@ -27,15 +29,21 @@ import java.util.List;
  * It uses {@link ChainedArray}s to store cumulative counts at the upstream and downstream ends, and stores vehicles in a {@link LinkedList}.
  * @author Michael
  */
-public class LTMLink extends Link
+public class MulticlassLTMLink extends Link
 {
+    
     private LinkedList<VehTime> queue;
     
-    private CumulativeCountStorage N_up, N_down;
+    private LinkedList<Region> regions;
+    
+    private FixedSizeAVRegionLL N_down;
+    private FixedSizeAVRegionLL N_up;
     
     private boolean init;
     
     private double capacityUp, capacityDown;
+    
+    private double Q_factor;
 
     /**
      * Constructs the link with the given parameters 
@@ -49,15 +57,27 @@ public class LTMLink extends Link
      * @param length the length (mi)
      * @param numLanes the number of lanes
      */
-    public LTMLink(int id, Node source, Node dest, double capacity, double ffspd, double wavespd, double jamd, double length, int numLanes)
+    public MulticlassLTMLink(int id, Node source, Node dest, double capacity, double ffspd, double wavespd, double jamd, double length, int numLanes)
     {
         super(id, source, dest, capacity, ffspd, wavespd = capacity / (jamd - capacity / ffspd), jamd, length, numLanes);
         //super(id, source, dest, capacity = ffspd * (wavespd/2 * jamd) / (ffspd + wavespd/2), ffspd, wavespd/2, jamd, length, numLanes);
         //super(id, source, dest, capacity, ffspd, wavespd, jamd, length, numLanes);
 
-
         queue = new LinkedList<VehTime>();
         init = false;
+        
+        Q_factor = 1;
+        
+        double Q = Region.getCapacity(this, 0);
+        Q_factor = capacity / Q;
+        
+        regions = new LinkedList<>();
+        regions.add(new Region(0, Integer.MAX_VALUE, 0));
+    }
+    
+    public double getQFactor()
+    {
+        return Q_factor;
     }
     
     public Iterable<Vehicle> getVehicles()
@@ -71,13 +91,19 @@ public class LTMLink extends Link
      */
     public void initialize()
     {
-        N_up = new FixedSizeLL(getUSLookBehind()+2);
-        N_down = new FixedSizeLL(getDSLookBehind()+2);
+        N_up = new FixedSizeAVRegionLL(getUSLookBehind()+2);
+        N_down = new FixedSizeAVRegionLL(getDSLookBehind()+2);
+        
+        regions.clear();
+        regions.add(new Region(0, Integer.MAX_VALUE, 0));
+        
 
         this.capacityUp = getCapacity() * Network.dt / 3600.0;
         this.capacityDown = getCapacity() * Network.dt / 3600.0;
         
         init = true;
+        
+        added_av_count = 0;
 
     }
     
@@ -109,6 +135,8 @@ public class LTMLink extends Link
         return capacityUp;
     }
     
+
+    
     /**
      * Returns the current downstream capacity. This includes fractions lost to discretization.
      * @return the current downstream capacity
@@ -135,8 +163,11 @@ public class LTMLink extends Link
         queue.clear();
         N_up.clear();
         N_down.clear();
-
         
+        regions.clear();
+        regions.add(new Region(0, Integer.MAX_VALUE, 0));
+
+        added_av_count = 0;
         super.reset();
     }
     
@@ -147,21 +178,138 @@ public class LTMLink extends Link
      */
     public void step()
     {
+        
+        
+        
         capacityUp -= (int)capacityUp;
         
-        capacityUp += getCapacity() * Network.dt / 3600.0;
+        //capacityUp += getCapacity() * Network.dt / 3600.0;
+        
+        int count = 0;
+        int av = 0;
+        
+        for(Link us : getSource().getIncoming())
+        {
+            List<Vehicle> S = us.getSendingFlow();
+            for(Vehicle v : S)
+            {
+                if(v.getNextLink() == this)
+                {
+                    count++;
+                    
+                    if(v.getDriver().isAV())
+                    {
+                        av++;
+                    }
+                }
+            }
+        }
+
+        if(count > 0)
+        {
+            updateIncomingVehicles((double)av/count);
+        }
+        else
+        {
+            updateIncomingVehicles(0);
+        }
+
 
         capacityDown -= (int)capacityDown;
         
-        capacityDown += getCapacity() * Network.dt / 3600.0;
+        double newCapacity = 0;
+        double tau_tilde = 0;
+        
+        int start_cc = getN_down(Simulator.time);
+        
+        for(Region r : regions)
+        {
+            if(r.getUpperB() <= start_cc)
+            {
+                continue;
+            }
+            
+            double tau = (r.getUpperB() - r.getLowerB()) / r.getCapacity(this) *3600;
+            
+            /*
+            if(Simulator.time == 12)
+            {
+                System.out.println("tau="+tau+" b: "+r.getLowerB()+" to "+r.getUpperB()+" "+newCapacity);
+                System.out.println(r.getCapacity(this));
+                System.out.println(r.getAVProp());
+            }
+            */
+            
+            if(tau_tilde + tau >= Simulator.dt)
+            {
+                newCapacity += r.getCapacity(this) * (Simulator.dt - tau_tilde) / 3600.0;
+                break;
+            }
+            else
+            {
+                newCapacity += r.getCapacity(this) / 3600.0 *tau;
+                tau_tilde += tau;
+            }
+        }
+        
+        /*
+        if(Simulator.time == 12)
+        {
+            System.out.println("Qnew="+newCapacity);
+            System.out.println("Startcc="+start_cc);
+            //System.exit(1);
+        }
+        */
+ 
+        capacityDown += newCapacity;
         
 
     }
     
+    // need to call this in upstream node class based on incoming vehicles
+    private double next_AV_prop = 0;
+    public void updateIncomingVehicles(double AV_prop)
+    {
+        next_AV_prop = AV_prop;
+        
+        capacityUp += Region.getCapacity(this, next_AV_prop) * Network.dt / 3600.0;
+        regions.getLast().setAVProp(next_AV_prop);
+        
+    }
+    
     public void update()
     {
+        
+        
+        Region last = regions.getLast();
+        last.setUpperB(N_up.getCC(Simulator.indexTime(Simulator.time)));
+        
+        int denom = last.getUpperB() - last.getLowerB();
+        
+        if(denom > 0)
+        {
+            last.setAVProp((double)added_av_count / denom);
+        }
+        else
+        {
+            last.setAVProp(0);
+        }
+        
         N_up.nextTimeStep();
         N_down.nextTimeStep();
+        
+        
+        added_av_count = 0;
+        regions.add(new Region(last.getUpperB(), Integer.MAX_VALUE, 0));
+        
+        int start = (int)Math.min(N_down.getFirst().getInitialC(), N_up.getFirst().getInitialC());
+        
+        while(regions.getFirst().getUpperB() < start)
+        {
+            regions.remove();
+        }
+        
+        
     }
     
     /**
@@ -176,7 +324,10 @@ public class LTMLink extends Link
         
         addN_up(Simulator.time, 1);
         
-        
+        if(veh.getDriver().isAV())
+        {
+            added_av_count++;
+        }
 
     }
     
@@ -205,14 +356,11 @@ public class LTMLink extends Link
      */
     public int getNumSendingFlow()
     {
-        
         int S = (int)Math.min(getN_up(Simulator.time - getLength()/getFFSpeed()*3600 + Network.dt) - 
                 getN_down(Simulator.time), getCurrentDownstreamCapacity());
         
         //if(getId() == 12)
         //System.out.println(Simulator.time+" - "+getOccupancy()+"\t"+getCurrentDownstreamCapacity()+"\tS="+S);
-        
-        
         return S;
     }
     
@@ -296,14 +444,23 @@ public class LTMLink extends Link
      */
     public double getReceivingFlow()
     {
-        double ret  =Math.min(
-                Math.min(Math.round(getN_down(Simulator.time - getLength()/getWaveSpeed()*3600 + Network.dt) 
-                + getJamDensity() * getLength() - getN_up(Simulator.time)), getJamDensity()*getLength() - queue.size()),
-                getCurrentUpstreamCapacity());
-        //System.out.println("t="+Simulator.time+" R="+ret+" Q="+getCurrentUpstreamCapacity()+" w="+getWaveSpeed());
-        return ret;
-        
 
+        LaxHopf calc = new LaxHopf(this, N_up, N_down, regions);
+        
+        double output = calc.calculateN_up((Simulator.time + Simulator.dt)/3600.0, regions.size()-1);
+        
+       
+        double capacity = getCurrentUpstreamCapacity();
+        
+        //System.out.println(Simulator.time+" "+capacity+" "+output);
+       
+        double ret = Math.min(capacity, output);
+        
+        //System.out.println("Q="+Region.getCapacity(this, next_AV_prop)+" w="+Region.getW(this, next_AV_prop));
+        //System.out.println("t="+Simulator.time+" R="+ret);
+        
+        
+        return ret;
     }
     
     
@@ -316,6 +473,8 @@ public class LTMLink extends Link
         return getN_up(Simulator.time - getLength()/getFFSpeed()*3600 + Network.dt) - getN_down(Simulator.time);
     }
     
+    
+    private int added_av_count;
     /**
      * Adds to the upstream cumulative count.
      * @param t the time (s)
@@ -324,6 +483,10 @@ public class LTMLink extends Link
     public void addN_up(double t, int val)
     {
         N_up.addCC(Simulator.indexTime(t), val);
+        
+       
+        
+        
     }
     
     /**
@@ -353,7 +516,7 @@ public class LTMLink extends Link
             int t_1 = (int)Math.floor(t / Network.dt);
             int t_2 = (int)Math.ceil(t / Network.dt);
             
-            if(t_1 != t_2 && t_2 <= Simulator.time/Network.dt)
+            if(t_1 != t_2)
             {
                 return (N_up.getCC(t_1) + N_up.getCC(t_2))/2;
             }
@@ -380,7 +543,7 @@ public class LTMLink extends Link
             int t_1 = (int)Math.floor(t / Network.dt);
             int t_2 = (int)Math.ceil(t / Network.dt);
             
-            if(t_1 != t_2 && t_2 <= Simulator.time/Network.dt)
+            if(t_1 != t_2)
             {
                 return (N_down.getCC(t_1) + N_down.getCC(t_2))/2;
             }
@@ -402,10 +565,10 @@ public class LTMLink extends Link
 
 
 
-class LTMIterator implements Iterator<Vehicle>
+class MulticlassLTMIterator implements Iterator<Vehicle>
 {
     private Iterator<VehTime> iter;
-    public LTMIterator(LinkedList<VehTime> queue)
+    public MulticlassLTMIterator(LinkedList<VehTime> queue)
     {
         this.iter = queue.iterator();
     }
