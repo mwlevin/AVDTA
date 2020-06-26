@@ -6,4 +6,4 @@ dynamic-lane-reversal	true
 hv-reaction-time	1
 hvs-use-reservations	false
 simulation-duration	36000
-simulation-mesoscopic-step	6
+simulation-mesoscopic-step	15

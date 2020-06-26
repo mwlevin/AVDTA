@@ -1,0 +1,16 @@
+Iter	Step	Moved	Gap %	AEC	TSTT	Trips	Non-exit	time
+1	1.0000	4329	100.00%	527.7	634.6	4329	0	59.22
+TSTT	637.5	hr
+Avg. TT	8.84	min/veh
+
+Energy:	0.0
+VMT:	0.00
+MPG:	NaN
+
+HV TT:	8.84	min
+AV TT:	0.00	min
+
+DA TT:	8.84	min
+Bus TT:	0.00	min
+Bus TT ratio:	NaN
+CPU time: 59.4s
