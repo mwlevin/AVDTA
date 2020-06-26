@@ -82,7 +82,7 @@ public class BoundaryCondition
     
     public String toString()
     {
-        return ""+getFinalC();
+        return ""+getInitialC()+"-"+getFinalC();
     }
     
     public int getInitialC()

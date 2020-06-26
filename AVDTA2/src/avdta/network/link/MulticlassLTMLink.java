@@ -31,10 +31,12 @@ import java.util.List;
  */
 public class MulticlassLTMLink extends Link
 {
+    private static final int max_region_duration = 0;
     
     private LinkedList<VehTime> queue;
     
-    private LinkedList<Region> regions;
+    private LinkedList<Region> regions1;
+    private LinkedList<Region> regions2; // subset of regions used for multiclass newell
     
     private FixedSizeAVRegionLL N_down;
     private FixedSizeAVRegionLL N_up;
@@ -71,8 +73,11 @@ public class MulticlassLTMLink extends Link
         double Q = Region.getCapacity(this, 0);
         Q_factor = capacity / Q;
         
-        regions = new LinkedList<>();
-        regions.add(new Region(0, Integer.MAX_VALUE, 0));
+        regions1 = new LinkedList<>();
+        regions2 = new LinkedList<>();
+        Region start = new Region(0, Simulator.dt, 0, Integer.MAX_VALUE, 0);
+        regions1.add(start);
+        regions2.add(start);
     }
     
     public double getQFactor()
@@ -94,8 +99,11 @@ public class MulticlassLTMLink extends Link
         N_up = new FixedSizeAVRegionLL(getUSLookBehind()+2);
         N_down = new FixedSizeAVRegionLL(getDSLookBehind()+2);
         
-        regions.clear();
-        regions.add(new Region(0, Integer.MAX_VALUE, 0));
+        regions1 = new LinkedList<>();
+        regions2 = new LinkedList<>();
+        Region start = new Region(0, Simulator.dt, 0, Integer.MAX_VALUE, 0);
+        regions1.add(start);
+        regions2.add(start);
         
 
         this.capacityUp = getCapacity() * Network.dt / 3600.0;
@@ -164,8 +172,11 @@ public class MulticlassLTMLink extends Link
         N_up.clear();
         N_down.clear();
         
-        regions.clear();
-        regions.add(new Region(0, Integer.MAX_VALUE, 0));
+        regions1 = new LinkedList<>();
+        regions2 = new LinkedList<>();
+        Region start = new Region(0, Simulator.dt, 0, Integer.MAX_VALUE, 0);
+        regions1.add(start);
+        regions2.add(start);
 
         added_av_count = 0;
         super.reset();
@@ -222,7 +233,7 @@ public class MulticlassLTMLink extends Link
         
         int start_cc = getN_down(Simulator.time);
         
-        for(Region r : regions)
+        for(Region r : regions1)
         {
             if(r.getUpperB() <= start_cc)
             {
@@ -273,7 +284,7 @@ public class MulticlassLTMLink extends Link
         next_AV_prop = AV_prop;
         
         capacityUp += Region.getCapacity(this, next_AV_prop) * Network.dt / 3600.0;
-        regions.getLast().setAVProp(next_AV_prop);
+        regions1.getLast().setAVProp(next_AV_prop);
         
     }
     
@@ -281,34 +292,80 @@ public class MulticlassLTMLink extends Link
     {
         
         
-        Region last = regions.getLast();
-        last.setUpperB(N_up.getCC(Simulator.indexTime(Simulator.time)));
+        Region last = regions2.getLast();
+        int newN_up = N_up.getCC(Simulator.indexTime(Simulator.time)); 
+        int lastN_up = N_up.getCC(Simulator.indexTime(Simulator.time)-1); 
+        
+        int change = newN_up - lastN_up;
         
         int denom = last.getUpperB() - last.getLowerB();
-        
+
+        double new_AV_prop = 0;
         if(denom > 0)
         {
-            last.setAVProp((double)added_av_count / denom);
+            new_AV_prop = (double)added_av_count / denom;
         }
-        else
+        
+        if(change > 0)
         {
-            last.setAVProp(0);
+            last.setUpperB(newN_up);
+
+            last.setAVProp(new_AV_prop);
+            
+        }
+        
+        // check to combine last 2 regions
+        if(regions2.size() > 1)
+        {
+            Region nextLast = regions2.get(regions2.size()-2);
+            
+            if(nextLast.getCCDiff() == 0 || Math.abs(nextLast.getAVProp() - last.getAVProp()) < 0.05)
+            {
+                nextLast.setUpperB(last.getUpperB());
+                double avgAVprop = (nextLast.getAVProp() * nextLast.getCCDiff() + last.getAVProp() * last.getCCDiff()) /
+                        (nextLast.getCCDiff() + last.getCCDiff()); 
+                        
+                nextLast.setAVProp(avgAVprop);
+                
+                regions2.remove();
+                regions1.remove();
+            }
         }
         
         N_up.nextTimeStep();
         N_down.nextTimeStep();
         
         
-        added_av_count = 0;
-        regions.add(new Region(last.getUpperB(), Integer.MAX_VALUE, 0));
-        
-        int start = (int)Math.min(N_down.getFirst().getInitialC(), N_up.getFirst().getInitialC());
-        
-        while(regions.getFirst().getUpperB() < start)
+        if(change > 0)
         {
-            regions.remove();
+            added_av_count = 0;
+            Region newR = new Region(Simulator.time, Simulator.time+Simulator.dt, last.getUpperB(), Integer.MAX_VALUE, 0);
+            regions1.add(newR);
+            regions2.add(newR);
         }
         
+        int start1 = N_up.getFirst().getInitialC();
+        
+        while(regions1.getFirst().getUpperB() < start1)
+        {
+            regions1.removeFirst();
+        }
+        
+        int start2 = N_down.getFirst().getInitialC();
+        
+        while(regions2.getFirst().getUpperB() < start2)
+        {
+            regions2.removeFirst();
+        }
+        
+        /*
+        if(getId() == 23)
+        {
+            System.out.println(Simulator.time+" - "+getId()+" - "+regions2.size()+" "+regions1.size());
+            System.out.println("\t"+regions2.getFirst().getUpperB()+" / "+start2+" "+
+                    N_down.getFirst().getInitialC()+" "+N_up.getFirst().getInitialC());
+        }
+        */
         
     }
     
@@ -445,9 +502,9 @@ public class MulticlassLTMLink extends Link
     public double getReceivingFlow()
     {
 
-        LaxHopf calc = new LaxHopf(this, N_up, N_down, regions);
+        LaxHopf calc = new LaxHopf(this, N_up, N_down, regions2);
         
-        double output = calc.calculateN_up((Simulator.time + Simulator.dt)/3600.0, regions.size()-1);
+        double output = calc.calculateN_up((Simulator.time + Simulator.dt)/3600.0, regions2.size()-1);
         
        
         double capacity = getCurrentUpstreamCapacity();
@@ -456,8 +513,13 @@ public class MulticlassLTMLink extends Link
        
         double ret = Math.min(capacity, output);
         
-        //System.out.println("Q="+Region.getCapacity(this, next_AV_prop)+" w="+Region.getW(this, next_AV_prop));
-        //System.out.println("t="+Simulator.time+" R="+ret);
+        /*
+        if(getId() == 23)
+        {
+            System.out.println("Q="+Region.getCapacity(this, next_AV_prop)+" w="+Region.getW(this, next_AV_prop));
+            System.out.println("t="+Simulator.time+" R="+ret+" Q="+getCurrentUpstreamCapacity());
+        }
+        */
         
         
         return ret;

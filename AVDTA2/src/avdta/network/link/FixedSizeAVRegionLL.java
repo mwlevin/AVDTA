@@ -64,7 +64,7 @@ public class FixedSizeAVRegionLL extends LinkedList<BoundaryCondition> implement
         removeFirst();
         
         BoundaryCondition r = getLast();
-        BoundaryCondition next = new BoundaryCondition(Simulator.time, Simulator.time+Simulator.dt, 0, r.getFinalC());
+        BoundaryCondition next = new BoundaryCondition(Simulator.time, Simulator.time+Simulator.dt, r.getFinalC(), r.getFinalC());
         
         add(next);
     }

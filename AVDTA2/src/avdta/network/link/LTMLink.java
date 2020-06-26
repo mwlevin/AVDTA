@@ -300,7 +300,13 @@ public class LTMLink extends Link
                 Math.min(Math.round(getN_down(Simulator.time - getLength()/getWaveSpeed()*3600 + Network.dt) 
                 + getJamDensity() * getLength() - getN_up(Simulator.time)), getJamDensity()*getLength() - queue.size()),
                 getCurrentUpstreamCapacity());
-        //System.out.println("t="+Simulator.time+" R="+ret+" Q="+getCurrentUpstreamCapacity()+" w="+getWaveSpeed());
+        
+        /*
+        if(getId() == 23)
+        {
+            System.out.println("t="+Simulator.time+" R="+ret+" Q="+getCurrentUpstreamCapacity()+" w="+getWaveSpeed());
+        }
+        */
         return ret;
         
 

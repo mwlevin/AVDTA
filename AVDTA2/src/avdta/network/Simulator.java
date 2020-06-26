@@ -854,6 +854,7 @@ public class Simulator extends Network
         
         for(time = 0; time < duration; time += dt)
         {
+            //System.out.println(time);
             //System.out.println(time+"\t"+getNumVehiclesInSystem()+"\t"+occupancy_900);
             // push vehicles onto centroid connectors at departure time
             addVehicles();

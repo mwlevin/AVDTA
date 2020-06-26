@@ -15,7 +15,7 @@ import java.io.Serializable;
 public class DriverType implements Serializable
 {
     
-    public static final DriverType AV = new DriverType("AV", 1, true, true, false);
+    public static final DriverType AV = new DriverType("AV", 0.5, true, true, false);
     public static final DriverType HV = new DriverType("HV", 1, false, false, false);
     public static final DriverType BUS_AV = new DriverType("AV", 1, true, true, true);
     public static final DriverType BUS_HV = new DriverType("HV", 1, false, false, true);
