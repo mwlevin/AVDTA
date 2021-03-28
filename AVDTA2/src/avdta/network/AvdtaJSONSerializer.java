@@ -11,9 +11,7 @@ import java.io.*;
 public class AvdtaJSONSerializer {
 
     /* Edit Configuration Variables START */
-
-    public static final String FILE_PATH = "/Users/jeffrey/AVDTA_modified/AVDTA_maps/maps1.js";
-
+    
     public static final int C1_R = 144;
     public static final int C1_G = 238;
     public static final int C1_B = 144;
