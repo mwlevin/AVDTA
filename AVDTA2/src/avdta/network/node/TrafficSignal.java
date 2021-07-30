@@ -31,6 +31,7 @@ import java.util.Map;
  * {@code total_time} is the cycle time. <br>
  * {@code turns} maps an incoming link to a mapping which maps an outgoing link 
  * to a {@link PhaseMovement}.
+ * {@code  SPaT} indicates if this is a SPaT enabled signal
  * @author Michael
  */
 public class TrafficSignal extends IntersectionControl implements Signalized
@@ -39,16 +40,19 @@ public class TrafficSignal extends IntersectionControl implements Signalized
     private int curr_idx;
     private double curr_time;
     private double total_time;
+    private boolean SPaT;
     
     private double offset;
     
     private Map<Link, Map<Link, PhaseMovement>> turns;
     /**
      * Instantiates a traffic signal with null.
+     * @param SP = is SPaT node?
      */
-    public TrafficSignal()
+    public TrafficSignal(boolean SP)
     {
         this(null);
+        SPaT = SP;
     }
     /**
      * Instantiates a traffic signal at a given {@link Intersection}.
@@ -65,6 +69,10 @@ public class TrafficSignal extends IntersectionControl implements Signalized
     public Signalized getSignal()
     {
         return this;
+    }
+    
+    public boolean getSPaT(){
+        return SPaT;
     }
     
     public double getOffset()

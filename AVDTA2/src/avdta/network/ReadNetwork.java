@@ -148,6 +148,8 @@ public class ReadNetwork
     public static final Type HIGHWAY = new Type(400, "Highway");
     public static final Type INTERSECTION = new Type(0, "Intersection");
     
+    public static final ExtendedType SPaT = new ExtendedType(1, "SPaT", SIGNAL);
+    
     // reservation policies
     public static final ExtendedType FCFS = new ExtendedType(1, "FCFS", RESERVATION);
     public static final ExtendedType EMERGENCY_FIRST = new ExtendedType(61, "Emergency-first", RESERVATION);
@@ -168,7 +170,7 @@ public class ReadNetwork
     
     // arrays of all types for searching purposes
     public static final Type[] NODE_TYPES = new Type[]{SIGNAL, RESERVATION, HIGHWAY, DIVERGE, MERGE, CONNECTOR};
-    public static final Type[] NODE_EXT_TYPES = new Type[]{FCFS, EMERGENCY_FIRST,
+    public static final Type[] NODE_EXT_TYPES = new Type[]{SPaT, FCFS, EMERGENCY_FIRST,
         EMERGENCY_FIRST_LIMITED, FIFO, AUCTION, RANDOM, VOT, Q2, DE4, PRESSURE, P0, MAX_PRESSURE, TRANSIT_FIRST};
     
     // these are the options that will show up in the GUI.
@@ -578,7 +580,11 @@ public class ReadNetwork
 
             if(type/100 == SIGNAL.getCode()/100)
             {
-                node.setControl(new TrafficSignal());
+                if(type%100 == SPaT.getCode()%100){
+                    node.setControl(new TrafficSignal(true));
+                } else {
+                    node.setControl(new TrafficSignal(false));
+                }
                 
                 if(type == MAX_PRESSURE.getCode())
                 {
