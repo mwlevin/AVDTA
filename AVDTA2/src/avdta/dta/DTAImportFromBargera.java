@@ -130,7 +130,16 @@ public class DTAImportFromBargera
                 int dest = filein.nextInt();
                 filein.next(); // :
                 String next = filein.next();
-                double dem = Double.parseDouble(next.substring(0, next.length()-1));
+                
+                if(next.charAt(next.length()-1) == ';')
+                {
+                    next = next.substring(0, next.length()-1);
+                }
+                else
+                {
+                    filein.next();
+                }
+                double dem = Double.parseDouble(next);
                 
                 if(dem > 0)
                 {
