@@ -36,8 +36,8 @@ public class DTAImportFromBargera
         nodes = new PrintStream(new FileOutputStream(project.getNodesFile()), true);
         PrintStream links = new PrintStream(new FileOutputStream(project.getLinksFile()), true);
         
-        nodes.print(ReadNetwork.getNodesFileHeader());
-        links.print(ReadNetwork.getLinksFileHeader());
+        nodes.println(ReadNetwork.getNodesFileHeader());
+        links.println(ReadNetwork.getLinksFileHeader());
         
         Scanner filein = new Scanner(net);
         
