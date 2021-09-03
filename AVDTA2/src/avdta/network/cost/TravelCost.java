@@ -7,6 +7,7 @@ package avdta.network.cost;
 import avdta.network.link.Link;
 import avdta.network.Simulator;
 import avdta.network.Network;
+import avdta.vehicle.DriverType;
 import avdta.vehicle.Vehicle;
 
 /**
@@ -27,6 +28,7 @@ public abstract class TravelCost
     
     public static final TravelCost dnlTime = new DNLTime();
     public static final TravelCost dnlGenCost = new DNLGenCost();
+    public static final TravelCost SPaT_Cost = new SPaT_Cost();
     
     /**
      * Calculates the cost of traveling on {@link Link} l starting at the specified time, with the specified value of time.
@@ -35,5 +37,6 @@ public abstract class TravelCost
      * @param time the time of arrival (s)
      * @return depends on subclass 
      */
+    public abstract double cost(Link l, double vot, int time, DriverType driver);
     public abstract double cost(Link l, double vot, int time);
 }

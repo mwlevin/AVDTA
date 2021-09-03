@@ -60,8 +60,8 @@ public abstract class Node extends Location implements Serializable, Comparable<
     
     
     
-    
-    
+     private boolean SPaT;
+
     
     public double label;
     public int arr_time;
@@ -86,6 +86,15 @@ public abstract class Node extends Location implements Serializable, Comparable<
         this(id, new Location(0, 0));
     }
     
+        /**
+     * Instantiates a {@link Node} with {@link Location} (0, 0)
+     * @param id A unique id for the node.
+     */
+    public Node(int id, boolean sp)
+    {
+        this(id, new Location(0, 0), sp);
+    }
+    
     /**
      * 
      * @param id A unique id for this {@link Node}
@@ -103,8 +112,33 @@ public abstract class Node extends Location implements Serializable, Comparable<
         transitOut = new HashSet<TransitLink>();
         
         selected = false;
+        SPaT = false;
+    }
+    
+     /**
+     * 
+     * @param id A unique id for this {@link Node}
+     * @param loc take {@link Location} as input
+     * @param SP indicates if this is a SPaT node
+     */
+    public Node(int id, Location loc, boolean SP)
+    {
+        super(loc);
+        this.id = id;
+        this.SPaT = SP;
+                
+        incoming = new HashSet<Link>();
+        outgoing = new HashSet<Link>();
+
+        transitInc = new HashSet<TransitLink>();
+        transitOut = new HashSet<TransitLink>();
+        
+        selected = false;
         
     }
+    
+    
+    
     
     public void prepare(){}
     
@@ -141,6 +175,22 @@ public abstract class Node extends Location implements Serializable, Comparable<
      */
     public double getRadius() {
         return 0;
+    }
+    
+    /**
+     * Returns if this node is SPaT enabled
+     * @return 
+     */
+    public boolean getSPaT(){
+        return SPaT;
+    }
+
+    /**
+     * Sets the SPaT status of the node
+     * @param SP SPaT node?
+     */
+    public void setSPaT(boolean SP){
+        this.SPaT = SP;
     }
     
     /**

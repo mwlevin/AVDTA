@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="JMapViewer-2.0">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/AVDTA2/lib/JMapViewer-2.0/JMapViewer_src.jar!/" />
+      <root url="jar://$PROJECT_DIR$/AVDTA2/lib/JMapViewer-2.0/JMapViewer_Demo.jar!/" />
+      <root url="jar://$PROJECT_DIR$/AVDTA2/lib/JMapViewer-2.0/JMapViewer.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

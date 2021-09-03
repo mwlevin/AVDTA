@@ -1,0 +1,14 @@
+<component name="libraryTable">
+  <library name="lib1">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/AVDTA2/lib/cplex.jar!/" />
+      <root url="jar://$PROJECT_DIR$/AVDTA2/lib/JMapViewer.jar!/" />
+      <root url="jar://$PROJECT_DIR$/AVDTA2/lib/javax.json-api-1.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/AVDTA2/lib/javax.json-1.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/AVDTA2/lib/postgresql-9.4.1212.jre6.jar!/" />
+      <root url="jar://$PROJECT_DIR$/AVDTA2/lib/mysql-connector-java-5.1.39-bin.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

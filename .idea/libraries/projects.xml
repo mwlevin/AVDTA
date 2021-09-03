@@ -1,0 +1,21 @@
+<component name="libraryTable">
+  <library name="projects">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/AVDTA2/projects/congress.zip!/" />
+      <root url="jar://$PROJECT_DIR$/AVDTA2/projects/vms_test.zip!/" />
+      <root url="jar://$PROJECT_DIR$/AVDTA2/projects/290.zip!/" />
+      <root url="jar://$PROJECT_DIR$/AVDTA2/projects/dallas_downtown.zip!/" />
+      <root url="jar://$PROJECT_DIR$/AVDTA2/projects/grid.zip!/" />
+      <root url="jar://$PROJECT_DIR$/AVDTA2/projects/lamar_38.zip!/" />
+      <root url="jar://$PROJECT_DIR$/AVDTA2/projects/SiouxFalls.zip!/" />
+      <root url="jar://$PROJECT_DIR$/AVDTA2/projects/coacongress.zip!/" />
+      <root url="jar://$PROJECT_DIR$/AVDTA2/projects/coacongress2_ttmp.zip!/" />
+      <root url="jar://$PROJECT_DIR$/AVDTA2/projects/austinI35.zip!/" />
+      <root url="jar://$PROJECT_DIR$/AVDTA2/projects/willco.zip!/" />
+      <root url="jar://$PROJECT_DIR$/AVDTA2/projects/mopac_ramps.zip!/" />
+      <root url="jar://$PROJECT_DIR$/AVDTA2/projects/scenario_2_pm_CACC.zip!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

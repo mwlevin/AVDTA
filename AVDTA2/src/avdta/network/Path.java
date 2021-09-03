@@ -273,6 +273,32 @@ public class Path extends ArrayList<Link> implements Serializable
      * @param dep_time departure time
      * @param vot the value of time
      * @param costFunc the cost function used for calculating the cost
+     * @param v the current vehicle - for SPaT detection
+     * @return estimated travel cost given departure time and cost function
+     */
+    public double getAvgCost(int dep_time, double vot, TravelCost costFunc, Vehicle v)
+    {
+        double time = dep_time;
+        double output = 0.0;
+        
+        Link i = null;
+        
+        for(Link j : this)
+        {
+            output += costFunc.cost(j, vot, (int)time, v.getDriver());
+            time += j.getAvgTT((int)time);
+            
+            i = j;
+        }
+        
+        return output;     
+    }
+    
+        /**
+     * Returns the expected cost when using the specified cost function
+     * @param dep_time departure time
+     * @param vot the value of time
+     * @param costFunc the cost function used for calculating the cost
      * @return estimated travel cost given departure time and cost function
      */
     public double getAvgCost(int dep_time, double vot, TravelCost costFunc)

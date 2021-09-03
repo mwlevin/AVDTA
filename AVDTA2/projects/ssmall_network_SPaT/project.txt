@@ -1,0 +1,4 @@
+key	value
+name	ssmall_network
+seed	121046
+type	DTA

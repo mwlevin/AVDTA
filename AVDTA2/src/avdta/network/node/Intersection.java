@@ -146,4 +146,16 @@ public class Intersection extends Node
         
         control.setNode(this);
     }
+    
+        /**
+     * Updates the control on this {@link Intersection}
+     * @param c the new {@link IntersectionControl}
+     * @param sp if the node is SPaT enabled
+     */
+    public void setControl(IntersectionControl c, boolean SP)
+    {
+        control = c;
+        this.setSPaT(SP);
+        control.setNode(this);
+    }
 }

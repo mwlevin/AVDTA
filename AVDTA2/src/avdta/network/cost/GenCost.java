@@ -6,6 +6,7 @@ package avdta.network.cost;
 
 import avdta.network.cost.TravelCost;
 import avdta.network.link.Link;
+import avdta.vehicle.DriverType;
 import avdta.vehicle.Vehicle;
 
 /**
@@ -16,6 +17,17 @@ public class GenCost extends TravelCost
 {
 
     /**
+     * Returns a weighted combination of link travel time and toll.
+     * @param l the {@link Link}
+     * @param vot the value of time ($/hr)
+     * @param enter the time entering the link (s)
+     * @return {@link Link#getAvgTT(int)} * vot/3600 + {@link Link#getToll(int)}
+     */
+    public double cost(Link l, double vot, int enter, DriverType driver)
+    {
+        return l.getAvgTT(enter)*vot/3600.0 + l.getToll(enter);
+    }
+     /**
      * Returns a weighted combination of link travel time and toll.
      * @param l the {@link Link}
      * @param vot the value of time ($/hr)

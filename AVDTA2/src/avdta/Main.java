@@ -55,6 +55,7 @@ import avdta.network.node.policy.TransitFirst;
 import avdta.project.DUERProject;
 import avdta.project.FourStepProject;
 import avdta.project.SAVProject;
+import avdta.project.DemandProject;
 import avdta.sav.ReadSAVNetwork;
 import avdta.sav.SAVMain;
 import avdta.sav.SAVOrigin;
@@ -108,9 +109,31 @@ public class Main
 
         
         
-        DTAProject project = new DTAProject(new File("projects/coacongress2_ttmp"));
+        DTAProject project = new DTAProject(new File("projects/ssmall_network"));
+        DTASimulator sim = project.getSimulator();       
+
+        ReadDemandNetwork read = new ReadDemandNetwork();
+        
+        int numVeh = read.prepareDemand(project);
+        System.out.println("There are " + numVeh + " vehicles in the network.");
+        
+        System.out.println(sim.getCostFunction());
+        sim.msa(50);
+        sim.simulate();
+
+        sim.postProcess();
+        
+        
+        String filename = project.getResultsFolder()+"/link_tt.txt";
+        sim.printLinkTT(0, sim.getLastExitTime()+sim.ast_duration, new File(filename));
+        
+        filename = project.getResultsFolder()+"/link_flow.txt";
+        sim.printLinkFlow(0, sim.getLastExitTime()+sim.ast_duration, new File(filename));
+        System.out.println("Link 12 TT: " + sim.getLink(12).getAvgTT(1));
+
     
         // this is Varaiya's function
+        /*
         MaxPressure.weight_function = new MPWeight()
         {
             public double calcMPWeight(MPTurn turn)
@@ -118,6 +141,8 @@ public class Main
                 return turn.getQueue();
             }
         };
+        */
+        
         
         /*
         // this is the travel time function
@@ -130,6 +155,7 @@ public class Main
         };
         */
         
+        /**
         int demand = 5000; // vehicles per hour
         int duration = 3600 * 3; // 3 hours * 3600 seconds
         Simulator sim = MaxPressureTest.createMPSimulator(project, demand, duration);
@@ -138,10 +164,7 @@ public class Main
         Simulator.duration = 3600*3;
         sim.simulate();
         System.out.println(sim.getAvgTT(DriverType.HV));
-        
-        
-        
-        
+        */
         
         //new DTAGUI();
         //new FourStepGUI();

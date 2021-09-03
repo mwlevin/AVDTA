@@ -15,6 +15,8 @@ import avdta.network.Simulator;
 import avdta.network.link.CentroidConnector;
 import avdta.network.link.Link;
 import avdta.network.node.Node;
+import avdta.network.cost.TravelCost;
+import avdta.network.cost.SPaT_Cost;
 import avdta.network.node.Zone;
 import avdta.project.DTAProject;
 import avdta.project.DemandProject;
@@ -181,7 +183,6 @@ public class DTASimulator extends Simulator
     public DTAResults pathgen(double stepsize) throws IOException
     {
 
-        
         int error_count = 0;
 
         Map<Node, Map<Node, Path[][]>> newpaths = new HashMap<Node, Map<Node, Path[][]>>();
@@ -239,7 +240,7 @@ public class DTASimulator extends Simulator
 
             if(v.getPath() != null)
             {
-                tstt += v.getPath().getAvgCost(dep_time, v.getVOT(), costFunc);
+                tstt += v.getPath().getAvgCost(dep_time, v.getVOT(), costFunc, v);
                 //tt += v.getTT();
 
 
@@ -248,7 +249,7 @@ public class DTASimulator extends Simulator
                     out.println("TT < 0 "+v.getDepTime()+" "+v.getExitTime());
                 }
             }
-            min += temp2[ast][v.getDriver().typeIndex()].getAvgCost(dep_time, v.getVOT(), costFunc);
+            min += temp2[ast][v.getDriver().typeIndex()].getAvgCost(dep_time, v.getVOT(), costFunc, v);
 
 
             
@@ -619,9 +620,15 @@ public class DTASimulator extends Simulator
                         String.format("%.1f", output.getAEC())+"\t"+String.format("%.1f", output.getTSTT())+"\t"+output.getTrips()+"\t"+
                         output.getNonExiting()+"\t"+String.format("%.2f", time / 1.0e9));
             }
-            fileout.println(iteration+"\t"+String.format("%.4f", stepsize)+"\t"+moved_count+"\t"+String.format("%.2f", output.getGapPercent())+"%\t"+
-                        String.format("%.1f", output.getAEC())+"\t"+String.format("%.1f", output.getTSTT())+"\t"+output.getTrips()+"\t"+
-                        output.getNonExiting()+"\t"+String.format("%.2f", time / 1.0e9));
+            fileout.println(iteration+"\t"+ //Iteration
+                    String.format("%.4f", stepsize)+ //Step size
+                    "\t"+moved_count+"\t"+ // Num veh moved
+                    String.format("%.2f", output.getGapPercent())+"%\t"+ //Gap percent
+                    String.format("%.1f", output.getAEC())+"\t"+ //AEC
+                    String.format("%.1f", output.getTSTT())+"\t"+ // Total Sum Travel Time
+                    output.getTrips()+"\t"+ //Num Trips
+                    output.getNonExiting()+"\t"+ // Non-exiting
+                    String.format("%.2f", time / 1.0e9)); //Time
 
             if(statusUpdate != null)
             {

@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="SiouxFalls">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/AVDTA2/projects/SiouxFalls/SiouxFalls.zip!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

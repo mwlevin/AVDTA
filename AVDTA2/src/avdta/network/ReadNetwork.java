@@ -148,6 +148,7 @@ public class ReadNetwork
     public static final Type HIGHWAY = new Type(400, "Highway");
     public static final Type INTERSECTION = new Type(0, "Intersection");
     
+    //SPaT - Enabled Intersection: Type 101
     public static final ExtendedType SPaT = new ExtendedType(1, "SPaT", SIGNAL);
     
     // reservation policies
@@ -581,9 +582,10 @@ public class ReadNetwork
             if(type/100 == SIGNAL.getCode()/100)
             {
                 if(type%100 == SPaT.getCode()%100){
-                    node.setControl(new TrafficSignal(true));
+                    node.setControl(new TrafficSignal(), true);//SPaT enabled traffic signal
+                    System.out.println("Found SPAT Node " + id);
                 } else {
-                    node.setControl(new TrafficSignal(false));
+                    node.setControl(new TrafficSignal());
                 }
                 
                 if(type == MAX_PRESSURE.getCode())
@@ -899,6 +901,7 @@ public class ReadNetwork
                 throw new RuntimeException("Link type not recognized: "+type);
             }
             
+            System.out.println("Link " + link.toString() + "TT: " + link.getFFTime());
             links.add(link);
             
             

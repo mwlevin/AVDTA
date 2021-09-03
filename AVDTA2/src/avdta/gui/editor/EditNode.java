@@ -501,7 +501,7 @@ public class EditNode extends JPanel
             }
             else if(newType == ReadNetwork.SIGNAL)
             {
-                i.setControl(new TrafficSignal());
+                i.setControl(new TrafficSignal());//not SPaT-enabled by default
             }
             else if(newType == ReadNetwork.RESERVATION)
             {

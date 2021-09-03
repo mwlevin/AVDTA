@@ -3,6 +3,7 @@ package avdta.network;
 import avdta.dta.Assignment;
 import avdta.dta.DTASimulator;
 import avdta.network.cost.TravelCost;
+import avdta.network.cost.SPaT_Cost;
 import avdta.network.link.CTMLink;
 import avdta.network.link.DLRCTMLink;
 import avdta.network.link.Link;
@@ -85,9 +86,17 @@ public class Network
     {
         setNetwork(nodes, links);
         
-        this.costFunc = TravelCost.ttCost;
+        //this.costFunc = TravelCost.ttCost;
+        this.costFunc = TravelCost.SPaT_Cost;
         paths = new PathList();
     }
+    
+    /**
+     * Constructs this {@link Network} with the specified {@link Node}s and {@link Link}s
+     * @param nodes the set of {@link Node}s
+     * @param links the set of {@link Link}s
+     * @param SPaT indicates if the SPaT cost function should be used
+     */
     
     /**
      * Returns whether human-driven vehicles can use reservations. 
@@ -410,10 +419,12 @@ public class Network
     {
         if(link_dijkstras)
         {
+            System.out.println("Running Link Dijkstra.");
             link_dijkstras(o, d, dep_time, vot, driver, costFunc);
         }
         else
         {
+            System.out.println("Runnin Node Dijkstra");
             node_dijkstras(o, d, dep_time, vot, driver, costFunc);
         }
     }
@@ -464,7 +475,7 @@ public class Network
             l.arr_time = (int)(dep_time);
             
             
-            l.label = costFunc.cost(l, vot, dep_time);
+            l.label = costFunc.cost(l, vot, dep_time, driver);
             
             Q.add(l);
             l.added = true;
@@ -492,7 +503,7 @@ public class Network
                 
                 double tt = v.getAvgTT(u.arr_time);
                 
-                double new_label = u.label + costFunc.cost(v, vot, u.arr_time);
+                double new_label = u.label + costFunc.cost(v, vot, u.arr_time, driver);
 
                 
                 if(new_label < v.label)
@@ -574,7 +585,7 @@ public class Network
                 
                 tt = v.getAvgTT(u.arr_time);
                 
-                double new_label = u.label + costFunc.cost(v, vot, u.arr_time);
+                double new_label = u.label + costFunc.cost(v, vot, u.arr_time, driver);
 
                 
                 if(new_label < v.label)
@@ -673,7 +684,7 @@ public class Network
                 int arr_time = u.arr_time;
 
                 
-                temp += costFunc.cost(l, vot, arr_time);
+                temp += costFunc.cost(l, vot, arr_time, driver);
                 
                 if(!l.canUseLink(driver))
                 {

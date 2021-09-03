@@ -1,0 +1,4 @@
+id	origin	dest	dep_time	vot	tt
+1	101	-102	0	20.0	126
+2	101	-102	0	10.0	132
+Time:	0.019450866	s
