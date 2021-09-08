@@ -307,6 +307,7 @@ public class Path extends ArrayList<Link> implements Serializable
         double output = 0.0;
         
         Link i = null;
+        System.out.println("Using the Path.getAvgCost that does not include driver type (SPaT won't work).");
         
         for(Link j : this)
         {

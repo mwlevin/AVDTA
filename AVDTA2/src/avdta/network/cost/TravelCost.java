@@ -39,4 +39,8 @@ public abstract class TravelCost
      */
     public abstract double cost(Link l, double vot, int time, DriverType driver);
     public abstract double cost(Link l, double vot, int time);
+
+    public double ffCost(Link aThis) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }

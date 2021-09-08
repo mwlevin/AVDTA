@@ -16,6 +16,7 @@ import avdta.vehicle.Vehicle;
  */
 public class SPaT_Cost extends TravelCost
 {
+    private double bet = 0.9; // discount rate for SPat
     /**
      * Returns the average travel time at the specified enter time from the previous simulation.
      * @param l the {@link Link}
@@ -28,10 +29,8 @@ public class SPaT_Cost extends TravelCost
         //IF vehicle is CV and the source node
        
         if(l.getDest().getSPaT() && (driver.isCV() || driver.isAV())){
-          double alp = 1; //ff time weight
-          double bet = 0.9; //fuel efficiency weight
           //System.out.println("Cost for link " + l.toString() + " moved from " + l.getAvgTT(enter) + " to " + (alp*(l.getAvgTT(enter)) - (bet*l.getAvgTT(enter))));
-          return (alp*(l.getAvgTT(enter)) - (bet*l.getAvgTT(enter)));
+          return l.getAvgTT(enter) - bet*l.getAvgTT(enter);
         }
         return l.getAvgTT(enter);
     }
@@ -40,5 +39,19 @@ public class SPaT_Cost extends TravelCost
     {
         System.out.println("Not discounting for SPaT because no driver was specified.");
         return l.getAvgTT(enter);
+    }
+    
+    /**
+     * Returns the link free flow travel time discounted for SPaT
+     * @param l the link
+     * @return free flow travel time (seconds)
+     */
+    public double ffCost(Link l){
+        return (l.getLength() / l.getFFSpeed() * 3600.0) - bet*(l.getLength() / l.getFFSpeed() * 3600.0);
+    }
+    
+    
+    public String toString(){
+        return "SPaT Cost function";
     }
 }

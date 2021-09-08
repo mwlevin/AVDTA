@@ -109,7 +109,7 @@ public class Main
 
         
         
-        DTAProject project = new DTAProject(new File("projects/ssmall_network"));
+        DTAProject project = new DTAProject(new File("projects/ssmall_network_SPaT"));
         DTASimulator sim = project.getSimulator();       
 
         ReadDemandNetwork read = new ReadDemandNetwork();

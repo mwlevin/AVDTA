@@ -438,6 +438,7 @@ public class Simulator extends Network
     /**
      * Returns the total free flow travel time.
      * This method iterates over all vehicles and finds the free flow path (see {@link FFTime}).
+     * This time will also be discounted for SPaT
      * @return the total free flow travel time (s)
      */
     public double getFFTT()
@@ -453,7 +454,7 @@ public class Simulator extends Network
                 statusUpdate.update((double)count++ / vehicles.size(), 0, "Finding paths");
             }
             
-            Path p = findPath((PersonalVehicle)v, TravelCost.ffTime);
+            Path p = findPath((PersonalVehicle)v, TravelCost.SPaT_Cost);
             output += p.getFFTime();
             
             

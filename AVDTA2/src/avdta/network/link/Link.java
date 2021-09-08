@@ -16,6 +16,8 @@ import avdta.network.node.Location;
 import avdta.network.node.TBR;
 import avdta.network.node.obj.PressureTerm;
 import avdta.network.type.Type;
+import avdta.network.cost.SPaT_Cost;
+import avdta.network.cost.TravelCost;
 import avdta.vehicle.DriverType;
 import avdta.vehicle.fuel.ICV;
 import java.awt.Color;
@@ -854,12 +856,12 @@ public abstract class Link implements Serializable, Comparable<Link>
     }
 
     /**
-     * Returns the free flow travel time
+     * Returns the free flow travel time discounted for SPaT
      * @return free flow travel time (seconds)
      */
     public double getFFTime()
     {
-        return length / ffspd * 3600.0;
+        return TravelCost.SPaT_Cost.ffCost(this);
     }
     
     /**
