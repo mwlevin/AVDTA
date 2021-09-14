@@ -16,7 +16,7 @@ import avdta.vehicle.Vehicle;
  */
 public class SPaT_Cost extends TravelCost
 {
-    private double bet = 0.9; // discount rate for SPat
+    private static double bet = 0.1; // discount rate for SPat
     /**
      * Returns the average travel time at the specified enter time from the previous simulation.
      * @param l the {@link Link}
@@ -29,15 +29,15 @@ public class SPaT_Cost extends TravelCost
         //IF vehicle is CV and the source node
        
         if(l.getDest().getSPaT() && (driver.isCV() || driver.isAV())){
-          //System.out.println("Cost for link " + l.toString() + " moved from " + l.getAvgTT(enter) + " to " + (alp*(l.getAvgTT(enter)) - (bet*l.getAvgTT(enter))));
-          return l.getAvgTT(enter) - bet*l.getAvgTT(enter);
+          //System.out.println("Cost for link " + l.toString() + " moved from " + l.getAvgTT(enter) + " to " + (l.getAvgTT(enter) - bet*l.getAvgTT(enter)));
+          return bet*l.getAvgTT(enter);
         }
         return l.getAvgTT(enter);
     }
     
     public double cost(Link l, double vot, int enter)
     {
-        System.out.println("Not discounting for SPaT because no driver was specified.");
+        //System.out.println("Not discounting for SPaT because no driver was specified.");
         return l.getAvgTT(enter);
     }
     
@@ -47,9 +47,17 @@ public class SPaT_Cost extends TravelCost
      * @return free flow travel time (seconds)
      */
     public double ffCost(Link l){
-        return (l.getLength() / l.getFFSpeed() * 3600.0) - bet*(l.getLength() / l.getFFSpeed() * 3600.0);
+        //System.out.println("Discounting FFTime for link " + l.toString() + "from " + (l.getLength() / l.getFFSpeed() * 3600.0) + " to " + ((l.getLength() / l.getFFSpeed() * 3600.0) - bet*(l.getLength() / l.getFFSpeed() * 3600.0)));
+        return bet*(l.getLength() / l.getFFSpeed() * 3600.0);
     }
     
+    /**
+     * Get the SPaT discount rate
+     * @return the SPaT discount rate
+     */
+    public double getDiscount(){
+        return bet;
+    }
     
     public String toString(){
         return "SPaT Cost function";

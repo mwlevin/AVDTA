@@ -110,26 +110,31 @@ public class Main
         
         
         DTAProject project = new DTAProject(new File("projects/ssmall_network_SPaT"));
-        DTASimulator sim = project.getSimulator();       
-
-        ReadDemandNetwork read = new ReadDemandNetwork();
+        DTASimulator sim = project.getSimulator();  
+        //ReadDTANetwork read = new ReadDTANetwork();
+       // read.prepareDemand(project);
+        //project.loadSimulator();
         
-        int numVeh = read.prepareDemand(project);
-        System.out.println("There are " + numVeh + " vehicles in the network.");
+        //ReadDemandNetwork read = new ReadDemandNetwork();
+        //int numVeh = read.prepareDemand(project);
+        //System.out.println("There are " + numVeh + " vehicles in the network.");
+        //System.out.println(sim.getCostFunction());
         
-        System.out.println(sim.getCostFunction());
-        sim.msa(50);
-        sim.simulate();
-
+        sim.initialize();
+        sim.msa(30);
         sim.postProcess();
+       
         
+        /*for(Vehicle v: sim.getVehicles()){
+            System.out.println("Vehicle: " + v.toString() + " Path: " + v.getPath().toString());
+        }*/
         
         String filename = project.getResultsFolder()+"/link_tt.txt";
         sim.printLinkTT(0, sim.getLastExitTime()+sim.ast_duration, new File(filename));
         
         filename = project.getResultsFolder()+"/link_flow.txt";
         sim.printLinkFlow(0, sim.getLastExitTime()+sim.ast_duration, new File(filename));
-        System.out.println("Link 12 TT: " + sim.getLink(12).getAvgTT(1));
+        //System.out.println("Link 12 TT: " + sim.getLink(12).getAvgTT(1));
 
     
         // this is Varaiya's function

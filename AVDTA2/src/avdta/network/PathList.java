@@ -140,6 +140,7 @@ public class PathList implements Iterable<Path>
             
             temp3.add(p);
             p.setId();
+            System.out.println("Added path " + p);
             return p;
         }
         else
@@ -147,6 +148,7 @@ public class PathList implements Iterable<Path>
             temp2.put(hash, temp3 = new ArrayList<Path>());
             temp3.add(p);
             p.setId();
+            System.out.println("Added path " + p);
             return p;
         }
     }

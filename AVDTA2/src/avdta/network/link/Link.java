@@ -547,6 +547,10 @@ public abstract class Link implements Serializable, Comparable<Link>
         
         if(idx_top < flowin.length)
         {
+            //System.out.println("This link " + this.toString() + " flow: " + (double)(flowin[idx_top] - flowin[idx_bot]) / (Simulator.ast_duration / 3600.0));
+            //System.out.println("IDX_bot: " + idx_bot + " idx_top: " + idx_top + " ast_dur: " + Simulator.ast_duration + " input time: " + t);
+            //System.out.println("Link " + this.toString() + " flowin: " + (flowin[idx_top]) + " flow out: " + flowin[idx_bot]);
+
             return (double)(flowin[idx_top] - flowin[idx_bot]) / (Simulator.ast_duration / 3600.0);
         }
         else
@@ -570,7 +574,10 @@ public abstract class Link implements Serializable, Comparable<Link>
      */
     public String toString()
     {
-        return ""+id;
+        String id = String.valueOf(this.id);
+        int mid = id.length()/2;
+        String[] parts = {id.substring(0, mid), id.substring(mid)};
+        return "(" + parts[0] + ", " + parts[1] + ")";
     }
     
     /**
@@ -621,7 +628,7 @@ public abstract class Link implements Serializable, Comparable<Link>
     /**
      * Adds an observation to update average travel time.
      * @param enter An integer indicating the entry time.
-     * @param exit An interger indicating the exit time.
+     * @param exit An integer indicating the exit time.
      */
     public void updateTT(int enter, int exit)
     {
@@ -648,7 +655,7 @@ public abstract class Link implements Serializable, Comparable<Link>
     public double getAvgTT(int enter)
     {
         int idx = (int)Math.min(Simulator.num_asts-1, enter / Simulator.ast_duration);
-        
+        //System.out.println("getAVGTT for link " + this.toString() + " is " + getAvgTT_ast(idx));
         return getAvgTT_ast(idx);
     }
     
@@ -656,10 +663,12 @@ public abstract class Link implements Serializable, Comparable<Link>
     {
         if(idx >= 0 && idx < avgTT.length && avgTT[idx].getCount() > 0)
         {
-            return Math.max(getFFTime(),avgTT[idx].getAverage());
+            //System.out.println("Returning " + Math.max(getFFTime(), avgTT[idx].getAverage()) + " for avg TT for this link " + this.toString());
+            return Math.max(getFFTime(), avgTT[idx].getAverage());
         }
         else
         {
+            //System.out.println("Returning " + getFFTime() + " for avg TT for this link " + id);
             return getFFTime();
         }
     }
@@ -856,12 +865,14 @@ public abstract class Link implements Serializable, Comparable<Link>
     }
 
     /**
-     * Returns the free flow travel time discounted for SPaT
+     * Returns the free flow travel time discounted
      * @return free flow travel time (seconds)
      */
     public double getFFTime()
     {
-        return TravelCost.SPaT_Cost.ffCost(this);
+      
+        return length / ffspd * 3600.0;
+        //return TravelCost.SPaT_Cost.ffCost(this);
     }
     
     /**

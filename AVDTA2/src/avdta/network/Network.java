@@ -374,6 +374,7 @@ public class Network
             throw new RuntimeException(o+" is not connected to "+(-d.getId()));
         }
         
+        //System.out.println("Found Path: " + output);
         return paths.addPath(output);
     }
 
@@ -471,7 +472,16 @@ public class Network
             {
                 continue;
             }
-            double tt = l.getAvgTT(dep_time);
+
+            double tt;// = l.getAvgTT(dep_time);
+            if(l.getDest().getSPaT() && (driver.isAV() || driver.isCV())){
+                   tt = l.getAvgTT(dep_time)*TravelCost.SPaT_Cost.getDiscount;
+                   //System.out.println("Discounted tt from " + l.getAvgTT(dep_time) + " to " + l.getAvgTT(dep_time)*TravelCost.SPaT_Cost.getDiscount);
+            } else {
+                   tt = l.getAvgTT(dep_time);
+                   //System.out.println("Did not discount tt for link: " + l.toString());
+            }
+            
             l.arr_time = (int)(dep_time);
             
             
@@ -493,17 +503,27 @@ public class Network
             {
                 if(!d.canMove(u, v, driver) || !v.canUseLink(driver))
                 {
+                    System.out.println("Cannot use " + v.toString() + " for this dijkstra iteration");
                     continue;
                 }
                 
                 if(v.settled)
                 {
+                    //System.out.println("Already settled: " + v.toString());
                     continue;
                 }
                 
-                double tt = v.getAvgTT(u.arr_time);
-                
+                double tt; //SPaT addition
+                if(v.getDest().getSPaT() && (driver.isAV() || driver.isCV())){
+                    tt = v.getAvgTT(u.arr_time)*TravelCost.SPaT_Cost.getDiscount;
+                    //System.out.println("Discounted link " + v.toString() + ", tt: from " + v.getAvgTT(u.arr_time) + " to " + tt);
+                } else {
+                   tt = v.getAvgTT(u.arr_time);
+                   //System.out.println("Did not discount link " + v.toString() + " tt: " + tt);
+                }
+                //double tt = v.getAvgTT(u.arr_time); non-Spat version
                 double new_label = u.label + costFunc.cost(v, vot, u.arr_time, driver);
+                //System.out.println("new label for " + v.toString() + " is " + u.label + " + " + costFunc.cost(v, vot, u.arr_time, driver) + " = " + new_label);
 
                 
                 if(new_label < v.label)
@@ -526,6 +546,12 @@ public class Network
                 }
             }
         }
+        /**
+        System.out.println("End of Dijkstra Iteration");
+        System.out.println(trace(o, dest));
+        for(Link l : links){
+            System.out.println(l.toString() + " label: " + l.label);
+        }*/
         
     }
     
@@ -582,8 +608,13 @@ public class Network
                     continue;
                 }
                 
-                
-                tt = v.getAvgTT(u.arr_time);
+                //SPaT Addition
+                if(v.getDest().getSPaT() && (driver.isAV() || driver.isCV())){
+                    tt = v.getAvgTT(u.arr_time)*TravelCost.SPaT_Cost.getDiscount;
+                } else {
+                   tt = v.getAvgTT(u.arr_time);
+                }
+                //tt = v.getAvgTT(u.arr_time);
                 
                 double new_label = u.label + costFunc.cost(v, vot, u.arr_time, driver);
 

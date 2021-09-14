@@ -29,6 +29,7 @@ public abstract class TravelCost
     public static final TravelCost dnlTime = new DNLTime();
     public static final TravelCost dnlGenCost = new DNLGenCost();
     public static final TravelCost SPaT_Cost = new SPaT_Cost();
+    public double getDiscount;
     
     /**
      * Calculates the cost of traveling on {@link Link} l starting at the specified time, with the specified value of time.

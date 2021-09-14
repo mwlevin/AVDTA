@@ -234,6 +234,7 @@ public class DTASimulator extends Simulator
             if(temp2[ast][v.getDriver().typeIndex()] == null)
             {
                 temp2[ast][v.getDriver().typeIndex()] = findPath(o, d, getAvgDepTime(ast), v.getVOT(), v.getDriver(), costFunc);
+                //System.out.println("Found path: " + temp2[ast][v.getDriver().typeIndex()]);
             }
             
             
@@ -246,9 +247,10 @@ public class DTASimulator extends Simulator
 
                 if(v.getTT() < 0)
                 {
-                    out.println("TT < 0 "+v.getDepTime()+" "+v.getExitTime());
+                    out.println(v.toString() + " TT < 0 "+v.getDepTime()+" "+v.getExitTime());
                 }
             }
+
             min += temp2[ast][v.getDriver().typeIndex()].getAvgCost(dep_time, v.getVOT(), costFunc, v);
 
 
@@ -280,7 +282,7 @@ public class DTASimulator extends Simulator
             count ++;
             
             
-
+            //System.out.println("Path for " + v.toString() + " is " + v.getPath().toString());
         }
         
 
@@ -605,6 +607,9 @@ public class DTASimulator extends Simulator
 
             double stepsize = 1.0/iteration;
             output = pathgen(stepsize);
+//            for(Vehicle v : vehicles){
+//                System.out.println(v.getPath().toString());
+//            }
             
             if(iteration == 1)
             {

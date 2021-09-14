@@ -286,7 +286,12 @@ public class Path extends ArrayList<Link> implements Serializable
         for(Link j : this)
         {
             output += costFunc.cost(j, vot, (int)time, v.getDriver());
-            time += j.getAvgTT((int)time);
+            if(j.getDest().getSPaT() && (v.getDriver().isAV() || v.getDriver().isCV())){
+                time += j.getAvgTT((int)time) * costFunc.getDiscount;
+            } else {
+                time += j.getAvgTT((int)time);
+            }
+            
             
             i = j;
         }
@@ -381,5 +386,14 @@ public class Path extends ArrayList<Link> implements Serializable
         }
         
         return output;
+    }
+    
+    public String toString(){
+        String s = "";
+        for(Link l : this){
+            s += l.toString();
+            s += ", ";
+        }
+        return s;
     }
 }

@@ -428,6 +428,7 @@ public class Simulator extends Network
     	{
             if(v.getExitTime() < Simulator.duration)
             {
+              
                  output += v.getTT();   
             }	
     	}
