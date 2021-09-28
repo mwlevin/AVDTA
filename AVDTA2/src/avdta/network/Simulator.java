@@ -834,6 +834,7 @@ public class Simulator extends Network
         resetSim();
 
         
+        
         PrintStream sim_vat = null;
         
         vat = new PrintStream(new FileOutputStream(getVatFile()), true);
@@ -900,7 +901,9 @@ public class Simulator extends Network
                 {
                     l.updateTT(v.enter_time, Simulator.time);
                 }
+
             }
+
         }
         
 
@@ -1203,6 +1206,7 @@ public class Simulator extends Network
         {
             fileout.print("\t"+t);
         }
+        fileout.print("\t"+ "Avg");
         
         fileout.println();
         
@@ -1214,6 +1218,9 @@ public class Simulator extends Network
             {
                 fileout.print("\t"+(l.getAvgFlow(t)));
             }
+            
+            fileout.print("\t"+(l.getTotalAvgFlow(end)));
+
             
             fileout.println();
         }

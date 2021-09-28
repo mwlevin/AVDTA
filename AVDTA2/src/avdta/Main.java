@@ -110,24 +110,63 @@ public class Main
         
         
         DTAProject project = new DTAProject(new File("projects/ssmall_network_SPaT"));
+        //DTAProject project = new DTAProject(new File("projects/Twin-Cities-MP-LTM"));
         DTASimulator sim = project.getSimulator();  
-        //ReadDTANetwork read = new ReadDTANetwork();
-       // read.prepareDemand(project);
+        ReadDTANetwork read = new ReadDTANetwork();
+        read.prepareDemand(project);
         //project.loadSimulator();
         
-        //ReadDemandNetwork read = new ReadDemandNetwork();
-        //int numVeh = read.prepareDemand(project);
+
         //System.out.println("There are " + numVeh + " vehicles in the network.");
         //System.out.println(sim.getCostFunction());
         
         sim.initialize();
-        sim.msa(30);
+        sim.msa(20);
         sim.postProcess();
        
         
-        /*for(Vehicle v: sim.getVehicles()){
-            System.out.println("Vehicle: " + v.toString() + " Path: " + v.getPath().toString());
-        }*/
+        double avgTTcv=0;
+        double avgTThv=0;
+        double numHV=140;
+        double numCV=36;
+        double minHVtt = Double.MAX_VALUE;
+        double maxHVtt = 0;
+        double minCVtt = Double.MAX_VALUE;
+        double maxCVtt = 0;
+        int numSpatRoute = 0;
+        
+        for(Vehicle v: sim.getVehicles()){
+            //System.out.println("Vehicle: " + v.toString() + " Path: " + v.getPath().toString() + "\nTT:" + v.getTT());
+            if(v.getPath().containsNode(sim.getNode(3))){
+                numSpatRoute++;
+            }
+            if(v.getType() == 111){
+                avgTThv += v.getTT();
+                //System.out.println("HV " + v.toString() + "TT: " + v.getTT() + " waiting: " +v.getTimeWaiting() + " traveling " + v.getTimeTraveling());
+                if(v.getTT() < minHVtt){
+                    minHVtt = v.getTT();
+                } else if (v.getTT() > maxHVtt){
+                    maxHVtt = v.getTT();
+                }
+            } else {
+                avgTTcv += v.getTT();
+                //System.out.println("CV" + v.toString() + "TT: " + v.getTT()+ " waiting: " +v.getTimeWaiting() + " traveling " + v.getTimeTraveling());
+                if(v.getTT() < minCVtt){
+                    minCVtt = v.getTT();
+                } else if (v.getTT() > maxCVtt){
+                    maxCVtt = v.getTT();
+                }
+            }
+        }
+        avgTThv = avgTThv/numHV;
+        avgTTcv = avgTTcv/numCV;
+        System.out.println("Average TT HV:" + avgTThv);
+        //System.out.println("Max TT HV: " + maxHVtt + "  Min TT HV: " + minHVtt);
+        System.out.println("Average TT CV:" + avgTTcv);
+        //System.out.println("Max TT CV: " + maxCVtt + "  Min TT CV: " + minCVtt);
+        System.out.println("Num veh taking SPaT Route: " + numSpatRoute);
+        
+        
         
         String filename = project.getResultsFolder()+"/link_tt.txt";
         sim.printLinkTT(0, sim.getLastExitTime()+sim.ast_duration, new File(filename));

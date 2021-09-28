@@ -176,7 +176,6 @@ public class LTMLink extends Link
         
         addN_up(Simulator.time, 1);
         
-        
 
     }
     

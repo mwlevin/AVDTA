@@ -1,4 +1,4 @@
 key	value
-name	ssmall_network
+name	ssmall_network_SPaT
 seed	121046
 type	DTA

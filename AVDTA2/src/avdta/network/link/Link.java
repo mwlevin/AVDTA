@@ -560,6 +560,18 @@ public abstract class Link implements Serializable, Comparable<Link>
     }
     
     /**
+     * Returns the total average flow from zero to the specified time
+     * @param t
+     * @return  total avg flow, in vph
+     */
+    public double getTotalAvgFlow(int t){
+        int idx_bot = 0;
+        int idx_top = t / Simulator.ast_duration+1;
+        
+        return (double)(flowin[idx_top] - flowin[idx_bot]) / (Simulator.ast_duration / 3600.0);
+    }
+    
+    /**
      * Returns average direction of the link based on upstream and downstream {@link Node} coordinates
      * @return heading (radians) of the link, based on node coordinates
      */

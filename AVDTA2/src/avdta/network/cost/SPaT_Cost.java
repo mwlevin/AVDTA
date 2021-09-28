@@ -16,7 +16,9 @@ import avdta.vehicle.Vehicle;
  */
 public class SPaT_Cost extends TravelCost
 {
-    private static double bet = 0.1; // discount rate for SPat
+    private static double alpha = .3;
+    private static double bet = 1-alpha; // discount rate for SPat
+    //SPat discount rate = 1-bet
     /**
      * Returns the average travel time at the specified enter time from the previous simulation.
      * @param l the {@link Link}

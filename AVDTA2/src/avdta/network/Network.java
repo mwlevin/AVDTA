@@ -420,12 +420,12 @@ public class Network
     {
         if(link_dijkstras)
         {
-            System.out.println("Running Link Dijkstra.");
+            //System.out.println("Running Link Dijkstra.");
             link_dijkstras(o, d, dep_time, vot, driver, costFunc);
         }
         else
         {
-            System.out.println("Runnin Node Dijkstra");
+            //System.out.println("Runnin Node Dijkstra");
             node_dijkstras(o, d, dep_time, vot, driver, costFunc);
         }
     }
@@ -503,7 +503,7 @@ public class Network
             {
                 if(!d.canMove(u, v, driver) || !v.canUseLink(driver))
                 {
-                    System.out.println("Cannot use " + v.toString() + " for this dijkstra iteration");
+                    //System.out.println("Cannot use " + v.toString() + " for this dijkstra iteration");
                     continue;
                 }
                 

@@ -514,7 +514,7 @@ public class TrafficSignal extends IntersectionControl implements Signalized
                     moved++;
 
                 }
-                else if(/*j.R >= receivingFlow &&*/ movement != null && movement.hasAvailableCapacity(equiv_flow))
+                else if(j.R >= receivingFlow && movement != null && movement.hasAvailableCapacity(equiv_flow))
                 {
                     //System.out.println(v.toString() + " moving from " + i.toString() + " to " + j.toString());
                     i.S -= equiv_flow;
@@ -530,8 +530,8 @@ public class TrafficSignal extends IntersectionControl implements Signalized
                 }
                 else
                 {
-                    System.out.println("No turning movement occured for Veh " + v.toString() + " at node " + node.toString() + " moving to " + j.toString());
-                    System.out.println(j.toString() + "R = " + j.R + "      recievingFlow: " + receivingFlow);
+                    //System.out.println("No turning movement occured for Veh " + v.toString() + " at node " + node.toString() + " moving to " + j.toString());
+                    //System.out.println(j.toString() + "R = " + j.R + "      recievingFlow: " + receivingFlow);
                     /*System.out.println(j.toString()+ " Reviving flow constraint: " + (j.R >= receivingFlow) +
                             "\nmovment != null constraint:" + (movement != null) + "\nAvail capacity constraint: " + (movement.hasAvailableCapacity(equiv_flow)));*/
                 }

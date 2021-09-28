@@ -901,7 +901,7 @@ public class ReadNetwork
                 throw new RuntimeException("Link type not recognized: "+type);
             }
             
-            System.out.println("Link " + link.toString() + "TT: " + link.getFFTime());
+            //System.out.println("Link " + link.toString() + "TT: " + link.getFFTime());
             links.add(link);
             
             
