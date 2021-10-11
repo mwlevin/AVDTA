@@ -109,8 +109,8 @@ public class Main
 
         
         
-        DTAProject project = new DTAProject(new File("projects/ssmall_network_SPaT"));
-        //DTAProject project = new DTAProject(new File("projects/Twin-Cities-MP-LTM"));
+       // DTAProject project = new DTAProject(new File("projects/ssmall_network_SPaT"));
+        DTAProject project = new DTAProject(new File("projects/Twin-Cities-MP-LTM-SPAT"));
         DTASimulator sim = project.getSimulator();  
         ReadDTANetwork read = new ReadDTANetwork();
         read.prepareDemand(project);
@@ -123,49 +123,58 @@ public class Main
         sim.initialize();
         sim.msa(20);
         sim.postProcess();
+        
+        
+        ArrayList<Node> SPaT = new ArrayList<Node>();
+        SPaT.add(sim.getNode(6359));
+        SPaT.add(sim.getNode(6089));
+        SPaT.add(sim.getNode(5896));
+        SPaT.add(sim.getNode(5688));
+        SPaT.add(sim.getNode(5604));
+        SPaT.add(sim.getNode(5443));
+        SPaT.add(sim.getNode(5418));
+        SPaT.add(sim.getNode(5376));
+        SPaT.add(sim.getNode(5305));
+        SPaT.add(sim.getNode(5181));
+        SPaT.add(sim.getNode(5100));
+        SPaT.add(sim.getNode(4981));
+        SPaT.add(sim.getNode(4855));
+        SPaT.add(sim.getNode(4810));
+        SPaT.add(sim.getNode(19823));
+        SPaT.add(sim.getNode(4362));
+        SPaT.add(sim.getNode(4298));
+        SPaT.add(sim.getNode(4174));
+        SPaT.add(sim.getNode(18678));
+        SPaT.add(sim.getNode(4080));
+        SPaT.add(sim.getNode(4030));
+        SPaT.add(sim.getNode(4004));
+        SPaT.add(sim.getNode(3955));
        
         
-        double avgTTcv=0;
-        double avgTThv=0;
-        double numHV=140;
-        double numCV=36;
-        double minHVtt = Double.MAX_VALUE;
-        double maxHVtt = 0;
-        double minCVtt = Double.MAX_VALUE;
-        double maxCVtt = 0;
+
         int numSpatRoute = 0;
+        int numCVSpatRoute = 0;
+        int numHVSpatRoute = 0;
+        double avgTTspatCV = 0;
         
         for(Vehicle v: sim.getVehicles()){
-            //System.out.println("Vehicle: " + v.toString() + " Path: " + v.getPath().toString() + "\nTT:" + v.getTT());
-            if(v.getPath().containsNode(sim.getNode(3))){
+            if(usedConnectedCorridor(v, SPaT)){
                 numSpatRoute++;
-            }
-            if(v.getType() == 111){
-                avgTThv += v.getTT();
-                //System.out.println("HV " + v.toString() + "TT: " + v.getTT() + " waiting: " +v.getTimeWaiting() + " traveling " + v.getTimeTraveling());
-                if(v.getTT() < minHVtt){
-                    minHVtt = v.getTT();
-                } else if (v.getTT() > maxHVtt){
-                    maxHVtt = v.getTT();
-                }
-            } else {
-                avgTTcv += v.getTT();
-                //System.out.println("CV" + v.toString() + "TT: " + v.getTT()+ " waiting: " +v.getTimeWaiting() + " traveling " + v.getTimeTraveling());
-                if(v.getTT() < minCVtt){
-                    minCVtt = v.getTT();
-                } else if (v.getTT() > maxCVtt){
-                    maxCVtt = v.getTT();
+                if(v.getType() == 111){
+                    numHVSpatRoute++;
+                } else {
+                    numCVSpatRoute++;
+                    avgTTspatCV += v.getTT();  
                 }
             }
         }
-        avgTThv = avgTThv/numHV;
-        avgTTcv = avgTTcv/numCV;
-        System.out.println("Average TT HV:" + avgTThv);
-        //System.out.println("Max TT HV: " + maxHVtt + "  Min TT HV: " + minHVtt);
-        System.out.println("Average TT CV:" + avgTTcv);
-        //System.out.println("Max TT CV: " + maxCVtt + "  Min TT CV: " + minCVtt);
-        System.out.println("Num veh taking SPaT Route: " + numSpatRoute);
-        
+        System.out.println("MPR = 30%");
+        System.out.println("Total Num veh taking SPaT Route: " + numSpatRoute);
+        System.out.println("Num CV taking SPaT Route: " + numCVSpatRoute);
+        System.out.println("Num HV taking SPaT Route: " + numHVSpatRoute);
+        System.out.println("AVG TT of CVs on SPaT Route: " + avgTTspatCV/numCVSpatRoute);
+
+
         
         
         String filename = project.getResultsFolder()+"/link_tt.txt";
@@ -173,53 +182,18 @@ public class Main
         
         filename = project.getResultsFolder()+"/link_flow.txt";
         sim.printLinkFlow(0, sim.getLastExitTime()+sim.ast_duration, new File(filename));
-        //System.out.println("Link 12 TT: " + sim.getLink(12).getAvgTT(1));
-
+    }
     
-        // this is Varaiya's function
-        /*
-        MaxPressure.weight_function = new MPWeight()
-        {
-            public double calcMPWeight(MPTurn turn)
-            {
-                return turn.getQueue();
+    public static Boolean usedConnectedCorridor(Vehicle v, ArrayList<Node> SPaT){
+        
+        for(Link l : v.getPath()){
+            for(Node n: SPaT){
+                if(l.getSource().equals(n) || l.getDest().equals(n)){
+                    return true;
+                }
             }
-        };
-        */
-        
-        
-        /*
-        // this is the travel time function
-        MaxPressure.weight_function = new MPWeight()
-        {
-            public double calcMPWeight(MPTurn turn)
-            {
-                return turn.getQueue() / turn.getCapacity();
-            }
-        };
-        */
-        
-        /**
-        int demand = 5000; // vehicles per hour
-        int duration = 3600 * 3; // 3 hours * 3600 seconds
-        Simulator sim = MaxPressureTest.createMPSimulator(project, demand, duration);
-        sim.recordQueueLengths(1800);
-
-        Simulator.duration = 3600*3;
-        sim.simulate();
-        System.out.println(sim.getAvgTT(DriverType.HV));
-        */
-        
-        //new DTAGUI();
-        //new FourStepGUI();
-        
-
-        // GUI.main(args);
-
-        
-        
-
-
+        }
+        return false;
     }
     
     
