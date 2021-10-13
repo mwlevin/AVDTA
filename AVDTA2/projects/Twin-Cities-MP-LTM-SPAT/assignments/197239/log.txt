@@ -1,0 +1,2 @@
+Iter	Step	Moved	Gap %	AEC	TSTT	Trips	Non-exit	time
+1	1.0000	65697	100.00%	759.5	13859.5	65697	0	1394.07

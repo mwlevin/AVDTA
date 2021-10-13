@@ -112,6 +112,7 @@ public class Main
        // DTAProject project = new DTAProject(new File("projects/ssmall_network_SPaT"));
         DTAProject project = new DTAProject(new File("projects/Twin-Cities-MP-LTM-SPAT"));
         DTASimulator sim = project.getSimulator();  
+        System.out.println("Reading simulator");
         ReadDTANetwork read = new ReadDTANetwork();
         read.prepareDemand(project);
         //project.loadSimulator();
@@ -119,9 +120,9 @@ public class Main
 
         //System.out.println("There are " + numVeh + " vehicles in the network.");
         //System.out.println(sim.getCostFunction());
-        
+        System.out.println("Starting MSA");
         sim.initialize();
-        sim.msa(20);
+        sim.msa(40);
         sim.postProcess();
         
         
@@ -156,6 +157,8 @@ public class Main
         int numCVSpatRoute = 0;
         int numHVSpatRoute = 0;
         double avgTTspatCV = 0;
+        double lenConnectTraveled = 0;
+        double lenI55traveled = 0;
         
         for(Vehicle v: sim.getVehicles()){
             if(usedConnectedCorridor(v, SPaT)){
@@ -165,10 +168,25 @@ public class Main
                 } else {
                     numCVSpatRoute++;
                     avgTTspatCV += v.getTT();  
+                    for(Link l : v.getPath()){
+                        for(Node n: SPaT){
+                            if(l.getDest().equals(n)){
+                                lenConnectTraveled += l.getLength();
+                            }
+                        }
+                    }
+                }
+                
+                for(Link l : v.getPath()){
+                    for(Node n: SPaT){
+                        if(l.getDest().equals(n)){
+                            lenI55traveled += l.getLength();
+                        }
+                    }
                 }
             }
         }
-        System.out.println("MPR = 30%");
+        System.out.println("MPR = 0%");
         System.out.println("Total Num veh taking SPaT Route: " + numSpatRoute);
         System.out.println("Num CV taking SPaT Route: " + numCVSpatRoute);
         System.out.println("Num HV taking SPaT Route: " + numHVSpatRoute);

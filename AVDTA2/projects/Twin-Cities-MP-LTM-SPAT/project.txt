@@ -1,0 +1,4 @@
+key	value
+name	Twin-Cities-MP-LTM-SPAT
+seed	47120
+type	DTA
