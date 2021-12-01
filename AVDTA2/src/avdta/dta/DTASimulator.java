@@ -5,6 +5,7 @@
  */
 package avdta.dta;
 
+import avdta.demand.AST;
 import avdta.demand.DemandProfile;
 import avdta.demand.DynamicODTable;
 import avdta.demand.ReadDemandNetwork;
@@ -321,7 +322,7 @@ public class DTASimulator extends Simulator
     {        
         DTAProject project = (DTAProject)getProject();
         
-        File folder = new File(project.getAssignmentsFolder()+"/"+assign.getName());
+        File folder = new File(project.getAssignmentsFolder()+"/"+assign.getAssignmentDirectory());
         folder.mkdirs();
         
         PathList paths = getPaths();
@@ -332,6 +333,8 @@ public class DTASimulator extends Simulator
         assign.writeToFile(vehicles, (DTAProject)getProject());
         
         FileTransfer.copy(project.getDemandFile(), assign.getDemandFile());
+        
+        //createSimVat(new File(project.getAssignmentsFolder()+"/"+assign.getAssignmentDirectory()+"/sim.vat"));
     }
 
     
@@ -363,6 +366,7 @@ public class DTASimulator extends Simulator
         assign.readFromFile(project, getVehicles(), paths);
         
         currAssign = assign;
+
     }
         
     /**
@@ -868,7 +872,23 @@ public class DTASimulator extends Simulator
         
         DemandProfile profile = new DemandProfile(rhs);
         
+
+        
+        AST lastAST = profile.getLastAST();
+        
+        int id = lastAST.getId();
+        
+        for(int t = lastAST.getEnd(); t < Simulator.duration + 899; t += 900)
+        {
+            profile.add(new AST(++id, t, t+900, 0));
+        }
+        
+        profile.save(rhs);
+        
+        
         DynamicODTable triptable = new DynamicODTable();
+        
+        
                
         // create dynamic od table
         filein = new Scanner(rhs.getDemandFile());

@@ -49,6 +49,7 @@ public class AnalysisPanel extends GUIPanel
         busTT = new JButton("Bus TT");
         importResults = new JButton("Import results");
 
+
         tt.setEnabled(false);
         volume.setEnabled(false);
         busTT.setEnabled(false);
@@ -134,6 +135,8 @@ public class AnalysisPanel extends GUIPanel
             }
         });
         
+        final JPanel refPanel = this;
+        
         importResults.addActionListener(new ActionListener()
         {
            public void actionPerformed(ActionEvent e)
@@ -143,9 +146,12 @@ public class AnalysisPanel extends GUIPanel
                try
                {
                     sim.importResults();
+                    JOptionPane.showMessageDialog(refPanel, "Import results complete",
+                            "Import results complete", JOptionPane.INFORMATION_MESSAGE);
                }
-               catch(IOException ex)
+               catch(Exception ex)
                {
+
                    GUI.handleException(ex);
                }
            }

@@ -213,7 +213,7 @@ public class Assignment implements Comparable<Assignment>
      */
     public Assignment(DTAProject project, DTAResults results)
     {
-        this(project, results, Calendar.getInstance().getTime().toString());
+        this(project, results, ""+(int)(System.nanoTime()/1.0e9));
     }
     
     /**

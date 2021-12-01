@@ -132,6 +132,7 @@ public abstract class GUI extends JFrame
     public static void handleException(Exception ex)
     {
         System.out.println("Error occurred: "+ex);
+        ex.printStackTrace(System.out);
         ex.printStackTrace(System.err);
         JOptionPane.showMessageDialog(frame, ex.toString()+" "+ex.getMessage(),
                             "Error", JOptionPane.ERROR_MESSAGE);
