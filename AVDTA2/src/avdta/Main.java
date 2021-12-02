@@ -13,6 +13,7 @@ import avdta.demand.DynamicODTable;
 import avdta.demand.ReadDemandNetwork;
 import avdta.demand.StaticODTable;
 import avdta.dta.Assignment;
+import avdta.dta.*;
 import avdta.dta.DTAImportFromVISTA;
 import avdta.network.link.transit.BusLink;
 import avdta.dta.DTAResults;
@@ -110,20 +111,27 @@ public class Main
         
         
        // DTAProject project = new DTAProject(new File("projects/ssmall_network_SPaT"));
-        DTAProject project = new DTAProject(new File("projects/Twin-Cities-MP-LTM-SPAT"));
+        DTAProject project;
+        project = new DTAProject(new File("projects/Twin-Cities-MP-LTM-SPAT-10"));
         DTASimulator sim = project.getSimulator();  
-        System.out.println("Reading simulator");
-        ReadDTANetwork read = new ReadDTANetwork();
-        read.prepareDemand(project);
+        MSAAssignment ma = new MSAAssignment(new File("projects/Twin-Cities-MP-LTM-SPAT-10/assignments/Full-Network-0MPR-Assignment"));
+        sim.loadAssignment(ma);
+        //System.out.println("Reading simulator");
+        //ReadDTANetwork read = new ReadDTANetwork();
+        //read.prepareDemand(project);
         //project.loadSimulator();
         
 
         //System.out.println("There are " + numVeh + " vehicles in the network.");
         //System.out.println(sim.getCostFunction());
-        System.out.println("Starting MSA");
-        sim.initialize();
-        sim.msa(40);
+        //System.out.println("Starting MSA");
+        //sim.initialize();
+        sim.msa_cont(350, 351, 5.0);
+        //sim.msa(200, 5.00);
         sim.postProcess();
+        sim.saveAssignment(sim.getAssignment());
+        sim.writeVehicleResults();
+        sim.createSimVat(new File (project.getResultsFolder()+"/simVat.txt"));
         
         
         ArrayList<Node> SPaT = new ArrayList<Node>();
@@ -150,19 +158,29 @@ public class Main
         SPaT.add(sim.getNode(4030));
         SPaT.add(sim.getNode(4004));
         SPaT.add(sim.getNode(3955));
-       
-        
 
+        
+        double THsize = 0;
+        for(Link l : sim.getLinks()){
+            for(Node n: SPaT){
+                if(l.getSource().equals(n) || l.getDest().equals(n)){
+                    THsize+= l.getLength();
+                }
+            }
+        }
+        System.out.println("TH55 SPaT Length: " + THsize);
+        
         int numSpatRoute = 0;
         int numCVSpatRoute = 0;
         int numHVSpatRoute = 0;
         double avgTTspatCV = 0;
+        double avgTTall = 0;
         double lenConnectTraveled = 0;
         double lenI55traveled = 0;
-        
         for(Vehicle v: sim.getVehicles()){
             if(usedConnectedCorridor(v, SPaT)){
                 numSpatRoute++;
+                avgTTall += v.getTT();
                 if(v.getType() == 111){
                     numHVSpatRoute++;
                 } else {
@@ -186,11 +204,15 @@ public class Main
                 }
             }
         }
-        System.out.println("MPR = 0%");
+        System.out.println("MPR = 0%, 10% scaled, Three Hour AM Peak");
         System.out.println("Total Num veh taking SPaT Route: " + numSpatRoute);
         System.out.println("Num CV taking SPaT Route: " + numCVSpatRoute);
         System.out.println("Num HV taking SPaT Route: " + numHVSpatRoute);
+        System.out.println("AVG of all veh on SPaT Route: " + avgTTall/numSpatRoute);
         System.out.println("AVG TT of CVs on SPaT Route: " + avgTTspatCV/numCVSpatRoute);
+        System.out.println("Length on corridor that all vehicles drove(mi): " + lenI55traveled);
+        System.out.println("Length on corridor that CVs drove(mi): " + lenConnectTraveled);
+
 
 
         
@@ -200,6 +222,7 @@ public class Main
         
         filename = project.getResultsFolder()+"/link_flow.txt";
         sim.printLinkFlow(0, sim.getLastExitTime()+sim.ast_duration, new File(filename));
+
     }
     
     public static Boolean usedConnectedCorridor(Vehicle v, ArrayList<Node> SPaT){

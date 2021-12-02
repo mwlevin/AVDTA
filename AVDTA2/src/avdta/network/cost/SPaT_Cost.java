@@ -16,7 +16,7 @@ import avdta.vehicle.Vehicle;
  */
 public class SPaT_Cost extends TravelCost
 {
-    private static double alpha = .1464;
+    private static double alpha = .1431;
     private static double bet = 1-alpha; // discount rate for SPat
     //SPat discount rate = 1-bet
     /**
@@ -31,7 +31,7 @@ public class SPaT_Cost extends TravelCost
         //IF vehicle is CV and the source node
        
         if(l.getDest().getSPaT() && (driver.isCV() || driver.isAV())){
-            double dis = (l.getLength()*(1/24.9)*bet*3.01*(1/13.6)*3600);
+            double dis = (l.getLength()*(1/24.9)*alpha*3.01*(1/13.6)*3600);
           //System.out.println("Cost for link " + l.toString() + " moved from " + l.getAvgTT(enter) + " to " + (l.getAvgTT(enter)-dis) + " with discount " + dis);
           return l.getAvgTT(enter)-dis;
         }

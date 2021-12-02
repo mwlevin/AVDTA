@@ -389,11 +389,15 @@ public class Path extends ArrayList<Link> implements Serializable
     }
     
     public String toString(){
-        String s = "";
-        for(Link l : this){
-            s += l.toString();
+        String s = " ( ";
+        for(int i = 0; i < this.size(); i++){
+            s += "(";
+            s += this.get(i).getSource();
             s += ", ";
+            s += this.get(i).getDest();
+            s += " ), ";
         }
+        s += " )";
         return s;
     }
 }

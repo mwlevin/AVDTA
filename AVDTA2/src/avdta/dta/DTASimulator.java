@@ -54,7 +54,7 @@ public class DTASimulator extends Simulator
     
     private int iteration;
     
-    private boolean continueUntilExit = true;
+    private boolean continueUntilExit = false;
     
     
     
