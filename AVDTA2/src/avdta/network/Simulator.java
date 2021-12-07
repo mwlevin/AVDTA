@@ -1012,7 +1012,8 @@ public class Simulator extends Network
             {
                 if(times.size() <= i)
                 {
-                    throw new RuntimeException("Vehicle "+v.getId()+" did not exit.");
+                    System.err.println("Vehicle "+v.getId()+" did not exit.");
+                    break;
                 }
                 fileout.print(" "+route.get(i).getId()+" "+
                         times.get(i)+".00");
