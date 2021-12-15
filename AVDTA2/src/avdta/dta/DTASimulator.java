@@ -812,7 +812,7 @@ public class DTASimulator extends Simulator
                 dest = null;
             }
             
-            for(int i = 0; i < path.size(); i++)
+            for(int i = 0; i < path.size()-1; i++)
             {
                 Link l = path.get(i);
                 
