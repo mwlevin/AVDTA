@@ -24,6 +24,8 @@ import java.awt.Rectangle;
 import java.awt.Stroke;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -33,8 +35,13 @@ import java.awt.geom.Line2D;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
+import javax.swing.AbstractAction;
+import static javax.swing.Action.ACTION_COMMAND_KEY;
+import javax.swing.ActionMap;
+import javax.swing.InputMap;
 import javax.swing.JComponent;
 import javax.swing.JScrollPane;
+import javax.swing.KeyStroke;
 import javax.swing.Scrollable;
 import javax.swing.Timer;
 import org.openstreetmap.gui.jmapviewer.Coordinate;
@@ -54,7 +61,7 @@ import org.openstreetmap.gui.jmapviewer.tilesources.OsmTileSource;
  *
  * @author ml26893
  */
-public class MapViewer extends avdta.gui.editor.JMapViewer implements MouseListener, MouseMotionListener
+public class MapViewer extends avdta.gui.editor.JMapViewer implements MouseListener, MouseMotionListener, KeyListener
 {
     private static final Point[] move = {new Point(1, 0), new Point(0, 1), new Point(-1, 0), new Point(0, -1)};
 
@@ -87,6 +94,8 @@ public class MapViewer extends avdta.gui.editor.JMapViewer implements MouseListe
         
         addMouseListener(this);
         addMouseMotionListener(this);
+        addKeyListener(this);
+  
     }
     
     public MapViewer(DisplayManager display, int viewWidth, int viewHeight, Network network)
@@ -122,12 +131,14 @@ public class MapViewer extends avdta.gui.editor.JMapViewer implements MouseListe
             double xmax = Math.max(mouseStart.getX(), mouseEnd.getX());
             double ymax = Math.max(mouseStart.getY(), mouseEnd.getY());
             
+            System.out.println("ctrl: "+ctrl_held);
+            
             for(Node n : nodes)
             {
                 if(n.getX() >= xmin && n.getX() <= xmax &&
                         n.getY() >= ymin && n.getY() <= ymax)
                 {
-                    n.setSelected(true);
+                    n.setSelected(!ctrl_held);
                 }
             }
             
@@ -141,7 +152,7 @@ public class MapViewer extends avdta.gui.editor.JMapViewer implements MouseListe
                         s.getX() >= xmin && s.getX() <= xmax &&
                         s.getY() >= ymin && s.getY() <= ymax)
                 {
-                    l.setSelected(true);
+                    l.setSelected(!ctrl_held);
                 }
             }
 
@@ -159,7 +170,38 @@ public class MapViewer extends avdta.gui.editor.JMapViewer implements MouseListe
         
     }
     
-    public void mouseEntered(MouseEvent e){}
+    
+    
+    
+    private boolean ctrl_held;
+    
+    
+    public void keyPressed(KeyEvent e)
+    {
+        if(e.getKeyCode() == KeyEvent.VK_SHIFT)
+        {
+            ctrl_held = true;
+        }
+    }
+    
+    public void keyTyped(KeyEvent e){
+    }
+    
+    public void keyReleased(KeyEvent e)
+    {
+        if(e.getKeyCode() == KeyEvent.VK_SHIFT)
+        {
+            ctrl_held = false;
+        }
+    }
+    
+    
+    
+    public void mouseEntered(MouseEvent e)
+    {
+        requestFocus();
+    }
+    
     public void mouseExited(MouseEvent e){}
     public void mouseClicked(MouseEvent e){}
     public void mouseMoved(MouseEvent e){}
