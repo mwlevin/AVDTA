@@ -620,7 +620,9 @@ public class Editor extends JFrame implements MouseListener
         {
             public void actionPerformed(ActionEvent e)
             {
+
                 printSelectedLinks();
+
             }
         });
         me2.add(mi);
@@ -1865,6 +1867,12 @@ public class Editor extends JFrame implements MouseListener
     
     public void printSelectedNodes()
     {
+        if(project == null)
+        {
+            JOptionPane.showMessageDialog(this, "No project selected");
+            return;
+        }
+        
         try
         {
             JFileChooser fc = new JFileChooser(project.getResultsFolder());
@@ -1905,6 +1913,12 @@ public class Editor extends JFrame implements MouseListener
     
     public void printSelectedLinks()
     {
+        if(project == null)
+        {
+            JOptionPane.showMessageDialog(this, "No project selected");
+            return;
+        }
+        
         try
         {
             JFileChooser fc = new JFileChooser(project.getResultsFolder());
