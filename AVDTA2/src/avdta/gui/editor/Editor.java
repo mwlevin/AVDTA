@@ -42,6 +42,7 @@ import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Point;
 import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
@@ -282,6 +283,7 @@ public class Editor extends JFrame implements MouseListener
         JPanel p2 = new JPanel();
         p2.setLayout(new GridBagLayout());
         constrain(p2, layers, 0, 0, 1, 1);
+        //constrain(p2, new JLabel("Hold shift to deselect"), 1, 0, 1, 1);
         
         nodePanel = new NodeRulePanel(this, display.getNodeRules());
         linkPanel = new LinkRulePanel(this, display.getLinkRules());
@@ -293,7 +295,7 @@ public class Editor extends JFrame implements MouseListener
         constrain(p3, linkPanel, 0, 1, 2, 1);
         constrain(p3, new JLabel("Time: "), 0, 2, 1, 1);
         constrain(p3, timeSlider, 1, 2, 1, 1);
-        constrain(p2, p3, 0, 1, 1, 1);
+        constrain(p2, p3, 0, 1, 2, 1);
         
         constrain(p, p2, 0, 0, 1, 2);
         
@@ -667,6 +669,7 @@ public class Editor extends JFrame implements MouseListener
             }
         });
         
+        map.requestFocus();
         setLocationRelativeTo(null);
 
         setVisible(true);
@@ -675,6 +678,8 @@ public class Editor extends JFrame implements MouseListener
         {
             openProject(project);
         }
+        
+        
         
         setMode(PAN);
     }
@@ -738,7 +743,7 @@ public class Editor extends JFrame implements MouseListener
                 }
                 catch(Exception ex)
                 {
-                    handleException(ex);
+                    GUI.handleException(ex);
                 }
             }
         }
@@ -1033,7 +1038,7 @@ public class Editor extends JFrame implements MouseListener
         switch(mode)
         {
             case PAN:
-                setInstructions("Use right mouse button to move; use mouse wheel to zoom");
+                setInstructions("Use right mouse button to move; use mouse wheel to zoom. Hold shift to deselect.");
                 map.setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
                 break;
             case NODE:
@@ -1607,6 +1612,7 @@ public class Editor extends JFrame implements MouseListener
             listeners.remove(s);
         }
     }
+    
     
     public void mousePressed(MouseEvent e){}
     public void mouseReleased(MouseEvent e){}
