@@ -6,6 +6,7 @@
 package avdta;
 
 import avdta.network.AvdtaJSONSerializer;
+import avdta.network.Metric;
 import avdta.network.Simulator;
 import avdta.network.link.*;
 import avdta.network.node.Intersection;
@@ -25,7 +26,7 @@ public class RunSimulation {
     
     public static void main(String[] args) throws Exception{
         // int[] demandSet = {2, 4, 6, 8, 10, 12, 14, 16, 18};
-        int[] demandSet = {18};
+        int[] demandSet = {5};
         int[] cycleLengthSet = {15};
 
         for (int j : cycleLengthSet) {
@@ -47,7 +48,13 @@ public class RunSimulation {
                 Main main = new Main();
                 main.simulateFixedProportions(i);
 
-                AvdtaJSONSerializer.write(main.sim, "MP Demand 18");
+                Metric average_TT = new Metric(Metric.Type.AVERAGE_TT, 0, 75, 150, "Seconds");
+                Metric flow_in = new Metric(Metric.Type.FLOW_IN, 0, 40, 80, "# of Vehicles");
+                Metric ffs = new Metric(Metric.Type.FREE_FLOW_SPEED, 0, 30, 60, "Mph");
+                Metric capacity = new Metric(Metric.Type.CAPACITY, 0, 900, 1800, "# of Vehicles");
+                Metric[] metricArray = { average_TT, flow_in, ffs, capacity };
+
+                AvdtaJSONSerializer.write(main.sim, "MP Demand 18", metricArray);
                 
                 PrintStream delayTableOutRegular = new PrintStream(new FileOutputStream(new File("/Users/jeffrey/AVDTA_modified/AVDTA2/projects/coacongress2_ttmp/HaiVuDataCollection/DelayTables/DelayTable_d" + i + ".csv")), true);
                 delayTableOutRegular.println("delay, count");

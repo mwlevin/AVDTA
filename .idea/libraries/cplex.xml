@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="cplex">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/../dist/lib/cplex.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../dist/lib/JMapViewer.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../dist/lib/mysql-connector-java-5.1.39-bin.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

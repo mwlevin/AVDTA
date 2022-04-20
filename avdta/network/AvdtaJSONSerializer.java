@@ -17,22 +17,6 @@ public class AvdtaJSONSerializer {
 
     public static final String FILE_PATH = "/Users/jeffrey/AVDTA_modified/AVDTA_maps/maps.js";
 
-    public static final double MIN_TT = 0;
-    public static final double TT_COLOR2_CUTOFF = 75;
-    public static final double MAX_TT = 150;
-
-    public static final double MIN_FLOWIN = 0;
-    public static final double FLOWIN_COLOR2_CUTOFF = 40;
-    public static final double MAX_FLOWIN = 80;
-
-    public static final double MIN_FFS = 0;
-    public static final double FFS_COLOR2_CUTOFF = 30;
-    public static final double MAX_FFS = 60;
-
-    public static final double MIN_CAPACITY = 0;
-    public static final double CAPACITY_COLOR2_CUTOFF = 900;
-    public static final double MAX_CAPACITY = 1800;
-
     public static final int C1_R = 144;
     public static final int C1_G = 238;
     public static final int C1_B = 144;
@@ -57,7 +41,7 @@ public class AvdtaJSONSerializer {
     private static final JsonBuilderFactory factory = Json.createBuilderFactory(null);
 
 
-    private static JsonObject serializeLinkCoordinates(Network network, String name) {
+    private static JsonObject serializeLinkCoordinates(Network network, String name, Metric[] metrics) {
         JsonArrayBuilder coordinatesArrayBuilder = factory.createArrayBuilder();
 
         for (Link link : network.getLinks()) {
@@ -67,35 +51,27 @@ public class AvdtaJSONSerializer {
 
             Location[] coordinates = calculateDisplacedCoordinates(link);
 
-            coordinatesArrayBuilder.add(factory.createObjectBuilder()
+            JsonObjectBuilder objectBuilder = factory.createObjectBuilder();
+            objectBuilder
                     .add("source", factory.createObjectBuilder()
-                            .add("latitude", coordinates[0].getLat())
-                            .add("longitude", coordinates[0].getLon()))
+                        .add("latitude", coordinates[0].getLat())
+                        .add("longitude", coordinates[0].getLon()))
                     .add("dest", factory.createObjectBuilder()
                             .add("latitude", coordinates[1].getLat())
                             .add("longitude", coordinates[1].getLon()))
-                    .add("id", link.getId())
-                    .add("colorForFFS", getColor(link.getFFSpeed(), MIN_FFS, FFS_COLOR2_CUTOFF, MAX_FFS))
-                    .add("colorForCapacity", getColor(link.getCapacity(), MIN_CAPACITY, CAPACITY_COLOR2_CUTOFF, MAX_CAPACITY))
-                    .add("colorArrayForTT", createColorArrayForTT(link))
-                    .add("colorArrayForFlowIn", createColorArrayForFlowin(link)));
+                    .add("id", link.getId());
+
+            for (Metric metric : metrics) {
+                objectBuilder.add("colorArrayFor" + metric.getMetricType(), createColorArray(link, metric));
+            }
+
+            coordinatesArrayBuilder.add(objectBuilder.build());
         }
 
-        JsonObject object = factory.createObjectBuilder()
-                .add("name", name)
+        JsonObjectBuilder objectBuilder = factory.createObjectBuilder();
+        objectBuilder
                 .add("ASTLabelArray", createASTLabelArray())
-                .add("MIN_TT_FOR_LEGEND", MIN_TT)
-                .add("C2_TT_CUTOFF_FOR_LEGEND", TT_COLOR2_CUTOFF)
-                .add("MAX_TT_FOR_LEGEND", MAX_TT)
-                .add("MIN_FLOWIN_FOR_LEGEND", MIN_FLOWIN)
-                .add("C2_FLOWIN_CUTOFF_FOR_LEGEND", FLOWIN_COLOR2_CUTOFF)
-                .add("MAX_FLOWIN_FOR_LEGEND", MAX_FLOWIN)
-                .add("MIN_FFS_FOR_LEGEND", MIN_FFS)
-                .add("C2_FFS_CUTOFF_FOR_LEGEND", FFS_COLOR2_CUTOFF)
-                .add("MAX_FFS_FOR_LEGEND", MAX_FFS)
-                .add("MIN_CAPACITY_FOR_LEGEND", MIN_CAPACITY)
-                .add("C2_CAPACITY_CUTOFF_FOR_LEGEND", CAPACITY_COLOR2_CUTOFF)
-                .add("MAX_CAPACITY_FOR_LEGEND", MAX_CAPACITY)
+                .add("name", name)
                 .add("C1_R", C1_R)
                 .add("C1_G", C1_G)
                 .add("C1_B", C1_B)
@@ -106,10 +82,22 @@ public class AvdtaJSONSerializer {
                 .add("C3_G", C3_G)
                 .add("C3_B", C3_B)
                 .add("coordinateArray", coordinatesArrayBuilder
-                        .build())
-                .build();
+                        .build());
 
-        return object;
+        JsonArrayBuilder metricMetadataArrayBuilder = factory.createArrayBuilder();
+
+        for (Metric metric : metrics) {
+            metricMetadataArrayBuilder.add(factory.createObjectBuilder()
+                .add("metricType", metric.getMetricType().toString())
+                .add("unitOfMeasurement", metric.getUnitOfMeasurement())
+                .add("MIN", metric.getMinValue())
+                .add("C2", metric.getC2Value())
+                .add("MAX", metric.getMaxValue()));
+        }
+
+        objectBuilder.add("metricsArray", metricMetadataArrayBuilder.build());
+
+        return objectBuilder.build();
     }
 
     private static JsonArray createASTLabelArray() {
@@ -126,29 +114,13 @@ public class AvdtaJSONSerializer {
         return ASTLabelArrayBuilder.build();
     }
 
-    private static JsonArray createColorArrayForFlowin(Link link) {
-        int[] flowInArray = link.flowin;
-
-        JsonArrayBuilder colorArrayBuilder = factory.createArrayBuilder();
-
-        for (int i = 0; i < Simulator.duration/Simulator.ast_duration; i++) {
-            colorArrayBuilder.add(factory.createObjectBuilder()
-                .add("index", i)
-                .add("color", getColor(flowInArray[i], MIN_FLOWIN, FLOWIN_COLOR2_CUTOFF, MAX_FLOWIN)));
-        }
-
-        return colorArrayBuilder.build();
-    }
-
-    private static JsonArray createColorArrayForTT(Link link) {
-        RunningAvg[] avgTTArray = link.getAvgTTs();
-
+    private static JsonArray createColorArray(Link link, Metric metric) {
         JsonArrayBuilder colorArrayBuilder = factory.createArrayBuilder();
 
         for (int i = 0; i < Simulator.duration/Simulator.ast_duration; i++) {
             colorArrayBuilder.add(factory.createObjectBuilder()
                     .add("index", i)
-                    .add("color", getColor(avgTTArray[i].getAverage(), MIN_TT, TT_COLOR2_CUTOFF, MAX_TT)));
+                    .add("color", getColor(metric.getValue(link, i), metric.getMinValue(), metric.getC2Value(), metric.getMaxValue())));
         }
 
         return colorArrayBuilder.build();
@@ -238,13 +210,13 @@ public class AvdtaJSONSerializer {
         return returnArray;
     }
 
-    public static void write(Network network, String name) throws IOException {
+    public static void write(Network network, String name, Metric[] metrics) throws IOException {
         File file = new File(FILE_PATH);
         FileReader fr = new FileReader(file);
         BufferedReader br = new BufferedReader(fr);
         String line = br.readLine();
 
-        JsonObject serializedNetwork = serializeLinkCoordinates(network, name);
+        JsonObject serializedNetwork = serializeLinkCoordinates(network, name, metrics);
 
         //read maps.js file - if it is currently empty (i.e. line is null since there should never be a newline in the file) then we only write the current serialized object. Otherwise,
         //we need to append the current serialized object onto the end of the array
