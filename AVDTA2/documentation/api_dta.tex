@@ -1,0 +1,27 @@
+\chapter{Package \texttt{avdta.dta}}
+
+%The \texttt{avdta.dta} package contains classes to solve DTA.
+
+\section{Method of successive averages}
+
+DTA is handled through the \texttt{DTASimulator} class, which adds methods of solving DTA. The key methods for running MSA are \texttt{DTASimulator.msa($\cdot$)}, which runs MSA from iteration 0.  \texttt{DTASimulator.msa\_cont($\cdot$)} allows continuing MSA from the specified iteration. Both have several versions for entering different parameters. \texttt{DTASimulator.msa($\cdot$)}, whereas  Each iteration of MSA calls the helper methods of \texttt{DTASimulator.pathgen($\cdot$)} and \texttt{DTASimulator.simulate()}. For instance,
+\begin{algorithmic}[1]
+\State{\texttt{DTAProject project = \linebreak new DTAProject(new File("projects/SiouxFalls"));}}
+\State{\texttt{DTASimulator sim = project.getSimulator();}}
+\State{\texttt{sim.msa(50, 1);}}
+\end{algorithmic}
+will run 50 iterations of MSA, stopping after 50 iterations or when a cost gap percent of 1\% is reached, whichever occurs first. MSA can be run multiple times in succession via the API. After MSA completes, it will reset to a state ready for another run.
+
+The solution of DTA results in a \texttt{Assignment}. Like \texttt{Project}s, \texttt{Assignment}s are an interface for data files. \texttt{Assignment}s store the output of DTA --- a list of paths, vehicle path assignments, and a copy of the demand file. \texttt{Assignment}s can be loaded via \texttt{DTASimulator.loadAssignment(Assignment)}, and MSA can be continued afterwards. MSA will output a \texttt{MSAAssignment}, which also stores the last iteration number. The assignment class structure is shown below.
+\begin{list}{$\circ$}{}
+	\item \texttt{avdta.dta.Assignment}
+	
+	\begin{list}{$\circ$}{}
+		\item \texttt{avdta.dta.MSAAssignment}
+	\end{list}
+\end{list}
+The current assignment may be accessed through \texttt{DTASimulator.getAssignment()}, and is automatically saved at the conclusion of MSA.
+
+\section{Creating subnetworks}
+
+\texttt{DTASimulator} also has a method to create subnetworks, \texttt{createSubnetwork($\cdot$)}. The reason the method is in \texttt{DTASimulator} is that vehicle entrance and exits within the subnetwork may depend on the assignment. The method takes as input a list of \texttt{Link}s to include in the subnetwork. Centroids and centroid connectors are created automatically based on vehicle entrance and exit points. Vehicles that enter and exit the subnetwork multiple times will be split into multiple trips. 

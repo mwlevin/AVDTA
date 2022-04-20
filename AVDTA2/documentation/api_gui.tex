@@ -1,0 +1,162 @@
+\chapter{Package \texttt{avdta.gui}}
+
+The GUI has less Javadocs available than the remaining packages, which are more related to traffic network modeling. However, Javadoc would be less helpful for the \texttt{avdta.gui} package as much of the code exists in the constructors. This chapter will give an overview of the classes, and how to modify them to account for new nodes and links. There are two parts to the GUI: first, the \texttt{avdta.gui.GUI} and subclasses define the DTA functional GUI. Most of the code is contained within the \texttt{avdta.gui.panels} package. The Editor is contained within the \texttt{avdta.gui.editor} package. 
+%
+The GUI packages are organized as follows:
+\begin{list}{$\circ$}{}
+	\item \texttt{avdta.gui}
+	
+	\begin{list}{$\circ$}{}
+		\item \texttt{avdta.gui.editor}
+		
+		\begin{list}{$\circ$}{}
+			\item \texttt{avdta.gui.editor.visual}
+			
+			\begin{list}{$\circ$}{}
+				\item \texttt{avdta.gui.visual.rules}
+				
+				\begin{list}{$\circ$}{}
+					\item \texttt{avdta.gui.editor.visual.rules.data}
+					\item \texttt{avdta.gui.editor.visual.rules.editor}
+				\end{list}
+			\end{list}
+		\end{list}
+		
+		\item \texttt{avdta.gui.panels}
+		
+		\begin{list}{$\circ$}{}
+			\item \texttt{avdta.gui.panels.analysis}
+			\item \texttt{avdta.gui.panels.demand}
+			\item \texttt{avdta.gui.panels.dta}
+			\item \texttt{avdta.gui.panels.network}
+			\item \texttt{avdta.gui.panels.transit}
+		\end{list}
+		
+		\item \texttt{avdta.gui.util}
+	\end{list}
+	
+\end{list}
+%
+The \texttt{avdta.gui.GUI} class provides a template for types of GUIs specific to different project types (such as DTA, SAVs, etc.). \texttt{GUI.main(String[])} creates the appropriate type of GUI based on the parameters. New types of GUIs for different subclasses should be modeled after \texttt{DTAGUI}. The main coding work occurs in the various panels, described in Section \ref{gui:panels}. The template extension of \texttt{GUI} itself need only create the tabs (see \texttt{javax.swing.JTabbedPane}), and implement a few methods. \texttt{parentReset()} and \texttt{parentSetEnabled(boolean)} should call \texttt{reset()} and \texttt{setEnabled($\cdot$)} for all component panels. The \texttt{openProject($\cdot$)} methods need to be implemented to pass the \texttt{Project} to component panels. Optionally, \texttt{createMenuBar()} may be overridden to add menus to the menubar.
+
+\section{Package \texttt{avdta.gui.panels}}
+\label{gui:panels}
+
+\texttt{DTAGUI} makes use of various panels, that appear as separate tabs. The code for these panels appears in package \texttt{avdta.gui.panels}. Each panel must implement the interface \texttt{AbstractGUIPanel}, which defines several methods regarding the components:
+\begin{itemize}
+	\item \texttt{reset()}: reloads the panel
+	\item \texttt{setEnabled(boolean)}: enables/disables the panel; used when performing computations that require significant time
+	\item \texttt{parentReset()}: a call back to the parent panel to reset other panels
+	\item \texttt{parentSetEnabled(boolean)}: a call back to the parent panel to enable/disable other panels
+\end{itemize} 
+Most panels will want to extend \texttt{GUIPanel}, which implements the parent call backs, and implement \texttt{reset()} and \texttt{setEnabled($\cdot$)} on its components. The design philosophy for each panel is as follows. Each panel consists of various components which may change display or whether they are enabled, based on the project properties. When a project is loaded, the \texttt{reset()} method will update these components. These components are instantiated in the constructor, and event listeners are used to add actions. See \texttt{javax.swing}, \texttt{java.awt}, and \texttt{java.awt.event} for more information. \texttt{GUI} will automatically resize itself based on its component panels; however, having a large \texttt{GUI} may cause issues for users with low-resolution displays. Large panels should be separated into multiple tabs.
+
+The panels are designed in a modular fashion. Most project types will use network, transit, and demand panels, and these can be added exactly to any new GUI. These require a \texttt{Project}, \texttt{TransitProject}, and \texttt{DemandProject}, respectively, which most project types are likely to extend. Note that \texttt{LinksPanel} and \texttt{NodesPanel} in package \texttt{avdta.gui.network} have options to change link and node types, respectively. If new link or node types are created, these panels must be updated before the options will appear in the GUI.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\section{Package \texttt{avdta.gui.editor}}
+\label{api:editor}
+
+The \texttt{avdta.gui.editor} package creates the Editor, which overlays the network on Open Street Maps and provides an interface for modifying individual nodes and links. The \texttt{Editor} class provides the independent frame for the editor, and is built on several components. The primary component is the \texttt{MapViewer}, which draws the network, but there are also several other components used for editing (Section \ref{api:editor:edit}).
+
+\paragraph*{\texttt{JMapViewer}} This class extends the Open Street Map package \texttt{JMapViewer} to slightly modify the functionality. Much of the map controls, such as movement and zoom, are from the Open Street Maps package.
+
+\paragraph*{\texttt{MapViewer}} This is the main class for the Open Street Map network display, and extends \texttt{JMapViewer}. It also contains the logic for selecting links or nodes. The \texttt{MapViewer} has separate methods for drawing nodes and links, \texttt{paintNode($\cdot$)} and \texttt{paintLink($\cdot$)}, respectively. Generally, this class should not be modified to change the display of networks. Rather, the \texttt{MapViewer} display is built on a \texttt{DisplayManager} in the subpackage \texttt{avdta.gui.editor.visual}, which defines how nodes and links are displayed. These are discussed further in Section \ref{api:editor:visual}.
+
+
+\paragraph*{\texttt{SelectListener}, \texttt{SelectAdapter}}
+These provide an interface to select individual nodes and links. When a selection action is finished, the appropriate in all registered listeners will be called. Listeners may be added to the \texttt{Editor} through the \texttt{addSelectListener($\cdot$)} method. When adding a listener, the \texttt{setMode(int)} method should also be called for the appropriate selection mode. The default is \texttt{PAN}: no selection, and there are also options for \texttt{NODE}, \texttt{LINK}, and \texttt{POINT}. The \texttt{POINT} option simply selects a geographic coordinate. The \texttt{NODE} option will select the node closest to the selected point. Finally, the \texttt{LINK} option returns an array of the closest links to the selected coordinate. Parallel but opposite direction links will be included.
+
+\paragraph*{\texttt{TwoNodeSelectAdapter}}
+This class provides a method to select two nodes, which may be useful for constructing a link. The \texttt{nodesSelected(Node, Node)} method will be called when two nodes have been selected.
+
+
+
+\subsection{Package \texttt{avdta.gui.editor.visual}}
+\label{api:editor:visual}
+
+
+This package contains classes that control the display of nodes and links within the Editor. The key interface is the \texttt{DisplayManager}, which defines the methods needed by \texttt{MapViewer}. The boolean on/off methods correspond to checkboxes in the upper left-hand side of the Editor, and control the display modes. There are also methods that control the color and width of each individual node and link. Each option has standard accessor and modifier methods.
+%
+\begin{itemize}
+	\item \texttt{DisplayLinks}: whether links are drawn. Links will be shifted to the right slightly so that parallel, opposite direction links are distinct.
+	
+	\item \texttt{DisplayNodes}: whether nodes are drawn and ids are displayed as text.
+	
+	\begin{itemize}
+		\item \texttt{DisplayCentroids}: whether centroids are drawn and ids displayed.
+		\item \texttt{DisplayNonCentroids}: whether non-centroids are drawn and ids displayed. This may be turned off to focus only on the centroids.
+	\end{itemize}
+\end{itemize}
+There are also methods that control the color and width of each individual node and link. 
+\begin{itemize}
+	\item \texttt{getColor(Link, int)}: returns the color of the line showing the link at the specified time.
+	\item \texttt{getWidth(Link, int)}: returns the width of the line showing the link at the specified time.
+	\\
+	\item \texttt{getColor(Node, int)}: returns the perimeter color of the circle showing the node at the specified time.
+	\item \texttt{getColor(Node, int)}: returns the fill color of the circle showing the node at the specified time.
+	\item \texttt{getRadius(Node, int)}: returns the radius of the circle showing the node at the specified time.
+\end{itemize}
+These methods include a time parameter to visualize the network differently at different times in simulation. The Editor contains a slider which is used to control the display time.
+Each of the above options has standard accessor and modifier methods.
+%
+Finally, the interface requires that the display configuration may be saved and opened from files.
+
+There are two provided classes that implement \texttt{DisplayManager}: \texttt{DefaultDisplay} and \texttt{RuleDisplay}. The \texttt{DefaultDisplay} provides only a basic implementation of \texttt{DisplayManager}, with booleans to store all display options and default values for the visualization. \texttt{RuleDisplay} extends \texttt{DefaultDisplay} to add visualization rules for displaying nodes and links. Rules are found in package \texttt{avdta.gui.editor.visual.rules}. Rules are separated for nodes and links through the \texttt{NodeRule} and \texttt{LinkRule} classes. Each contains a boolean \texttt{matches($\cdot$)} method, which indicates whether the rule applies to the specified node/link at the given time. (If one rule does not apply, other rules might). The rules then have methods controlling the color and width of individual nodes and links. 
+
+There are several rule options built in. Nodes and links each have three types of rules:
+\begin{itemize}
+	\item \texttt{Type}: matches nodes/links of a specific flow model (e.g. CTM), and colors them as specified.
+	\item \texttt{Data}: matches all nodes/links, and colors them on a range between two colors according to the data given (e.g. travel times).
+	\item \texttt{File}: a user-specified file containing a subset of nodes/links with the color they should be drawn.
+\end{itemize}
+%
+Package \texttt{avdta.gui.editor.visual.rules.data} provides data sources for the data rules.  Package \texttt{avdta.gui.editor.visual.rules.editor} provides GUI panels for adding and modifying display rules.
+
+
+\subsection{Editing nodes and links}
+\label{api:editor:edit}
+
+There are several classes used to create popup windows within the Editor for editing individual data. These typically provide a custom interface specific to the data being edited (nodes, signals, links). These include \texttt{EditLink}, \texttt{EditNode}, and \texttt{EditSignal}. These classes are added to a \texttt{JInternalFrame} to show up as a popup window. These classes can all be used in two modes: constructing a new link, node, or signal, or editing an existing one. Accessing these modes depends on whether the classes are constructed with an existing link, node, or signal, respectively. The options within these classes should be modified as new flow models are added to AVDTA so that the flow models may be selected within the GUI.
+
+
+
+
+
+\section{Package \texttt{avdta.gui.util}}
+\label{api:util}
+
+This package contains utility methods and classes for GUI construction.
+
+\paragraph*{\texttt{GraphicUtils}} This class was developed externally, and works with a specific type of layout, \texttt{java.awt.GridBagLayout}, for arranging GUI components. The methods provide a matrix-based alignment; each component has a row and column where the left corner is located, and a width and height in numbers of columns and rows, respectively.
+
+\paragraph*{\texttt{JColorButton}}
+This class allows the user to choose among multiple colors. It appears as a button which displays the currently selected color, and opens a color selector when clicked. 
+
+\paragraph*{\texttt{JFileField}}
+This is a non-editable text field that, when clicked, will prompt the user to select a file. The text field stores the selected file, which can be accessed. Hovering the mouse over a \texttt{JFileField} will indicate its clickability.
+
+\paragraph*{\texttt{ProjectChooser}}
+This is an extension of \texttt{JFileChooser}, which is used to choose files. The \texttt{ProjectChooser} is used to select projects. Project folders are displayed with a special icon within the \texttt{ProjectChooser} (although they are a normal folder in the Windows file system) to indicate their status to users. The type of projects available for selection is determined by the \texttt{ProjectFileView}.
+
+\paragraph*{\texttt{ProjectFileView}}
+This class extends \texttt{FileView} to select AVDTA projects. Project folders appear in the \texttt{ProjectChooser} with a specific icon denoting their status as an AVDTA project. There are several selection modes, indicating the type of project that the \texttt{ProjectFileView} will search for. 
+
+\paragraph*{\texttt{StatusBar}} This provides a progress bar component that can be created with a corresponding \texttt{StatusUpdate} class. Updates made by the \texttt{StatusUpdate} will be visually shown in the \texttt{StatusBar} component.
+
+\paragraph*{\texttt{StatusUpdate}} Any implementing class can send updates to a corresponding \texttt{StatusBar}. Several classes, such as \texttt{DTASimulator}, use \texttt{StatusUpdate} to update progress.
+
+

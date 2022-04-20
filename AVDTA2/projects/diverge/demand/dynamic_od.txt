@@ -1,0 +1,3 @@
+id	type	origin	dest	ast	demand
+1	111	101	102	0	400.0
+2	111	101	102	0	600.0

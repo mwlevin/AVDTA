@@ -1,0 +1,12 @@
+name	value
+all-avs	true
+allow-repositioning	true
+arrival-time-alpha	3.198
+arrival-time-beta	1.94878125
+arrival-time-gamma	7.60012695
+demand-asts	8
+fuel-cost	2
+logit-dispersion	0.0548
+reposition-asc	0.0
+transit-asc	-52.6
+transit-fee	1.0

@@ -1,0 +1,8 @@
+name	value
+ast-duration	900
+av-reaction-time	0.5
+dynamic-lane-reversal	false
+hv-reaction-time	1
+hvs-use-reservations	false
+simulation-duration	36000
+simulation-mesoscopic-step	6

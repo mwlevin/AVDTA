@@ -1,0 +1,56 @@
+\chapter{Examples}
+\label{sec:tutorials}
+
+This chapter provides some code examples for commonly used functions.
+
+\paragraph*{Running DTA}
+\begin{algorithmic}[1]
+\State{\texttt{DTAProject project = new DTAProject(\linebreak new File("projects/coacongress"));}}
+\State{\texttt{DTASimulator simulator = project.getSimulator();}}
+\State{\texttt{simulator.msa(30);}}
+\end{algorithmic}
+
+\paragraph*{Iterating through network structure}
+\begin{algorithmic}[1]
+\State\texttt{for(Link link : simulator.getLinks())}
+\State\texttt{for(Node node : simulator.getNodes())}
+\State\texttt{for(Vehicle veh : simulator.getVehicles())}
+\end{algorithmic}
+
+
+\paragraph*{Creating a network through code}
+\begin{algorithmic}[1]
+\State\texttt{DTAProject project = new DTAProject();}
+\State\texttt{project.createProject("transit", new File("projects/transit"));}
+\State\texttt{DTASimulator sim = project.createEmptySimulator();\linebreak }
+        
+\State\texttt{Set<Node> nodes = new HashSet<Node>();}
+\State\texttt{Set<Link> links = new HashSet<Link>();\linebreak }
+        
+        
+\State\texttt{Zone n1 = new Zone(1);}
+\State\texttt{ Node n2 = new Intersection(2, new PriorityTBR());}
+\State\texttt{Node n3 = new Intersection(3, new PriorityTBR());}
+\State\texttt{Zone n4 = new Zone(4);}
+\State\texttt{Zone n1a = new Zone(10);\linebreak }
+        
+\State\texttt{nodes.add(n1);}
+\State\texttt{nodes.add(n2);}
+\State\texttt{nodes.add(n3);}
+\State\texttt{nodes.add(n4);}
+\State\texttt{nodes.add(n1a);\linebreak }
+        
+\State\texttt{Link l12 = new CentroidConnector(12, n1, n2);}
+\State\texttt{Link l12a = new CentroidConnector(110, n1a, n2);}
+\State\texttt{TransitLane t23 = new TransitLane(230, n2, n3, 1200, 30, 15, \linebreak 5280/Vehicle.vehicle\_length, 2.0);}
+\State\texttt{CTMLink l23 = new SharedTransitCTMLink(23, n2, n3, 1200, 30, 15, \linebreak 5280.0/Vehicle.vehicle\_length, 2.0, 1, t23);}
+\State\texttt{Link l34 = new CentroidConnector(34, n3, n4);\linebreak }
+        
+\State\texttt{links.add(l12);}
+\State\texttt{links.add(t23);}
+\State\texttt{links.add(l23);}
+\State\texttt{links.add(l34);}
+\State\texttt{links.add(l12a);\linebreak }
+        
+\State\texttt{sim.setNetwork(nodes, links);}
+\end{algorithmic}

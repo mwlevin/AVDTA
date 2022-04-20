@@ -1,0 +1,4 @@
+id	weight	start	duration
+0	0.05	0	900
+1	0.05	900	900
+

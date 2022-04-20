@@ -1,0 +1,217 @@
+\chapter{Package \texttt{avdta.network}}
+\label{api:network}
+
+The \texttt{avdta.network} package contains classes that model traffic networks and handle the propagation of traffic through the network. This package includes the DNL code, and is currently the most extensive. The main classes in the package are \texttt{Network}, which includes network data (nodes and links), and \texttt{Simulator} (which adds vehicle propagation methods). Note that \texttt{Simulator} extensions appear in other packages as well, such as \texttt{DTASimulator} and \texttt{SAVSimulator}. The \texttt{avdta.network} package also includes many subpackages which include nodes, links, and other network-related code.
+
+\section{Package \texttt{avdta.network} organization}
+The \texttt{avdta.network} package is organized as follows:
+\begin{list}{$\circ$}{}
+	\item \texttt{avdta.network.Network}
+	
+	This class contains network data (nodes and links) and methods for working with networks, such as shortest path calculations.
+	
+	\begin{list}{$\circ$}{}
+		\item \texttt{avdta.network.Simulator}
+		
+		This class adds vehicle propagation to the \texttt{Network} class.
+	\end{list}
+
+	\item \texttt{avdta.network.ReadNetwork}
+	
+	This class contains methods to read data. Although the methods are typically not called directly by user applications, it also contains constants used for data type codes (see Chapter \ref{ch:network}).
+	
+	\item \texttt{avdta.network.Path}
+	
+	A path is a list of links, and this class  extends \texttt{ArrayList<Link>}. It also adds methods for calculating or accessing link parameters, such as costs, free flow travel times, and lengths.
+	
+	\item\texttt{avdta.network.PathList}
+	
+	An internal class used to avoid storing duplicate paths.
+	
+	\item \texttt{ImportFromVISTA}
+	
+	This class imports network data from VISTA (see Chapter \ref{ch:network}).
+	
+	\item \texttt{TransitImportFromVISTA}
+	
+	This class imports transit data from VISTA (see Chapter \ref{ch:transit}).
+	
+\end{list}
+
+%\subsection{Working with \texttt{Network}s and \texttt{Simulator}s}
+
+There are several notable methods that are often important for working with \texttt{Network}s and \texttt{Simulator}s. \texttt{Network} requires sets of nodes and links, and can be constructed using \texttt{Network.Network(Set<Node>, Set<Link>)}. Alternatively, these can be provided after construction using \texttt{Network.setNetwork(Set<Node>, Set<Link>)}. After reading data is complete, nodes and links should be initialized prior to any simulation using \texttt{Network.initialize()}. Network data can be accessed via \texttt{Network.getNodes()} and  \texttt{Network.getLinks()}. There are also methods to create mappings from ids to nodes or links: \texttt{Network.createNodeIdsMap()} and \texttt{Network.createLinkIdsMap()}, respectively.
+
+\subsection{Shortest paths}
+\texttt{Network} has several options for finding shortest paths. There are two types of Dijkstra's implementations --- node and link. Node Dijkstra's is the standard Dijkstra's method. Link Dijkstra's runs on the dual graph (with nodes and links swapped) and is the correct version for use on intersections in which some turning movements are not permitted. However, link Dijkstra's typically takes more computation time due to most networks having more links than nodes. Link Dijkstra's is used by default, although this can be changed via \texttt{Network.setUseLinkDijkstras(boolean)}. These methods can also be called via \texttt{Network.node\_dijkstras($\cdot$)} and \texttt{Network.link\_dijkstras($\cdot$)}. Each takes as parameters the starting node, departure time, value of time, \texttt{DriverType} (Chapter \ref{api:vehicle}), and \texttt{TravelCost} (Section \ref{api:pathcost}). The \texttt{DriverType} is required because some node and link types are restricted to certain types of drivers. For instance, CACC cannot be used by non-connected vehicles. It is also controllable whether non-AVs can use reservations. The \texttt{TravelCost} parameter allows specifying different generalized cost functions. The corresponding functions to obtain \texttt{Path}s are \texttt{Network.node\_trace()} and \texttt{Network.link\_trace()}, respectively.
+
+Dijkstra's should be be called explicitly when finding one-to-all paths. For finding a one-to-one path, \texttt{Network.findPath($\cdot$)} is a faster interface. This is best used when the parameters for finding paths are likely to be different for each one-to-one path.
+
+\subsection{Simulation}
+
+\texttt{Simulator} extends \texttt{Network} to propagate vehicles through the network. Correspondingly, it has methods to add vehicles --- \texttt{Simulator.setVehicles(List<Vehicle>)}.  
+%
+\texttt{Simulator.simulate()} will run a complete simulation (the simulation is finished when \texttt{Simulator.simulationFinished()} returns true). Before new simulations, the initial state must be restored by calling \texttt{Simulator.resetSim()}. \texttt{Simulator.simulate()} calls several helper methods that can be overridden by subclasses that wish to modify the simulation, such as \texttt{Simulator.addVehicles()}. After simulation, there are a large variety of methods to access or print simulation results.
+
+\section{\texttt{avdta.network.cost}}
+\label{api:pathcost}
+
+The \texttt{avdta.network.cost} package includes various cost functions that work with the Dijkstra's methods in \texttt{Network}. The main class is \texttt{TravelCost}, which specifies the \texttt{TravelCost.cost($\cdot$)} method. Other classes provide potentially useful cost functions.
+
+\section{Package \texttt{avdta.network.node}}
+
+This package contains code to model nodes and intersections. There are several trees of classes. Abstract classes are italicized.
+
+\begin{list}{$\circ$}{}
+	\item \texttt{avdta.network.node.Location}
+	\begin{list}{$\circ$}{}
+		\item \texttt{\textit{avdta.network.node.Node}}	
+		
+		\begin{list}{$\circ$}{}
+			\item \texttt{avdta.network.node.Intersection}
+			\item \texttt{avdta.network.node.Zone}
+		\end{list}	
+	\end{list}
+
+	\item \texttt{\textit{avdta.network.node.IntersectionControl}}
+	
+	\begin{list}{$\circ$}{}
+		
+		\item \texttt{avdta.network.node.Diverge}
+		
+		\item \texttt{avdta.network.node.Merge}
+		
+		\item \texttt{\textit{avdta.network.node.TBR}}
+		
+		\begin{list}{$\circ$}{}
+			\item \texttt{avdta.network.node.IPTBR}
+			
+			\item \texttt{avdta.network.node.PhasedTBR}
+			
+			\item \texttt{avdta.network.node.PriorityTBR}
+		\end{list}
+		
+		\item \texttt{avdta.network.node.TrafficSignal}
+		
+		
+		\item \texttt{avdta.network.node.StopSign}
+	\end{list}
+
+	\item{avdta.network.node.Signalized}
+
+\end{list}
+\texttt{Node}s are either \texttt{Intersection}s, controlled by an \texttt{IntersectionControl}, or a \texttt{Zone}, without any intersection dynamics. \texttt{Zone}s are used to represent centroids. 
+%
+Incoming and outgoing \texttt{Link}s can be accessed by \texttt{Node.getIncoming()} and \texttt{Node.getOutgoing()}, respectively.
+When constructing a \texttt{Link}, it is not necessary to call \texttt{Node.addLink($\cdot$)}, as it will be called automatically by the \texttt{Link} constructor.
+
+\subsection{\texttt{Node.step()}}
+
+Vehicle flow is controlled via \texttt{Node.step()}, which is called every time step to determine vehicle movements. \texttt{Node.step()} returns the number of exiting vehicles. Note that vehicles may exit at \texttt{Zone}s, or, in the case of buses, at \texttt{Intersection}s. For \texttt{Intersection}s, \texttt{Node.step()} calls \texttt{IntersectionControl.step()}. It may be necessary to override \texttt{IntersectionControl.step()} to implement new types of intersection controls. There are several requirements for successful propagation of vehicle flow, which we discuss here.
+
+The set of vehicles that could move is accessed through \texttt{Link.getSendingFlow()}. The number of vehicles that can enter a downstream link is \texttt{Link.getReceivingFlow()}. Note that these should only be called once per time step because of discretization. These are normally real numbered values, but are discretized each time step. Calling these methods multiple times per time step could disrupt the discretization. The lists of sending flows should be stored internally to the method. Receiving flows may be stored in the public variable \texttt{Link.R}, which is created for this purpose.
+
+Incoming and outgoing links for each vehicle for the appropriate node can be accessed through the \texttt{Vehicle.getPrevLink()} and \texttt{Vehicle.getNextLink()} methods. These require proper updating of the vehicle's position when a vehicle moves across an intersection by calling the \texttt{Link.removeVehicle(Vehicle)} and \texttt{Link.addVehicle(Vehicle)} methods for the appropriate links. Vehicles that exit will not have an outgoing link; instead, the method called should be \texttt{Vehicle.exited()}.
+
+
+\subsection{\texttt{Signalized}}
+
+The \texttt{Signalized} interface provides methods for storing and accessing traffic signal data. \texttt{Signalized} may apply to \texttt{IntersectionControl} subclasses or to policies used for specific types of intersection controls. To access the signal, call \texttt{Node.getSignal()}, which will propagate through intersection controls and policies to return the associated \texttt{Signalized}, if one exists, or \texttt{null} otherwise.
+
+
+\subsubsection{Intersection controls}
+
+There are several intersection controls already implemented. \texttt{TrafficSignal} implements a standard traffic signal; flow is allowed when the light is green, and blocked when red. Unprotected turning movements are not permitted. \texttt{StopSign} attempts to model the stopping behavior by placing a minimum delay on vehicles in the last cell of the intersection. \texttt{Diverge} and \texttt{Merge} implement the diverge and merge node models, respectively, and are typically more efficient than signals and reservations. Therefore, they are used in place of signals and reservations where possible. Finally, there are many variations of reservations studied, with corresponding packages.
+
+\subsection{Reservation-based intersection control}
+
+Reservation-based intersection control is through subclasses of \texttt{TBR}. (TBR stands for tile-based reservation). There are many potential policies for how to prioritize vehicle movement. \texttt{PriorityTBR} prioritizes vehicles according to a priority function specified by a  \texttt{avdta.network.node.policy.IntersectionPolicy} subclass. These include first-come-first-served and others. \texttt{IPTBR} uses CPLEX to solve the IP associated with moving a variety of vehicles with various weights. Since this IP is NP-hard, solving this each time step is intractable for large networks. \texttt{avdta.network.node.policy.MCKSTBR} uses an efficiency-based priority function to provide a greedy heuristic for the IP. Objective functions for \texttt{IPTBR} and \texttt{MCKSTBR} are found in the \texttt{avdta.network.node.obj} package.
+
+\subsection{Creating a new type of intersection control}
+
+Due to the structure of the \texttt{Node} class, creating a new subclass is unlikely to be necessary. Rather, users are likely to create a new subclass of \texttt{IntersectionControl}. After creating such a subclass, it must be added to \texttt{avdta.network.ReadNetwork} to be used when loading networks. First, assign it an unique type code (see Section \ref{sec:nodes}), and declare the type code along with the other constants at the top of \texttt{ReadNetwork}. \texttt{IntersectionControl}s for \texttt{Node}s are constructed using a \texttt{switch} \texttt{case} on type codes in \texttt{ReadNetwork.readIntersections(Project)}. To use a new subclass, add a new \texttt{switch} \texttt{case} entry.
+
+\section{Package \texttt{avdta.network.link}}
+
+This package contains link models, which propagate flow between nodes. There are three main types of flow models in use: centroid connectors, LTM, and CTM. The package hierarchy is shown below, with abstract classes italicized.
+%
+\begin{list}{$\circ$}{}
+	\item \texttt{\textit{avdta.network.link.Link}}
+	\begin{list}{$\circ$}{}
+		\item \texttt{avdta.network.link.CentroidConnector}
+		\item \texttt{avdta.network.link.CTMLink}
+		
+		\begin{list}{$\circ$}{}
+			\item \texttt{avdta.network.link.DLRCTMLink}
+			\item \texttt{avdta.network.link.SharedTransitCTMLink}
+			\item \texttt{avdta.network.link.SplitCTMLink}
+			\item \texttt{avdta.network.link.TransitLane}
+		\end{list}
+		\item \texttt{avdta.network.link.LTMLink}
+		
+		\begin{list}{$\circ$}{}
+			\item \texttt{avdta.network.link.CACCLTMLink}
+		\end{list}
+	\end{list}
+\end{list}
+Some classes (\texttt{SharedTransitCTMLink} and \texttt{SplitCTMLink})have a separate transit lane, modeled by the \texttt{TransitLane} class. These classes also implement the \texttt{AbstractSplitLane} interface to connect the two links. In the network structure, there will be two links with the same source and destination node. One will be usable by transit vehicles, and the other by all vehicles; transit vehicles will prefer the \texttt{TransitLane} when possible.
+
+\texttt{Link} parameters are specified by the network data (see Chapter \ref{ch:network}). The \texttt{Link} class also stores average travel times and flows from the last simulation. These are used for computing new shortest paths for iterations of DTA, and can be accessed after simulation as part of the results. Links are updated via the \texttt{Link.step()} method. Some \texttt{Link} subclasses also require the \texttt{Link.prepare()} and \texttt{Link.update()} methods. Each time step, \texttt{Link.prepare()} will be called for all links, then \texttt{Link.step()}, and finally \texttt{Link.update()}. 
+
+To interface with nodes, links must implement the \texttt{Link.getSendingFlow()} and \texttt{Link.getReceivingFlow()} methods. Vehicles are individually tracked, and are added and removed via \texttt{Link.addVehicle($\cdot$)} and \texttt{Link.removeVehicle($\cdot$)} methods. The number of lanes at the upstream and downstream ends of the link, \texttt{Link.getUsLanes()} and \texttt{Link.getDsLanes()}, are also important for FIFO flow at intersections. Note that capacities and jam densities are calculated per lane because some \texttt{Link} subclasses change the number of lanes available each time step.
+
+\subsection{\texttt{CTMLink}}
+
+\texttt{CTMLink} and subclasses use cells (package \texttt{avdta.network.link.cell}) to propagate flow. Each cell is modeled as a FIFO queue with sending and receiving flow constraints from the flow-density relationship. Due to the lack of multiple inheritance, each type of \texttt{CTMLink} has three separate types of cells in the \texttt{avdta.network.link.cell} package. All are subclasses of \texttt{Cell}. \texttt{LinkCell} models cells in the middle of the link. The start and ends of the link are handled separately due to interfacing with nodes, and are modeled through the \texttt{StartCell} and \texttt{EndCell} classes, respectively. New \texttt{CTMLink} subclasses should create new \texttt{Cell} subclasses as well. The typical organization of these \texttt{Cell} subclasses is shown below.
+\begin{list}{$\circ$}{}
+	\item \texttt{\textit{avdta.network.link.cell.Cell}}
+	
+	\begin{list}{$\circ$}{}
+		\item \texttt{avdta.network.link.cell.LinkCell}
+		
+		\begin{list}{$\circ$}{}
+			\item \texttt{avdta.network.link.cell.EndCell}
+		\end{list}
+		\item \texttt{avdta.network.link.cell.StartCell}
+	\end{list}
+\end{list}
+The appropriate \texttt{Cell} subclasses can be used for \texttt{CTMLink} subclasses by overriding the following methods:
+\begin{itemize}
+	\item \texttt{CTMLink.createCell($\cdot$)}
+	\item \texttt{CTMLink.createEndCell($\cdot$)}
+	\item \texttt{CTMLink.createStartCell()}
+\end{itemize}
+\texttt{CTMLink.initialize()}  calls the above methods to create an internal array of \texttt{Cell}s. The number of cells depends on the free flow speed. For the CTM to be a true Godunov approximation\cite{godunov1959difference}, the congested wave speed cannot exceed the free flow speed.
+
+\texttt{CTMLink} overrides \texttt{Link.prepare()}, \texttt{Link.step()}, and \texttt{Link.update()} and calls the corresponding methods in \texttt{Cell}. Similarly, \texttt{CTMLink.getSendingFlow()} and \texttt{CTMLink.getReceivingFlow()} also call the corresponding methods in \texttt{Cell} for the last and first cells, respectively. \texttt{CTMLink} provides several methods for calculating cell parameters:
+\begin{itemize}
+	\item \texttt{CTMLink.getCellCapacityPerLane()}
+	\item \texttt{CTMLink.getCellJamdPerLane()}
+	\item \texttt{CTMLink.getCellLength()}
+\end{itemize}
+%
+CTM also has an integrated vehicle-specific power model to predict fuel consumption. This is called via the \texttt{Vehicle.updatePosition(Cell)} method, which estimates fuel consumption based on average speed and acceleration in the previous cell. Acceleration is estimated as the difference between average cell speeds in the previous two cells.
+
+\subsection{\texttt{LTMLink}}
+
+\texttt{LTMLink}s use a \texttt{ChainedArray} to store upstream and downstream cumulative counts for previous time steps. The \texttt{ChainedArray} has a fixed size, set when the link is initialized by \texttt{LTMLink.getUSLookBehind()} and \texttt{LTMLink.getDSLookBehind()}. The \texttt{ChainedArray} internally calculates the appropriate indices for the desired look behind time. \texttt{LTMLink} is modeled as a FIFO queue, with sending and receiving flows determined by the LTM equations. Extensions of \texttt{LTMLinks}s only need to modify the appropriate parameter methods to achieve the desired behavior.
+
+\subsection{Creating a new link class}
+
+After creating a new link class, it must be added to \texttt{avdta.network.ReadNetwork} so that it can be used when constructing networks. First, assign the class an unique code. These codes are defined as constants at the top of \texttt{ReadNetwork} (also see Section \ref{sec:links}). When the link data file is read, one of the parameters is the link type. In the \texttt{ReadNetwork.readLinks(Project)} method, add a new \texttt{switch} \texttt{case} with the appropriate type code to construct the new link subclass.
+
+\subsection{\texttt{avdta.network.link.transit}}
+
+\texttt{TransitLink}s are virtual links that model connections via transit or walking. These links may not correspond to physical links in the network, and are not usable by vehicles. \texttt{WalkingLink}s are created alongside physical links, and have a fixed travel time set by the walking speed. \texttt{BusLink}s represent connections between bus stops. \texttt{TransitLink}s have separate shortest path methods in \texttt{Network} and separate methods to get the sets of incoming and outgoing links from \texttt{Node}s. \texttt{BusLink}s are created during the instantiation of bus routes, and contain a set of travel time records (\texttt{TTRecord}). Every time a bus travels directly (without stopping) from the source to the destination of a \texttt{BusLink} the travel time records are updated. When a traveler seeks to use the buses, the appropriate travel time for the traveler's departure time is returned.
+
+\section{``Record'' classes}
+
+AVDTA contains several ``Record'' classes: \texttt{NodeRecord}, \texttt{LinkRecord}, etc. Each class provides an interface for a single entry in the corresponding data file (see Chapter \ref{ch:network}). For instance, \texttt{NodeRecord} is an interface for the data for a single node, which is one line of data in the \texttt{nodes.txt} file. These classes are designed to provide easy access to reading and writing input data. Each class has a constructor which takes a line of input data, and a \texttt{toString()} method which will output the data in the correct format. For instance, data may be read via the following code:
+\begin{algorithmic}[1]
+\State{\texttt{DTAProject project = \linebreak new DTAProject(new File("projects/SiouxFalls"));}}
+\State{\texttt{Scanner filein = new Scanner(project.getNodesFile());}}
+\State{\texttt{filein.nextLine()}} \Comment{Header data}
+\State{\texttt{While(filein.hasNextLine())\{}}
+\State\hspace{\algorithmicindent} \texttt{NodeRecord data = new NodeRecord(filein.nextLine());}
+\State{\texttt{\}}}
+\end{algorithmic}

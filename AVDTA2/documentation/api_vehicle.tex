@@ -1,0 +1,40 @@
+\chapter{Package \texttt{avdta.vehicle}}
+
+The \texttt{avdta.vehicle} package represents vehicles that move through the network during simulation. \texttt{Vehicle}s are constructed with a \texttt{avdta.vehicle.DriverType}, which determines reaction times used for the multiclass CTM\cite{levin2016multiclass} and which nodes and links are accessible to the vehicle, and a \texttt{avdta.vehicle.fuel.VehicleClass}, which determines fuel consumption when using CTM. 
+
+\section{Location tracking}
+\texttt{Vehicle}s have a set \texttt{Path} that they follow, and they track their location along this \texttt{Path} using the \texttt{Vehicle.enteredLink(Link)} method. \texttt{Vehicle} locations may be accessed by the following methods.
+\begin{itemize}
+	\item \texttt{Vehicle.getCurrLink()}
+	\item \texttt{Vehicle.getPrevLink()}
+	\item \texttt{Vehicle.getNextLink()}
+\end{itemize}
+Note that \texttt{Vehicle.getPrevLink()} and \texttt{Vehicle.getCurrLink()} return the link the vehicle currently occupies. \texttt{Vehicle.getPrevLink()} is used by \texttt{Node}s to identify the vehicle's incoming and outgoing link.
+%
+\texttt{Path}s may be assigned prior to the start of simulation using \texttt{Vehicle.setPath(Path)} without any consistency problems, assuming that the vehicle starts at the starting point of the path. Changing the \texttt{Path} during simulation requires updating the internally stored path index and ensuring that the vehicle is on the correct link. Otherwise, the vehicle may be unable to traverse nodes.
+
+\texttt{Vehicle}s also store several parameters related to their last simulation, which can be used to access enter and exit times. The \texttt{Vehicle.entered()} and \texttt{Vehicle.exited()} methods are called when the vehicle enters and exits the network, respectively. (Note that modifications to \texttt{Simulator} or \texttt{Node} subclasses may need to call these methods when appropriate.) 
+
+\section{\texttt{PersonalVehicle}}
+
+\texttt{PersonalVehicle}s represent a drive-alone traveler trip, and have a set origin and destination. The \texttt{PersonalVehicle.setPath(Path)} method is overridden to only admit paths between the set origin and destination.
+
+\section{\texttt{DriverType}}
+
+The \texttt{DriverType} defines whether the \texttt{Vehicle} is permitted to use certain links and nodes (such as CACC links and reservations). It also defines whether the vehicle is transit or not. Although a new \texttt{DriverType} instance could be created for all vehicles, it is recommended to use the constant instances at the top of \texttt{DriverType}. The reaction times for these will be updated based on the project options. 
+
+
+
+\section{\texttt{VehicleClass}}
+
+The \texttt{avdta.vehicle.fuel.VehicleClass} defines the fuel consumption. Vehicles calculate average speeds and accelerations when on a CTM link, and pass them to their \texttt{VehicleClass} by calling \texttt{VehicleClass.calcEnergy($\cdot$)}. This method calculates the energy consumption, depending on the subclass used. The \texttt{avdta.vehicle.fuel} package contains the following classes.
+\begin{list}{$\circ$}{}
+	\item \texttt{\textit{avdta.vehicle.fuel.VehicleClass}}
+	\begin{list}{$\circ$}{}
+		
+		\item \texttt{avdta.vehicle.fuel.ICV}
+		\item \texttt{avdta.vehicle.fuel.BEV}
+	\end{list}
+\end{list}
+Subclasses must override \texttt{VehicleClass.calcPower($\cdot$)}.
+\texttt{ICV} and \texttt{BEV} calculate fuel consumption for internal combustion engine vehicles and battery electric vehicles, respectively, using PAMVEC\cite{simpson2005parametric}.

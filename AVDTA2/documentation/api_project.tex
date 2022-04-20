@@ -1,0 +1,83 @@
+\chapter{Package \texttt{avdta.project}}
+\label{api:project}
+
+\texttt{Project}s provide an API for reading and writing data, given that data appears in a specific format. AVDTA is based around using \texttt{Project}s to retrieve data due to the simplicity. {Project}s contain data access interfaces such as 
+\begin{algorithmic}[1]
+\State{\texttt{Project.getNodesFile()}}
+\State{\texttt{Project.getLinksFile()}}
+\end{algorithmic}
+with similar methods for all relevant data files. 
+
+\section{Organization}
+\texttt{Project}s are organized according to various data requirements. Initial levels of abstraction (\texttt{Project}, \texttt{TransitProject}, \texttt{DemandProject}) are abstract classes and not meant to be instantiated. \texttt{DTAProject}, \texttt{FourStepProject}, and \texttt{SAVProject} are subclasses that refer to types of projects (DTA, four-step planning model, and SAVs, respectively). The entire \texttt{avdta.project} package is shown below, with abstract classes italicized.
+%
+\begin{list}{$\circ$}{}
+	\item \textit{\texttt{avdta.project.Project}}
+	\begin{list}{$\circ$}{}
+		\item \textit{\texttt{avdta.project.TransitProject}}
+		
+		This class extends \texttt{Project} to add transit-related data.
+		
+		\begin{list}{$\circ$}{}
+			\item \textit{\texttt{avdta.project.DemandProject}}
+			
+			This class extends \texttt{TransitProject} to add demand-related data.
+			
+			\begin{list}{$\circ$}{}
+				\item \texttt{avdta.project.DTAProject}
+				
+				\begin{list}{$\circ$}{}
+					\item \texttt{avdta.project.FourStepProject}
+				\end{list}
+			
+				\item \texttt{avdta.project.SAVProject}
+			\end{list}
+		\end{list}
+	\end{list}
+\end{list}
+%
+\texttt{Project} represents a project with standard network data (nodes, links, intersection controls). \texttt{TransitProject} adds transit data (buses), and \texttt{DemandProject} adds traveler demand data, which may be used to create travelers or personal vehicles.
+
+\section{Working with \texttt{Project}s}
+
+This section discusses how to create and open \texttt{Project}s, and presents some code examples.
+
+\subsection{Creating a new project}
+\texttt{Project}s follow a very specific file format, and it is therefore recommended not to attempt to create a \texttt{Project} folder by hand. Instead, AVDTA provides a method to create new projects, \texttt{Project.createProject(String, File)}. For instance,
+\begin{algorithmic}[1]
+\State{\texttt{DTAProject project = new DTAProject();}}
+\State{\texttt{project.createProject("Sioux Falls", \linebreak new File("projects/SiouxFalls"));}}
+\end{algorithmic}
+will create all the files used by a \texttt{DTAProject}. All files will be empty except for the header line, and data should be copied in or imported from other sources. 
+
+\subsection{Importing data}
+There are several methods to import data. \texttt{Project.cloneFromProject(Project)} will copy appropriate data from the parameter \texttt{Project}. The data copied will depend on the types of projects; for instance, a \texttt{DemandProject} would attempt to copy demand data if the parameter is also a \texttt{DemandProject}. Data can also be imported from VISTA\cite{ziliaskopoulos2000internet}, but the methods to do so are separated into other packages based on data type. See
+%
+\begin{itemize}
+	
+\item \texttt{avdta.network.ImportFromVISTA}
+
+This imports network and traffic flow-related data files (see Chapter \ref{ch:network}).
+
+\item \texttt{avdta.transit.TransitImportFromVISTA}
+
+This imports transit-related data files (see Chapter \ref{ch:transit}).
+
+\item \texttt{avdta.demand.DemandImportFromVISTA}
+
+This imports demand-related data files (see Chapter \ref{ch:demand}).
+
+\item \texttt{avdta.dta.DTAImportFromVISTA}
+
+This uses the \texttt{vehicle\_path} and \texttt{vehicle\_path\_time} tables from VISTA to create an assignment within AVDTA.
+\end{itemize}
+These classes require specifying the input files (which are VISTA database tables) and the output \texttt{Project}.
+
+\subsection{Opening a project}
+
+\texttt{Project}s also include a constructor \texttt{Project.Project(File)}, which constructs the \texttt{Project} using the specified project folder. This should be the same file used when the project was created via \texttt{Project.createProject(String, File)}. The usual purpose of opening a project is to access its \texttt{Simulator} (see Cha \ref{api:network}), which is accomplished via
+\begin{algorithmic}[1]
+\State{\texttt{DTAProject project = \linebreak new DTAProject(new File("projects/SiouxFalls"));}}
+\State{\texttt{DTASimulator sim = project.getSimulator();}}
+\end{algorithmic}
+The \texttt{Simulator} can also be loaded manually via \texttt{Project.loadSimulator()}. However, calling \texttt{Project.getSimulator()} will call \texttt{Project.loadSimulator()} if necessary.

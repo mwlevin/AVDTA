@@ -1,0 +1,4 @@
+key	value
+name	1link
+seed	206064
+type	DTA
