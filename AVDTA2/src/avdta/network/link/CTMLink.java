@@ -29,7 +29,7 @@ public class CTMLink extends Link
     
     
     public Cell[] cells;
-    
+    public RunningAvg avgTrafficVolume;
     private double mesoDelta;
     
     
@@ -50,17 +50,23 @@ public class CTMLink extends Link
     public CTMLink(int id, Node source, Node dest, double capacity, double ffspd, double wavespd, double jamd, double length, int numLanes)
     {
         super(id, source, dest, capacity, ffspd, wavespd, jamd, length, numLanes);
-        
+        avgTrafficVolume = new RunningAvg();
         mesoDelta = wavespd / ffspd;
         
-        
-                
     }
     
     
     public Iterable<Vehicle> getVehicles()
     {
         return new CTMIterable();
+    }
+    
+    public void updateAvgTrafficVolume() {
+        int count = 0;
+        for (Cell c : cells) {
+            count = count + c.getOccupancy();
+        }
+        avgTrafficVolume.add(count);
     }
     
     /**
@@ -218,7 +224,11 @@ public class CTMLink extends Link
         }
         
         return queue;
-        
+    }
+    
+    public int getLastCellOccupancy()
+    {
+        return cells[cells.length-1].getOccupancy();
     }
     
     /**
@@ -268,6 +278,7 @@ public class CTMLink extends Link
             c.reset();
         }
         
+        avgTrafficVolume.reset();
         
         
         super.reset();
@@ -473,7 +484,17 @@ public class CTMLink extends Link
             c.step();
         }
         
-        
+//        if (getId() == 105993) {
+//            for (int i = 0; i < cells.length; i++) {
+//                System.out.println("Link 105993. Cell #" + i + " occupancy: " + cells[i].getOccupancy());
+//            }
+//        }
+//        
+//        if (getId() == 5993) {
+//            for (int i = 0; i < cells.length; i++) {
+//                System.out.println("Link 5993. Cell #" + i + " occupancy: " + cells[i].getOccupancy());
+//            }
+//        }
     }
     
     /**
@@ -481,8 +502,6 @@ public class CTMLink extends Link
      */
     public void update()
     {
-        
-        
         for(Cell c : cells)
         {
             c.update();

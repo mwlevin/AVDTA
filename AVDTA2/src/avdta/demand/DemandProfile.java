@@ -11,7 +11,6 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.util.Scanner;
 import java.util.TreeMap;
-import java.util.TreeSet;
 
 /**
  * A demand profile is a set of assignment intervals.
@@ -39,10 +38,7 @@ public class DemandProfile extends TreeMap<Integer, AST>
             int start = filein.nextInt();
             int duration = filein.nextInt();
             
-            if(filein.hasNextLine())
-            {
-                filein.nextLine();
-            }
+            filein.nextLine();
             
             add(new AST(id, start, duration, weight));
         }
@@ -50,11 +46,6 @@ public class DemandProfile extends TreeMap<Integer, AST>
         filein.close();
 
         normalizeWeights();
-    }
-    
-    public AST getLastAST()
-    {
-        return get(lastKey());
     }
     
     public void save(DemandProject project) throws IOException

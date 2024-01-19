@@ -304,8 +304,10 @@ public abstract class Project
      */
     public Simulator getSimulator()
     {
+        System.out.println("Project.getSimulator() called");
         if(simulator == null)
         {
+            System.out.println("simulator is null");
             try
             {
                 loadProject();
@@ -355,6 +357,7 @@ public abstract class Project
      */
     public void loadProject() throws IOException
     {
+        System.out.println("Project.loadProject() called");
         readProperties();
         loadSimulator();
     }
@@ -630,6 +633,7 @@ public abstract class Project
      */
     public File getPropertiesFile()
     {
+        System.out.println(getProjectDirectory()+"/project.txt");
         return new File(getProjectDirectory()+"/project.txt");
     }
     
@@ -675,7 +679,7 @@ public abstract class Project
      */
     public String getProjectDirectory()
     {
-        return directory;
+        return "/Users/jeffrey/AVDTA_modified/AVDTA2/projects/coacongress2_ttmp";
     }
     
     

@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Simple Polylines</title>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+    <link rel="stylesheet" href="style.css">
+    <script
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBnY8P7v7k-FyuR1AYT7X-3ASVth1VUJk0&callback=initMap&libraries=&v=weekly"
+      defer
+    ></script>
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+    <script type="text/javascript" src="maps.js"></script>
+    <style type="text/css">
+      #map {
+        height: 100%;
+        width: 100%;
+      }
+      html,
+      body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="mapContainer">
+      <div class="map" id="map"></div>
+      <div class="mapAccessories">
+        <label for="networks">Select a network: </label>
+        <select id="networks"></select></br></br>
+        <label for="dataOption">Select what data you want to view: </label>
+        <select id="dataOption">
+        </select></br></br>
+        <div>
+          <h3> Click on a link to display its ID </h3>
+          <p id="linkIdLabel"> Link ID: N/A </p>
+        </div>
+      </div>
+    </div>
+    <div class="extrasContainer">
+      <div class="legendContainer">
+        <div id="legend">
+          <h3>Legend</h3>
+        </div>
+        <label id="legendLabel" class="legendLabel"> Seconds </label>
+      </div>
+      <div class="slidecontainer">
+        <h3 id="sliderLabel"> label </h3>
+        <input type="range" min="1" value="1" class="slider" id="myRange">
+      </div>
+    </div>
+    <script>
+      const legendLabel = document.getElementById("legendLabel");
+      const networkDropdown = document.getElementById("networks");
+      const dataOptionDropdown = document.getElementById("dataOption");
+      var metricMetadataArray = [];
+
+      for (i = 0; i < serializedNetworkArray.length; i ++) {
+        networkDropdown.options[i] = new Option(serializedNetworkArray[i].name, i);
+      }
+
+      // dataOptionDropdown.options[i] = new Option(serializedNetworkArray[i].metricsArray.metricType, serializedNetworkArray[i].metricsArray.metricType);
+
+      function loadMetricMetadataArray(networkIndex) {
+        metricMetadataArray = [];
+        const metricsArray = serializedNetworkArray[networkIndex].metricsArray;
+
+        for (let i = 0; i < metricsArray.length; i++) {
+          metricMetadataArray.push({
+            metricType: metricsArray[i].metricType,
+            unitOfMeasurement: metricsArray[i].unitOfMeasurement,
+            min: metricsArray[i][`MIN`],
+            c2: metricsArray[i][`C2`],
+            max: metricsArray[i][`MAX`]
+          });
+        }
+
+        for (let i = 0; i < dataOptionDropdown.options.length; i++) {
+          dataOptionDropdown.options[i] = null;
+        }
+        for (let i = 0; i < metricMetadataArray.length; i ++) {
+          dataOptionDropdown.options[i] = new Option(serializedNetworkArray[networkIndex].metricsArray[i].metricType, serializedNetworkArray[networkIndex].metricsArray[i].metricType);
+        }
+      }
+
+      function getMetricMetadataForMetricType(metricType) {
+        console.log(metricMetadataArray);
+        for (let i = 0; i < metricMetadataArray.length; i++) {
+          if (metricType === metricMetadataArray[i].metricType) {
+            return metricMetadataArray[i];
+          }
+        }
+
+        return null;
+      }
+
+      loadMetricMetadataArray(0);
+    </script>
+    <script>
+      var flightPaths = [];
+      var eventListeners = [];
+      var map;
+
+      function initMap() {
+
+        map = new google.maps.Map(document.getElementById("map"), {
+          zoom: 13,
+          center: { lat: 30.2777, lng: -97.7479 }
+        });
+
+        drawPolylines(0, 0, dataOptionDropdown.value);
+      }
+
+      function drawPolylines(ASTIndex, networkIndex, dataOption) {
+        // serializedNetworkArray is not defined in this file. serializedNetworkArray is the json object that is stored in maps.js and is imported above
+        serializedNetworkArray[networkIndex].coordinateArray.forEach((coordinatePair) => {
+          var linkColor;
+          linkColor = coordinatePair[`colorArrayFor${dataOption}`][ASTIndex].color;
+
+          const source = coordinatePair.source;
+          const dest = coordinatePair.dest;
+          const linkId = coordinatePair.id;
+
+          const flightPlanCoordinates = [
+            { lng: source.longitude, lat: source.latitude },
+            { lng: dest.longitude, lat: dest.latitude}
+          ]
+
+          const flightPath = new google.maps.Polyline({
+            path: flightPlanCoordinates,
+            geodesic: true,
+            strokeColor: linkColor,
+            strokeOpacity: 1.0,
+            strokeWeight: 2
+          });
+          flightPath.setMap(map);
+
+          const mouseoverListener = google.maps.event.addListener(flightPath, 'click', function() {
+            const linkIdLabel = document.getElementById("linkIdLabel");
+            linkIdLabel.innerHTML = "Link ID: ".concat(linkId);
+          })
+          flightPaths.push(flightPath);
+          eventListeners.push(mouseoverListener);
+        });
+      }
+
+      function clearPolylines() {
+        flightPaths.forEach((flightPath) => {
+          flightPath.setMap(null);
+        })
+
+        eventListeners.forEach((eventListener) => {
+          google.maps.event.removeListener(eventListener);
+        })
+
+        flightPaths = [];
+        eventListeners = [];
+      }
+    </script>
+    <script>
+      function redraw() {
+        clearPolylines();
+        const networkIndex = networkDropdown.value;
+        // loadMetricMetadataArray(networkIndex);
+        drawPolylines(0, networkIndex, dataOptionDropdown.value);
+        loadLegend(networkIndex, dataOption.value);
+        loadSlider(networkIndex, dataOptionDropdown.value);
+
+        const metricMetadata = getMetricMetadataForMetricType(dataOptionDropdown.value);
+        legendLabel.innerHTML = metricMetadata.unitOfMeasurement;
+      }
+
+      networkDropdown.onchange = redraw;
+      dataOptionDropdown.onchange = redraw;
+    </script>
+    <script>
+      function loadSlider(networkIndex, dataOption) {
+        var slider = document.getElementById("myRange");
+        var output = document.getElementById("sliderLabel");
+        slider.value = 1;
+        slider.setAttribute("max", serializedNetworkArray[networkIndex].ASTLabelArray.length);
+        output.innerHTML = serializedNetworkArray[networkIndex].ASTLabelArray[0].label; // Display the default slider value
+
+        // Update the current slider value (each time you drag the slider handle)
+        slider.oninput = function() {
+          output.innerHTML = serializedNetworkArray[networkIndex].ASTLabelArray[this.value - 1].label;
+
+          clearPolylines();
+          drawPolylines(this.value - 1, networkIndex, dataOption);
+        }
+      }
+      loadSlider(0, dataOptionDropdown.value);
+    </script>
+    <script>
+      function loadLegend(networkIndex, dataOption) {
+        const C1_R = serializedNetworkArray[networkIndex].C1_R;
+        const C1_G = serializedNetworkArray[networkIndex].C1_G;
+        const C1_B = serializedNetworkArray[networkIndex].C1_B;
+
+        const C2_R = serializedNetworkArray[networkIndex].C2_R;
+        const C2_G = serializedNetworkArray[networkIndex].C2_G;
+        const C2_B = serializedNetworkArray[networkIndex].C2_B;
+
+        const C3_R = serializedNetworkArray[networkIndex].C3_R;
+        const C3_G = serializedNetworkArray[networkIndex].C3_G;
+        const C3_B = serializedNetworkArray[networkIndex].C3_B;
+
+        var MIN_VALUE;
+        var C2_CUTOFF;
+        var MAX_VALUE;
+
+        const metricMetadata = getMetricMetadataForMetricType(dataOption);
+
+        MIN_VALUE = metricMetadata.min;
+        C2_CUTOFF = metricMetadata.c2;
+        MAX_VALUE = metricMetadata.max;
+
+        function componentToHex(c) {
+          var hex = c.toString(16);
+          return hex.length == 1 ? "0" + hex : hex;
+        }
+
+        function rgbToHex(r, g, b) {
+          return "#" + componentToHex(r) + componentToHex(g) + componentToHex(b);
+        }
+
+        function round(number) {
+          return Math.round(parseFloat(number));
+        }
+
+        function mapFunction(colorIndexPair) {
+          const index = colorIndexPair.index + MIN_VALUE;
+          return index;
+        }
+
+        var legendData = [];
+
+        for (i = 0; i <= MAX_VALUE - MIN_VALUE; i++) {
+          if (i <= C2_CUTOFF - MIN_VALUE) {
+            const proportion = (i - MIN_VALUE)/(C2_CUTOFF - MIN_VALUE);
+            const red = (C2_R - C1_R) * proportion + C1_R;
+            const green = (C2_G - C1_G) * proportion + C1_G;
+            const blue = (C2_B - C1_B) * proportion + C1_B;
+            const color = rgbToHex(round(red), round(green), round(blue));
+
+            legendData.push({
+              "color": color,
+              "index": i
+            });
+          } else {
+            const proportion = (i - C2_CUTOFF)/(MAX_VALUE - C2_CUTOFF);
+            const red = (C3_R - C2_R) * proportion + C2_R;
+            const green = (C3_G - C2_G) * proportion + C2_G;
+            const blue = (C3_B - C2_B) * proportion + C2_B;
+            const color = rgbToHex(round(red), round(green), round(blue));
+
+            legendData.push({
+              "color": color,
+              "index": i
+            });
+          }
+        }
+
+        var extent = d3.extent(legendData, d => d.index);
+
+        var padding = 9;
+        var width = 500;
+        var innerWidth = width - (padding * 3);
+        var barHeight = 15;
+        var height = 50;
+
+        var xScale = d3.scaleLinear()
+            .range([0, innerWidth])
+            .domain(extent);
+
+        // var xTicks = legendData.filter(f => f.index % 50 === 0 || f.index === MAX_VALUE).map(mapFunction);
+        var xTicks = legendData.filter(f => f.index === MAX_VALUE || f.index === MIN_VALUE || f.index === (MAX_VALUE - MIN_VALUE)/2).map(mapFunction);
+
+        var xAxis = d3.axisBottom(xScale)
+            .tickSize(barHeight * 2)
+            .tickValues(xTicks);
+
+        // var oldsvg = d3.select("#legend").select('svg');
+        // d3.select("#legend").removeChild(oldsvg);
+        var svg = d3.select("#legend").append("svg").attr("width", width).attr("height", height);
+        var g = svg.append("g").attr("transform", "translate(" + padding + ", 0)");
+
+        var defs = svg.append("defs");
+        var linearGradient = defs.append("linearGradient").attr("id", "myGradient");
+        linearGradient.selectAll("stop")
+            .data(legendData)
+          .enter().append("stop")
+            .attr("offset", d => ((d.index - extent[0]) / (extent[1] - extent[0]) * 100) + "%")
+            .attr("stop-color", d => d.color);
+
+        g.append("rect")
+            .attr("width", innerWidth)
+            .attr("height", barHeight)
+            .style("fill", "url(#myGradient)");
+
+        g.append("g")
+            .call(xAxis)
+          .select(".domain").remove();
+
+        function removeDuplicateLegends() {
+          svgArray = document.getElementById("legend").childNodes;
+          var svgCount = 0;
+          for (var i = 0; i < svgArray.length; i++) {
+            if (svgArray[i].tagName === "svg") {
+              svgCount = svgCount + 1;
+            }
+          }
+
+          if (svgCount > 1) {
+            for (var i = 0; i < svgArray.length; i++) {
+              if (svgArray[i].tagName === "svg") {
+                document.getElementById("legend").removeChild(svgArray[i]);
+                break;
+              }
+            }
+          }
+        }
+        removeDuplicateLegends();
+      }
+      loadLegend(0, dataOptionDropdown.value);
+    </script>
+  </body>
+</html>

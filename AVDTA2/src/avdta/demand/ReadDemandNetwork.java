@@ -62,7 +62,6 @@ public class ReadDemandNetwork extends ReadNetwork
         DemandProfile profile = readDemandProfile(project);
         Scanner filein = new Scanner(project.getDynamicODFile());
         
-        
         filein.nextLine();
         
         Random rand = project.getRandom();
@@ -127,13 +126,6 @@ public class ReadDemandNetwork extends ReadNetwork
         
 
         return total;
-        
-    }
-    
-    public void createStaticOD(DemandProject project) throws IOException
-    {
-        DynamicODTable table = new DynamicODTable(project);
-        table.printStaticOD(project);
     }
     
     public void createDynamicOD(DemandProject project) throws IOException

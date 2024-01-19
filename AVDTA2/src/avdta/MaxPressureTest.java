@@ -30,23 +30,25 @@ public class MaxPressureTest
 {
     public static MPSimulator createMPSimulator(DTAProject project, double vph, int duration) throws IOException
     {
+        System.out.println("in create MPSSimulator");
         ReadDTANetwork read = new ReadDTANetwork();
         DemandProfile profile = new DemandProfile();
         profile.add(new AST(1, 0, duration, 1.0));
         profile.save(project);
         
+        //reads staticODTABLE
         StaticODTable staticOd = new StaticODTable(project);
+        //creates dynamicOD Table
         read.createDynamicOD(project, duration / 3600.0 * vph / staticOd.getTotal());
-        
+        //creates demand file
         read.prepareDemand(project);
-        
-        
-        
-        
+        //not that important
         read.readOptions(project);
+        
         Set<Node> nodes = read.readNodes(project);
         Set<Link> links = read.readLinks(project);
         
+        //assigns traffic control to every intersection
         read.readIntersections(project);
         read.readPhases(project);
         
@@ -57,11 +59,11 @@ public class MaxPressureTest
         
         sim.initialize();
 
-                
-                
-        Assignment assign = new Assignment("mp_proportion", project);
-        sim.setPaths(assign);
         
+        Assignment assign = new Assignment("mp_proportion", project);
+        //sets path equal to all the paths from the mp_proportion/paths file
+        sim.setPaths(assign);
+        //paths is all the paths from the mp_proportion/paths file
         PathList paths = sim.getPaths();
         
         for(Vehicle v : sim.getVehicles())
@@ -77,8 +79,63 @@ public class MaxPressureTest
         }
         
         sim.calculateTurningProportionsMP(assign);
+
+        Simulator.duration = duration;
+        
+        return sim;
+    }
+    
+    public static MPSimulator createMPSimulator(DTAProject project, double vph, int duration, int cycleLength) throws IOException
+    {
+        ReadDTANetwork read = new ReadDTANetwork();
+        DemandProfile profile = new DemandProfile();
+        profile.add(new AST(1, 0, duration, 1.0));
+        profile.save(project);
+        
+        //reads staticODTABLE
+        StaticODTable staticOd = new StaticODTable(project);
+        //creates dynamicOD Table
+        read.createDynamicOD(project, duration / 3600.0 * vph / staticOd.getTotal());
+        //creates demand file
+        read.prepareDemand(project);
+        //not that important
+        read.readOptions(project);
+        
+        Set<Node> nodes = read.readNodes(project);
+        Set<Link> links = read.readLinks(project);
+        
+        //assigns traffic control to every intersection
+        read.readIntersections(project, cycleLength);
+        read.readPhases(project);
         
         
+        MPSimulator sim = new MPSimulator(project, nodes, links);
+
+        read.readVehicles(project, sim);
+        
+        sim.initialize();
+
+        
+        Assignment assign = new Assignment("mp_proportion", project);
+        //sets path equal to all the paths from the mp_proportion/paths file
+        sim.setPaths(assign);
+        //paths is all the paths from the mp_proportion/paths file
+        PathList paths = sim.getPaths();
+        
+        for(Vehicle v : sim.getVehicles())
+        {
+            Path path = paths.randomPath(v.getOrigin(), v.getDest());
+            
+            if(path == null)
+            {
+                path = paths.addPath(sim.findPath(v.getOrigin(), v.getDest()));
+                path.proportion = 1;
+            }
+            v.setPath(path);
+        }
+        
+        sim.calculateTurningProportionsMP(assign);
+
         Simulator.duration = duration;
         
         return sim;

@@ -23,6 +23,11 @@ public class MPTurn extends Turn
     public double num;
     public double denom;
     
+    //// RC 7/23/2019 ////
+    public double average_waiting_time;
+    public int total_waiting_time;
+    //////////////////////
+    
     public MPTurn(Link i, Link j)
     {
         super(i, j);
@@ -35,6 +40,7 @@ public class MPTurn extends Turn
     
     public double getWeight(MPWeight func)
     {
+        //System.out.println(" prop: "+ this.p_ij+ " MPTurn: "+ this.i+ ","+this.j);
         double weight = func.calcMPWeight(this); // x_ij or T_ij
         
         Node n = j.getDest();
@@ -56,10 +62,13 @@ public class MPTurn extends Turn
     }
     
 
-    
+    ///// update queue length, average waiting time, and the total waiting time
     public void calculateQueue()
     {
         int queue = 0;
+        int total_waiting = 0;
+        double average_waiting = 0;
+        
         
         Iterable<Vehicle> sending;
         
@@ -77,10 +86,15 @@ public class MPTurn extends Turn
             if(v.getNextLink() == j)
             {
                 queue++;
+                total_waiting = total_waiting + v.getDelayInCell();
             }
         }
-        
+        if (queue > 0){
+            average_waiting = total_waiting*1.0 / queue;
+        }
         this.queue = queue;
+        this.average_waiting_time = average_waiting;
+        this.total_waiting_time = total_waiting;
     }
     
     public int getQueue()
@@ -91,5 +105,13 @@ public class MPTurn extends Turn
     public double getTurningProportion()
     {
         return p_ij;
+    }
+    
+    public int getTotalWaitingTime(){
+        return this.total_waiting_time;
+    }
+    
+    public double getAverageWaitingTime(){
+        return this.average_waiting_time;
     }
 }

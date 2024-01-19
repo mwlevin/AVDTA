@@ -5,6 +5,7 @@
  */
 package avdta.project;
 
+import avdta.RunSimulation;
 import avdta.dta.Assignment;
 import avdta.dta.DTASimulator;
 import avdta.dta.ReadDTANetwork;
@@ -94,6 +95,7 @@ public class DTAProject extends DemandProject
      */
     public DTASimulator getSimulator()
     {
+        System.out.println("DTAProject.getSimulator called");
         return (DTASimulator)super.getSimulator();
     }
     
@@ -103,12 +105,13 @@ public class DTAProject extends DemandProject
      */
     public void loadSimulator() throws IOException
     {
+        System.out.println("DTAProject.loadSimulator called");
         try
         {
             ReadDTANetwork read = new ReadDTANetwork();  
             
             DTASimulator output = read.readNetwork(this);
-        
+            
             setSimulator(output);
         }
         catch(Exception ex)
@@ -155,10 +158,14 @@ public class DTAProject extends DemandProject
         
         String dirStr = dir.getCanonicalPath();
         
-        File file = new File(dirStr+"/assignments");
+        File file = null;
+        if (RunSimulation.testing) {
+            file = new File(dirStr+"/assignments");
+        } else {
+            file = new File(dirStr+"/DataCollection");
+        }
+        
         file.mkdirs();
-        
-        
     }
     
     /**
@@ -178,7 +185,12 @@ public class DTAProject extends DemandProject
      */
     public String getAssignmentsFolder()
     {
-        return getProjectDirectory()+"/assignments/";
+        if (RunSimulation.testing) {
+            return getProjectDirectory()+"/assignments/";
+        } else {
+            return getProjectDirectory()+"/DataCollection/";
+        }
+        //return getProjectDirectory()+"/assignments/";
     }
     
     /**

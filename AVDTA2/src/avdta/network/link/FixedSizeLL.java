@@ -42,13 +42,12 @@ public class FixedSizeLL extends LinkedList<Integer> implements CumulativeCountS
     {
 
         int difference = Simulator.indexTime(Simulator.time) - t;
-        int idx = size() - difference-1;
+        int idx = size() - difference-2;
         
         if(idx >= size())
         {
-            System.err.println(Simulator.indexTime(Simulator.time)+" "+t);
             throw new RuntimeException("Looking for time "+(t*Simulator.dt)+" time range is ["+(
-                    Simulator.time-(size()-1)*Simulator.dt)+","+(Simulator.time+Simulator.dt)
+                    t-(size()-1)*Simulator.dt)+","+(Simulator.time+Simulator.dt)
                     +"]");
         }
 
@@ -60,14 +59,14 @@ public class FixedSizeLL extends LinkedList<Integer> implements CumulativeCountS
     public void nextTimeStep()
     {
         removeFirst();
-        add(this.getLast());
+        add(0);
     }
     
     
     public void addCC(int t, int value)
     {
         int difference = Simulator.indexTime(Simulator.time) - t;
-        int idx = size() - difference-1;
+        int idx = size() - difference-2;
 
         set(idx, get(idx)+value);
         

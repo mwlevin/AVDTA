@@ -12,6 +12,7 @@ import avdta.network.Path;
 import avdta.network.PathList;
 import avdta.network.Simulator;
 import avdta.network.link.Link;
+import avdta.network.node.HaiVuTrafficSignal;
 import avdta.network.node.Intersection;
 import avdta.network.node.IntersectionControl;
 import avdta.network.node.MPTurn;
@@ -24,6 +25,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
@@ -98,14 +100,22 @@ public class MPSimulator extends DTASimulator
             {
                 IntersectionControl c = ((Intersection)n).getControl();
                 
-                if(!(c instanceof MaxPressure))
+                if(!(c instanceof MaxPressure || c instanceof HaiVuTrafficSignal))
                 {
                     continue;
                 }
                 
-                MaxPressure control = (MaxPressure)c;
+                List<MPTurn> turns = null;
                 
-                for(MPTurn turn : control.getTurns())
+                if (c instanceof MaxPressure) {
+                    turns = ((MaxPressure)c).getTurns();
+                }
+                
+                if (c instanceof HaiVuTrafficSignal) {
+                    turns = ((HaiVuTrafficSignal)c).getMPTurns();
+                }
+                
+                for(MPTurn turn : turns)
                 {
                     for(Path p : paths)
                     {

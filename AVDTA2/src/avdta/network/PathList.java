@@ -171,8 +171,6 @@ public class PathList implements Iterable<Path>
      */
     public void writeToFile(File file) throws IOException
     {
-        calculateProportions();
-        
         PrintStream fileout = new PrintStream(new FileOutputStream(file), true);
         
         for(Node o : paths.keySet())
@@ -187,10 +185,6 @@ public class PathList implements Iterable<Path>
                 {
                     for(Path p : temp2.get(h))
                     {
-                        if(p.proportion == 0)
-                        {
-                            continue;
-                        }
                         fileout.print(p.getId()+"\t"+p.size()+"\t"+p.proportion);
                         
                         for(Link l : p)
@@ -265,10 +259,6 @@ public class PathList implements Iterable<Path>
             {
                 p.proportion = filein.nextDouble();
             }
-            else
-            {
-                p.proportion = 1.0;
-            }
             
             for(int i = 0; i < size; i++)
             {
@@ -277,10 +267,8 @@ public class PathList implements Iterable<Path>
                 p.add(links.get(link_id));
             }
             
-            if(p.proportion > 0)
-            {
-                addUnrestricted(p);
-            }
+
+            addUnrestricted(p);
         }
     }
     
@@ -295,8 +283,10 @@ public class PathList implements Iterable<Path>
         
         double rand = Simulator.active.getProject().getRandom().nextDouble();
         
+        //for every size of path from origin to destination
         for(int i : hashtable.keySet())
         {
+            //for every path of size i
             for(Path p : hashtable.get(i))
             {
                 if(rand < p.proportion)

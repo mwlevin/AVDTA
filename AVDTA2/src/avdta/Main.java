@@ -96,163 +96,225 @@ import java.sql.DriverManager;
  */
 public class Main 
 {
-    public static void main(String[] args) throws Exception
-    {
-        /*
-        DTAProject msa = new DTAProject(new File("projects/coacongress2"));
-        DTASimulator sim = msa.getSimulator();
-        sim.msa(5);
-        */
-        
-        
-
-        
-        
-        DTAProject project = new DTAProject(new File("projects/coacongress2_ttmp"));
     
-        // this is Varaiya's function
+    public Simulator sim = null;
+    //maps from Intersection id to a link id showing the incoming link with the highest demand for each intersection
+    public HashMap<Integer, Integer> highestDelayLinks = new HashMap<>();
+    
+    //maps from Intersection id to the average waiting time for that intersection across all links
+    public HashMap<Integer, Double> highestDelayAllLinks = new HashMap<>();
+    
+    //maps from Intersection id to an Integer showing the turn for every intersection with the highest avg red light time
+    //First Integer represents intersection Id, second integer represents the average red light time for the worst case turn for that intersection
+    public HashMap<Integer, Double> highestRedLightTurns = new HashMap<>();
+    
+    //maps from Intersection id to an Integer showing the turn for every intersection with the highest avg wait time
+    //First Integer represents intersection Id, second integer represents the average wait time for the worst case turn for that intersection
+    public HashMap<Integer, Double> highestWaitTurns = new HashMap<>();
+    
+    public static void main(String[] args)
+    {
+        
+    }
+    
+    public void simulate(int demand_factor, int iteration_num) throws Exception
+    {
+        for (int run_time = 1; run_time <= 1; run_time++) {
+            //int demand_factor = 18;
+            int use_MP = 1;
+            int duration = 4*3600;
+            int vehicle_per_hour = 2000*demand_factor;
+
+            DTAProject msa_mp = new DTAProject(new File("projects/coacongress2_ttmp"));
+            ReadDTANetwork read = new ReadDTANetwork();
+
+            DemandProfile profile = new DemandProfile();
+            profile.add(new AST(1, 0, duration, 1.0));
+            profile.save(msa_mp);
+
+            StaticODTable staticOd = new StaticODTable(msa_mp);
+            read.createDynamicOD(msa_mp, duration / 3600.0 * vehicle_per_hour / staticOd.getTotal());
+
+            //creates vehicles and writes them to demand file (project/demand/demand.txt)
+            read.prepareDemand(msa_mp);
+
+            Set<Node> nodes = read.readNodes(msa_mp);
+            Set<Link> links = read.readLinks(msa_mp);        
+            read.readIntersections(msa_mp);
+            read.readPhases(msa_mp);
+            
+            System.out.println("Before msa_map.getSimulator()");
+            //within msa_mp.getSimulator(), vehicles within msa_mp are set as well.
+            DTASimulator sim_mp = msa_mp.getSimulator();
+            System.out.println("After msa_mp.getSimulator()" + sim_mp.getVehicles().size());
+            sim_mp.initialize();
+            sim_mp.recordQueueLengths(1800);
+            MaxPressure.weight_function = new MPWeight()
+            {
+                public double calcMPWeight(MPTurn turn)
+                {
+                    return turn.getQueue();
+                }
+            };        
+
+            if (use_MP ==1 ){
+                sim_mp.MP_msa_cont(1, iteration_num, 0.01);
+            }
+            else{
+                sim_mp.msa(iteration_num);
+            }
+        }
+    }
+    
+    public void simulateFixedProportions(int demand_factor) throws Exception
+    {
+        DTAProject project = new DTAProject(new File("projects/coacongress2_ttmp"));
         MaxPressure.weight_function = new MPWeight()
         {
             public double calcMPWeight(MPTurn turn)
             {
                 return turn.getQueue();
-            }
+            }    
         };
+        int demand = 1000*demand_factor; // vehicles per hour
+        int duration = 3600 *3; // 3 hours * 3600 seconds
+        sim = MaxPressureTest.createMPSimulator(project, demand, duration);
         
-        /*
-        // this is the travel time function
+        sim.recordQueueLengths(1800);
+        Simulator.duration = 3600*3;
+        sim.simulate(demand_factor, -1);       
+        sim.printLinkTT(0, duration);
+        System.out.println("Average TT: " + sim.getAvgTT(DriverType.HV));
+        
+        for (Node n : sim.nodes) {
+            Intersection i = null;
+            if (n instanceof Intersection) {
+                i = (Intersection) n;
+            } else {
+                continue;
+            }
+            
+            double highestAvgLinkTT = 0;
+            int highestLinkId = 0;
+            double cumulativeLinkTT = 0.0;
+            for (Link l : i.getIncoming()) {
+                if (l.getCumulativeAvgTT() >= highestAvgLinkTT) {
+                    highestAvgLinkTT = l.getCumulativeAvgTT();
+                    highestLinkId = l.getId();
+                }
+                
+                cumulativeLinkTT = cumulativeLinkTT + l.getCumulativeAvgTT();
+            }
+            double avgLinkTT = cumulativeLinkTT/i.getIncoming().size();
+            
+            double highestAvgRedLight = 0;
+            double highestAvgWait = 0;
+            if (i.getControl() instanceof MaxPressure) {
+                for (Phase p : ((MaxPressure) i.getControl()).getPhases()) {
+                    for (Turn t : p.getAllowed()) {
+                        if (t.avgRedLightTime.getAverage() > highestAvgRedLight) {
+                            highestAvgRedLight = t.avgRedLightTime.getAverage();
+                        }
+                        if (t.avgWaitingTime.getAverage() > highestAvgWait) {
+                            highestAvgWait = t.avgWaitingTime.getAverage();
+                        }
+                    }
+                }
+            }
+            
+            if (highestLinkId != 0) {
+                highestDelayLinks.put(i.getId(), highestLinkId);
+                highestDelayAllLinks.put(i.getId(), avgLinkTT);
+            }
+            
+            if (highestAvgRedLight != 0) {
+                highestRedLightTurns.put(i.getId(), highestAvgRedLight);
+            }
+            
+            if (highestAvgWait != 0) {
+                highestWaitTurns.put(i.getId(), highestAvgWait);
+            }
+        }
+    }
+    
+    public void simulateFixedProportions(int demand_factor, int cycleLength) throws Exception
+    {
+        DTAProject project = new DTAProject(new File("projects/coacongress2_ttmp"));
         MaxPressure.weight_function = new MPWeight()
         {
             public double calcMPWeight(MPTurn turn)
             {
-                return turn.getQueue() / turn.getCapacity();
-            }
+                return turn.getQueue();
+            }    
         };
-        */
-        
-        int demand = 5000; // vehicles per hour
-        int duration = 3600 * 3; // 3 hours * 3600 seconds
-        Simulator sim = MaxPressureTest.createMPSimulator(project, demand, duration);
+        int demand = 1000*demand_factor; // vehicles per hour
+        int duration = 3600 *3; // 3 hours * 3600 seconds
+        sim = MaxPressureTest.createMPSimulator(project, demand, duration, cycleLength);        
         sim.recordQueueLengths(1800);
-
         Simulator.duration = 3600*3;
-        sim.simulate();
-        System.out.println(sim.getAvgTT(DriverType.HV));
+        sim.simulate(demand_factor, cycleLength);       
+        sim.printLinkTT(0, duration);
+        System.out.println("Average TT: " + sim.getAvgTT(DriverType.HV));
         
-        
-        
-        
-        
-        //new DTAGUI();
-        //new FourStepGUI();
-        
-
-        // GUI.main(args);
-
-        
-        
-
-
-    }
-    
-    
-    
-    
-    
-    public static void fixConnectivity2() throws Exception
-    {
-        DTAProject project = new DTAProject(new File("projects/scenario_2_pm_sub_CACC"));
-        DTASimulator sim = project.getSimulator();
-        
-        DTAProject project2 = new DTAProject(new File("projects/scenario_2_pm"));
-        DTASimulator sim2 = project2.getSimulator();
-        
-        Set<Link> newLinks = new HashSet<Link>();
-        
-        for(Link l : sim.getLinks())
-        {
-            if(l.isCentroidConnector())
-            {
+        for (Node n : sim.nodes) {
+            Intersection i = null;
+            if (n instanceof Intersection) {
+                i = (Intersection) n;
+            } else {
                 continue;
             }
             
-            Node r = l.getSource();
-            Node s = l.getDest();
-            
-            boolean found = false;
-            
-            for(Link v : r.getIncoming())
-            {
-                if(v.getSource() == s)
-                {
-                    found = true;
-                    break;
+            double highestAvgLinkTT = 0;
+            int highestLinkId = 0;
+            double cumulativeLinkTT = 0.0;
+            for (Link l : i.getIncoming()) {
+                if (l.getCumulativeAvgTT() >= highestAvgLinkTT) {
+                    highestAvgLinkTT = l.getCumulativeAvgTT();
+                    highestLinkId = l.getId();
                 }
+                
+                cumulativeLinkTT = cumulativeLinkTT + l.getCumulativeAvgTT();
             }
+            double avgLinkTT = cumulativeLinkTT/i.getIncoming().size();
             
-            if(!found)
-            {
-                for(Link l2 : sim2.getLinks())
-                {
-                    if(l2.getSource().getId() == s.getId() && l2.getDest().getId() == r.getId())
-                    {
-                        newLinks.add(l2);
+            double highestAvgRedLight = 0;
+            double highestAvgWait = 0;
+            if (i.getControl() instanceof MaxPressure) {
+                for (Phase p : ((MaxPressure) i.getControl()).getPhases()) {
+                    for (Turn t : p.getAllowed()) {
+                        if (t.avgRedLightTime.getAverage() > highestAvgRedLight) {
+                            highestAvgRedLight = t.avgRedLightTime.getAverage();
+                        }
+                        if (t.avgWaitingTime.getAverage() > highestAvgWait) {
+                            highestAvgWait = t.avgWaitingTime.getAverage();
+                        }
+                    }
+                }
+            } else if (i.getControl() instanceof HaiVuTrafficSignal) {
+                for (Phase p : ((HaiVuTrafficSignal) i.getControl()).getPhases()) {
+                    for (Turn t : p.getAllowed()) {
+                        if (t.avgRedLightTime.getAverage() > highestAvgRedLight) {
+                            highestAvgRedLight = t.avgRedLightTime.getAverage();
+                        }
+                        if (t.avgWaitingTime.getAverage() > highestAvgWait) {
+                            highestAvgWait = t.avgWaitingTime.getAverage();
+                        }
                     }
                 }
             }
+            
+            if (highestLinkId != 0) {
+                highestDelayLinks.put(i.getId(), highestLinkId);
+                highestDelayAllLinks.put(i.getId(), avgLinkTT);
+            }
+            
+            if (highestAvgRedLight != 0) {
+                highestRedLightTurns.put(i.getId(), highestAvgRedLight);
+            }
+            
+            if (highestAvgWait != 0) {
+                highestWaitTurns.put(i.getId(), highestAvgWait);
+            }
         }
-        
-        PrintStream fileout = new PrintStream(new FileOutputStream(new File("newLinks.txt")), true);
-        for(Link l : newLinks)
-        {
-            fileout.println(l.createLinkRecord());
-        }
-        fileout.close();
     }
-    public static void fixConnectivity() throws Exception
-    {
-        
-        DTAProject project = new DTAProject(new File("projects/scenario_2_pm_sub_CACC"));
-        DTASimulator sim = project.getSimulator();
-        
-        Set<Link> newLinks = new HashSet<Link>();
-        
-        int new_id = 80000001;
-        
-        for(Link l : sim.getLinks())
-        {
-            if(!l.isCentroidConnector())
-            {
-                continue;
-            }
-            
-            Node r = l.getSource();
-            Node s = l.getDest();
-            
-            boolean found = false;
-            
-            for(Link v : r.getIncoming())
-            {
-                if(v.getSource() == s)
-                {
-                    found = true;
-                    break;
-                }
-            }
-            
-            if(!found)
-            {
-                Link u = new CentroidConnector(new_id++, s, r);
-                newLinks.add(u);
-            }
-        }
-        
-        PrintStream fileout = new PrintStream(new FileOutputStream(new File("newLinks.txt")), true);
-        for(Link l : newLinks)
-        {
-            fileout.println(l.createLinkRecord());
-        }
-        fileout.close();
-    }
-    
 }

@@ -96,6 +96,7 @@ public class RunningAvg implements Serializable
                 return 0;
             }
 	}
+      
         
         public double getStDev()
         {

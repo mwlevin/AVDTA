@@ -33,6 +33,9 @@ public class Metric {
             case FLOW_IN:
                 return link.flowin[ast];
             case AVERAGE_TT:
+                if (link.getId() == 18178) {
+                    System.out.println("ast: " + ast + ". averageTT: " + link.getAvgTTs()[ast].getAverage());
+                }
                 return link.getAvgTTs()[ast].getAverage();
             case FREE_FLOW_SPEED:
                 return link.getFFSpeed();

@@ -148,8 +148,6 @@ public class CentroidConnector extends Link
      */
     public List<Vehicle> getSendingFlow()
     {
-        
-        
         List<Vehicle> output = new ArrayList<Vehicle>();
         
         for(Vehicle v : queue)
@@ -182,6 +180,16 @@ public class CentroidConnector extends Link
     public int getOccupancy()
     {
         return queue.size();
+    }
+    
+    public void step() {
+//        if (getId() == 425014) {
+//            System.out.println("CC 425014. Occupancy: " + getOccupancy());
+//        }
+//        
+//        if (getId() == 325014) {
+//            System.out.println("CC 325014. Occupancy: " + getOccupancy());
+//        }
     }
     
     /**

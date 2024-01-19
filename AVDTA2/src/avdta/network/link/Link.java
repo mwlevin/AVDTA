@@ -637,6 +637,14 @@ public abstract class Link implements Serializable, Comparable<Link>
         return getAvgTT((int)enter);
     }
     
+    public double getCumulativeAvgTT() {
+        Double sum = 0.0;
+        for (RunningAvg avg : avgTT) {
+            sum += avg.getAverage();
+        }
+        
+        return sum/avgTT.length;
+    }
     
     /**
      * 

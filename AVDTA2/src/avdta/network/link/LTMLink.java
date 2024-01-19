@@ -71,8 +71,8 @@ public class LTMLink extends Link
      */
     public void initialize()
     {
-        N_up = new FixedSizeLL(getUSLookBehind()+2);
-        N_down = new FixedSizeLL(getDSLookBehind()+2);
+        N_up = new ChainedArray(getUSLookBehind()+2);
+        N_down = new ChainedArray(getDSLookBehind()+2);
 
         this.capacityUp = getCapacity() * Network.dt / 3600.0;
         this.capacityDown = getCapacity() * Network.dt / 3600.0;
@@ -206,14 +206,8 @@ public class LTMLink extends Link
     public int getNumSendingFlow()
     {
         
-        int S = (int)Math.min(getN_up(Simulator.time - getLength()/getFFSpeed()*3600 + Network.dt) - 
+        return (int)Math.min(getN_up(Simulator.time - getLength()/getFFSpeed()*3600 + Network.dt) - 
                 getN_down(Simulator.time), getCurrentDownstreamCapacity());
-        
-        //if(getId() == 12)
-        //System.out.println(Simulator.time+" - "+getOccupancy()+"\t"+getCurrentDownstreamCapacity()+"\tS="+S);
-        
-        
-        return S;
     }
     
     
@@ -296,18 +290,11 @@ public class LTMLink extends Link
      */
     public double getReceivingFlow()
     {
-        double ret  =Math.min(
+        
+        return Math.min(
                 Math.min(Math.round(getN_down(Simulator.time - getLength()/getWaveSpeed()*3600 + Network.dt) 
                 + getJamDensity() * getLength() - getN_up(Simulator.time)), getJamDensity()*getLength() - queue.size()),
                 getCurrentUpstreamCapacity());
-        
-        /*
-        if(getId() == 23)
-        {
-            System.out.println("t="+Simulator.time+" R="+ret+" Q="+getCurrentUpstreamCapacity()+" w="+getWaveSpeed());
-        }
-        */
-        return ret;
         
 
     }
@@ -356,17 +343,7 @@ public class LTMLink extends Link
         }
         else
         {
-            int t_1 = (int)Math.floor(t / Network.dt);
-            int t_2 = (int)Math.ceil(t / Network.dt);
-            
-            if(t_1 != t_2 && t_2 <= Simulator.time/Network.dt)
-            {
-                return (N_up.getCC(t_1) + N_up.getCC(t_2))/2;
-            }
-            else
-            {
-                return N_up.getCC(t_1);
-            }
+            return N_up.getCC(Simulator.indexTime(t));
         }
     }
     
@@ -383,17 +360,7 @@ public class LTMLink extends Link
         }
         else
         {
-            int t_1 = (int)Math.floor(t / Network.dt);
-            int t_2 = (int)Math.ceil(t / Network.dt);
-            
-            if(t_1 != t_2 && t_2 <= Simulator.time/Network.dt)
-            {
-                return (N_down.getCC(t_1) + N_down.getCC(t_2))/2;
-            }
-            else
-            {
-                return N_down.getCC(t_1);
-            }
+            return N_down.getCC(Simulator.indexTime(t));
         }
     }
     

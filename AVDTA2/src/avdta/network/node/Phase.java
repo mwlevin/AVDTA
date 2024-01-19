@@ -46,7 +46,7 @@ public class Phase implements Comparable<Phase>
         
         this.yellow = yellow;
         this.red = red;
-        this.green_time = green;
+        this.green_time = green * 2.5;
     }
     
     
@@ -63,7 +63,7 @@ public class Phase implements Comparable<Phase>
     {
         this.sequence = sequence;
         this.allowed = allowed;
-        this.green_time = green;
+        this.green_time = green * 2.5;
         this.yellow = yellow;
         this.red = red;
     }

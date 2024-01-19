@@ -123,6 +123,13 @@ public class TrafficSignal extends IntersectionControl implements Signalized
         return phases;
     }
     
+    private void setPhases() {
+        total_time = 225;
+        for (Phase phase : phases) {
+            phase.setGreenTime((225 - phases.size() * 3)/phases.size());
+        }
+    }
+    
     /**
      * Resets the current phase and the current time to 0, inserts the mapping 
      * of the phase movements in turns, and sets the start time of each phase in 
@@ -130,6 +137,8 @@ public class TrafficSignal extends IntersectionControl implements Signalized
      */
     public void initialize()
     {
+        setPhases();
+        
         Collections.sort(phases);
         
         
@@ -354,8 +363,10 @@ public class TrafficSignal extends IntersectionControl implements Signalized
                     movement.newTimestep();
                 }
             }
+
             while(time_rem > 0)
             {
+
                 Phase curr_phase = phases.get(curr_idx);
 
                 double green_time = Math.min(time_rem, curr_phase.getGreenTime(curr_time));

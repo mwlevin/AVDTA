@@ -4,9 +4,13 @@
  */
 package avdta.network.node;
 
+import avdta.network.Simulator;
+import avdta.network.link.CTMLink;
+import avdta.network.link.CentroidConnector;
 import avdta.vehicle.DriverType;
 import avdta.network.link.Link;
 import avdta.network.type.Type;
+import avdta.util.RunningAvg;
 
 /**
  * An intersection in the traffic network. Each intersection has an {@link IntersectionControl} that specifies vehicle movement
@@ -15,6 +19,10 @@ import avdta.network.type.Type;
 public class Intersection extends Node
 {
     private IntersectionControl control;
+    private RunningAvg avgQLength = new RunningAvg();
+    private RunningAvg avgDelay = new RunningAvg();
+
+    private int totalQueueLength = 0;
 
     /**
      * Instantiates {@link Intersection} with {@link Location} (0, 0) and specified control. Null control is acceptable for instantiation but not for simulation
@@ -107,6 +115,8 @@ public class Intersection extends Node
      */
     public void reset()
     {
+        avgQLength.reset();
+        avgDelay.reset();
         control.reset();
     }
     
@@ -124,7 +134,15 @@ public class Intersection extends Node
      */
     public int step()
     {
+        updateTotalQueueLength();
         return control.step();
+    }
+
+    private void updateTotalQueueLength() {
+        totalQueueLength = 0;
+        for (Link link : getIncoming()) {
+            totalQueueLength += link.getQueueLength();
+        }
     }
     
     /**
@@ -145,5 +163,45 @@ public class Intersection extends Node
         control = c;
         
         control.setNode(this);
+    }
+    
+    public double getAvgQLength() {
+        return avgQLength.getAverage();
+    }
+    
+    public void updateAvgQLength() {
+        int count = 0;
+        for (Link l : getIncoming()) {
+            if (l instanceof CTMLink) {
+                //count = count + l.getQueueLength();
+                count = count + ((CTMLink) l).getLastCellOccupancy();
+            }
+            
+            if (l instanceof CentroidConnector) {
+                count = count + ((CentroidConnector) l).getOccupancy();
+            }
+        }
+        avgQLength.add(count);
+    }
+    
+    public double getAvgDelay() {
+        return avgDelay.getAverage();
+    }
+    
+    public void updateAvgDelay() {
+        double value = 0;
+        if (control instanceof MaxPressure) {
+            for (MPTurn turn : ((MaxPressure) control).getTurns()) {
+//                if (turn.i instanceof CentroidConnector) {
+//                    continue;
+//                }
+                value = value + turn.getAverageWaitingTime();
+            }
+        }
+        avgDelay.add(value);
+    }
+
+    public int getTotalQueueLength() {
+        return totalQueueLength;
     }
 }

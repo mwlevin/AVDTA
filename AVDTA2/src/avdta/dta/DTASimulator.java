@@ -5,16 +5,20 @@
  */
 package avdta.dta;
 
-import avdta.demand.AST;
 import avdta.demand.DemandProfile;
 import avdta.demand.DynamicODTable;
 import avdta.demand.ReadDemandNetwork;
+import avdta.demand.StaticODTable;
 import avdta.network.Path;
 import avdta.network.PathList;
 import avdta.network.ReadNetwork;
 import avdta.network.Simulator;
 import avdta.network.link.CentroidConnector;
 import avdta.network.link.Link;
+import avdta.network.node.Intersection;
+import avdta.network.node.IntersectionControl;
+import avdta.network.node.MPTurn;
+import avdta.network.node.MaxPressure;
 import avdta.network.node.Node;
 import avdta.network.node.Zone;
 import avdta.project.DTAProject;
@@ -181,8 +185,6 @@ public class DTASimulator extends Simulator
      */
     public DTAResults pathgen(double stepsize) throws IOException
     {
-
-        
         int error_count = 0;
 
         Map<Node, Map<Node, Path[][]>> newpaths = new HashMap<Node, Map<Node, Path[][]>>();
@@ -202,14 +204,11 @@ public class DTASimulator extends Simulator
             
             Node o = v.getOrigin();
             Node d = v.getDest();
+            
+            // converts departure time to assignment interval -> getDepTime() / DTASimulator.ast_duration;
             int ast = v.getAST();
             int dep_time = v.getDepTime();
 
-
-
-
-            
-            
             Map<Node, Path[][]> temp1;
             Path[][] temp2;
 
@@ -262,7 +261,6 @@ public class DTASimulator extends Simulator
                 try
                 {
                     v.setPath(temp2[ast][v.getDriver().typeIndex()]);
-                    
                     moved_count++;
                 }
                 catch(Exception ex)
@@ -275,11 +273,8 @@ public class DTASimulator extends Simulator
                     error_count++;
                 }
             }
-            
-
+        
             count ++;
-            
-            
 
         }
         
@@ -290,7 +285,7 @@ public class DTASimulator extends Simulator
             System.err.println("Unable: "+error_count);
         }
 
-        simulate();
+        simulate(Math.round(1.0/stepsize));
         
 
         if(tstt == 0)
@@ -300,7 +295,6 @@ public class DTASimulator extends Simulator
 
 
         return new DTAResults(min, tstt, vehicles.size(), getNumExited());
-
     }
     
     /**
@@ -322,7 +316,8 @@ public class DTASimulator extends Simulator
     {        
         DTAProject project = (DTAProject)getProject();
         
-        File folder = new File(project.getAssignmentsFolder()+"/"+assign.getAssignmentDirectory());
+        //assignments/400194 for example
+        File folder = new File(project.getAssignmentsFolder()+"/"+assign.getName());
         folder.mkdirs();
         
         PathList paths = getPaths();
@@ -333,8 +328,6 @@ public class DTASimulator extends Simulator
         assign.writeToFile(vehicles, (DTAProject)getProject());
         
         FileTransfer.copy(project.getDemandFile(), assign.getDemandFile());
-        
-        //createSimVat(new File(project.getAssignmentsFolder()+"/"+assign.getAssignmentDirectory()+"/sim.vat"));
     }
 
     
@@ -366,7 +359,6 @@ public class DTASimulator extends Simulator
         assign.readFromFile(project, getVehicles(), paths);
         
         currAssign = assign;
-
     }
         
     /**
@@ -426,7 +418,7 @@ public class DTASimulator extends Simulator
         }
         
         
-        simulate();
+        simulate(0);
         
         
         if(statusUpdate != null)
@@ -632,11 +624,11 @@ public class DTASimulator extends Simulator
                 statusUpdate.update((double)(iteration - start_iter+1)/ (max_iter - start_iter + 1), 1.0 / (max_iter - start_iter + 1), "Iteration "+iteration);
             }
         }
-        while( (iteration++ < max_iter && (iteration <= 2 || min_gap < output.getGapPercent())) || 
-                (continueUntilExit && output.getNonExiting() > 0 && iteration < max_iter_contingency) );
+        while( (iteration++ < max_iter && (iteration <= 2 || min_gap < output.getGapPercent())) || (continueUntilExit && output.getNonExiting() > 0 && iteration < max_iter_contingency) );
         
         currAssign.setResults(output);
         ((MSAAssignment)currAssign).setIter(iteration);
+        
         saveAssignment(currAssign);
         
         if(statusUpdate != null)
@@ -812,7 +804,7 @@ public class DTASimulator extends Simulator
                 dest = null;
             }
             
-            for(int i = 0; i < path.size()-1; i++)
+            for(int i = 0; i < path.size(); i++)
             {
                 Link l = path.get(i);
                 
@@ -872,23 +864,7 @@ public class DTASimulator extends Simulator
         
         DemandProfile profile = new DemandProfile(rhs);
         
-
-        
-        AST lastAST = profile.getLastAST();
-        
-        int id = lastAST.getId();
-        
-        for(int t = lastAST.getEnd(); t < Simulator.duration + 899; t += 900)
-        {
-            profile.add(new AST(++id, t, t+900, 0));
-        }
-        
-        profile.save(rhs);
-        
-        
         DynamicODTable triptable = new DynamicODTable();
-        
-        
                
         // create dynamic od table
         filein = new Scanner(rhs.getDemandFile());
@@ -924,4 +900,275 @@ public class DTASimulator extends Simulator
             newLinks.add(new CentroidConnector(id+20000, node, newD));
         }
     }
+    
+    
+    
+    //This is the one we use lol
+    public DTAResults MP_msa_cont(int start_iter, int max_iter, double min_gap) throws IOException
+    {
+        long actual_time = System.nanoTime();
+        
+        //creates an assignment. New assignment folder gets created with name (some system time value which is pretty much guaranteed to be unique)
+        currAssign = createAssignment(start_iter);
+        
+        if(statusUpdate != null)
+        {
+            statusUpdate.update(0, 0, "Starting MSA");
+        }
+        
+        //Used to write to the log file
+        PrintStream fileout = new PrintStream(new FileOutputStream(currAssign.getLogFile(), start_iter > 1), true);
+        
+        iteration = start_iter;
+        DTAResults output = null;
+
+        if(print_status)
+        {
+            out.println(getProject().getName());
+            out.println("Iter\tStep\tMoved\tGap %\tAEC\tTSTT\tTrips\tNon-exit\ttime");
+        }
+        
+        fileout.println("Iter\tStep\tMoved\tGap %\tAEC\tTSTT\tTrips\tNon-exit\ttime");
+        
+        int max_iter_contingency = max_iter *2;
+        
+        do
+        {
+            /////////////////////////////////////////
+            PathList paths = this.getPaths();
+
+            for(Path p : paths)
+            {
+                p.flow = 0;
+            }
+
+            for(Vehicle v : vehicles)
+            {
+                v.getPath().flow++;
+            }
+
+            
+            if (this.iteration > 1){
+                //If we are currently not on the first iteration
+                paths.calculateProportions();
+                this.calculateTurningProportions_MP(paths);
+                this.loadTurningProportions_MP();
+            }
+            else{
+                //for each vehicle, assigns vehicle a path from it's origin to it's destination
+                
+                //If we are currently on the first iteration
+                //looks at preset mp_proportion assignment folder
+                Assignment assign = new Assignment("mp_proportion", this.getProject());
+                //sets paths from preset mp_proportion assignment folder
+                this.setPaths(assign);
+                System.out.println("set assign: "+ assign.getName());
+                paths = this.getPaths();
+
+                for(Vehicle v : this.getVehicles())
+                {
+                    Path path = paths.randomPath(v.getOrigin(), v.getDest());
+
+                    if(path == null)
+                    {
+                        path = paths.addPath(this.findPath(v.getOrigin(), v.getDest()));
+                        path.proportion = 1;
+                    }
+                    v.setPath(path);
+                }  
+            }
+            
+            
+            
+            long time = System.nanoTime();
+
+            //proportion of vehicles we will move to another path
+            double stepsize = 1.0/iteration;
+            //moves stepsize proportion of vehicles onto new paths, and returns results of simulating the assignment
+            output = pathgen(stepsize);
+            
+            currAssign.writeLinkTTFile(vehicles, (DTAProject)getProject(), iteration);
+            currAssign.writeLinkAvgTrafficVolumeFile(links, iteration);
+            currAssign.writeAvgQLengthFile(getNodes(), iteration);
+            currAssign.writeAvgDelayFile(getNodes(), iteration);
+            System.out.println("Weird link enter: " + Vehicle.weirdLinkEnter);
+            System.out.println("Weird link exit: " + Vehicle.weirdLinkExit);
+                
+            if(iteration == 1)
+            {
+                output.setMinTT(0);
+            }
+
+
+            time = System.nanoTime() - time;
+
+            if(print_status)
+            {
+                out.println(iteration+"\t"+String.format("%.4f", stepsize)+"\t"+moved_count+"\t"+String.format("%.2f", output.getGapPercent())+"%\t"+
+                        String.format("%.1f", output.getAEC())+"\t"+String.format("%.1f", output.getTSTT())+"\t"+output.getTrips()+"\t"+
+                        output.getNonExiting()+"\t"+String.format("%.2f", time / 1.0e9));
+            }
+            fileout.println(iteration+"\t"+String.format("%.4f", stepsize)+"\t"+moved_count+"\t"+String.format("%.2f", output.getGapPercent())+"%\t"+
+                        String.format("%.1f", output.getAEC())+"\t"+String.format("%.1f", output.getTSTT())+"\t"+output.getTrips()+"\t"+
+                        output.getNonExiting()+"\t"+String.format("%.2f", time / 1.0e9));
+
+            if(statusUpdate != null)
+            {
+                statusUpdate.update((double)(iteration - start_iter+1)/ (max_iter - start_iter + 1), 1.0 / (max_iter - start_iter + 1), "Iteration "+iteration);
+            }
+            System.out.println(output.getGapPercent());
+            
+            System.out.println("ITERATION NUMBER: " + iteration);
+            System.out.println("WHILE LOOP CONDITION: " + ((iteration <= 2 || min_gap < output.getGapPercent()/100.0) && iteration < 300));
+        }
+        while( (iteration <= 2 || min_gap < output.getGapPercent()/100.0) && iteration++ < 300);
+//        while( (iteration++ < max_iter && (iteration <= 2 || min_gap < output.getGapPercent())) || 
+//                (continueUntilExit && output.getNonExiting() > 0 && iteration < max_iter_contingency) );
+        
+        //sets a DTAResults private var within Assigment class to the value of output
+        currAssign.setResults(output);
+        //sets a int private var within MSAAssignment class to the value of iteration
+        ((MSAAssignment)currAssign).setIter(iteration);
+        //writes a bunch of files
+        saveAssignment(currAssign);
+        
+        if(statusUpdate != null)
+        {
+            statusUpdate.update(1, 0, "");
+        }
+        
+        actual_time = System.nanoTime() - actual_time;
+
+        out.println(String.format("TSTT\t%.1f", getTSTT()/3600.0)+"\thr");
+        out.println("Avg. TT\t"+String.format("%.2f", getTSTT() / 60 / vehicles.size())+"\tmin/veh");
+        out.println("Exiting: "+getNumExited());
+        out.println("Energy:\t"+getTotalEnergy());
+        out.println("VMT:\t"+String.format("%.2f", getTotalVMT()));
+        out.println("MPG:\t"+String.format("%.2f", getAvgMPG()));
+        out.println();
+        out.println("HV TT:\t"+String.format("%.2f", getAvgTT(DriverType.HV)/60)+"\tmin");
+        out.println("AV TT:\t"+String.format("%.2f", getAvgTT(DriverType.AV)/60)+"\tmin");
+        out.println();
+        out.println("DA TT:\t"+String.format("%.2f", getAvgBusTT(false)/60)+"\tmin");
+        out.println("Bus TT:\t"+String.format("%.2f", getAvgBusTT(true)/60)+"\tmin");
+        out.println("Bus ratio:\t"+(calcAvgBusTimeRatio()));
+        out.println("CPU time: "+String.format("%.1f", actual_time/1.0e9)+"s");
+        
+        fileout.println(String.format("TSTT\t%.1f", getTSTT()/3600.0)+"\thr\nAvg. TT\t"+String.format("%.2f", getTSTT() / 60 / vehicles.size())+"\tmin/veh");
+        fileout.println();
+        fileout.println("Energy:\t"+getTotalEnergy());
+        fileout.println("VMT:\t"+String.format("%.2f", getTotalVMT()));
+        fileout.println("MPG:\t"+String.format("%.2f", getAvgMPG()));
+        fileout.println();
+        fileout.println("HV TT:\t"+String.format("%.2f", getAvgTT(DriverType.HV)/60)+"\tmin");
+        fileout.println("AV TT:\t"+String.format("%.2f", getAvgTT(DriverType.AV)/60)+"\tmin");
+        fileout.println();
+        fileout.println("DA TT:\t"+String.format("%.2f", getAvgBusTT(false)/60)+"\tmin");
+        fileout.println("Bus TT:\t"+String.format("%.2f", getAvgBusTT(true)/60)+"\tmin");
+        fileout.println("Bus TT ratio:\t"+calcAvgBusTimeRatio());
+        fileout.println("CPU time: "+String.format("%.1f", actual_time/1.0e9)+"s");
+        
+        fileout.close();
+        
+        return output;
+    }
+    
+    
+    ////// modified method to calculate turning proportions of the method
+    public void calculateTurningProportions_MP(PathList pathlist) throws IOException
+    {
+  
+        StaticODTable table = new StaticODTable((DemandProject)getProject());
+        
+        for(Path p : pathlist)
+        {
+            p.flow = p.proportion * table.getTrips(p.getOrigin(), p.getDest());
+            
+        }
+        
+        table = null;
+        
+        PrintStream fileout = new PrintStream(new FileOutputStream(new File("C:/Users/huxx0254/AVDTA_modified/AVDTA2/projects/coacongress2_ttmp/assignments/mp_proportion/results/turning_proportions_7_23.txt")), true);
+        
+        for(Node n : this.getNodes())
+        {
+            if(n instanceof Intersection)
+            {
+                IntersectionControl c = ((Intersection)n).getControl();
+                
+                if(!(c instanceof MaxPressure))
+                {
+                    continue;
+                }
+                
+                MaxPressure control = (MaxPressure)c;
+                
+                for(MPTurn turn : control.getTurns())
+                {
+                    for(Path p : pathlist)
+                    {
+                        int idx = p.indexOf(turn.i);
+                        if(idx >= 0)
+                        {
+                            turn.denom += p.flow;
+                            
+                            if(p.get(idx+1) == turn.j)
+                            {
+                                turn.num += p.flow;
+                            }
+                        }
+                    }
+                    
+                    if(turn.denom > 0)
+                    {
+                        turn.setTurningProportion(turn.num / turn.denom);
+                    }
+                    else
+                    {
+                        turn.setTurningProportion(0);
+                    }
+                    //System.out.println(" prop: "+ turn.num / turn.denom + " MPTurn: "+ turn.i+ ","+turn.j);
+                    if ((turn.i.getId() == 105990)&&(turn.j.getId() == 6015)){
+                        System.out.println("Time: "+Simulator.time +" MPTurn: "+ turn.i+ ","+turn.j +" prop: "+ turn.num / turn.denom );
+                    }
+                    fileout.println(turn.i.getId()+"\t"+turn.j.getId()+"\t"+turn.getTurningProportion());
+                }
+            }
+        }
+        fileout.close();
+        //System.out.println("Calculate turning proportions");
+    }
+    
+    
+    //// modified method for loading turning proportion /// RC /// 7/23/2019
+
+    public void loadTurningProportions_MP() throws IOException
+    {
+        Scanner filein = new Scanner(new File("C:/Users/huxx0254/AVDTA_modified/AVDTA2/projects/coacongress2_ttmp/assignments/mp_proportion/results/turning_proportions_7_23.txt"));
+        
+        Map<Integer, Link> linksmap = createLinkIdsMap();
+        
+        while(filein.hasNextInt())
+        {
+            int i_id = filein.nextInt();
+            int j_id = filein.nextInt();
+            double p_ij = filein.nextDouble();
+            
+            Link i = linksmap.get(i_id);
+            Link j = linksmap.get(j_id);
+            
+            Node node = i.getDest();
+            MaxPressure control = (MaxPressure)((Intersection)node).getControl();
+            for(MPTurn t : control.getTurns())
+            {
+                if(t.i == i && t.j == j)
+                {
+                    t.setTurningProportion(p_ij);
+                    break;
+                }
+            }
+        }
+        filein.close();
+        //System.out.println("Load turning proportions");
+    }    
 }

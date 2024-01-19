@@ -26,6 +26,7 @@ import avdta.network.node.policy.IntersectionPolicy;
 import avdta.network.node.StopSign;
 import avdta.network.node.Phase;
 import avdta.network.node.TrafficSignal;
+import avdta.network.node.HaiVuTrafficSignal;
 import avdta.network.node.PriorityTBR;
 import avdta.network.node.policy.SignalWeightedTBR;
 import avdta.network.node.Signalized;
@@ -39,7 +40,6 @@ import avdta.network.link.AbstractSplitLink;
 import avdta.network.link.DLR2CTMLink;
 import avdta.network.link.LinkRecord;
 import avdta.network.link.MPLink;
-import avdta.network.link.MulticlassLTMLink;
 import avdta.network.link.SplitCTMLink;
 import avdta.network.link.TransitLane;
 import avdta.network.node.Connector;
@@ -122,7 +122,6 @@ public class ReadNetwork
     public static final ExtendedType MP_LINK = new ExtendedType(36, "MP-LINK", CTM);
     
     public static final ExtendedType CACC = new ExtendedType(5, "CACC", LTM);
-    public static final ExtendedType MULTICLASS_LTM = new ExtendedType(1, "Multiclass LTM", LTM);
     
     public static final ExtendedType TRANSIT_LANE = new ExtendedType(10, "Transit lane", CTM);
     public static final Type CENTROID = new Type(1000, "Centroid");
@@ -216,6 +215,8 @@ public class ReadNetwork
     
     
     private double mesodelta;
+
+    private static boolean USE_HAI_VU_FOR_CYCLE_LENGTH = true;
     
     /**
      * Constructs an empty {@link ReadNetwork} object.
@@ -578,7 +579,7 @@ public class ReadNetwork
 
             if(type/100 == SIGNAL.getCode()/100)
             {
-                node.setControl(new TrafficSignal());
+                node.setControl(new TrafficSignal(node));
                 
                 if(type == MAX_PRESSURE.getCode())
                 {
@@ -664,6 +665,147 @@ public class ReadNetwork
         }
     }
     
+    /**
+     * Reads intersection controls from the nodes file.
+     * @param project the project
+     * @throws IOException if a file cannot be accessed
+     */
+    public void readIntersections(Project project, int cycleLength) throws IOException
+    {
+        Scanner filein = new Scanner(project.getNodesFile());
+        
+        filein.nextLine();
+        
+        while(filein.hasNext())
+        {
+            int id = filein.nextInt();
+            int type = filein.nextInt();
+            double x = filein.nextDouble();
+            double y = filein.nextDouble();
+            double elevation = filein.nextDouble();
+            
+            if(filein.hasNextLine())
+            {
+                filein.nextLine();
+            }
+            
+            if(type/100 == CENTROID.getCode()/100)
+            {
+                continue;
+            }
+            
+            Intersection node = (Intersection)nodesmap.get(id);
+        
+            /*
+            if(node.getIncoming().size() == 1 && type != HIGHWAY)
+            {
+                node.setControl(new Diverge());
+            }
+            else if(node.getOutgoing().size() == 1 && type != HIGHWAY)
+            {
+                node.setControl(new Merge());
+            }
+            else
+            {
+            */
+            BackPressureObj backpressureobj = new BackPressureObj();
+            P0Obj p0obj = new P0Obj();
+            MaxPressureObj maxpressureobj = new MaxPressureObj();
+
+            if(type/100 == SIGNAL.getCode()/100)
+            {
+                if (USE_HAI_VU_FOR_CYCLE_LENGTH) {
+                    node.setControl(new HaiVuTrafficSignal(node));
+                } else {
+                    node.setControl(new MaxPressure(node, cycleLength));
+                }
+                
+                if(type == MAX_PRESSURE.getCode())
+                {
+                    node.setControl(new MaxPressure(node, cycleLength));
+                }
+            }
+            else if(type == STOPSIGN.getCode())
+            {
+                node.setControl(new StopSign());
+            }
+            else if(type == DIVERGE.getCode())
+            {
+                node.setControl(new Diverge());
+            }
+            else if(type == MERGE.getCode())
+            {
+                node.setControl(new Merge());
+            }
+            else if(type == CONNECTOR.getCode())
+            {
+                node.setControl(new Connector());
+            }
+            else if(type/100 == HIGHWAY.getCode()/100)
+            {
+                node.setControl(new Highway());
+            }
+            else if(type/100 == RESERVATION.getCode()/100)
+            {
+                if(type%100 == FCFS.getCode()%100)
+                {
+                    node.setControl(new PriorityTBR(node, IntersectionPolicy.FCFS));
+                }
+                else if(type%100 == AUCTION.getCode()%100)
+                {
+                    node.setControl(new PriorityTBR(node, IntersectionPolicy.auction));
+                }
+                else if(type%100 == RANDOM.getCode()%100)
+                {
+                    node.setControl(new PriorityTBR(node, IntersectionPolicy.random));
+                }
+                else if(type%100 == EMERGENCY_FIRST.getCode()%100)
+                {
+                    node.setControl(new PriorityTBR(node, IntersectionPolicy.emergency));
+                }
+                else if(type%100 == EMERGENCY_FIRST_LIMITED.getCode()%100)
+                {
+                    node.setControl(new PriorityTBR(node, IntersectionPolicy.emergency_limited));
+                }
+                else if(type%100 == PRESSURE.getCode()%100)
+                {
+                    node.setControl(new MCKSTBR(node, backpressureobj));
+                }
+                else if(type%100 == MAX_PRESSURE.getCode()%100)
+                {
+                    node.setControl(new MCKSTBR(node, maxpressureobj));
+                }
+                else if(type%100 == P0.getCode()%100)
+                {
+                    node.setControl(new MCKSTBR(node, p0obj));
+                }
+                else if(type%100 == PHASED.getCode()%100)
+                {
+                    node.setControl(new PhasedTBR());
+                }
+                else if(type%100 == WEIGHTED.getCode()%100)
+                {
+                    node.setControl(new SignalWeightedTBR());
+                }
+                else if(type%100 == TRANSIT_FIRST.getCode()%100)
+                {
+                    node.setControl(new PriorityTBR(node, new TransitFirst(IntersectionPolicy.FCFS)));
+                }
+                else
+                {
+                    throw new RuntimeException("Node type not recognized: "+type);
+                }
+            }
+            else
+            {
+                throw new RuntimeException("Node type not recognized: "+type);
+            }
+
+        }
+    }
+    
+    
+
     public void relabelMergeDiverge(Project project) throws IOException
     {
         Simulator sim = project.getSimulator();
@@ -797,7 +939,10 @@ public class ReadNetwork
             double capacity = filein.nextDouble();
             int numLanes = filein.nextInt();
             double jamd = 5280.0/Vehicle.vehicle_length;
-            
+
+            if (type != 136 && type != 1000) {
+                System.out.println(type);
+            }
             
             if(filein.hasNextLine())
             {
@@ -843,10 +988,6 @@ public class ReadNetwork
                     {
                         link = new LTMLink(id, source, dest, capacity, ffspd, w, jamd, length, numLanes);
                     }
-                }
-                else if(type == MULTICLASS_LTM.getCode())
-                {
-                    link = new MulticlassLTMLink(id, source, dest, capacity, ffspd, w, jamd, length, numLanes);
                 }
                 else
                 {
@@ -1031,7 +1172,7 @@ public class ReadNetwork
             Phase phase = new Phase(sequence, turns, timegreen, timeyellow, timered);
 
             if(turns.size() > 0)
-            {   
+            {
                 ((Signalized)((Intersection)node).getControl()).addPhase(phase);
             }
         }

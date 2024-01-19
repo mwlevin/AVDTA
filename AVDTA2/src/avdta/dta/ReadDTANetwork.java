@@ -63,6 +63,7 @@ public class ReadDTANetwork extends ReadDemandNetwork
      */
     public DTASimulator readNetwork(DTAProject project) throws IOException
     {
+        System.out.println("ReadDTANetwork.readNetwork called");
         readOptions(project);
         Set<Node> nodes = readNodes(project);
         Set<Link> links = readLinks(project);
@@ -93,10 +94,7 @@ public class ReadDTANetwork extends ReadDemandNetwork
         vehicles = new ArrayList<Vehicle>();
         readTransit(project);
         readVehicles(project);
-        
         sim.setVehicles(vehicles);
-
-
     }
     
     

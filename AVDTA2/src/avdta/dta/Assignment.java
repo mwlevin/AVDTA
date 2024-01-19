@@ -1,3 +1,4 @@
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -8,7 +9,10 @@ package avdta.dta;
 import avdta.network.Path;
 import avdta.network.PathList;
 import avdta.network.Simulator;
+import avdta.network.link.CTMLink;
 import avdta.network.link.Link;
+import avdta.network.node.Intersection;
+import avdta.network.node.Node;
 import avdta.project.DTAProject;
 import avdta.util.FileTransfer;
 import avdta.util.RunningAvg;
@@ -20,6 +24,7 @@ import java.io.PrintStream;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 import java.util.Map;
 import java.util.Scanner;
 
@@ -213,7 +218,7 @@ public class Assignment implements Comparable<Assignment>
      */
     public Assignment(DTAProject project, DTAResults results)
     {
-        this(project, results, ""+(int)(System.nanoTime()/1.0e9));
+        this(project, results, Calendar.getInstance().getTime().toString());
     }
     
     /**
@@ -289,6 +294,24 @@ public class Assignment implements Comparable<Assignment>
         return new File(getAssignmentDirectory()+"/linktt.dat");
     }
     
+    public File getTimesFile(int iterationNum)
+    {
+        return new File(getAssignmentDirectory()+"/linktt" + iterationNum + ".dat");
+    }
+    
+    public File getAvgTrafficVolumeFile(int iterationNum)
+    {
+        return new File(getAssignmentDirectory() + "/TrafficVolume" + iterationNum + ".dat");
+    }
+    
+    public File getAvgQLengthFile(int iterationNum) {
+        return new File(getAssignmentDirectory() + "/avgQLength" + iterationNum + ".dat");
+    }
+    
+    public File getAvgDelayFile(int iterationNum) {
+        return new File(getAssignmentDirectory() + "/avgDelay" + iterationNum + ".dat");
+    }
+    
     /**
      * Returns the sim.vat file
      * @return the sim.vat file
@@ -353,6 +376,92 @@ public class Assignment implements Comparable<Assignment>
         }
         fileout.close();
         
+    }
+    
+    //writes LinkTT file for each iteration
+    public void writeLinkTTFile(List<Vehicle> vehicles, DTAProject project, int iterationNum) throws IOException
+    {                
+        PrintStream fileout = new PrintStream(new FileOutputStream(getTimesFile(iterationNum)), true);
+        fileout.print("linkid\t");
+        fileout.print("source-dest\t");
+        for (int t = 0; t <= 14400; t = t + 900) {
+            fileout.print(t + "\t");
+        }
+        fileout.print("totalAvg\t");
+        fileout.println();
+        
+        for(Link l : project.getSimulator().getLinks())
+        {
+            fileout.print(l.getId() + "\t");
+            fileout.print(l.getSource().getId() + "-" + l.getDest().getId() + "\t");
+            
+            RunningAvg[] tts = l.getAvgTTs();
+            
+//            for(int t = 0; t < tts.length; t++)
+//            {
+//                fileout.print("\t"+(t*Simulator.ast_duration)+"\t"+tts[t].getAverage());
+//            }
+
+            RunningAvg totalAvg = new RunningAvg();
+            for (int t = 0; t <= 14400; t = t + 900) {
+                fileout.print(tts[t/900].getAverage() + "\t");
+                totalAvg.add(tts[t/900].getAverage());
+            }
+            fileout.print(totalAvg.getAverage() + "\t");
+            
+            fileout.println();
+        }
+        fileout.close();
+    }
+    
+    public void writeLinkAvgTrafficVolumeFile(Set<Link> links, int iterationNum) throws IOException
+    {
+        PrintStream fileout = new PrintStream(new FileOutputStream(getAvgTrafficVolumeFile(iterationNum)), true);
+        fileout.print("linkid\t");
+        fileout.print("source-dest\t");
+        fileout.print("avgTrafficVolume");
+        fileout.println();
+        for (Link l : links) {
+            if (l instanceof CTMLink) {
+                fileout.print(l.getId() + "\t");
+                fileout.print(l.getSource().getId() + "-" + l.getDest().getId() + "\t");
+                fileout.print(((CTMLink) l).avgTrafficVolume.getAverage());
+                fileout.println();
+            }
+        }
+        fileout.close();
+    }
+    
+    public void writeAvgQLengthFile(Set<Node> nodes, int iterationNum) throws IOException
+    {
+        PrintStream fileout = new PrintStream(new FileOutputStream(getAvgQLengthFile(iterationNum)), true);
+        fileout.print("intersectionid\t");
+        fileout.print("avgQLength\t");
+        fileout.println();
+        for (Node n : nodes) {
+            if (n instanceof Intersection) {
+                fileout.print(n.getId());
+                fileout.print("\t" + ((Intersection) n).getAvgQLength());
+                fileout.println();
+            }
+        }
+        fileout.close();
+    }
+    
+    public void writeAvgDelayFile(Set<Node> nodes, int iterationNum) throws IOException
+    {
+        PrintStream fileout = new PrintStream(new FileOutputStream(getAvgDelayFile(iterationNum)), true);
+        fileout.print("intersectionid\t");
+        fileout.print("avgDelay\t");
+        fileout.println();
+        for (Node n : nodes) {
+            if (n instanceof Intersection) {
+                fileout.print(n.getId());
+                fileout.print("\t" + ((Intersection) n).getAvgDelay());
+                fileout.println();
+            }
+        }
+        fileout.close();
     }
     
     public void writePropertiesFile() throws IOException

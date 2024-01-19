@@ -37,7 +37,8 @@ public abstract class Vehicle implements Serializable, Comparable<Vehicle>
 {   
     public static double vehicle_length = 19;
     
-    
+    public static int weirdLinkEnter = 0;
+    public static int weirdLinkExit = 0;
     private Wallet wallet;
     private int id;
 
@@ -54,7 +55,11 @@ public abstract class Vehicle implements Serializable, Comparable<Vehicle>
     
     private Link curr;
     
-    private int exit_time, net_enter_time;
+    private int exit_time;
+    static int weirdLinkId = 425014;
+    
+    //time when vehicle enters the network
+    private int net_enter_time;
     
     private Path path;
     
@@ -288,9 +293,6 @@ public abstract class Vehicle implements Serializable, Comparable<Vehicle>
         prev_cell_time = Simulator.time - cell_enter;
         cell_enter = Simulator.time;
         curr_cell = curr;   
-        
-        
-        
     }
     
     public int getDelayInCell()
@@ -407,6 +409,7 @@ public abstract class Vehicle implements Serializable, Comparable<Vehicle>
     public void entered()
     {
         net_enter_time = Simulator.time;
+        cell_enter = Simulator.time;
         routeChoice.activate();
     }
     
@@ -432,7 +435,9 @@ public abstract class Vehicle implements Serializable, Comparable<Vehicle>
             getPrevLink().exit[Simulator.time / Simulator.ast_duration]++;
         }
         */ 
-        
+        if (curr.getId() == weirdLinkId) {
+            weirdLinkExit ++;
+        }
         routeChoice.exited();
         curr = null;
     }
@@ -587,7 +592,12 @@ public abstract class Vehicle implements Serializable, Comparable<Vehicle>
         {
             try
             {
-                return routeChoice.getFirstLink(getOrigin());
+                
+                Link l = routeChoice.getFirstLink(getOrigin());
+                if (l.getId() == weirdLinkId) {
+                    weirdLinkEnter++;
+                }
+                return l;
             }
             catch(Exception ex)
             {
@@ -629,6 +639,13 @@ public abstract class Vehicle implements Serializable, Comparable<Vehicle>
      */
     public void enteredLink(Link l)
     {
+        if (l != null && l.getId() == weirdLinkId) {
+            weirdLinkEnter ++;
+        }
+        
+        if (curr != null && curr.getId() == weirdLinkId && l != null) {
+            weirdLinkExit ++;
+        }
         curr = l;
         
         if(!(routeChoice instanceof FixedPath))

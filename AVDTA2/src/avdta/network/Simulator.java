@@ -28,6 +28,7 @@ import avdta.network.node.TrafficSignal;
 import avdta.project.Project;
 import avdta.vehicle.Bus;
 import java.io.File;
+import java.util.Arrays;
 import avdta.project.DemandProject;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -64,17 +65,25 @@ import avdta.dta.Assignment;
 import avdta.network.node.IntersectionControl;
 import avdta.network.node.MPTurn;
 import avdta.network.node.MaxPressure;
+import avdta.project.DTAProject;
+import java.nio.file.Paths;
+import java.util.Optional;
+import java.util.HashMap;
 
 /**
  * A {@link Simulator} extends {@link Network} in adding {@link Vehicle}s and dynamic network loading. 
  * Where the {@link Network} works with {@link Node}s and {@link Link}s, {@link Simulator} methods are focused on {@link Vehicle}s.
  * @author Michael
  */
+
 public class Simulator extends Network 
 {
 
     
     public static int time;
+    
+    //number of times a vehicle has to wait more than 60 seconds at an intersection
+    public static HashMap<Integer, Integer> delayTable = new HashMap<>();
     
     public static int duration = 3600*10;
     
@@ -169,6 +178,9 @@ public class Simulator extends Network
         lastExit = duration;
         
         emergency = new HashSet<>();
+        for (int i = 10; i <= 300; i = i + 10) {
+            Simulator.delayTable.put(new Integer(i), 0);
+        }
     }
     
     
@@ -195,6 +207,9 @@ public class Simulator extends Network
         lastExit = duration;
         
         emergency = new HashSet<>();
+        for (int i = 10; i <= 300; i = i + 10) {
+            Simulator.delayTable.put(new Integer(i), 0);
+        }
     }
     
     
@@ -649,18 +664,60 @@ public class Simulator extends Network
     {
         double total = 0.0;
         int count = 0;
-        
+
+        int count2000 = 0;
+        int count4000 = 0;
+        int count6000 = 0;
+        int count8000 = 0;
+        int count10000 = 0;
+        int countmax = 0;
+        int stuckCount = 0;
+        int notTraveledCount = 0;
+
         for(Vehicle v : vehicles)
         {
             if(v.getDriver() == driver)
             {
+                if (v.getExitTime() < 2000) {
+                    count2000++;
+                } else if (v.getExitTime() < 4000) {
+                    count4000++;
+                } else if (v.getExitTime() < 6000) {
+                    count6000++;
+                } else if (v.getExitTime() < 8000) {
+                    count8000++;
+                } else if (v.getExitTime() < 10000) {
+                    count10000++;
+                } else if (v.getExitTime() == 10800) {
+                    countmax++;
+                    if (v.getNetEnterTime() < 5000) {
+                        // System.out.println("Number of links traveled: " + (v.getPath().size() - v.getNumRemainingLinks() + 1));
+                        // System.out.println("links left: " + v.getNumRemainingLinks());
+                        // System.out.println("enter time: " + v.getNetEnterTime());
+                        if ((v.getPath().size() - v.getNumRemainingLinks() + 1) == 0) {
+                            notTraveledCount++;
+                        }
+                        stuckCount++;
+                    }
+                }
+                // System.out.println(v.getTT());
                 count++;
                 total += v.getTT();
             }
         }
+
+        System.out.println("Exit between 0 and 2000: " + count2000);
+        System.out.println("Exit between 2000 and 4000: " + count4000);
+        System.out.println("Exit between 4000 and 6000: " + count6000);
+        System.out.println("Exit between 6000 and 8000: " + count8000);
+        System.out.println("Exit between 8000 and 10000: " + count10000);
+        System.out.println("Exit max: " + countmax);
+        System.out.println("Stuck count: " + stuckCount);
+        System.out.println("Not traveled count: " + notTraveledCount);
         
         if(count > 0)
         {
+            // System.out.println("total " + total);
             return total/count;
         }
         else
@@ -826,7 +883,7 @@ public class Simulator extends Network
      * For each time step, this calls {@link Simulator#addVehicles()} and {@link Simulator#propagateFlow()}.
      * @throws IOException if a file cannot be accessed
      */
-    public void simulate() throws IOException
+    public void simulate(long iter) throws IOException
     {   
  
         resetSim();
@@ -846,21 +903,26 @@ public class Simulator extends Network
         
         if(printQueueLength)
         {
-            queueLengthOut = new PrintStream(new FileOutputStream(new File(project.getResultsFolder()+"/queue_lengths.txt")), true);
+            java.nio.file.Path parentFolder = java.nio.file.Paths.get(project.getProjectDirectory(), "DataCollection");
+            Optional<File> mostRecentFolder =
+            Arrays
+                .stream(parentFolder.toFile().listFiles())
+                .filter(f -> f.isDirectory())
+                .max(
+                    (f1, f2) -> Long.compare(f1.lastModified(),
+                        f2.lastModified()));
+            
+            int demand = this.getVehicles().size();
+            String DemandAsString = Integer.toString(demand);
+            queueLengthOut = new PrintStream(new FileOutputStream(new File(mostRecentFolder.get()+"/queue_lengths"+DemandAsString+"_iter"+iter+".txt")), true);
             queueLengthOut.println("Time (s)\tTotal queue");
         }
-        
-        
-        
+                
         for(time = 0; time < duration; time += dt)
         {
-            //System.out.println(time);
             //System.out.println(time+"\t"+getNumVehiclesInSystem()+"\t"+occupancy_900);
             // push vehicles onto centroid connectors at departure time
             addVehicles();
-            
-
-            
             if(printQueueLength)
             {
                 int queue = getNumVehiclesInSystem();
@@ -874,21 +936,252 @@ public class Simulator extends Network
             }
             
             
-            propagateFlow();
+            propagateFlow();  
 
+            //checks if all vehicles have exited
             if(isSimulationFinished())
             {
                 break;
+            }   
+            
+            //sample queue lengths for every link
+            if (time > 1000 && time % ast_duration == 0) {
+                
             }
             
-            
-            
-            
+            if (time > 1000) {
+                for (Node n : getNodes()) {
+                    if (n instanceof Intersection) {
+                        ((Intersection) n).updateAvgDelay();
+                    }
+                }
+                for (Link l : getLinks()) {
+                    if (l instanceof CTMLink) {
+                        ((CTMLink) l).updateAvgTrafficVolume();
+                    }
+                }
+                
+                for (Node n : getNodes()) {
+                    if (n instanceof Intersection) {
+                        ((Intersection) n).updateAvgQLength();
+                    }
+                }
+            }
         }
         
 
         lastExit = time;
         
+        //for vehicles that haven't yet exited the network, add an observation to the running average avgTT for vehicle's current link
+        //that is equal to the time of the system currently minus the time the vehicle has entered the link
+        for(Vehicle v : vehicles)
+        {
+            if(!v.isExited())
+            {
+                Link l = v.getCurrLink();
+                if(l != null)
+                {
+                    l.updateTT(v.enter_time, Simulator.time);
+                }
+            }
+        }
+        
+
+        
+        simulationFinished();
+         
+        vat.close();
+        
+        if(printQueueLength)
+        {
+            queueLengthOut.close();
+            System.out.println("Average queue length: "+queue_length.getAverage());
+        }
+        
+        
+    }
+    
+    public void simulate() throws IOException
+    {   
+ 
+        resetSim();
+        
+        PrintStream sim_vat = null;
+        
+        vat = new PrintStream(new FileOutputStream(getVatFile()), true);
+        
+        veh_idx = 0;
+
+        exit_count = 0;
+        
+        
+        
+        PrintStream queueLengthOut = new PrintStream(new FileOutputStream(new File("C:\\Users\\huxx0254\\AVDTA_modified\\AVDTA2\\projects\\coacongress2_ttmp\\DataCollection/queueLengths.csv")), true);
+        queueLengthOut.println("Time (s),Total queue");
+        
+        for(time = 0; time < duration; time += dt)
+        {
+            //System.out.println(time+"\t"+getNumVehiclesInSystem()+"\t"+occupancy_900);
+            // push vehicles onto centroid connectors at departure time
+            addVehicles();
+            if(printQueueLength)
+            {
+                int queue = getNumVehiclesInSystem();
+                
+                queueLengthOut.println(time+","+queue);
+                
+                if(time >= queue_time_delay)
+                {
+                    queue_length.add(queue);
+                }
+            }
+            
+            
+            propagateFlow();  
+
+            //checks if all vehicles have exited
+            if(isSimulationFinished())
+            {
+                break;
+            }   
+            
+            //sample queue lengths for every link
+            if (time > 1000 && time % ast_duration == 0) {
+                
+            }
+            
+            if (time > 1000) {
+                for (Node n : getNodes()) {
+                    if (n instanceof Intersection) {
+                        ((Intersection) n).updateAvgDelay();
+                    }
+                }
+                for (Link l : getLinks()) {
+                    if (l instanceof CTMLink) {
+                        ((CTMLink) l).updateAvgTrafficVolume();
+                    }
+                }
+                
+                for (Node n : getNodes()) {
+                    if (n instanceof Intersection) {
+                        ((Intersection) n).updateAvgQLength();
+                    }
+                }
+            }
+        }
+        
+
+        lastExit = time;
+        
+        //for vehicles that haven't yet exited the network, add an observation to the running average avgTT for vehicle's current link
+        //that is equal to the time of the system currently minus the time the vehicle has entered the link
+        for(Vehicle v : vehicles)
+        {
+            if(!v.isExited())
+            {
+                Link l = v.getCurrLink();
+                if(l != null)
+                {
+                    l.updateTT(v.enter_time, Simulator.time);
+                }
+            }
+        }
+        
+
+        
+        simulationFinished();
+         
+        vat.close();
+        
+        if(printQueueLength)
+        {
+            queueLengthOut.close();
+            System.out.println("Average queue length: "+queue_length.getAverage());
+        }
+        
+        
+    }
+    
+    public void simulate(int demandFactor, int cycleLength) throws IOException
+    {   
+        System.out.println("in simulate");
+        MaxPressure.cycleLength = cycleLength;
+        resetSim();
+        
+        PrintStream sim_vat = null;
+        
+        vat = new PrintStream(new FileOutputStream(getVatFile()), true);
+        
+        veh_idx = 0;
+
+        exit_count = 0;
+        
+        PrintStream queueLengthOut = null;
+        if (cycleLength > 0) {
+            queueLengthOut = new PrintStream(new FileOutputStream(new File("/Users/jeffrey/AVDTA_modified/AVDTA2/projects/coacongress2_ttmp/HaiVuDataCollection/Stability/QLengths_d" + demandFactor + "_c" + cycleLength + ".csv")), true);
+        }
+        else {
+            queueLengthOut = new PrintStream(new FileOutputStream(new File("/Users/jeffrey/AVDTA_modified/AVDTA2/projects/coacongress2_ttmp/HaiVuDataCollection/Stability/QLengths_d" + demandFactor + ".csv")), true);            
+        }
+        queueLengthOut.println("Time (s),Total queue");
+        
+        for(time = 0; time < duration; time += dt)
+        {
+            //System.out.println(dt);
+            //System.out.println(time+"\t"+getNumVehiclesInSystem()+"\t"+occupancy_900);
+            // push vehicles onto centroid connectors at departure time
+            addVehicles();
+            if(printQueueLength)
+            {
+                int queue = getNumVehiclesInSystem();
+                
+                queueLengthOut.println(time+","+queue);
+                
+                if(time >= queue_time_delay)
+                {
+                    queue_length.add(queue);
+                }
+            }
+            
+            
+            propagateFlow();  
+
+            //checks if all vehicles have exited
+            if(isSimulationFinished())
+            {
+                break;
+            }   
+            
+            //sample queue lengths for every link
+            if (time > 1000 && time % ast_duration == 0) {
+                
+            }
+            
+            if (time > 1000) {
+                for (Node n : getNodes()) {
+                    if (n instanceof Intersection) {
+                        ((Intersection) n).updateAvgDelay();
+                    }
+                }
+                for (Link l : getLinks()) {
+                    if (l instanceof CTMLink) {
+                        ((CTMLink) l).updateAvgTrafficVolume();
+                    }
+                }
+                
+                for (Node n : getNodes()) {
+                    if (n instanceof Intersection) {
+                        ((Intersection) n).updateAvgQLength();
+                    }
+                }
+            }
+        }
+        
+
+        lastExit = time;
+        
+        //for vehicles that haven't yet exited the network, add an observation to the running average avgTT for vehicle's current link
+        //that is equal to the time of the system currently minus the time the vehicle has entered the link
         for(Vehicle v : vehicles)
         {
             if(!v.isExited())
@@ -1010,17 +1303,8 @@ public class Simulator extends Network
 
             for(int i = 0; i < route.size(); i++)
             {
-                if(times.size() <= i)
-                {
-                    System.err.println("Vehicle "+v.getId()+" did not exit.");
-                    fileout.print(" "+route.get(i).getId()+" "+
-                            Simulator.duration+".00");
-                }
-                else
-                {
-                    fileout.print(" "+route.get(i).getId()+" "+
-                            times.get(i)+".00");
-                }
+                fileout.print(" "+route.get(i).getId()+" "+
+                        times.get(i)+".00");
             }
             fileout.println();
         }
@@ -1052,6 +1336,7 @@ public class Simulator extends Network
      */
     public void printLinkTdd() throws IOException
     {
+        System.out.println("within prinkLinkTdd()");
         postProcess();
         
 
@@ -1082,6 +1367,7 @@ public class Simulator extends Network
             {
                 flowout.print(","+l.getFlowin(t));
                 ttout.print(","+l.getAvgTT(t));
+                ttout.print(","+"hello, its me");
             }
             
             flowout.println();
@@ -1190,6 +1476,7 @@ public class Simulator extends Network
      */
     public void printLinkFlow(int start, int end) throws IOException
     {
+        System.out.println("within printLinkFlow (start, end)");
         printLinkFlow(start, end, new File(project.getResultsFolder()+"/linkq.txt"));
     }
     
@@ -1202,6 +1489,7 @@ public class Simulator extends Network
      */
     public void printLinkFlow(int start, int end, File file) throws IOException
     {
+        System.out.println("within printLinkFlow(start, end, File)");
         PrintStream fileout = new PrintStream(new FileOutputStream(file), true);
         
         fileout.print("Link\tType");
@@ -1306,6 +1594,7 @@ public class Simulator extends Network
      */
     public void printLinkTT(int start, int end, File file, Set<Integer> linkids) throws IOException
     {
+        System.out.println("printLinkTT(start, end, File, linkids");
         PrintStream fileout = new PrintStream(new FileOutputStream(file), true);
         
         fileout.print("Link id\tFFtime");

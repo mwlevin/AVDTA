@@ -3,6 +3,9 @@ package avdta.network;
 import avdta.network.link.CentroidConnector;
 import avdta.network.link.Link;
 import avdta.network.node.Location;
+import avdta.network.node.Node;
+import avdta.util.RunningAvg;
+import org.openstreetmap.gui.jmapviewer.Coordinate;
 
 import javax.json.*;
 import java.awt.*;
@@ -11,7 +14,9 @@ import java.io.*;
 public class AvdtaJSONSerializer {
 
     /* Edit Configuration Variables START */
-    
+
+    public static final String FILE_PATH = "/Users/jeffrey/AVDTA_modified/AVDTA_maps/maps.js";
+
     public static final int C1_R = 144;
     public static final int C1_G = 238;
     public static final int C1_B = 144;
@@ -24,9 +29,11 @@ public class AvdtaJSONSerializer {
     public static final int C3_G = 0;
     public static final int C3_B = 0;
 
+    public static final double DISPLACEMENT = 0.0001;
+
     /* Edit Configuration Variables END */
 
-    private static final double DISPLACEMENT = 0.0001;
+
     private static final Color C1 = new Color(C1_R, C1_G, C1_B);
     private static final Color C2 = new Color(C2_R, C2_G, C2_B);
     private static final Color C3 = new Color(C3_R, C3_G, C3_B);
@@ -47,8 +54,8 @@ public class AvdtaJSONSerializer {
             JsonObjectBuilder objectBuilder = factory.createObjectBuilder();
             objectBuilder
                     .add("source", factory.createObjectBuilder()
-                            .add("latitude", coordinates[0].getLat())
-                            .add("longitude", coordinates[0].getLon()))
+                        .add("latitude", coordinates[0].getLat())
+                        .add("longitude", coordinates[0].getLon()))
                     .add("dest", factory.createObjectBuilder()
                             .add("latitude", coordinates[1].getLat())
                             .add("longitude", coordinates[1].getLon()))
@@ -81,11 +88,11 @@ public class AvdtaJSONSerializer {
 
         for (Metric metric : metrics) {
             metricMetadataArrayBuilder.add(factory.createObjectBuilder()
-                    .add("metricType", metric.getMetricType().toString())
-                    .add("unitOfMeasurement", metric.getUnitOfMeasurement())
-                    .add("MIN", metric.getMinValue())
-                    .add("C2", metric.getC2Value())
-                    .add("MAX", metric.getMaxValue()));
+                .add("metricType", metric.getMetricType().toString())
+                .add("unitOfMeasurement", metric.getUnitOfMeasurement())
+                .add("MIN", metric.getMinValue())
+                .add("C2", metric.getC2Value())
+                .add("MAX", metric.getMaxValue()));
         }
 
         objectBuilder.add("metricsArray", metricMetadataArrayBuilder.build());
@@ -204,12 +211,7 @@ public class AvdtaJSONSerializer {
     }
 
     public static void write(Network network, String name, Metric[] metrics) throws IOException {
-        File file = new File("google_maps_project/maps.js");
-
-        if (!file.exists()) {
-            file.createNewFile();
-        }
-
+        File file = new File(FILE_PATH);
         FileReader fr = new FileReader(file);
         BufferedReader br = new BufferedReader(fr);
         String line = br.readLine();

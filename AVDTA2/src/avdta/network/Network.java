@@ -49,7 +49,7 @@ public class Network
     
     private PathList paths;
 
-    public static int dt = 6;
+    public static int dt = 15;
     
     
     

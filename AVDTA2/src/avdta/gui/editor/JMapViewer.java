@@ -4,7 +4,6 @@
  */
 package avdta.gui.editor;
 
-import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
@@ -136,7 +135,7 @@ public class JMapViewer extends org.openstreetmap.gui.jmapviewer.JMapViewer
         }
         else
         {
-            g.setColor(Color.white);
+            g.setColor(getBackground());
             g.fillRect(0, 0, getWidth(), getHeight());
         }
         
