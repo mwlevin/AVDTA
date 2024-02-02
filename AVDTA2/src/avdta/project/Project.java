@@ -679,7 +679,7 @@ public abstract class Project
      */
     public String getProjectDirectory()
     {
-        return "/Users/jeffrey/AVDTA_modified/AVDTA2/projects/coacongress2_ttmp";
+        return directory;
     }
     
     

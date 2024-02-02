@@ -940,9 +940,7 @@ public class ReadNetwork
             int numLanes = filein.nextInt();
             double jamd = 5280.0/Vehicle.vehicle_length;
 
-            if (type != 136 && type != 1000) {
-                System.out.println(type);
-            }
+
             
             if(filein.hasNextLine())
             {
