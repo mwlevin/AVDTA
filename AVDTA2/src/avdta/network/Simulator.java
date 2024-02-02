@@ -883,8 +883,20 @@ public class Simulator extends Network
      * For each time step, this calls {@link Simulator#addVehicles()} and {@link Simulator#propagateFlow()}.
      * @throws IOException if a file cannot be accessed
      */
+    
+    public void simulate() throws IOException{
+        simulate("");
+    }
+    
     public void simulate(long iter) throws IOException
     {   
+        simulate("_iter"+iter);
+    }
+    
+    PrintStream queueLengthOut;
+    
+    public void simulate(String filelabel) throws IOException
+    {
  
         resetSim();
 
@@ -897,9 +909,55 @@ public class Simulator extends Network
 
         exit_count = 0;
         
+        beforeSimulate(filelabel);
+        
+        for(time = 0; time < duration; time += dt)
+        {
+            //System.out.println(time+"\t"+getNumVehiclesInSystem()+"\t"+occupancy_900);
+            // push vehicles onto centroid connectors at departure time
+            
+            
+            nextTimestep();
+            
+            afterTimestep();
+            
+            //checks if all vehicles have exited
+            if(isSimulationFinished())
+            {
+                break;
+            }  
+            
+        }
+        
+
+        lastExit = time;
+        
+        //for vehicles that haven't yet exited the network, add an observation to the running average avgTT for vehicle's current link
+        //that is equal to the time of the system currently minus the time the vehicle has entered the link
+        for(Vehicle v : vehicles)
+        {
+            if(!v.isExited())
+            {
+                Link l = v.getCurrLink();
+                if(l != null)
+                {
+                    l.updateTT(v.enter_time, Simulator.time);
+                }
+            }
+        }
+        
+
+        
+        simulationFinished();
+         
+        vat.close();
         
         
-        PrintStream queueLengthOut = null;
+        
+        
+    }
+    
+    public void beforeSimulate(String filelabel) throws IOException {
         
         if(printQueueLength)
         {
@@ -914,197 +972,76 @@ public class Simulator extends Network
             
             int demand = this.getVehicles().size();
             String DemandAsString = Integer.toString(demand);
-            queueLengthOut = new PrintStream(new FileOutputStream(new File(mostRecentFolder.get()+"/queue_lengths"+DemandAsString+"_iter"+iter+".txt")), true);
+            queueLengthOut = new PrintStream(new FileOutputStream(new File(mostRecentFolder.get()+"/queue_lengths"+DemandAsString+filelabel+".txt")), true);
             queueLengthOut.println("Time (s)\tTotal queue");
         }
-                
-        for(time = 0; time < duration; time += dt)
-        {
-            //System.out.println(time+"\t"+getNumVehiclesInSystem()+"\t"+occupancy_900);
-            // push vehicles onto centroid connectors at departure time
-            addVehicles();
-            if(printQueueLength)
-            {
-                int queue = getNumVehiclesInSystem();
-                
-                queueLengthOut.println(time+"\t"+queue);
-                
-                if(time >= queue_time_delay)
-                {
-                    queue_length.add(queue);
-                }
-            }
-            
-            
-            propagateFlow();  
-
-            //checks if all vehicles have exited
-            if(isSimulationFinished())
-            {
-                break;
-            }   
-            
-            //sample queue lengths for every link
-            if (time > 1000 && time % ast_duration == 0) {
-                
-            }
-            
-            if (time > 1000) {
-                for (Node n : getNodes()) {
-                    if (n instanceof Intersection) {
-                        ((Intersection) n).updateAvgDelay();
-                    }
-                }
-                for (Link l : getLinks()) {
-                    if (l instanceof CTMLink) {
-                        ((CTMLink) l).updateAvgTrafficVolume();
-                    }
-                }
-                
-                for (Node n : getNodes()) {
-                    if (n instanceof Intersection) {
-                        ((Intersection) n).updateAvgQLength();
-                    }
-                }
-            }
-        }
-        
-
-        lastExit = time;
-        
-        //for vehicles that haven't yet exited the network, add an observation to the running average avgTT for vehicle's current link
-        //that is equal to the time of the system currently minus the time the vehicle has entered the link
-        for(Vehicle v : vehicles)
-        {
-            if(!v.isExited())
-            {
-                Link l = v.getCurrLink();
-                if(l != null)
-                {
-                    l.updateTT(v.enter_time, Simulator.time);
-                }
-            }
-        }
-        
-
-        
-        simulationFinished();
-         
-        vat.close();
-        
+    }
+    
+    public void afterSimulate() throws IOException {
         if(printQueueLength)
         {
             queueLengthOut.close();
             System.out.println("Average queue length: "+queue_length.getAverage());
         }
+    }
+    
+    public void nextTimestep() throws IOException
+    {
+        //System.out.println(time+"\t"+getNumVehiclesInSystem()+"\t"+occupancy_900);
+            // push vehicles onto centroid connectors at departure time
+        addVehicles();
         
+        propagateFlow();  
+
         
     }
     
-    public void simulate() throws IOException
-    {   
- 
-        resetSim();
-        
-        PrintStream sim_vat = null;
-        
-        vat = new PrintStream(new FileOutputStream(getVatFile()), true);
-        
-        veh_idx = 0;
-
-        exit_count = 0;
-        
-        
-        
-        PrintStream queueLengthOut = new PrintStream(new FileOutputStream(new File("C:\\Users\\huxx0254\\AVDTA_modified\\AVDTA2\\projects\\coacongress2_ttmp\\DataCollection/queueLengths.csv")), true);
-        queueLengthOut.println("Time (s),Total queue");
-        
-        for(time = 0; time < duration; time += dt)
-        {
-            //System.out.println(time+"\t"+getNumVehiclesInSystem()+"\t"+occupancy_900);
-            // push vehicles onto centroid connectors at departure time
-            addVehicles();
-            if(printQueueLength)
-            {
-                int queue = getNumVehiclesInSystem();
-                
-                queueLengthOut.println(time+","+queue);
-                
-                if(time >= queue_time_delay)
-                {
-                    queue_length.add(queue);
-                }
-            }
-            
-            
-            propagateFlow();  
-
-            //checks if all vehicles have exited
-            if(isSimulationFinished())
-            {
-                break;
-            }   
-            
-            //sample queue lengths for every link
-            if (time > 1000 && time % ast_duration == 0) {
-                
-            }
-            
-            if (time > 1000) {
-                for (Node n : getNodes()) {
-                    if (n instanceof Intersection) {
-                        ((Intersection) n).updateAvgDelay();
-                    }
-                }
-                for (Link l : getLinks()) {
-                    if (l instanceof CTMLink) {
-                        ((CTMLink) l).updateAvgTrafficVolume();
-                    }
-                }
-                
-                for (Node n : getNodes()) {
-                    if (n instanceof Intersection) {
-                        ((Intersection) n).updateAvgQLength();
-                    }
-                }
-            }
-        }
-        
-
-        lastExit = time;
-        
-        //for vehicles that haven't yet exited the network, add an observation to the running average avgTT for vehicle's current link
-        //that is equal to the time of the system currently minus the time the vehicle has entered the link
-        for(Vehicle v : vehicles)
-        {
-            if(!v.isExited())
-            {
-                Link l = v.getCurrLink();
-                if(l != null)
-                {
-                    l.updateTT(v.enter_time, Simulator.time);
-                }
-            }
-        }
-        
-
-        
-        simulationFinished();
-         
-        vat.close();
-        
+    public void afterTimestep() throws IOException{
         if(printQueueLength)
         {
-            queueLengthOut.close();
-            System.out.println("Average queue length: "+queue_length.getAverage());
+            int queue = getNumVehiclesInSystem();
+
+            queueLengthOut.println(time+"\t"+queue);
+
+            if(time >= queue_time_delay)
+            {
+                queue_length.add(queue);
+            }
         }
-        
-        
+
+
+
+
+        //sample queue lengths for every link
+        /*
+        if (time > 1000 && time % ast_duration == 0) {
+
+        }
+
+        if (time > 1000) {
+            for (Node n : getNodes()) {
+                if (n instanceof Intersection) {
+                    ((Intersection) n).updateAvgDelay();
+                }
+            }
+            for (Link l : getLinks()) {
+                if (l instanceof CTMLink) {
+                    ((CTMLink) l).updateAvgTrafficVolume();
+                }
+            }
+
+            for (Node n : getNodes()) {
+                if (n instanceof Intersection) {
+                    ((Intersection) n).updateAvgQLength();
+                }
+            }
+        }
+        */
     }
     
-    public void simulate(int demandFactor, int cycleLength) throws IOException
+    
+    public void simulateMP(int demandFactor, int cycleLength) throws IOException
     {   
-        System.out.println("in simulate");
         MaxPressure.cycleLength = cycleLength;
         resetSim();
         
@@ -1127,24 +1064,8 @@ public class Simulator extends Network
         
         for(time = 0; time < duration; time += dt)
         {
-            //System.out.println(dt);
-            //System.out.println(time+"\t"+getNumVehiclesInSystem()+"\t"+occupancy_900);
-            // push vehicles onto centroid connectors at departure time
-            addVehicles();
-            if(printQueueLength)
-            {
-                int queue = getNumVehiclesInSystem();
-                
-                queueLengthOut.println(time+","+queue);
-                
-                if(time >= queue_time_delay)
-                {
-                    queue_length.add(queue);
-                }
-            }
-            
-            
-            propagateFlow();  
+
+            nextTimestep();  
 
             //checks if all vehicles have exited
             if(isSimulationFinished())

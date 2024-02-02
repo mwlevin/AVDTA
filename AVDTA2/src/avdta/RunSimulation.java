@@ -34,7 +34,7 @@ public class RunSimulation {
                 int cycleLength = j;
           
                 System.out.println("Running CycleMP with Demand " + i + " and CycleLength " + cycleLength + "----------------------------");
-                Main mainCycle = new Main();
+                JeffreyHuMain mainCycle = new JeffreyHuMain();
                 System.out.println("calling simulate fixed proportions");
                 mainCycle.simulateFixedProportions(i, cycleLength);
 
@@ -45,7 +45,7 @@ public class RunSimulation {
                 }
                 
                 System.out.println("Running RegularMP With Demand " + i + "----------------------------");
-                Main main = new Main();
+                JeffreyHuMain main = new JeffreyHuMain();
                 main.simulateFixedProportions(i);
 
                 Metric average_TT = new Metric(Metric.Type.AVERAGE_TT, 0, 75, 150, "Seconds");
@@ -121,7 +121,7 @@ public class RunSimulation {
         }
     }
 
-    public static void writeTotalQueueLengthPerIntersection(Main main, Main mainCycle, int demand, int cycleLength) throws FileNotFoundException {
+    public static void writeTotalQueueLengthPerIntersection(JeffreyHuMain main, JeffreyHuMain mainCycle, int demand, int cycleLength) throws FileNotFoundException {
         PrintStream totalQueueLengthPerIntersectionOut = new PrintStream(new FileOutputStream(new File(
                 "/Users/jeffrey/AVDTA_modified/AVDTA2/projects/coacongress2_ttmp/HaiVuDataCollection/IntersectionQueueLength/intersectionQueue_d" + demand + ".csv")), true);
         totalQueueLengthPerIntersectionOut.println("intersection, total queue length");
